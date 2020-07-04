@@ -10,11 +10,18 @@ int main(int argc, char* argv[]) {
     // 第四个參数：bool值，表示该參数是否必须存在（可选。默认值是false）
     // 第五个參数：參数的默认值（可选，当第四个參数为false时该參数有效）
     options.add<string>("bench", 'b', "bench file name", true, "");
+    options.add<string>("fault", 'f', "fault file name", true, "");
     options.parse_check(argc, argv);
 
     auto netlist = NetList::GetInstance();
     string benchFile = options.get<string>("bench");
-    netlist.Parse(benchFile);
+    netlist->Parse(benchFile);
+    netlist->PrintGates();
+
+    auto faultlist = FaultList::GetInstance();
+    string faultFile = options.get<string>("fault");;
+    faultlist->Parse(faultFile);
+    faultlist->PrintFaults();
 
     return 0;
 }
