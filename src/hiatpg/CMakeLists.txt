@@ -3,4 +3,4 @@ project(hiatpg)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(hiatpg main.cpp)
+add_executable(hiatpg main.cpp common.h)
