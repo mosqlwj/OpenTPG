@@ -2,8 +2,8 @@
 // Created by fish on 2020/7/4.
 //
 
-#ifndef HIATPG_COMMON_H
-#define HIATPG_COMMON_H
+#ifndef HIATPG_MODEL_H
+#define HIATPG_MODEL_H
 
 #include <vector>
 #include <string>
@@ -232,4 +232,4 @@ class AtpgEngine {
     unordered_map<GateId, Value> testCube;
 };
 
-#endif //HIATPG_COMMON_H
+#endif //HIATPG_MODEL_H

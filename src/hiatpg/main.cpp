@@ -1,4 +1,4 @@
-#include "common.h"
+#include "model.h"
 #include "cmdline.h"
 
 int main(int argc, char* argv[]) {
