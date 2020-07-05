@@ -56,6 +56,18 @@ vector<string> split(const string& in, const string& delim)
     };
 }
 
+void trim(string &s)
+{
+    int index = 0;
+    if(!s.empty())
+    {
+        while( (index = s.find(' ',index)) != string::npos)
+        {
+            s.erase(index,1);
+        }
+    }
+}
+
 struct Gate {
     GateId gateId;
     GateType type;
@@ -109,20 +121,22 @@ public:
                 continue;
             }
 
+            trim(line);
+
             vector<string> paras;
             paras = split(line, "[=,()]");
             Gate* gate;
 
             if (paras[0] == "INPUT") {
-                auto name = move(paras[1]);
+                auto name = paras[1];
                 gate = new Gate(curGateId, PI, name);
                 name2GatePointer[name] = gate;
             } else if (paras[0] == "OUTPUT") {
-                auto name = move(paras[1]);
+                auto name = paras[1];
                 gate = new Gate(curGateId, PI, name);
                 primaryOutput[name] = gate;
             } else {
-                auto name = move(paras[0]);
+                auto name = paras[0];
                 GateType type = str2GateType[paras[1]];
                 gate = new Gate(curGateId, type, name);
                 name2GatePointer[name] = gate;
