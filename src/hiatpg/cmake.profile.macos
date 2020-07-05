@@ -1,0 +1,1 @@
+-DMACOSX_DEPLOYMENT_TARGET=10.9 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ -G "CodeBlocks - Unix Makefiles"

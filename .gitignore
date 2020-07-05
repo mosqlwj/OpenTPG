@@ -32,4 +32,15 @@
 *.app
 
 .idea
-/src/hiatpg/cmake-build-debug/
+
+#cmake
+cmake-build-*/
+
+#cmake qtcreator
+*.user
+
+test/
+atalanta
+
+
+
