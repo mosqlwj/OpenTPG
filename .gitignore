@@ -40,7 +40,12 @@ cmake-build-*/
 *.user
 
 test/
-atalanta
 
+
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+*.cbp
 
 
