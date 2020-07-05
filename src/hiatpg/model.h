@@ -47,6 +47,11 @@ enum EventDir {
     BOTH
 };
 
+enum MachineType {
+    GOODMACHINE,
+    FAULTYMACHINE
+};
+
 vector<string> split(const string& in, const string& delim)
 {
     regex re{delim};
@@ -240,10 +245,5 @@ public:
     }
 };
 FaultList* FaultList::instance = nullptr;
-
-class AtpgEngine {
-    unordered_map<GateId, AtpgValue> window;
-    unordered_map<GateId, Value> testCube;
-};
 
 #endif //HIATPG_MODEL_H
