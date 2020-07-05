@@ -12,12 +12,13 @@ public:
 private:
 	void DoOneFaultSim(FaultDescript* fault);
 	uint64_t DoFaultGateSim(FaultDescript* fault, Gate* gate);
+    uint64_t SimFaultGate(Gate* gate);
 
 private:
 	NetlistParser* netlistParser;
 	vector<FaultDescript*>* faultList;
 	SimGM* goodMechine;
+    ValueManager* faultValueManager;
 	uint64_t* faultMachine;
 	uint64_t mask;
 };
-

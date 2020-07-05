@@ -1,6 +1,20 @@
 #pragma once
 
 const int PARALLCUBESIZEMAX = 64;
+enum GateType {
+	PI = 0,
+	PO,
+	AND,
+	NAND,
+	OR,
+	NOR,
+	XOR,
+	NXOR,
+	INV,
+	MUX,
+	BUF
+};
+
 
 class ValueManager
 {
@@ -72,13 +86,46 @@ public:
 	}
 };
 
+class SimGM {
+    uint64_t* res;
+
+public:
+    SimGM(uint64_t size) {
+        res = new uint64_t[parser->GetFlattenGates().size()];
+        memset(res, 0, sizeof(uint64_t) * size);
+    }
+    ~SimGM() {
+        if (nullptr != res) {
+            delete[] res;
+            res = nullptr;
+        }
+    }
+    uint64_t& operator[](int index) { return res[index]; }
+};
+
 class SimUtil
 {
 public:
-	SimGate(Gate* gate, uint64_t* goodMechine, uint64_t mask);
-	SimGate1(Gate* gate, uint64_t* goodMechine, uint64_t mask);
-	SimGate2(Gate* gate, uint64_t* goodMechine, uint64_t mask);
-	SimGate3(Gate* gate, uint64_t* goodMechine, uint64_t mask);
-	SimGate4(Gate* gate, uint64_t* goodMechine, uint64_t mask);
+	// simulation gate's value acrroding goodmechine 
+	// and set goodvalue to mechine same time
+    uint64_t SimGate(Gate* gate, SimGM* goodMechine, uint64_t mask);
+    uint64_t SimGate1(Gate* gate, SimGM* goodMechine, uint64_t mask);
+    uint64_t SimGate2(Gate* gate, SimGM* goodMechine, uint64_t mask);
+    uint64_t SimGate3(Gate* gate, SimGM* goodMechine, uint64_t mask);
+    uint64_t SimGate4(Gate* gate, SimGM* goodMechine, uint64_t mask);
+
+	// siulation gate's fault vale acrroding goodmechine/faultmechine/valuemanager
+	// and set fault machine at same time 
+	// notice:not change good machine ever
+    uint64_t SimFaultGate1(Gate* gate, SimGM* goodMechine, uint64_t* faultMechine, ValueManager* faultValueManager,
+                           uint64_t mask);
+    uint64_t SimFaultGate2(Gate* gate, SimGM* goodMechine, uint64_t* faultMechine, ValueManager* faultValueManager,
+                           uint64_t mask);
+    uint64_t SimFaultGate3(Gate* gate, SimGM* goodMechine, uint64_t* faultMechine, ValueManager* faultValueManager,
+                           uint64_t mask);
+    uint64_t SimFaultGate4(Gate* gate, SimGM* goodMechine, uint64_t* faultMechine, ValueManager* faultValueManager,
+                           uint64_t mask);
+
 };
+
 

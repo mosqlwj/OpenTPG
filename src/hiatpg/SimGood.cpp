@@ -41,22 +41,22 @@ SimGood::DoSim(uint64_t mask)
 	Gate* curGate = nullptr;
 	while (!que.Empty()) {
 		curGate = que->dequeue();
-		switch (curGate->GetGateFins()) {
-		case 1:
-			SimUtil::SimGate1(curGate, goodMechine, mask);
-			break;
-		case 2:
-			SimUtil::SimGate2(curGate, goodMechine, mask);
-			break;
-		case 3:
-			SimUtil::SimGate3(curGate, goodMechine, mask);
-			break;
-		case 4:
-			SimUtil::SimGate4(curGate, goodMechine, mask);
-			break;
-		default:
-			cout << "ERROR:Not Support This Gate." << endl;
-		}
+        switch (curGate->GetGateFins()) {
+            case 1:
+                SimUtil::SimGate1(curGate, goodMechine, mask);
+                break;
+            case 2:
+                SimUtil::SimGate2(curGate, goodMechine, mask);
+                break;
+            case 3:
+                SimUtil::SimGate3(curGate, goodMechine, mask);
+                break;
+            case 4:
+                SimUtil::SimGate4(curGate, goodMechine, mask);
+                break;
+            default:
+                cout << "ERROR:Not Support This Gate." << endl;
+        }
 		valueManager->Set(curGate->GetGateId());
 		for (auto fanout : curGate->GetFanoutGate()) {
 			if (valueManager->Contains(fanout->GetGateId())) {
