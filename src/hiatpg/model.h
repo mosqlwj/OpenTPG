@@ -38,18 +38,18 @@ enum GateType {
 unordered_map<string, GateType> str2GateType = {
     {"AND", AND}, {"NAND", NAND}, {"OR", OR},
     {"NOR", NOR}, {"XOR", XOR}, {"XNOR", XNOR},
-    {"NOT", INV}, {"BUF", BUF}
+    {"INV", INV}, {"BUF", BUF}
 };
 
+unordered_map<GateType, string> gateType2Str = {
+    {AND,"AND"}, {NAND, "NAND"}, {OR, "OR"},
+    {NOR, "NOR"}, {XOR, "XOR"}, {XNOR, "XNOR"},
+    {INV, "INV"}, {BUF, "BUF"}
+};
 enum EventDir {
     FORWARD,
     BACKWORD,
     BOTH
-};
-
-enum MachineType {
-    GOODMACHINE,
-    FAULTYMACHINE
 };
 
 vector<string> split(const string& in, const string& delim)
@@ -138,7 +138,7 @@ public:
                 name2GatePointer[name] = gate;
             } else if (paras[0] == "OUTPUT") {
                 auto name = paras[1];
-                gate = new Gate(curGateId, PI, name);
+                gate = new Gate(curGateId, PO, name);
                 primaryOutput[name] = gate;
             } else {
                 auto name = paras[0];
@@ -194,6 +194,17 @@ public:
     {
         return name2GatePointer[name];
     }
+
+    vector<Gate*>& GetGates()
+    {
+        return gates;
+    }
+
+    void ClearGates()
+    {
+        gates.clear();
+        name2GatePointer.clear();
+    }
 };
 NetList* NetList::instance = nullptr;
 
@@ -245,5 +256,10 @@ public:
     }
 };
 FaultList* FaultList::instance = nullptr;
+
+class AtpgEngine {
+    unordered_map<GateId, AtpgValue> window;
+    unordered_map<GateId, Value> testCube;
+};
 
 #endif //HIATPG_MODEL_H
