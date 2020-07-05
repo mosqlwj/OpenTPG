@@ -1,18 +1,17 @@
 #include "SimUtil.h"
 
-uint64_t SimUtil::SimGate(Gate* gate, SimGM* goodMechine, uint64_t mask) {
-}
+uint64_t SimUtil::SimGate(Gate* gate, SimGM* goodMechine, uint64_t mask) {}
 
-uint64_t SimUtil::SimGate1(Gate* gate, SimGM* goodMechine, uint64_t mask) { 
+uint64_t SimUtil::SimGate1(Gate* gate, SimGM* goodMechine, uint64_t mask) {
     uint64_t res = 0;
-    switch (gate->GetGateType()) { 
+    switch (gate->GetGateType()) {
         case BUF:
             res = goodMechine[GetFaninGate(0)->GetGateId()];
             break;
         case INV:
             res = ~goodMechine[GetFaninGate(0)->GetGateId()];
         default:
-            cout << "Can Not Sim Gate Which Have One Fanin!" << endl ;
+            cout << "Can Not Sim Gate Which Have One Fanin!" << endl;
     }
     goodMechine[gate->GetGateId()] = res & mask;
     return res & mask;
@@ -31,7 +30,7 @@ uint64_t SimUtil::SimGate2(Gate* gate, SimGM* goodMechine, uint64_t mask) {
 
 uint64_t SimUtil::SimGate3(Gate* gate, SimGM* goodMechine, uint64_t mask) {
     uint64_t res = 0;
-    // to be done 
+    // to be done
     switch (gate->GetGateType()) {
         case MUX:
             uint64_t fanin0 = goodMechine[gate->GetFaninGate(0)->GetGateId()];
@@ -45,7 +44,7 @@ uint64_t SimUtil::SimGate3(Gate* gate, SimGM* goodMechine, uint64_t mask) {
     return res & mask;
 }
 
-uint64_t SimUtil::SimGate4(Gate* gate, SimGM* goodMechine, uint64_t mask) { 
+uint64_t SimUtil::SimGate4(Gate* gate, SimGM* goodMechine, uint64_t mask) {
     uint64_t res = 0;
     uint64_t fanin0 = goodMechine[gate->GetFaninGate(0)->GetGateId()];
     uint64_t fanin1 = goodMechine[gate->GetFaninGate(1)->GetGateId()];
@@ -77,19 +76,19 @@ uint64_t SimUtil::SimGate4(Gate* gate, SimGM* goodMechine, uint64_t mask) {
     return res & mask;
 }
 
-uint64_t SimUtil::SimFaultGate1(Gate* gate, SimGM* goodMechine, uint64_t* faultMechine, 
-    ValueManager* faultValueManager, uint64_t mask);
-{ 
-    uint64_t res = 0; 
+uint64_t SimUtil::SimFaultGate1(Gate* gate, SimGM* goodMechine, uint64_t* faultMechine, ValueManager* faultValueManager,
+                                uint64_t mask);
+{
+    uint64_t res = 0;
     // to be done
     int32_t fanin0Id = gate->GetFaninGate(0)->GetGateId();
     uint64_t fanin0Val = faultMechine->Contains(fanin0Id) ? faultMechine[fanin0Id] : goodMechine[fanin0Id];
     switch (gate->GetGateType()) {
         case BUF:
-            res = fanin0Val;            
+            res = fanin0Val;
             break;
         case INV:
-            res = ~fanin0Val;            
+            res = ~fanin0Val;
         default:
             cout << "Can Not Sim Fault Gate Which Have One Fanin!" << endl;
     }
@@ -97,13 +96,12 @@ uint64_t SimUtil::SimFaultGate1(Gate* gate, SimGM* goodMechine, uint64_t* faultM
     return res & mask;
 }
 
-uint64_t SimUtil::SimFaultGate2(Gate* gate, SimGM* goodMechine, uint64_t* faultMechine,
-    ValueManager* faultValueManager, uint64_t mask);
+uint64_t SimUtil::SimFaultGate2(Gate* gate, SimGM* goodMechine, uint64_t* faultMechine, ValueManager* faultValueManager,
+                                uint64_t mask);
 {
     uint64_t res = 0;
     // to be done
     switch (gate->GetGateType()) {
-
         default:
             cout << "Can Not Sim Fault Gate Which Have Two Fanin!" << endl;
     }
@@ -111,8 +109,8 @@ uint64_t SimUtil::SimFaultGate2(Gate* gate, SimGM* goodMechine, uint64_t* faultM
     return res & mask;
 }
 
-uint64_t SimUtil::SimFaultGate3(Gate* gate, SimGM* goodMechine, uint64_t* faultMechine,
-    ValueManager* faultValueManager, uint64_t mask);
+uint64_t SimUtil::SimFaultGate3(Gate* gate, SimGM* goodMechine, uint64_t* faultMechine, ValueManager* faultValueManager,
+                                uint64_t mask);
 {
     uint64_t res = 0;
     // to be done
@@ -133,8 +131,8 @@ uint64_t SimUtil::SimFaultGate3(Gate* gate, SimGM* goodMechine, uint64_t* faultM
     return res & mask;
 }
 
-uint64_t SimUtil::SimFaultGate4(Gate* gate, SimGM* goodMechine, uint64_t* faultMechine,
-    ValueManager* faultValueManager, uint64_t mask);
+uint64_t SimUtil::SimFaultGate4(Gate* gate, SimGM* goodMechine, uint64_t* faultMechine, ValueManager* faultValueManager,
+                                uint64_t mask);
 {
     uint64_t res = 0;
     // to be done
@@ -162,7 +160,7 @@ uint64_t SimUtil::SimFaultGate4(Gate* gate, SimGM* goodMechine, uint64_t* faultM
         case XOR:
             res = fanin0Val ^ fanin1Val ^ fanin2Val ^ fanin3Val;
             break;
-        case NXOR: 
+        case NXOR:
             res = ~(fanin0Val ^ fanin1Val ^ fanin2Val ^ fanin3Val);
             break;
         default:

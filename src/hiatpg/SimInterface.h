@@ -1,15 +1,13 @@
 #pragma once
 
-class SimEntryInterface
-{
+class SimEntryInterface {
 public:
-	virtual void HandleTestCube() = 0;
-	virtual void HandleOutput();
-	virtual void ParsePattern();
+    virtual void HandleTestCube() = 0;
+    virtual void HandleOutput();
+    virtual void ParsePattern();
 };
 
-class SimInterface
-{
-public: 
-	virtual void DoSim() = 0;
+class SimInterface {
+public:
+    virtual void DoSim() = 0;
 };

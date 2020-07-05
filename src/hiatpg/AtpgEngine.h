@@ -5,9 +5,10 @@
 #ifndef HIATPG_ATPGENGINE_H
 #define HIATPG_ATPGENGINE_H
 
-#include "model.h"
-#include "LogicValue.h"
 #include <queue>
+
+#include "LogicValue.h"
+#include "model.h"
 
 struct TpgEvent {
     Gate* gate;
@@ -24,19 +25,15 @@ private:
     unordered_map<GateId, AtpgValue> window;
     unordered_map<GateId, Value> testCube;
     queue<TpgEvent> tpgEventQueue;
+
 public:
-    bool ActivateFaultEffect(Fault* fault)
-    {
+    bool ActivateFaultEffect(Fault* fault) {}
 
-    }
-
-    bool ImplyGate(Gate* gate, Value value, MachineType machineType)
-    {
+    bool ImplyGate(Gate* gate, Value value, MachineType machineType) {
         tpgEventQueue.push(move(TpgEvent(gate, BOTH, value, machineType)));
     }
 
-    bool DoImplication()
-    {
+    bool DoImplication() {
         while (!tpgEventQueue.empty()) {
             TpgEvent event = tpgEventQueue.front();
             tpgEventQueue.pop();
@@ -48,19 +45,16 @@ public:
             Value curVal = GetCurVal(curGate->gateId, machineType);
             Value combineVal = CombineVal(curVal, assignVal);
             if (combineVal != UNDEF) {
-                Value simVal =
-                combineVal = CombineVal(simVal, combineVal);
+                Value simVal = combineVal = CombineVal(simVal, combineVal);
             }
 
             if (combineVal != UNDEF) {
                 bool needChange = combineVal == curVal ? true : false;
-
             }
         }
     }
 
-    Value GetCurVal(GateId gateId, MachineType machineType)
-    {
+    Value GetCurVal(GateId gateId, MachineType machineType) {
         Value value = X;
         if (machineType == GOODMACHINE) {
             value = window[gateId].goodVal;
@@ -70,8 +64,7 @@ public:
         return value;
     }
 
-    Value CombineVal(Value origin, Value dest)
-    {
+    Value CombineVal(Value origin, Value dest) {
         if (origin == X) {
             return dest;
         }
@@ -83,8 +76,7 @@ public:
         return dest;
     }
 
-    Value SimulateGate(Gate* gate, MachineType machineType)
-    {
+    Value SimulateGate(Gate* gate, MachineType machineType) {
         uint8_t index = 0;
         int i = 0;
         for (auto fanin : gate->fanins) {
@@ -94,8 +86,7 @@ public:
         return
     }
 
-    Value LookupValueTable(GateType type, int index)
-    {
+    Value LookupValueTable(GateType type, int index) {
         Value value;
         switch (type) {
             case AND:
@@ -128,4 +119,4 @@ public:
     }
 };
 
-#endif //HIATPG_ATPGENGINE_H
+#endif  // HIATPG_ATPGENGINE_H

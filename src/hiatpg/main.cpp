@@ -1,5 +1,5 @@
-#include "model.h"
 #include "cmdline.h"
+#include "model.h"
 
 int main(int argc, char* argv[]) {
     cmdline::parser options;
@@ -19,7 +19,8 @@ int main(int argc, char* argv[]) {
     netlist->PrintGates();
 
     auto faultlist = FaultList::GetInstance();
-    string faultFile = options.get<string>("fault");;
+    string faultFile = options.get<string>("fault");
+    ;
     faultlist->Parse(faultFile);
     faultlist->PrintFaults();
 

@@ -5,70 +5,37 @@
 #ifndef HIATPG_MODEL_H
 #define HIATPG_MODEL_H
 
-#include <vector>
+#include <fstream>
+#include <iostream>
+#include <regex>
 #include <string>
 #include <unordered_map>
-#include <regex>
-#include <iostream>
-#include <fstream>
+#include <vector>
 
 using namespace std;
 using GateId = int;
 
-enum Value {
-    X,
-    ZERO,
-    ONE,
-    UNDEF
-};
+enum Value { X, ZERO, ONE, UNDEF };
 
-enum GateType {
-    PI,
-    PO,
-    AND,
-    NAND,
-    OR,
-    NOR,
-    XOR,
-    XNOR,
-    INV,
-    BUF
-};
+enum GateType { PI, PO, AND, NAND, OR, NOR, XOR, XNOR, INV, BUF };
 
-unordered_map<string, GateType> str2GateType = {
-    {"AND", AND}, {"NAND", NAND}, {"OR", OR},
-    {"NOR", NOR}, {"XOR", XOR}, {"XNOR", XNOR},
-    {"INV", INV}, {"BUF", BUF}
-};
+unordered_map<string, GateType> str2GateType = {{"AND", AND}, {"NAND", NAND}, {"OR", OR},   {"NOR", NOR},
+                                                {"XOR", XOR}, {"XNOR", XNOR}, {"INV", INV}, {"BUF", BUF}};
 
-unordered_map<GateType, string> gateType2Str = {
-    {AND,"AND"}, {NAND, "NAND"}, {OR, "OR"},
-    {NOR, "NOR"}, {XOR, "XOR"}, {XNOR, "XNOR"},
-    {INV, "INV"}, {BUF, "BUF"}
-};
-enum EventDir {
-    FORWARD,
-    BACKWORD,
-    BOTH
-};
+unordered_map<GateType, string> gateType2Str = {{AND, "AND"}, {NAND, "NAND"}, {OR, "OR"},   {NOR, "NOR"},
+                                                {XOR, "XOR"}, {XNOR, "XNOR"}, {INV, "INV"}, {BUF, "BUF"}};
+enum EventDir { FORWARD, BACKWORD, BOTH };
 
-vector<string> split(const string& in, const string& delim)
-{
+vector<string> split(const string& in, const string& delim) {
     regex re{delim};
-    return vector<string> {
-            sregex_token_iterator(in.begin(), in.end(), re, -1),
-            sregex_token_iterator()
-    };
+    return vector<string>{sregex_token_iterator(in.begin(), in.end(), re, -1), sregex_token_iterator()};
 }
 
-void trim(string &s)
-{
+void trim(string& s) {
     int index = 0;
-    if(!s.empty())
-    {
-        while( (index = s.find(' ',index)) != string::npos)
-        {
-            s.erase(index,1);
+    if (!s.empty()) {
+        while ((index = s.find(' ', index)) != string::npos) {
+            s.erase(index, 1);
         }
     }
 }
@@ -80,8 +47,7 @@ struct Gate {
     vector<Gate*> fanouts;
     string name;
 
-    Gate(GateId gateId, GateType type, const string& name)
-        : gateId(gateId), type(type), name(name) {}
+    Gate(GateId gateId, GateType type, const string& name) : gateId(gateId), type(type), name(name) {}
 };
 
 struct Fault {
@@ -90,8 +56,7 @@ struct Fault {
     Value value;
     bool detected;
 
-    Fault(GateId gateId, int index, Value value)
-        : gateId(gateId), index(index), value(value), detected(false) {}
+    Fault(GateId gateId, int index, Value value) : gateId(gateId), index(index), value(value), detected(false) {}
 };
 
 struct AtpgValue {
@@ -173,8 +138,7 @@ public:
         return;
     }
 
-    void PrintGates()
-    {
+    void PrintGates() {
         for (auto gate : gates) {
             cout << "GateId: " << gate->gateId << endl;
             cout << "GateName: " << gate->name << endl;
@@ -190,18 +154,11 @@ public:
         }
     }
 
-    Gate* FindGateByName(string name)
-    {
-        return name2GatePointer[name];
-    }
+    Gate* FindGateByName(string name) { return name2GatePointer[name]; }
 
-    vector<Gate*>& GetGates()
-    {
-        return gates;
-    }
+    vector<Gate*>& GetGates() { return gates; }
 
-    void ClearGates()
-    {
+    void ClearGates() {
         gates.clear();
         name2GatePointer.clear();
     }
@@ -247,8 +204,7 @@ public:
         return;
     }
 
-    void PrintFaults()
-    {
+    void PrintFaults() {
         for (auto fault : faults) {
             cout << "Fault gate id: " << fault->gateId << endl;
             cout << "Fault value: " << fault->value - ZERO << endl;
@@ -262,4 +218,4 @@ class AtpgEngine {
     unordered_map<GateId, Value> testCube;
 };
 
-#endif //HIATPG_MODEL_H
+#endif  // HIATPG_MODEL_H
