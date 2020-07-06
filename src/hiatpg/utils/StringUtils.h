@@ -8,7 +8,9 @@
 #include <string>
 #include <vector>
 
+
 class StringUtils {
+public:
     static  void trim(std::string& s);
     static  std::vector<std::string> split(const std::string& in, const std::string& delim);
 };

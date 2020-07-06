@@ -184,7 +184,7 @@ public:
             }
 
             vector<string> paras;
-            paras = split(line, " ");
+            paras = StringUtils::split(line, " ");
             auto netlist = NetList::GetInstance();
             auto gateName = paras[0];
             Gate* gate = netlist->FindGateByName(gateName);
