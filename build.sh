@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
+
 SELFDIR=$(dirname $(realpath "$0"))
+
 
 PROJECT_ROOT="${SELFDIR}"
 while [[ ! -f "${PROJECT_ROOT}/PROJECT" ]]; do
@@ -34,10 +36,10 @@ function compile()
     local filter=$(uname -s)
     case "${filter}" in
         Linux*)
-            cmakeopts=-DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++
+            cmakeopts="-DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++"
         ;;
         Darwin*)
-            cmakeopts=-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+            cmakeopts="-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
         ;;
         *)
             echo    "Unknown system: '${filter}'"
@@ -46,17 +48,24 @@ function compile()
     esac
 
 
+    local buildmode=""
     if   [[ "$2" == "debug" ]] || [[ "$2" == "" ]]; then
+        buildmode="debug"
         cmakeopts="${cmakeopts} -DCMAKE_BUILD_TYPE=Debug"
+        cmakegens="CodeBlocks - Unix Makefiles"
     elif [[ "$2" == "release" ]]; then
+        buildmode="release"
         cmakeopts="${cmakeopts} -DCMAKE_BUILD_TYPE=Release"
+        cmakegens="CodeBlocks - Unix Makefiles"
     else
         echo    "Unsupported compile mode '$2'"
         return  2
     fi
 
 
-    cmake ${cmakeopts} -G "CodeBlocks - Unix Makefiles" "${PROJECT_ROOT}/src/hiatpg"  && \
+    local builddir="${PROJECT_ROOT}/cmake-build/${buildmode}"
+    mkdir -p "${builddir}"
+    cd    "${builddir}" && cmake ${cmakeopts} -G "${cmakegens}" "${PROJECT_ROOT}/src/hiatpg"  &&  \
     make clean  &&  \
     make
     RESULT=$?
@@ -73,8 +82,8 @@ function compile()
 
 function format()
 {
-    local cppfiles=$(cd "${PROJECT_ROOT}" && find "${PROJECT_ROOT}" -name '*.cpp' | grep -v -E '.*-build.*')
-    local hppfiles=$(cd "${PROJECT_ROOT}" && find "${PROJECT_ROOT}" -name '*.h'   | grep -v -E '.*-build.*')
+    local cppfiles=$(cd "${PROJECT_ROOT}" && find "${PROJECT_ROOT}/src" -name '*.cpp' | grep -v -E '.*-build.*' | grep -v -E 'CMakeFiles')
+    local hppfiles=$(cd "${PROJECT_ROOT}" && find "${PROJECT_ROOT}/src" -name '*.h'   | grep -v -E '.*-build.*' | grep -v -E 'CMakeFiles')
     local fmtfiles="${cppfiles} ${hppfiles}"
     for f in ${fmtfiles}; do
         cd "${PROJECT_ROOT}" && clang-format --style=file -i "${f}"
@@ -96,8 +105,12 @@ function main()
 {
     local action="$1"
 
+    if [[ "${action}" == "help" ]] || [[ "${action}" == "--help" ]] || [[ "${action}" == "-h" ]]; then
+        help    "$@"
+        return  "$?"
+    fi
+
     if [[ "${action}" == "debug" ]] || [[ "${action}" == "release" ]] || [[ "${action}" == "" ]]; then
-        action="compile"
         compile "compile" "$@"
         return  $?
     fi
@@ -109,11 +122,6 @@ function main()
 
     if [[ "${action}" == "format" ]]; then
         format  "$@"
-        return  "$?"
-    fi
-
-    if [[ "${action}" == "help" ]] || [[ "${action}" == "--help" ]] || [[ "${action}" == "-h" ]]; then
-        help    "$@"
         return  "$?"
     fi
 

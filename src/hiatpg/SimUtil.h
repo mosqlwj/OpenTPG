@@ -43,7 +43,7 @@ public:
 
     inline void Set(int32_t index, uint64_t val) {
         values[index] = val;
-        exists[index] = gBase + 1£»
+        exists[index] = gBase + 1;
     }
 
     inline void Remove(int32_t index) { exists[index] = 0; }

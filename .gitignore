@@ -41,11 +41,10 @@ cmake-build-*/
 
 test/
 
-
+bin/
 CMakeCache.txt
 CMakeFiles/
 Makefile
 cmake_install.cmake
 *.cbp
-
 
