@@ -12,6 +12,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "StringUtils.h"
+
 using namespace std;
 
 using GateId = int;
@@ -30,19 +32,6 @@ enum EventDir { FORWARD, BACKWORD, BOTH };
 
 struct Options {};
 
-static inline vector<string> split(const string& in, const string& delim) {
-    regex re{delim};
-    return vector<string>{sregex_token_iterator(in.begin(), in.end(), re, -1), sregex_token_iterator()};
-}
-
-static inline void trim(string& s) {
-    int index = 0;
-    if (!s.empty()) {
-        while ((index = s.find(' ', index)) != string::npos) {
-            s.erase(index, 1);
-        }
-    }
-}
 
 struct Gate {
     GateId gateId;
@@ -95,10 +84,10 @@ public:
                 continue;
             }
 
-            trim(line);
+            StringUtils::trim(line);
 
             vector<string> paras;
-            paras = split(line, "[=,()]");
+            paras = StringUtils::split(line, "[=,()]");
             Gate* gate;
 
             if (paras[0] == "INPUT") {

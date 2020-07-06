@@ -8,15 +8,18 @@ SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../../bin)
 set(SOURCES
     main.cpp
 #    Context.cpp
-    )
+    utils/StringUtils.cpp )
 
 set(HEADERS
-    model.h
+    include/model.h
+    include/Context.h
     cmdline.h
     LogicValue.h
     AtpgEngine.h
-    Context.h
+    utils/StringUtils.hpp
     )
 
 add_executable(hiatpg ${SOURCES})
-target_include_directories(hiatpg PUBLIC include)
+target_include_directories(hiatpg PUBLIC
+    include
+    utils)
