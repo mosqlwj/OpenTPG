@@ -13,7 +13,9 @@
 #include <vector>
 
 using namespace std;
+
 using GateId = int;
+
 
 enum Value { X, ZERO, ONE, UNDEF };
 
@@ -26,12 +28,14 @@ unordered_map<GateType, string> gateType2Str = {{AND, "AND"}, {NAND, "NAND"}, {O
                                                 {XOR, "XOR"}, {XNOR, "XNOR"}, {INV, "INV"}, {BUF, "BUF"}};
 enum EventDir { FORWARD, BACKWORD, BOTH };
 
-vector<string> split(const string& in, const string& delim) {
+struct Options {};
+
+static inline vector<string> split(const string& in, const string& delim) {
     regex re{delim};
     return vector<string>{sregex_token_iterator(in.begin(), in.end(), re, -1), sregex_token_iterator()};
 }
 
-void trim(string& s) {
+static inline void trim(string& s) {
     int index = 0;
     if (!s.empty()) {
         while ((index = s.find(' ', index)) != string::npos) {

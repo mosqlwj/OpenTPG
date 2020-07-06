@@ -7,7 +7,7 @@ SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../../bin)
 
 set(SOURCES
     main.cpp
-    Context.cpp
+#    Context.cpp
     )
 
 set(HEADERS
