@@ -121,7 +121,7 @@ namespace atalantadll {
 			maxBackTrack=10;
 			maxBackTrack1=0;
 			randomLimit=16;
-			rptMode='y';
+			rptMode='n';
 
 			wFaults=0;
 			wTestMode=0;
