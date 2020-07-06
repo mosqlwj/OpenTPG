@@ -19,3 +19,4 @@ set(HEADERS
     )
 
 add_executable(hiatpg ${SOURCES})
+target_include_directories(hiatpg PUBLIC include)
