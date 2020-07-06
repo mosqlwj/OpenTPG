@@ -13,7 +13,7 @@
 
 using namespace std;
 
-namespace atalantadll {
+namespace hiatpg {
 	int Hash::keyValue(const string& s)
 	{
 		char c;

@@ -7,7 +7,7 @@
 
 using namespace std;
 
-namespace atalantadll {
+namespace hiatpg {
 	const char EDIGIT=4;
 	const char BASIS=('Z'-'A'+19);
 

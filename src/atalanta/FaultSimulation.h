@@ -5,7 +5,7 @@
 #ifndef __ATALANTA_FAULTSIMULATION_H__
 #define __ATALANTA_FAULTSIMULATION_H__
 
-namespace atalantadll {
+namespace hiatpg {
 #define copyLevel(dest,source) dest[0]=source[0]; dest[1]=source[1]
 #define cmpLevel(v1,v2) ((v1[0]!=v2[0]) || (v1[1]!=v2[1]))
 

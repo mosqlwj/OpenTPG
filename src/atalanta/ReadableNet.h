@@ -10,7 +10,7 @@
 #include <iostream>
 #include <fstream>
 
-namespace atalantadll {
+namespace hiatpg {
 	class ReadableNet :public FaultSimulation
 	{
 	protected:

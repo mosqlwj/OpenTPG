@@ -6,7 +6,7 @@
 #include "Defines.h"
 #include "Random.h"
 
-namespace atalantadll {
+namespace hiatpg {
 	unsigned int Random::iseed;
 
 	int Random::seed(int startvalue)

@@ -11,7 +11,7 @@
 
 using namespace std;
 
-namespace atalantadll {
+namespace hiatpg {
 	const char* const fault2str[4]={" /0"," /1"," /0"," /1"};
 	const int inverseParity[2][2]={{0,1},{1,0}};	
 	const int parityOfGate[MAXGTYPE]={0,1,0,1,0,0,0,0,0,0,1,};

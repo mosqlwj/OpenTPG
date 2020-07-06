@@ -13,7 +13,7 @@
 
 using namespace std;
 
-namespace atalantadll {
+namespace hiatpg {
 	enum LineType {LFREE,HEAD,BOUND};
 	const level TABLE[Z+1][2]={{ALL1,ALL0},{ALL0,ALL1},{ALL0,ALL0},{ALL1,ALL1}};
 

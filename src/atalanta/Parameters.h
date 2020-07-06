@@ -1,7 +1,7 @@
 #ifndef __ATALANTA_PARAM_H__
 #define __ATALANTA_PARAM_H__
 
-namespace atalantadll {
+namespace hiatpg {
 	//const int MAXGATE=300000;	//number of gate
 	//const int MAXPI=20000;		//number of primary inputs
 	//const int MAXPO=20050;		// number of primary outputs 

@@ -1,7 +1,7 @@
 #ifndef	__ATALANTA_ERROR_H__
 #define	__ATALANTA_ERROR_H__
 
-namespace atalantadll {
+namespace hiatpg {
 	class Error
 	{
 	private:

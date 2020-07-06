@@ -8,7 +8,7 @@
 #include "Gate.h"
 #include <vector>
 
-namespace atalantadll {
+namespace hiatpg {
 	class Stack
 	{
 		//Gate **stackData;

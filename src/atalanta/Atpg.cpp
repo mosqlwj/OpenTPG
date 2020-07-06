@@ -32,10 +32,10 @@
 
 //#include "windows.h"
 
-using namespace atalantadll;
+using namespace hiatpg;
 
 
-namespace atalantadll {
+namespace hiatpg {
 MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(faultList)
 	{
 		mask=new char[fault];

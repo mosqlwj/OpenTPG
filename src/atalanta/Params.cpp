@@ -1,5 +1,5 @@
 #include "Params.h"
 
-namespace atalantadll {
+namespace hiatpg {
 
 }

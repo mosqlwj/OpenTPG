@@ -7,7 +7,7 @@
 
 using namespace std;
 
-namespace atalantadll {
+namespace hiatpg {
 	static const unsigned char messages[NUMERRORS+1][75]=
 	{
 		"Good status",

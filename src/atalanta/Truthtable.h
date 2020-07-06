@@ -51,7 +51,7 @@ should include atpg.h prior to include truthtable.h
 #define __ATALANTA_TRUTH_H__
 
 #include "Defines.h"
-namespace atalantadll {
+namespace hiatpg {
 	/* 1 input gates: */
 	const level a_truthtbl1[MAXGTYPE][ATALEVEL] = {
 		/*   	0	1	x	d	dbar		*/

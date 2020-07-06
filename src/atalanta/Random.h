@@ -3,7 +3,7 @@
 #include <string>
 using namespace std;
 
-namespace atalantadll {
+namespace hiatpg {
 	const unsigned int all1=~0;
 	
 	

@@ -26,7 +26,7 @@
 
 #include "Globals.h"
 
-namespace atalantadll {
+namespace hiatpg {
 
 	//////////////////////////////////////////////////////////////////////
 	// Construction/Destruction

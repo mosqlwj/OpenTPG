@@ -8,7 +8,7 @@
 
 #include "Parameters.h"
 
-namespace atalantadll {
+namespace hiatpg {
 	class Fan  
 	{
 		void initNet(int nog, GATEPTR faulty_gate, int maxdpi);

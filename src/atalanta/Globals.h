@@ -11,7 +11,7 @@
 
 #define INCLUDE_HOPE
 
-namespace atalantadll {
+namespace hiatpg {
 	typedef struct TestVector
 	{
 		char *ivct;

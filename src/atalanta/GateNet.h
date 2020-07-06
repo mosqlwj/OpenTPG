@@ -10,7 +10,7 @@
 #include "Parameters.h"
 #include "Globals.h"
 
-namespace atalantadll {
+namespace hiatpg {
 	class GateNet
 	{
 #ifdef _ALG_DEBUG

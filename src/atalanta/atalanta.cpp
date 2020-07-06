@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <vector>
 
-using namespace atalantadll;
+using namespace hiatpg;
 
 int main(int argc, char** argv)
 {

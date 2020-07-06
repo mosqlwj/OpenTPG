@@ -7,7 +7,7 @@
 using namespace std;
 
 
-namespace atalantadll {
+namespace hiatpg {
 	class Params
 	{
 	  protected :

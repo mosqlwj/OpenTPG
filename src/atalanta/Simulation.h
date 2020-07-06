@@ -9,7 +9,7 @@
 //#define TestVectorsData vector< vector<level> >
 
 
-namespace atalantadll {
+namespace hiatpg {
 	
 	class TestVectorsData {
 		int secondSize;

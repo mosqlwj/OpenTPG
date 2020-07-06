@@ -7,7 +7,7 @@
 
 using namespace std;
 
-namespace atalantadll {
+namespace hiatpg {
 	const int TESTPERLINE=13;
 
 	class ResultsReader  

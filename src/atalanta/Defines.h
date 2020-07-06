@@ -1,7 +1,7 @@
 #ifndef         __ATALANTA_DEFINES_H__
 #define         __ATALANTA_DEFINES_H__
 
-namespace atalantadll {
+namespace hiatpg {
 	typedef		int	logic;
 	typedef		int level;
 	typedef		int	fault_type;

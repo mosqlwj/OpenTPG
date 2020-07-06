@@ -11,7 +11,7 @@
 #include "Random.h"
 using namespace std;
 
-namespace atalantadll {
+namespace hiatpg {
 
 
 	class MyFaultlist {

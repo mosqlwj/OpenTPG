@@ -14,7 +14,7 @@
 
 #include "Globals.h"
 
-namespace atalantadll {
+namespace hiatpg {
 	//level Globals::inVal[MAXPI];
 	//Stack** Globals::eventList;
 	//Fault *Globals::myCurrFault;

@@ -8,7 +8,7 @@
 #include "GateNet.h"
 
 
-namespace atalantadll {
+namespace hiatpg {
 	const int SELECTMODE=0;	// 0: easiest first, 1: hardest first
 
 	struct TreeNode

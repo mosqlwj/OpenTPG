@@ -7,7 +7,7 @@
 
 #include "FanNet.h"
 
-namespace atalantadll {
+namespace hiatpg {
 	class ParralelPattern:public FanNet
 	{
 	protected:

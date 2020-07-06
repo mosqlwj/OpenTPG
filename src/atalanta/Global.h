@@ -1,4 +1,4 @@
-//namespace atalantadll {
+//namespace hiatpg {
 //	typedef		int	logic;
 //	typedef		unsigned level;
 //	typedef		int	fault_type;
