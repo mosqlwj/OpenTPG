@@ -8,7 +8,7 @@ using namespace std;
 
 
 namespace atalantadll {
-	class SHARE_EXPORT Params
+	class Params
 	{
 	  protected :
 			char cctMode;

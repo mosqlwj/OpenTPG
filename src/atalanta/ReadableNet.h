@@ -11,7 +11,7 @@
 #include <fstream>
 
 namespace atalantadll {
-	class SHARE_EXPORT ReadableNet :public FaultSimulation  
+	class ReadableNet :public FaultSimulation
 	{
 	protected:
 		fstream *circuit2;

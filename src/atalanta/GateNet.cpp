@@ -91,7 +91,7 @@ namespace atalantadll {
 		TestVectorType *testv;
 		testv = (TestVectorType *)malloc(sizeof(TestVectorType));
 		testv->ivct = (char *)malloc( tv.inpVars + 1 );
-		testv->mask = "";
+		testv->mask = strdup("");
 		strcpy(testv->ivct, ivct->c_str());
 		if ( ovct != NULL ) {
 			testv->ovct = (char *)malloc( tv.outVars + 1 );

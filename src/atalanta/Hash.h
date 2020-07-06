@@ -40,7 +40,7 @@ namespace atalantadll {
 			this->size = size;
 			data=new list<HashData*>[size];
 		};		//Creates new hash table of the given size
-		SHARE_EXPORT HashData *findHash(const string& symbol,int key);	//Find a symbol in a hash table
+        HashData *findHash(const string& symbol,int key);	//Find a symbol in a hash table
 		HashData *insertHash(const string& ,int key); //Adds a symbol to hash table
 		HashData *findAndInsertHash(string symbol,int key); //Searches and inserts a symbol to a hash table
 		void clear(void) { for(int i = 0; i < size; i++) { data[i].clear(); }; }

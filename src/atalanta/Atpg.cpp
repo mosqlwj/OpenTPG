@@ -36,7 +36,7 @@ using namespace atalantadll;
 
 
 namespace atalantadll {
-	myFaultList::myFaultList(int fault,Fault **faultList):fault(fault),faultList(faultList)
+MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(faultList)
 	{
 		mask=new char[fault];
 		memset(mask,0,fault);
@@ -57,7 +57,7 @@ namespace atalantadll {
 		}
 	}
 
-	void myFaultList::printList(std::streambuf *fn)
+	void MyFaultlist::printList(std::streambuf *fn)
 	{
 
 		if (fn != NULL)
@@ -67,12 +67,12 @@ namespace atalantadll {
 		}
 	}
 
-	void myFaultList::updateFaultList()
+	void MyFaultlist::updateFaultList()
 	{
 		for(int i=0;i<fault;i++) mask[i]=faultList[i]->detected;
 	}
 
-	void myFaultList::writeFaultMask(std::streambuf *fn)
+	void MyFaultlist::writeFaultMask(std::streambuf *fn)
 	{
 		//  Writes the faltlist mask, according the order in faultlist
 		//  0 = not detected
@@ -89,7 +89,7 @@ namespace atalantadll {
 		}
 	}
 
-	void myFaultList::writeABFaults(std::streambuf *fn)
+	void MyFaultlist::writeABFaults(std::streambuf *fn)
 	{
 
 		if(fn != NULL)
@@ -101,7 +101,7 @@ namespace atalantadll {
 		}
 	}
 
-	void myFaultList::writeUDFaults(std::streambuf *fn)
+	void MyFaultlist::writeUDFaults(std::streambuf *fn)
 	{
 
 		if(fn != NULL)
@@ -944,9 +944,9 @@ namespace atalantadll {
 		return det;
 	}
 
-	atpgResults Atalanta::getResults()
+    AtpgStatus Atalanta::getResults()
 	{
-		atpgResults ar;
+        AtpgStatus ar;
 
 		ar.circuitName=circuitName;
 		ar.gates=numberOfGates - numberOfPrimaryInputs - numberOfPrimaryOutputs;
@@ -960,7 +960,7 @@ namespace atalantadll {
 		return ar;
 	}
 
-	void Atalanta::writeResults(atpgResults ar)
+	void Atalanta::writeResults(AtpgStatus ar)
 	{
 
 		if(reportStream != NULL) {
@@ -1123,15 +1123,15 @@ namespace atalantadll {
 			ostream file(patternStream);
 			file.clear();
 
-			current=tv.vectors.begin();
-			final=tv.vectors.end();
+			current = tv.vectors.begin();
+			final = tv.vectors.end();
 
-			while(current!=final)
+			while(current != final)
 			{
-				file<<(*current)->ivct<<endl;
+				file << (*current)->ivct << endl;
+                cout << (*current)->ivct << endl;
 				current++;
 			}
-
 		}
 	}
 
@@ -1222,111 +1222,70 @@ namespace atalantadll {
 
 	int Atalanta::run()
 	{
-		int n;
-		int ndetect3=0;
-		int store=0;
-		int ncomp=INFINITY,stop=ONE;
-		atpgResults ar;
-		myFaultList * fl;
-		int bit=0,packet=0;
+        AtpgStatus atpgStatus;
+        MyFaultlist *faultlist;
 		clock_t start, end;
 
-#ifdef _ALG_DEBUG
-		dbgFile.open("dbg.txt", ios::out);
-#endif
-
-		levels=setBenchStream(benchStream);
+		levels = setBenchStream(benchStream);
 
 		setFaults();
 		indexFaults();
-		fl=new myFaultList(numberOfFaults,faultList);
+        faultlist = new MyFaultlist(numberOfFaults,faultList);
 
-		if(wFaults) fl->printList(wFaultStream);
+		if(wFaults) faultlist->printList(wFaultStream);
 
 		iseed=Random::seed(iseed);
-		//iseed=Random::seed(100);
 
 		start = clock();
 
 		initFS();
 
-		if(simulationMode)
-		{
-			// Open pattern File for reading
-			if(sPatternFile.length() > 0) {
-				patternFile.open(sPatternFile.c_str(), fstream::in);
-				if(!patternFile.is_open()) {
-					stringstream ss;
-					ss << "Fatal error: Cannot open pattern file " << sPatternFile;
-					throw ss.str();
-				}
-				else {
-					patternStream = patternFile.rdbuf();
-				}
-			}
-			if(!lfsrSimMode)
-			{
-				readTestFile();
-				n=simulateTest();
-			} else
-			{
-				n=simulateLFSR();
-				if(lfsrSimMode == 2) {
-					ostream f(genResStream);
-					f.clear();
-					f << "poly: " << lfsrPoly << ", seed: " << lfsrSeed << endl;
-					f.flush();
-				}
-				nTest2=lfsrNum;
-				nTest3=lfsrNum;
-			}
-			end = clock();
-			ar = getResults();
-			ar.time = (end-start)/(double)CLOCKS_PER_SEC;
-			fl->updateFaultList();
-			fl->writeFaultMask(maskStream);
-			writeResults(ar);
+        // Open pattern File for writing
+        if(sPatternFile.length() > 0) {
+            patternFile.open(sPatternFile.c_str(), fstream::out);
+            if(!patternFile.is_open()) {
+                stringstream ss;
+                ss << "Fatal error: Cannot open pattern file " << sPatternFile;
+                throw ss.str();
+            }
+            else {
+                patternStream = patternFile.rdbuf();
+            }
+        }
 
-			if (uFaultMode == 1) fl->writeABFaults(udFaultsStream);
-			else if (uFaultMode == 2) fl->writeUDFaults(udFaultsStream);
-		} else
-		{
-			// Open pattern File for writing
-			if(sPatternFile.length() > 0) {
-				patternFile.open(sPatternFile.c_str(), fstream::out);
-				if(!patternFile.is_open()) {
-					stringstream ss;
-					ss << "Fatal error: Cannot open pattern file " << sPatternFile;
-					throw ss.str();
-				}
-				else {
-					patternStream = patternFile.rdbuf();
-				}
-			}
+        generateTest();
+        atpgStatus = getResults();
+        faultlist->updateFaultList();
 
-			generateTest();
-			ar = getResults();
-			fl->updateFaultList();
+        //if(wTestMode==4) simulateAllVectors();
+        end = clock();
+        atpgStatus.time = (end-start)/(double)CLOCKS_PER_SEC;
+        writeResults(atpgStatus);
+        switch (wTestMode)
+        {
+            case 0:
+                break;
+            case 1:
+                writeTestFile();
+                break;
+            case 2:
+                writeTestFileOut();
+                break;
+            case 3:
+                writeMultiTestFile();
+                break;
+            case 4:
+                writeMultiTestFileMask();
+                break;
+        }
 
-			if(wTestMode==4) simulateAllVectors();
-			end = clock();
-			//			Sleep(5000);
-			ar.time = (end-start)/(double)CLOCKS_PER_SEC;
-			writeResults(ar);
-			switch (wTestMode)
-			{
-			case 0: break;
-			case 1: writeTestFile(); break;
-			case 2: writeTestFileOut(); break;
-			case 3: writeMultiTestFile(); break;
-			case 4: writeMultiTestFileMask(); break;
-			}
+        faultlist->writeFaultMask(maskStream);
+        if(uFaultMode == 1)
+            faultlist->writeABFaults(udFaultsStream);
+        else if (uFaultMode == 2)
+            faultlist->writeUDFaults(udFaultsStream);
 
-			fl->writeFaultMask(maskStream);
-			if(uFaultMode == 1 ) fl->writeABFaults(udFaultsStream);
-			else if ( uFaultMode == 2 ) fl->writeUDFaults(udFaultsStream);
-		}
-		printf("\n Computing time: %.2fs\n", (end-start)/(double)CLOCKS_PER_SEC);
+		printf("\nComputing time: %.2fs\n", (end-start)/(double)CLOCKS_PER_SEC);
 
 		//Close opened files
 		if(benchFile.is_open()) { benchFile.close(); benchStream = NULL; };
@@ -1337,18 +1296,16 @@ namespace atalantadll {
 		if(maskFile.is_open()) { maskFile.close(); maskStream = NULL; };
 		if(reportFile.is_open()) { reportFile.close(); reportStream = NULL; };
 		if(genResFile.is_open()) { genResFile.close(); genResStream = NULL; };
-#ifdef _ALG_DEBUG
-		if(dbgFile.is_open()) { dbgFile.close(); };
-#endif
+
 		return 0;
 	}
 
 	int Atalanta::run(int argc, char **argv)
 	{
-
 		optionSet(argc,argv);
 		return run();
 	}
+
 	void Atalanta::setParams(Params *p) {
 		cctMode = p->getCctMode();
 		randomLimit = p->getRandomLimit();

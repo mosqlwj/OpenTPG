@@ -64,7 +64,7 @@ namespace atalantadll {
 
 	};
 
-	char* const fn_to_string[MAXGTYPE+3]=         /* gate function to string */
+	const char* const fn_to_string[MAXGTYPE+3]=         /* gate function to string */
 	{"AND","NAND","OR","NOR","INPUT","XOR","XNOR","DFF","DUMMY","BUFFER","NOT",
 	"","","","","","","","","","PO",};
 

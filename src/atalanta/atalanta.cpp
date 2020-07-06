@@ -12,30 +12,21 @@ int main(int argc, char** argv)
 {
 	int res = 0;
 	fstream bench, pat;
-	
-	try {
-		Atalanta *simulation=new Atalanta();
-		Params *p[5];
 
-		//res=simulation->run(argc, argv);
+    Atalanta* atlanta =new Atalanta();
+    Params* paras;
 
-		p[0] = new Params();
-		bench.open("c17.bench", ios::in);
-		pat.open("c17.pat", ios::out);
-		p[0]->setBenchStream(bench.rdbuf());
-		p[0]->setSPatternStream(pat.rdbuf());
-		p[0]->setWTestMode(1);
-		p[0]->setCctMode('9');
-		p[0]->setIseed(23);
-		simulation->setParams(p[0]);
-		simulation->run();
-	}
-	catch(string s) {
-		cerr << s;
-	}
-	catch(...) {
-		cerr << "Uknown exception";
-	}
+    paras = new Params();
+    bench.open("c17.bench", ios::in);
+    pat.open("c17.pat", ios::out);
+    paras->setBenchStream(bench.rdbuf());
+    paras->setSPatternStream(pat.rdbuf());
+    paras->setWTestMode(1);
+    paras->setCctMode('9');
+    paras->setIseed(23);
+    atlanta->setParams(paras);
+    atlanta->run();
+
 	return res;	
 }
 

@@ -46,7 +46,7 @@ namespace atalantadll {
 		short flag[3];
 	};
 
-	class SHARE_EXPORT FaultSimulation:public ReadableFaultList
+	class FaultSimulation:public ReadableFaultList
 	{
 	protected:
 		int groupID;

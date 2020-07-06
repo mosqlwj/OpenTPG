@@ -1,24 +1,9 @@
-
 #ifndef         __ATALANTA_DEFINES_H__
 #define         __ATALANTA_DEFINES_H__
 
-#ifdef _WIN32
-  // Export symbols to .dll while using MS C++ compiler
-  #ifdef ATALANTADLL_EXPORTS
-  // Export symbols to .dll while using MS C++ compiler
-    # define SHARE_EXPORT __declspec(dllexport)
-  #else
-    # define SHARE_EXPORT __declspec(dllimport)
-  #endif
-//# define SHARE_EXPORT 
-#else
-  // There is no need to declare export on Linux
-# define SHARE_EXPORT
-#endif
-
 namespace atalantadll {
 	typedef		int	logic;
-	typedef		int	level;
+	typedef		int level;
 	typedef		int	fault_type;
 	typedef		int	boolean;
 	typedef		int	status;
@@ -108,7 +93,7 @@ namespace atalantadll {
 	};
 
 
-	char * const levelToString[MAXLEVEL+1]=      /* level to string */
+	const char * const levelToString[MAXLEVEL+1]=      /* level to string */
 	{"0","1","x","z",};
 
 	level const parallelToLevel[2][2]=          /* parallel level types to level */

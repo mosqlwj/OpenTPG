@@ -14,15 +14,14 @@ using namespace std;
 namespace atalantadll {
 
 
-	class SHARE_EXPORT myFaultList
-	{
+	class MyFaultlist {
 		int fault;
 		char *mask;
 		string *names;
 		Fault **faultList;
 
 	public:
-		myFaultList(int fault,Fault **faultList);
+        MyFaultlist(int fault,Fault **faultList);
 		void updateFaultList();
 		void printList(std::streambuf *fn);
 		void writeFaultMask(std::streambuf *fn);
@@ -30,8 +29,7 @@ namespace atalantadll {
 		void writeUDFaults(std::streambuf *fn);
 	};
 
-	struct atpgResults
-	{
+	struct AtpgStatus {
 		string circuitName;          // name of the bench file
 		int gates;                  // total gates
 		int iv;                     // # of inputs
@@ -44,7 +42,7 @@ namespace atalantadll {
 		double time;                // computational time
 	};
 
-	class SHARE_EXPORT Atalanta:public Simulation
+	class Atalanta : public Simulation
 	{
 		char inputMode;
 		int iseed;
@@ -129,8 +127,8 @@ namespace atalantadll {
 		void	writeMultiTestFileMask();
 		void	setFaults();
 
-		void	writeResults(atpgResults ar);
-		atpgResults getResults();
+		void	writeResults(AtpgStatus ar);
+        AtpgStatus getResults();
 
 		list<Eden> impo;
 		int snode;

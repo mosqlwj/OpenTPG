@@ -111,6 +111,6 @@ namespace atalantadll {
 
 	};
 
-	char* const dLevelToString[5]={"0","1","x","1","0"};
+	const char* const dLevelToString[5]={"0","1","x","1","0"};
 }
 #endif // __ATALANTA_GATE_H__

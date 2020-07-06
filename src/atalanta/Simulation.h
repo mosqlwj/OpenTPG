@@ -47,7 +47,7 @@ namespace atalantadll {
 		unsigned int size() { return testData.size(); };
 	};
 
-	class SHARE_EXPORT Simulation:public ReadableNet
+	class Simulation:public ReadableNet
 	{
 	protected:
 		char compact;

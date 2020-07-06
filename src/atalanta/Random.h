@@ -14,7 +14,7 @@ namespace atalantadll {
 		
 	public:
 		
-		SHARE_EXPORT static int	seed(int startvalue);
+        static int	seed(int startvalue);
 		static void getRandompattern(int number,level *array,int nbit);
 		static void getPRandompattern(int number,level *array);
 		
