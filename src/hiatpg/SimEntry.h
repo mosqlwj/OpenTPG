@@ -9,7 +9,7 @@ class SimEntry : public SimEntryInterface {
 public:
     SimEntry();
     ~SimEntry();
-    virtual void HandleTestCube(vector<Cube> testCube);
+    virtual void HandleTestCube(unordered_map<GateId, Value> testCube);
 
 private:
     NetlistParser* netlistParser;

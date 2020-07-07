@@ -20,7 +20,7 @@ SimEntry::~SimEntry() {
     }
 }
 
-SimEntry::HandleTestCube(vector<Cube> testCube) {
+SimEntry::HandleTestCube(unordered_map<GateId, Value> testCube) {
     if (testCube.size() > 64) {
         cout << "test cube size error" << endl;
         return;
@@ -28,6 +28,7 @@ SimEntry::HandleTestCube(vector<Cube> testCube) {
 
     mask = UINT64_MAX >> (PARALLCUBESIZEMAX - testCube.size());
 
+    goodSimulator->Prepare(testCube);
     goodSimulator->DoSim(mask);
     faultSimulator->DoSim(mask);
 }

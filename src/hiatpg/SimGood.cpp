@@ -21,7 +21,13 @@ SimGood::~SimGood() {
     }
 }
 
-SimGood::DoSim(uint64_t mask) {
+void SimGood::Prepare(unordered_map<GateId, Value> testCube) {
+    for (auto gateValue; testCube) {
+        goodMechine[gateValue.first] = gateValue.second
+    }
+}
+
+void SimGood::DoSim(uint64_t mask) {
     queue<Gate*> que;
 
     // 1.prepare input node

@@ -11,6 +11,7 @@ uint64_t SimUtil::SimGate1(Gate* gate, SimGM* goodMechine, uint64_t mask) {
             break;
         case INV:
             res = ~goodMechine[GetFaninGate(0)->GetGateId()];
+            break;
         default:
             cout << "Can Not Sim Gate Which Have One Fanin!" << endl;
     }
@@ -117,11 +118,13 @@ uint64_t SimUtil::SimFaultGate1(Gate* gate, SimGM* goodMechine, uint64_t* faultM
     int32_t fanin0Id = gate->GetFaninGate(0)->GetGateId();
     uint64_t fanin0Val = faultMechine->Contains(fanin0Id) ? faultMechine[fanin0Id] : goodMechine[fanin0Id];
     switch (gate->GetGateType()) {
+        case PO:
         case BUF:
             res = fanin0Val;
             break;
         case INV:
             res = ~fanin0Val;
+            break;
         default:
             cout << "Can Not Sim Fault Gate Which Have One Fanin!" << endl;
     }
@@ -134,7 +137,29 @@ uint64_t SimUtil::SimFaultGate2(Gate* gate, SimGM* goodMechine, uint64_t* faultM
 {
     uint64_t res = 0;
     // to be done
+    int32_t fanin0Id = gate->GetFaninGate(0)->GetGateId();
+    int32_t fanin1Id = gate->GetFaninGate(1)->GetGateId();
+    uint64_t fanin0Val = faultMechine->Contains(fanin0Id) ? faultMechine[fanin0Id] : goodMechine[fanin0Id];
+    uint64_t fanin1Val = faultMechine->Contains(fanin1Id) ? faultMechine[fanin1Id] : goodMechine[fanin1Id];
     switch (gate->GetGateType()) {
+        case AND:
+            res = fanin0Val & fanin1Val;
+            break;
+        case NAND:
+            res = ~(fanin0Val & fanin1Val);
+            break;
+        case OR:
+            res = fanin0Val | fanin1Val;
+            break;
+        case NOR:
+            res = ~(fanin0Val | fanin1Val);
+            break;
+        case XOR:
+            res = fanin0Val ^ fanin1Val;
+            break;
+        case NXOR:
+            res = ~(fanin0Val ^ fanin1Val);
+            break;
         default:
             cout << "Can Not Sim Fault Gate Which Have Two Fanin!" << endl;
     }
@@ -154,6 +179,18 @@ uint64_t SimUtil::SimFaultGate3(Gate* gate, SimGM* goodMechine, uint64_t* faultM
     uint64_t fanin1Val = faultMechine->Contains(fanin1Id) ? faultMechine[fanin1Id] : goodMechine[fanin1Id];
     uint64_t fanin2Val = faultMechine->Contains(fanin2Id) ? faultMechine[fanin2Id] : goodMechine[fanin2Id];
     switch (gate->GetGateType()) {
+        case AND:
+            res = fanin0Val & fanin1Val & fanin2Val;
+            break;
+        case NAND:
+            res = ~(fanin0Val & fanin1Val & fanin2Val);
+            break;
+        case OR:
+            res = fanin0Val | fanin1Val | fanin2Val;
+            break;
+        case NOR:
+            res = ~(fanin0Val | fanin1Val | fanin2Val);
+            break;
         case MUX:
             res = (fanin1Val & ~fanin0Val) | (fanin2Val & fanin0Val);
             break;

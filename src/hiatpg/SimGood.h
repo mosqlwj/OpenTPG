@@ -1,5 +1,6 @@
 #pragma once
 #include "SimInterface.h"
+#include <unordered_map>
 
 class SimGM {
     uint64_t* res;
@@ -24,6 +25,7 @@ public:
     ~SimGood();
 
     virtual void DoSim(uint64_t mask);
+    void Prepare(unordered_map<GateId, Value> testCube);
     inline SimGM* GetGoodMechine() const { return goodMechine; }
 
 private:
