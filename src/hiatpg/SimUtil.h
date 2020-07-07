@@ -4,46 +4,50 @@ const int PARALLCUBESIZEMAX = 64;
 enum GateType { PI = 0, PO, AND, NAND, OR, NOR, XOR, NXOR, INV, MUX, BUF };
 
 class ValueManager {
-    uint64_t* values;
-    uint64_t* exists;
-    size_t count;
-    uint64_t gBase;
+    uint8_t* exists;
+    size_t gCount;
+    size_t cCount;
 
 public:
     ValueManager() {
-        values = nullptr;
         exists = nullptr;
-        count = 0;
-        gBase = 0;
     }
 
     ~ValueManager() { Delete(); }
 
-    inline int Init(size_t maxGateCount) {
-        values = new uint64_t[maxGateCount];
-        exists = new uint64_t[maxGateCount];
-        count = maxGatecount;
+    inline int Init(size_t gateCount) {
+        if (exists == nullptr) {
+            exists = new uint64_t[gateCount / 8 + 1];
+        }
+        gCount = gateCount;
         Reset();
         return 0;
     }
 
     inline void Delete() {
-        delete[] values;
         delete[] exists;
     }
 
     inline void Reset() {
         gBase = 0;
-        memset(exists, 0, sizeof(uint64_t) * count);
+        memset(exists, 0, sizeof(uint8_t) * gCount + 1);
     }
 
-    inline bool Contains(int index) const { return exists[index] > gBase; }
-
-    inline uint64_t IndexOf(int32_t index) const { return values[index]; }
+    inline bool Contains(int index) const {
+        static uint8_t containsMask[8] = {
+            0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80,
+        };
+        int byteIndex = index / 8;
+        int bitsIndex = index % 5 return (0 != exists[byteIndex] & containsMask[bitsIndex]);
+    }
 
     inline void Set(int32_t index, uint64_t val) {
-        values[index] = val;
-        exists[index] = gBase + 1;
+        static uint8_t setMask[8] = {
+            0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80,
+        };
+        int byteIndex = index / 8;
+        int bitsIndex = index % 8;
+        exists[byteIndex] = setMask[bitsIndex];
     }
 
     inline void Remove(int32_t index) { exists[index] = 0; }
