@@ -5,6 +5,7 @@ uint64_t SimUtil::SimGate(Gate* gate, SimGM* goodMechine, uint64_t mask) {}
 uint64_t SimUtil::SimGate1(Gate* gate, SimGM* goodMechine, uint64_t mask) {
     uint64_t res = 0;
     switch (gate->GetGateType()) {
+        case PO:
         case BUF:
             res = goodMechine[GetFaninGate(0)->GetGateId()];
             break;
@@ -20,7 +21,29 @@ uint64_t SimUtil::SimGate1(Gate* gate, SimGM* goodMechine, uint64_t mask) {
 uint64_t SimUtil::SimGate2(Gate* gate, SimGM* goodMechine, uint64_t mask) {
     uint64_t res = 0;
     // to be done
+    int fin0Id = gate->GetFaninGate(0)->GetGateId();
+    int fin1Id = gate->GetFaninGate(1)->GetGateId();
+    uint64_t fin0Value = goodMechine[fin0Id];
+    uint64_t fin1Value = goodMechine[fin1Id];
     switch (gate->GetGateType()) {
+        case AND:
+            res = fin0Value & fin1Value;
+            break;
+        case NAND:
+            res = ~(fin0Value & fin1Value);
+            break;
+        case OR:
+            res = fin0Value | fin1Value;
+            break;
+        case NOR:
+            res = ~(fin0Value | fin1Value);
+            break;
+        case XOR:
+            res = fanin0 ^ fanin1 ^ fanin2 ^ fanin3;
+            break;
+        case NXOR:
+            res = ~(fanin0 ^ fanin1 ^ fanin2 ^ fanin3);
+            break;
         default:
             cout << "Can Not Sim Gate Which Have Two Fanin!" << endl;
     }
@@ -31,12 +54,28 @@ uint64_t SimUtil::SimGate2(Gate* gate, SimGM* goodMechine, uint64_t mask) {
 uint64_t SimUtil::SimGate3(Gate* gate, SimGM* goodMechine, uint64_t mask) {
     uint64_t res = 0;
     // to be done
+    int fin0Id = gate->GetFaninGate(0)->GetGateId();
+    int fin1Id = gate->GetFaninGate(1)->GetGateId();
+    int fin2Id = gate->GetFaninGate(2)->GetGateId();
+    uint64_t fin0Value = goodMechine[fin0Id];
+    uint64_t fin1Value = goodMechine[fin1Id];
+    uint64_t fin2Value = goodMechine[fin2Id];
     switch (gate->GetGateType()) {
+        case AND:
+            res = fin0Value & fin1Value & fin2Value;
+            break;
+        case NAND:
+            res = ~(fin0Value & fin1Value & fin2Value);
+            break;
+        case OR:
+            res = fin0Value | fin1Value | fin2Value;
+            break;
+        case NOR:
+            res = ~(fin0Value | fin1Value | fin2Value);
+            break;
         case MUX:
-            uint64_t fanin0 = goodMechine[gate->GetFaninGate(0)->GetGateId()];
-            uint64_t fanin1 = goodMechine[gate->GetFaninGate(1)->GetGateId()];
-            uint64_t fanin2 = goodMechine[gate->GetFaninGate(2)->GetGateId()];
-            res = (fanin1 & ~fanin0) | (fanin2 & fanin0);
+            res = (fin1Value & ~fin0Value) | (fin2Value & fin0Value);
+            break;
         default:
             cout << "Can Not Sim Gate Which Have Three Fanin!" << endl;
     }
@@ -62,12 +101,6 @@ uint64_t SimUtil::SimGate4(Gate* gate, SimGM* goodMechine, uint64_t mask) {
             break;
         case NOR:
             res = ~(fanin0 | fanin1 | fanin2 | fanin3);
-            break;
-        case XOR:
-            res = fanin0 ^ fanin1 ^ fanin2 ^ fanin3;
-            break;
-        case NXOR:
-            res = ~(fanin0 ^ fanin1 ^ fanin2 ^ fanin3);
             break;
         default:
             cout << "Can Not Sim Gate Which Have Four Fanin!" << endl;
