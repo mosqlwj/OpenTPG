@@ -3,7 +3,7 @@
 
 namespace hiatpg {
 	typedef		int	logic;
-	typedef		int level;
+	typedef		unsigned level;
 	typedef		int	fault_type;
 	typedef		int	boolean;
 	typedef		int	status;
@@ -76,8 +76,8 @@ namespace hiatpg {
 
 #define         Z               3
 #define         ALL0            0
-#define         ALL1            (~0)
-#define         MASK0           (~(ALL1<<1))
+#define         ALL1            unsigned(~0)
+#define         MASK0           unsigned(~(ALL1<<1))
 
 #define MAX(x,y) ( (x)>(y) ? (x) : (y))
 

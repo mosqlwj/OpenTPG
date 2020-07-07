@@ -58,11 +58,11 @@ namespace hiatpg {
 		TestVectorsData testStore;//level testStore[MAXTEST/10][MAXPI+1];
 		TestVectorsData testStore1;//level testStore1[MAXTEST/10][MAXPI+1];
 
-		void setBit(int *word,int nth);
-		void resetBit(int *word,int nth);
-		void setb0(int *word0, int *word1, int nth) ;
-		void setb1(int *word0, int *word1, int nth) ; 
-		void setbx(int *word0, int *word1, int nth) ;
+		void setBit(unsigned *word,int nth);
+		void resetBit(unsigned *word,int nth);
+		void setb0(unsigned *word0, unsigned *word1, int nth) ;
+		void setb1(unsigned *word0, unsigned *word1, int nth) ;
+		void setbx(unsigned *word0, unsigned *word1, int nth) ;
 
 		int		randomFsim(int levels,int nStem,Gate **stem,level *lfsr,int limit,int maxBit,int maxDetect,int *nTest,int *nPacket,int *nBit);
 		int		randomHope(level *lfsr,int limit,int maxBit,int maxDetect,int *nTest,int *nPacket,int *nBit);

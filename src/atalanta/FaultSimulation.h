@@ -70,7 +70,7 @@ namespace hiatpg {
 
 		int  setb(int word,int p) { return word | BITMASK[p];};
 		int  resetb(int word,int p) {return word & ~BITMASK[p];};
-		void setx(int *v0,int *v1) {(*v0)=(*v1)=ALL0;};
+		void setx(unsigned *v0,unsigned *v1) {(*v0)=(*v1)=ALL0;};
 		bool bitb(int word,int p) {return (word & BITMASK[p])==ALL0;};
 		int whatIs(int v0,int v1)
 		{
@@ -84,7 +84,7 @@ namespace hiatpg {
 		int		dropDetectedFaults();
 		void	faultSim(int start,int stop,int gid);
 		void	faultyGateEval(Gate *gut,level *val);
-		void	feval(Gate *gut,int *val,int *v,int ggid);
+		void	feval(Gate *gut,unsigned *val,unsigned *v,int ggid);
 		Gate*	injectFault(Gate *gate,int ftype,int fline,int bit);
 		FaultIter selectNextFaults(FaultIter current);
 		FaultIter selectOneFault(FaultIter current);

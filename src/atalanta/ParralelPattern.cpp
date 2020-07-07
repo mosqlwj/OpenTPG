@@ -238,12 +238,12 @@ namespace hiatpg {
 		return observe;
 	}
 
-	void ParralelPattern::pGateEval1(Gate *gate,int *val)
+	void ParralelPattern::pGateEval1(Gate *gate,unsigned *val)
 	{
 		*val=(gate->fn==NOT || gate->fn==NAND || gate->fn==NOR)?~gate->inlis[0]->output1:gate->inlis[0]->output1;
 	}
 
-	void ParralelPattern::pGateEval2(Gate *gate,int *val)
+	void ParralelPattern::pGateEval2(Gate *gate,unsigned *val)
 	{
 		switch(gate->fn)
 		{
@@ -256,7 +256,7 @@ namespace hiatpg {
 		}
 	}
 
-	void ParralelPattern::pGateEval3(Gate *gate,int *val)
+	void ParralelPattern::pGateEval3(Gate *gate,unsigned *val)
 	{
 		switch(gate->fn)
 		{
@@ -267,7 +267,7 @@ namespace hiatpg {
 		}
 	}
 
-	void ParralelPattern::pGateEval4(Gate *gate,int *val)
+	void ParralelPattern::pGateEval4(Gate *gate,unsigned *val)
 	{
 		int cnt;
 		switch(gate->fn)
@@ -289,7 +289,7 @@ namespace hiatpg {
 		}
 	}
 
-	void ParralelPattern::pGateEvalX(Gate *gate,int *val)
+	void ParralelPattern::pGateEvalX(Gate *gate,unsigned *val)
 	{
 		int cnt;
 		switch(gate->fn)

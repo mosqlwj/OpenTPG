@@ -458,7 +458,7 @@ namespace hiatpg {
 		}
 	}
 
-	void FaultSimulation::feval(Gate *gut,int *val,int *v,int ggid)
+	void FaultSimulation::feval(Gate *gut,unsigned *val,unsigned *v,int ggid)
 	{
 		Gate *temp;
 		int j;

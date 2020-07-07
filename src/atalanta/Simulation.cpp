@@ -38,11 +38,11 @@ namespace hiatpg {
 
 	}*/
 
-	void Simulation::setBit(int *word, int nth) {*word |= BITMASK[nth];}
-	void Simulation::resetBit(int *word,int nth) {*word &= ~BITMASK[nth];}
-	void Simulation::setb0(int *word0, int *word1, int nth) { *word0 |= BITMASK[nth]; *word1 &= (~BITMASK[nth]); }
-	void Simulation::setb1(int *word0, int *word1, int nth) { *word0 &= (~BITMASK[nth]); *word1 |= BITMASK[nth]; }
-	void Simulation::setbx(int *word0, int *word1, int nth) { *word0 &= (~BITMASK[nth]); *word1 &= (~BITMASK[nth]); }
+	void Simulation::setBit(unsigned *word, int nth) {*word |= BITMASK[nth];}
+	void Simulation::resetBit(unsigned *word,int nth) {*word &= ~BITMASK[nth];}
+	void Simulation::setb0(unsigned *word0, unsigned *word1, int nth) { *word0 |= BITMASK[nth]; *word1 &= (~BITMASK[nth]); }
+	void Simulation::setb1(unsigned *word0, unsigned *word1, int nth) { *word0 &= (~BITMASK[nth]); *word1 |= BITMASK[nth]; }
+	void Simulation::setbx(unsigned *word0, unsigned *word1, int nth) { *word0 &= (~BITMASK[nth]); *word1 &= (~BITMASK[nth]); }
 
 	int Simulation::randomFsim(int levels,int nStem,Gate **stem,level *lfsr,int limit,int maxBit,int maxDetect,int *nTest,int *nPacket,int *nBit)
 	{

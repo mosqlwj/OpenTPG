@@ -17,11 +17,11 @@ namespace hiatpg {
 		int pCheckPo(Gate *gut,status *flag,int nbit,int *tArray);
 		level pCheckFault(Gate *gut,Fault ***pf,level stemobs);
 
-		void pGateEval1(Gate *gate,int *val);
-		void pGateEval2(Gate *gate,int *val);
-		void pGateEval3(Gate *gate,int *val);
-		void pGateEval4(Gate *gate,int *val);
-		void pGateEvalX(Gate *gate,int *val);
+		void pGateEval1(Gate *gate,unsigned *val);
+		void pGateEval2(Gate *gate,unsigned *val);
+		void pGateEval3(Gate *gate,unsigned *val);
+		void pGateEval4(Gate *gate,unsigned *val);
+		void pGateEvalX(Gate *gate,unsigned *val);
 		void pScheduleOutput(Gate *gate);
 
 		level	feval(Fault *pf,Gate *gut);
