@@ -25,6 +25,7 @@ namespace hiatpg {
 
 	class FanNet:public GateNet
 	{
+        friend class SimulateEngine;
 	protected:
 		Stack unjustified,initObj,currObj,fanObj,finalObj,dFrontier;
 		Stack *headObj;

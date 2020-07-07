@@ -35,7 +35,10 @@ namespace hiatpg {
 
 		vector<Gate *> net; //Gate **net;
 
-		Stack *freeGates, *faultyGates,*evalGates,*activeStems;
+		Stack *freeGates;
+        Stack *faultyGates;
+        Stack *evalGates;
+        Stack *activeStems;
 		Stack *dynamicStack;
 		Stack *stack;
 		Stack *stack1,*stack2;

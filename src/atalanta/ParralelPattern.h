@@ -8,7 +8,7 @@
 #include "FanNet.h"
 
 namespace hiatpg {
-	class ParralelPattern//:public FanNet
+	class ParralelPattern:public FanNet
 	{
 	protected:
 		status updateFlag;
