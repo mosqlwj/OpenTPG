@@ -547,30 +547,34 @@ namespace hiatpg {
 			case NAND:
 				p->changed=true;
 				for(i=0;i<p->ninput;i++)
-					if(i!=fault->line)
-						if(p->inlis[i]->output==X)
-						{
-							p->inlis[i]->output=ONE;
-							stack->push(p->inlis[i]);
-						}
-						else if(p->inlis[i]->output != ONE) return -1;
-						p->output= p->fn==NAND ? aNot(v2) : v2;
-						stack->push(p);
-						break;
+					if(i!=fault->line) {
+                        if(p->inlis[i]->output==X)
+                        {
+                            p->inlis[i]->output=ONE;
+                            stack->push(p->inlis[i]);
+                        }
+                        else if(p->inlis[i]->output != ONE) return -1;
+					}
+
+                    p->output= p->fn==NAND ? aNot(v2) : v2;
+                    stack->push(p);
+                    break;
 			case OR:
 			case NOR:
 				p->changed=true;
 				for(i=0;i<p->ninput;i++)
-					if(i!=fault->line)
-						if(p->inlis[i]->output==X)
-						{
-							p->inlis[i]->output=ZERO;
-							stack->push(p->inlis[i]);
-						}
-						else if(p->inlis[i]->output != ZERO) return -1;
-						p->output=p->fn==NOR ? aNot(v2) : v2;
-						stack->push(p);
-						break;
+					if(i!=fault->line) {
+                        if(p->inlis[i]->output==X)
+                        {
+                            p->inlis[i]->output=ZERO;
+                            stack->push(p->inlis[i]);
+                        }
+                        else if(p->inlis[i]->output != ZERO) return -1;
+					}
+
+                    p->output=p->fn==NOR ? aNot(v2) : v2;
+                    stack->push(p);
+                    break;
 			case NOT:
 				p->output=aNot(v2);
 				stack->push(p);
