@@ -24,8 +24,8 @@ int main(int argc, char** argv)
 
     string benchFile = options.get<string>("bench");
 
-	int res = 0;
-	fstream bench, pat;
+    int res = 0;
+    fstream bench, pat;
 
     Atalanta* atlanta =new Atalanta();
     Params* paras;
@@ -41,7 +41,7 @@ int main(int argc, char** argv)
     atlanta->setParams(paras);
     atlanta->run();
 
-	return res;	
+    return res;
 }
 
 

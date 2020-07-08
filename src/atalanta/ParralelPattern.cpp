@@ -79,7 +79,7 @@ namespace hiatpg {
 			for(i=0;i<gut->noutput;i++)
 				if(!gut->outlis[i]->freach)
 				{
-					gut->outlis[i]->freach;
+					gut->outlis[i]->freach = true;
 					stack->push(gut->outlis[i]);
 				}
 		}
@@ -222,7 +222,7 @@ namespace hiatpg {
 				if(gut==dominator)
 				{
 					restoreFaultFreeValue();
-					return observe | val^gut->output1;
+					return observe | (val ^ gut->output1);
 				}
 				if(gut->fn==PO) observe |= val^gut->output1;
 
@@ -447,11 +447,14 @@ namespace hiatpg {
 		while(!stack->isEmpty())
 		{
 			gut=stack->pop();
-			if(gut->pfault.size()>0)
-				if(flag2)
-					nDetect+=pCheckPo(gut,flag,nbit,tArray);
-				else
-					observe=pCheckFault(gut,&pf,observe);
+			if(gut->pfault.size()>0) {
+                if(flag2) {
+                    nDetect += pCheckPo(gut, flag, nbit, tArray);
+                }
+                else {
+                    observe=pCheckFault(gut,&pf,observe);
+                }
+			}
 			if(gut->cobserve!=ALL0) observe|=gut->observe & gut->cobserve;
 			if(gut->ninput==1)
 			{
