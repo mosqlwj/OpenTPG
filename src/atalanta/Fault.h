@@ -23,7 +23,7 @@ namespace hiatpg {
 	};
 
 	class Gate;
-	class GateNet;
+	class Netlist;
 
 	class Fault  
 	{

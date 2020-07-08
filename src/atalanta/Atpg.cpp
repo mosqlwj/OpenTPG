@@ -17,7 +17,7 @@
 
 #include "Gate.h"
 #include "Stack.h"
-#include "GateNet.h"
+#include "Netlist.h"
 #include "FanNet.h"
 #include "ParralelPattern.h"
 #include "Fault.h"

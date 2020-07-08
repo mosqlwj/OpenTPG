@@ -58,8 +58,8 @@ namespace hiatpg {
 		short dpi, dpo;			// depth from PIs & POs
 		status changed;			// flag for event queue operations
 		HashData *symbol;		// pointer to the symbol table
-		boolean freach1,        // is reached from faulty gate
-			freach;				// is reached from faulty gate
+		boolean freach1;       // is reached from faulty gate
+        boolean	freach;				// is reached from faulty gate
 		status xpath;			// x path exists or not 
 		LineType ltype;			// head line, free line, bound line 
 		int numzero,numone;		// expected number of zeros and ones 

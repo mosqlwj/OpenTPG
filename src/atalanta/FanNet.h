@@ -5,7 +5,7 @@
 #ifndef __ATALANTA_FANNET_H__
 #define __ATALANTA_FANNET_H__
 
-#include "GateNet.h"
+#include "Netlist.h"
 
 
 namespace hiatpg {
@@ -23,7 +23,7 @@ namespace hiatpg {
 		bool isFlagged() {return flag;};
 	};
 
-	class FanNet:public GateNet
+	class FanNet:public Netlist
 	{
         friend class SimulateEngine;
 	protected:

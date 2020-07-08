@@ -14,7 +14,7 @@
 
 #include "Gate.h"
 #include "Stack.h"
-#include "GateNet.h"
+#include "Netlist.h"
 
 #include <memory>
 #include "Globals.h"
@@ -57,7 +57,7 @@ namespace hiatpg {
 		eventList=new Stack *[maxlevel+2];
 		for(i=0;i<maxlevel+2;i++) eventList[i]=new Stack(levelPopulation[i]);
 
-		delete levelPopulation;
+		delete[] levelPopulation;
 	}
 
 #ifdef INCLUDE_HOPE
@@ -93,7 +93,7 @@ namespace hiatpg {
 			{
 				gut=net[primaryIn[i]];
 				val=gut->inlis[0]->SGV;
-				if(gut->SGV,val)
+				if(val)
 				{
 					gut->SGV=val;
 					gut->GV[0]=TABLE[val][0];
@@ -1258,17 +1258,20 @@ namespace hiatpg {
 								else
 								{nn0=n1;nn1=n0;}
 
-								if(nn0>0 || nn1>0)
-									if(input[i]->isFanout())
-									{
-										if(input[i]->numzero==0 && input[i]->numone==0) fanObj.push(input[i]);
-										input[i]->numzero+=nn0;
-										input[i]->numone+=nn1;
-									} else
-									{
-										input[i]->setLine(nn0,nn1);
-										currObj.push(input[i]);
-									}
+								if(nn0>0 || nn1>0) {
+                                    if(input[i]->isFanout())
+                                    {
+                                        if(input[i]->numzero==0 && input[i]->numone==0) {
+                                            fanObj.push(input[i]);
+                                        }
+                                        input[i]->numzero+=nn0;
+                                        input[i]->numone+=nn1;
+                                    } else
+                                    {
+                                        input[i]->setLine(nn0,nn1);
+                                        currObj.push(input[i]);
+                                    }
+								}
 						}
 					}
 				}
@@ -1721,7 +1724,7 @@ namespace hiatpg {
 
 		// pass 2: Backward propagation --- X-path
 		dyID2=dyID+1;
-		for(i=0;i,nxPo;i++)
+		for(i=0;nxPo;i++)
 		{
 			gut=xPo[i];
 			gut->freach1=dyID2;

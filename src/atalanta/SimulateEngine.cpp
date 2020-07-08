@@ -12,7 +12,7 @@
 #include "FanNet.h"
 #include "Fault.h"
 #include "Gate.h"
-#include "GateNet.h"
+#include "Netlist.h"
 #include "Globals.h"
 #include "Hash.h"
 #include "Parameters.h"
@@ -73,7 +73,7 @@ void SimulateEngine::updateAll() {
         gut = fanNet->stack->pop();
         for (i = 0; i < gut->noutput; i++) {
             if (!gut->outlis[i]->freach) {
-                gut->outlis[i]->freach;
+                gut->outlis[i]->freach = true;
                 fanNet->stack->push(gut->outlis[i]);
             }
         }
@@ -248,12 +248,12 @@ level SimulateEngine::pFaultSimulation(Gate *gut, level observe, Gate *dominator
     return observe;
 }
 
-void SimulateEngine::pGateEval1(Gate *gate, int *val) {
+void SimulateEngine::pGateEval1(Gate *gate, level *val) {
     *val = (gate->fn == NOT || gate->fn == NAND || gate->fn == NOR) ? ~gate->inlis[0]->output1
                                                                     : gate->inlis[0]->output1;
 }
 
-void SimulateEngine::pGateEval2(Gate *gate, int *val) {
+void SimulateEngine::pGateEval2(Gate *gate, level *val) {
     switch (gate->fn) {
         case AND:
             *val = gate->inlis[0]->output1 & gate->inlis[1]->output1;
@@ -275,7 +275,7 @@ void SimulateEngine::pGateEval2(Gate *gate, int *val) {
     }
 }
 
-void SimulateEngine::pGateEval3(Gate *gate, int *val) {
+void SimulateEngine::pGateEval3(Gate *gate, level *val) {
     switch (gate->fn) {
         case AND:
             *val = gate->inlis[0]->output1 & gate->inlis[1]->output1 & gate->inlis[2]->output1;
@@ -291,7 +291,7 @@ void SimulateEngine::pGateEval3(Gate *gate, int *val) {
     }
 }
 
-void SimulateEngine::pGateEval4(Gate *gate, int *val) {
+void SimulateEngine::pGateEval4(Gate *gate, level *val) {
     int cnt;
     switch (gate->fn) {
         case AND:
@@ -318,7 +318,7 @@ void SimulateEngine::pGateEval4(Gate *gate, int *val) {
     }
 }
 
-void SimulateEngine::pGateEvalX(Gate *gate, int *val) {
+void SimulateEngine::pGateEvalX(Gate *gate, level *val) {
     int cnt;
     switch (gate->fn) {
         case AND:

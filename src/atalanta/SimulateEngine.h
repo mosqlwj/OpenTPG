@@ -25,11 +25,11 @@ protected:
     int pCheckPo(Gate *gut, status *flag, int nbit, int *tArray);
     level pCheckFault(Gate *gut, Fault ***pf, level stemobs);
 
-    void pGateEval1(Gate *gate, int *val);
-    void pGateEval2(Gate *gate, int *val);
-    void pGateEval3(Gate *gate, int *val);
-    void pGateEval4(Gate *gate, int *val);
-    void pGateEvalX(Gate *gate, int *val);
+    void pGateEval1(Gate *gate, level *val);
+    void pGateEval2(Gate *gate, level *val);
+    void pGateEval3(Gate *gate, level *val);
+    void pGateEval4(Gate *gate, level *val);
+    void pGateEvalX(Gate *gate, level *val);
     void pScheduleOutput(Gate *gate);
 
     level feval(Fault *pf, Gate *gut);
