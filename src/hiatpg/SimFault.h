@@ -15,7 +15,7 @@ private:
 
 private:
     NetlistParser* netlistParser;
-    vector<FaultDescript*>* faultList;
+    vector<Fault*>* faultList;
     SimGM* goodMechine;
     ValueManager* faultValueManager;
     uint64_t* faultMachine;

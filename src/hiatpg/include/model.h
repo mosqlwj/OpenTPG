@@ -21,6 +21,10 @@ using GateId = int;
 
 enum Value { X, ZERO, ONE, UNDEF };
 
+enum FaultType { STUCK_AT_0, STUCK_AT_1 };
+
+enum FaultStatus { TESTED, UNKNOW};
+
 enum GateType { PI, PO, AND, NAND, OR, NOR, XOR, XNOR, INV, BUF };
 
 unordered_map<string, GateType> str2GateType = {{"AND", AND}, {"NAND", NAND}, {"OR", OR},   {"NOR", NOR},
@@ -40,15 +44,26 @@ struct Gate {
     vector<Gate*> fanouts;
     string name;
 
+    GateType GetGateType() const { return type; }
+    GateId GetGateId() const { return gateId; }
+    Gate* GetFaninGate(int index) const { return fanins[index]; }
+    Gate* GetFanoutGate(int index) const { return fanouts[index]; }
     Gate(GateId gateId, GateType type, const string& name) : gateId(gateId), type(type), name(name) {}
 };
 
 struct Fault {
     GateId gateId;
-    int index;
     Value value;
+    FaultType faultType;
+    FaultStatus faultStatus;
+    int index;
     bool detected;
+    int faultSitePin;
 
+    FaultStatus GetFaultStatusType() const { return faultStatus; }
+    int GetFaultSitePin() const { return faultSitePin; }
+    FaultType GetFaultType() const { return faultType; }
+    int GetFaultSiteGateId() const { return gateId; }
     Fault(GateId gateId, int index, Value value) : gateId(gateId), index(index), value(value), detected(false) {}
 };
 

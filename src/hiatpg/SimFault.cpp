@@ -1,6 +1,6 @@
 #include "SimFault.h"
-
 #include "SimInterface.h"
+#include "model.h"
 
 SimFault::SimFault(SimGM* gm, NetlistParser* parser, vector<FaultDescript*>* fList)
     : netlistParser(parser), faultList(fList), goodMechine(gm) {
@@ -23,10 +23,10 @@ SimFault::~SimFault() {
 SimFault::DoSim(uint64_t ma) {
     mask = ma;
     for (auto fault : *faultList) {
-        if (fault->GetFaultType() == ENUM::TESTED || fault->GetFaultType() == ENUM::AU_UNTESTABLE ||
-            fault->GetFaultType() == ENUM::UNTESTABLE) {
-            continue;
-        }
+//        if (fault->GetFaultType() == ENUM::TESTED || fault->GetFaultType() == ENUM::AU_UNTESTABLE ||
+//            fault->GetFaultType() == ENUM::UNTESTABLE) {
+//            continue;
+//        }
         DoOneFaultSim(fault);
     }
 }
@@ -66,13 +66,13 @@ SimFault::DoOneFaultSim(FaultDescript* fault) {
 
 uint64_t SimFault::DoFaultGateSim(FaultDescript* fault, Gate* gate) {
     uint64_t faultValue = (fault->GetFaultType() == enum ::STUCK_AT_0) ? 0 : (UINT64_MAX & mask);
-    if (fault->GetFaultSizePin() == 0) {
+    if (fault->GetFaultSitePin() == 0) {
         // if fault pin at fanout pin
         faultMachine[gate->GetGateId()] = faultValue;
         return faultValue;
     } else {
         // if fault pin at certain fanin pin
-        faultMachine[gate->GetFaninGate(fault->GetFaultSizePin() - 1)] = faultVale;
+        faultMachine[gate->GetFaninGate(fault->GetFaultSitePin() - 1)] = faultVale;
     }
     return SimGate(gate);
 }
