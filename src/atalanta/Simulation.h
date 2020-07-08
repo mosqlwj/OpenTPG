@@ -87,9 +87,8 @@ namespace hiatpg {
 		int randomSim(int levels,int nStem,Gate **stem,level *lfsr,int limit,int maxBit,int maxDetect,int *nTest,int *nPacket,int *nBit);
 		int simulateHope(int *nPacket,int *nBit);
 		int tGenSim(int levels,int nStem,Gate **stem,int nTest,int *profile);
-		int testGen(int levels,int maxBits,int nStem,Gate **stem,int maxBackTrack,int phase,int *nRedundant,int *nOverBackTrack,int *nBackTrack,int *nTest,int *nPacket,int *nBit,double *fanTime);
 
-		virtual ~Simulation(){};
+        virtual ~Simulation(){};
 	};
 
 }
