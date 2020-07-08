@@ -86,7 +86,6 @@ namespace hiatpg {
 	{
 	protected:
 		istream *inputf;
-		char simMode;
 
 		Gate **myStem;
 		int myNumberOfStems;
@@ -100,7 +99,6 @@ namespace hiatpg {
 
 	public:
 		ReadableFaultList() {
-			simMode = 'f';
 		};
 
 		void readFaults(std::streambuf *fn);

@@ -148,10 +148,7 @@ namespace hiatpg {
 
 	int Simulation::randomSim(int levels,int nStem,Gate **stem,level *lfsr,int limit,int maxBit,int maxDetect,int *nTest,int *nPacket,int *nBit)
 	{
-		if(simMode=='f')
-			return randomFsim(levels,nStem,stem,lfsr,limit,maxBit,maxDetect,nTest,nPacket,nBit);
-		else
-			return randomHope(lfsr,limit,maxBit,maxDetect,nTest,nPacket,nBit);
+	    return randomFsim(levels,nStem,stem,lfsr,limit,maxBit,maxDetect,nTest,nPacket,nBit);
 	}
 
 	int Simulation::simulateHope(int *nPacket,int *nBit)
@@ -177,13 +174,7 @@ namespace hiatpg {
 
 	int Simulation::tGenSim(int levels,int nStem,Gate **stem,int nTest,int *profile)
 	{
-		if(simMode=='f')
-			return fault0Simulation(levels,1,profile);
-		else
-		{
-			goodSim(nTest);
-			return simulation();
-		}
+	    return fault0Simulation(levels,1,profile);
 	}
 
 	void Simulation::fillPatternsFsim(char mode,int nPacket,int nBit)
@@ -320,10 +311,7 @@ namespace hiatpg {
 
 	void Simulation::fillPatterns(int mode,int nPacket,int nBit)
 	{
-		if(simMode=='f')
-			fillPatternsFsim(mode,nPacket,nBit);
-		else
-			fillPatternsHope(mode,nPacket,nBit);
+	    fillPatternsFsim(mode,nPacket,nBit);
 	}
 
 	int Simulation::testGen(int levels,int maxBits,int nStem,Gate **stem,int maxBackTrack,int phase,int *nRedundant,int *nOverBackTrack,int *nBackTrack,int *nTest,int *nPacket,int *nBit,double *fanTime)
@@ -434,7 +422,6 @@ namespace hiatpg {
 				// assign random zero and ones to the unassigned bits
 				(*nTest)++;
 				fillPatterns(fillMode,*nPacket,*nBit);
-				if(simMode=='f')
 					for(j=0;j<numberOfPrimaryInputs;j++)
 					{
 						net[j]->changed=false;
@@ -442,12 +429,7 @@ namespace hiatpg {
 						net[j]->cobserve=ALL0;
 						net[j]->output=net[j]->output1;
 					}
-				else
-					for(j=0;j<numberOfGates;j++)
-					{
-						net[j]->changed=false;
-						net[j]->freach=false;
-					}
+
 					if(++(*nBit)==maxBits) {*nBit=0; (*nPacket)++;}
 					stack->clear();
 
@@ -459,8 +441,6 @@ namespace hiatpg {
 
 					if(compact=='n')
 					{
-						if(simMode=='f')
-						{
 							/*printio(test,nopi,nopo,j,*ntest);KHB*/      // ????
 							printIO(0,*nTest);
 							/*   if(logmode=='y') {
@@ -470,22 +450,6 @@ namespace hiatpg {
 							printoutputs(logfile,nopo,0);
 							fprintf(logfile," %4d faults detected\n",profile[0]);
 							}     */
-						} else
-						{
-							//   fprintf(test,"test %4d: ",*ntest);
-							printIOValues(primaryIn,primaryOut);
-							//   fprintf(test," ");
-							//   my_printiovalues(primaryout,nopo,'o','g',0);
-							//   fprintf(test,"\n");
-							/*   if(logmode=='y') {
-							fprintf(logfile,"test %4d: ",*ntest);
-							my_printiovalues(logfile,primaryin,nopi,'o','g',0);
-							fprintf(logfile," ");
-							my_printiovalues(logfile,primaryout,nopo,'o','g',0);
-							fprintf(logfile," %4d faults detected",profile[0]);
-							fprintf(logfile,"\n");
-							}  */
-						}
 					}
 
 					if(pCurrentFault->detected!=DETECTED)
@@ -498,11 +462,8 @@ namespace hiatpg {
 			{	// redundant faults
 				pCurrentFault->detected=REDUNDANT;
 				(*nRedundant)++;
-				if(simMode=='f')
-				{
-					gut->pfault.remove(pCurrentFault);
-					if(gut->pfault.empty()) updateFlag=true;
-				}
+                gut->pfault.remove(pCurrentFault);
+                if(gut->pfault.empty()) updateFlag=true;
 			}
 			else
 			{		 // over backtracking
@@ -754,263 +715,13 @@ namespace hiatpg {
 		return noTest;
 	}
 
-	void Simulation::randomTestHope(TestVectorsData *testSt0, TestVectorsData *testSt1,
-		TestVectorsData *testVect0,TestVectorsData *testVect1,int pack,int noBit)
-	{
-		int array[40*BITSIZE];
-		int array1[40*BITSIZE];
-		int i,j,x,bits,k,B,nBit=0,nPacket=0;
-		int maxbits=BITSIZE;
-
-		bits=32*pack+noBit;
-		for(i=0;i<bits;i++) array[i]=i;
-
-		j=0;
-		for(i=bits-1;i>=0;i--)
-		{
-			x=rand()%(i+1);
-			array1[j]=array[x];
-			array[x]=array[i];
-			j++;	
-		}
-
-		for(i=0;i<bits;i++)
-		{
-			x=array1[i];
-			k=x/32;
-			B=x%32;
-			for(j=0;j<numberOfPrimaryInputs;j++)
-			{
-				if((((*testSt0)[k][j])&BITMASK[B])!=ALL0)
-				{ setBit(&(*testVect0)[nPacket][j],nBit); }
-				else
-				{ resetBit(&(*testVect0)[nPacket][j],nBit); }
-
-				if((((*testSt1)[k][j])&BITMASK[B])!=ALL0)
-				{ setBit(&(*testVect1)[nPacket][j],nBit); }
-				else
-				{ resetBit(&(*testVect1)[nPacket][j],nBit); }
-			}
-			if(++nBit==maxbits){nBit=0;nPacket++;}
-		}
-	}
-
-	int Simulation::reverseHope(int *nDet,int nPacket,int nBit,int maxBits)
-	{
-		int i, j, k, n;
-		level v1, v2;
-		int nRestoredFault;
-		int nDetect=0;
-		int noTest=0;
-		int nComp=INFINITY, stop=ONE;
-		int bit=0, packet=0;
-
-		if((nRestoredFault=restoreHopeFaultList())<0)
-		{
-			/*printf("error occurred in restoration of fault list\n");
-			exit(0);*/
-			stringstream ss;
-			ss << "error occurred in restoration of fault list";
-			throw ss.str();
-		}
-
-		potentialFault=hopeFaultList.back();
-
-		for(i=0; i<numberOfGates; i++) { net[i]->changed=false;}
-
-		if(nBit==0) {--nPacket; nBit=maxBits;}
-
-		// reverse fault simulation
-		k=nPacket+1;
-		while(--k>=0)
-		{
-			if(nDetect>=nRestoredFault) break;
-			if(k<nPacket) nBit=maxBits;
-			for(i=nBit-1; i>=0; i--)
-			{
-				for(j=0;j<numberOfPrimaryInputs;j++)
-				{
-					v1=(((testVectors[k][j])&BITMASK[i])==ALL0)?ZERO:ONE;
-					v2=(((testVectors1[k][j])&BITMASK[i])==ALL0)?ZERO:ONE;
-					inVal[j]=(v1==ONE)?ZERO:(v2==ONE)?ONE:X;
-				}
-				goodSim(2);
-				if((n=simulation()) > 0)
-				{
-					nDetect+=n;
-					noTest++;
-					if(compact=='r')
-					{
-						//  fprintf(test,"test %4d: ",no_test);
-						printIOValues(primaryIn, primaryOut);
-						//   fprintf(test," ");
-						//   my_printiovalues(primaryout,nopo,'o','g',0);
-						//   fprintf(test,"\n");
-						/*					if(logmode=='y')
-						{				
-						fprintf(logfile,"test %4d: ",no_test);
-						my_printiovalues(logfile,primaryin,nopi,'o','g',0);
-						fprintf(logfile," ");
-						my_printiovalues(logfile,primaryout,nopo,'o','g',0);
-						fprintf(logfile," %4d faults detected",n);
-						fprintf(logfile,"\n");
-						}*/
-					}
-					if(nDetect>=nRestoredFault) break;
-				}
-			}
-		}
-
-		*nDet=nDetect;
-		return noTest;
-	}
-
-	int Simulation::shuffleHope(int *nShuf,int *nDet,int nPacket,int nBit,int maxBits)
-	{
-		int i, j, k, n;
-		level v1, v2;
-		int nRestoredFault;
-		int nDetect=0;
-		int noTest=0;
-		int nComp=INFINITY, stop=ONE;
-		int bit=0, packet=0;
-		int nArray[MAXTEST], store=0;
-		bool done, flagBit;
-
-		for(i=0;i<=maxCompact;i++) nArray[i]=0;
-		done=false;
-		flagBit=false;
-		*nShuf=0;
-
-		// shufle fault simulation
-		if(compact=='s')
-		{
-			while((!done))
-			{
-				(*nShuf)++;
-				if((nRestoredFault=restoreHopeFaultList())<0)
-				{
-					/*cout<<"error occurred in restoration of fault list";
-					cout<<endl;
-					exit(0);*/
-					stringstream ss;
-					ss << "error occurred in restoration of fault list";
-					throw ss.str();
-				}
-
-				potentialFault=hopeFaultList.back();
-				for(i=0; i<numberOfGates; i++) net[i]->changed=false;
-
-				if(flagBit)
-				{
-					nBit=bit;   
-					nPacket=packet;
-					//shuffles the test patterns and stores it back in the random fashion
-					randomTestHope(&testStore, &testStore1, &testVectors, &testVectors1,packet,bit);
-					bit=packet=0;
-					for(nComp=0;nComp<=maxCompact-1;nComp++)
-					{
-						stop=STOP;
-						if(nArray[nComp]!=nArray[nComp+1])
-						{
-							stop=TWO;
-							break;
-						}
-					}
-				}
-
-				noTest=0;
-				nDetect=0;
-
-				if(nBit==0) {--nPacket; nBit=maxBits;}
-				k=nPacket+1;
-				while(--k>=0)
-				{
-					if(nDetect>=nRestoredFault) break;
-					if(k<nPacket) nBit=maxBits;
-					for(i=nBit-1; i>=0; i--)
-					{
-						for(j=0;j<numberOfPrimaryInputs;j++)
-						{
-							v1=(((testVectors[k][j])&BITMASK[i])==ALL0)?ZERO:ONE;
-							v2=(((testVectors1[k][j])&BITMASK[i])==ALL0)?ZERO:ONE;
-							inVal[j]=(v1==ONE)?ZERO:(v2==ONE)?ONE:X;
-						}
-
-						goodSim(2);
-						if((n=simulation()) > 0)
-						{
-							nDetect+=n;
-							noTest++;
-							if(stop==STOP)
-							{
-								//fprintf(test,"test %4d: ",no_test);
-								printIOValues(primaryIn, primaryOut);
-								//fprintf(test," ");
-								//my_printiovalues(primaryout,nopo,'o','g',0);
-								//fprintf(test,"\n");
-								/*							if(logmode=='y')
-								{
-								fprintf(logfile,"test %4d: ",no_test);
-								my_printiovalues(logfile,primaryin,nopi,'o','g',0);
-								fprintf(logfile," ");
-								my_printiovalues(logfile,primaryout,nopo,'o','g',0);
-								fprintf(logfile," %4d faults detected",n);
-								fprintf(logfile,"\n");
-								}*/
-								done=true;
-							}
-
-							flagBit=true;
-							for(j=0;j<numberOfPrimaryInputs;j++)
-							{
-								switch(inVal[j])
-								{
-								case ONE:
-									resetBit(&testStore[packet][j],bit);
-									setBit(&testStore1[packet][j],bit);
-									break;
-								case ZERO:
-									setBit(&testStore[packet][j],bit);
-									resetBit(&testStore1[packet][j],bit);
-									break;
-								default:
-									resetBit(&testStore[packet][j],bit);
-									resetBit(&testStore1[packet][j],bit);
-									break;
-								}
-							}
-							if(++bit==maxBits) {bit=0; packet++;}
-						}
-						if(nDetect>=nRestoredFault) break;
-					}
-				}
-				if(store==maxCompact+1) store=0;
-				nArray[store]=noTest;
-				store++;
-			}
-		}
-
-		*nDet=nDetect;
-		return noTest;
-	}
-
-	int Simulation::compactTest(int levels,int nStem,Gate **stem,int *nShuf,int *nDet,int nPacket,int nBit,int maxBits)
+    int Simulation::compactTest(int levels,int nStem,Gate **stem,int *nShuf,int *nDet,int nPacket,int nBit,int maxBits)
 	{
 		*nShuf=0;
-		if(simMode=='f')
-		{
-			if(compact=='s')
-				return(shuffleFsim(levels,nStem,stem,nShuf,nDet,nPacket,nBit,maxBits));
-			else
-				return(reverseFsim(levels,nStem,stem,nDet,nPacket,nBit,maxBits));
-		} else
-		{
-			if(compact=='s')
-				return(shuffleHope(nShuf,nDet,nPacket,nBit,maxBits));
-			else
-				return(reverseHope(nDet,nPacket,nBit,maxBits));
-		}
+        if(compact=='s')
+            return(shuffleFsim(levels,nStem,stem,nShuf,nDet,nPacket,nBit,maxBits));
+        else
+            return(reverseFsim(levels,nStem,stem,nDet,nPacket,nBit,maxBits));
 	}
 
 	/*Simulation::~Simulation()

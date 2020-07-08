@@ -71,8 +71,8 @@ namespace hiatpg {
 		int		reverseFsim(int levels,int nStem,Gate **stem,int *nDet,int nPacket,int nBit,int maxBits);
 		int		reverseHope(int *nDet,int nPacket,int nBit,int maxBits);
 		int		shuffleFsim(int levels,int nStem,Gate **stem,int *nShuf,int *nDet,int nPacket,int nBit,int maxBits);
-		int		shuffleHope(int *nShuf,int *nDet,int nPacket,int nBit,int maxBits);
-		void	fillPatternsFsim(char mode,int nPacket,int nBit);
+
+        void	fillPatternsFsim(char mode,int nPacket,int nBit);
 		void	fillPatternsHope(char mode,int nPacket,int nBit);
 
 	public:

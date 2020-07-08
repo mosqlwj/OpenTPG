@@ -161,14 +161,8 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 			readFaults(faultStream);
 		else
 		{
-
-			if(simMode=='f')
-			{ // FSIM
-				numberOfFaults = setAllFaultList(myNumberOfStems,myStem);
-			}
-#ifdef INCLUDE_HOPE
-			else FWDfaults();
-#endif
+		    // FSIM
+		    numberOfFaults = setAllFaultList(myNumberOfStems,myStem);
 
 			if(numberOfFaults<0) 
 			{
@@ -490,13 +484,8 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 			faultList[i]->observe=ALL0;
 		}
 
-		if(simMode=='f')
-		{
-			nRedundant=checkRedundantFaults();
-			pInitSimulation(levels);
-		}
-		else
-			initFaultSim();
+        nRedundant=checkRedundantFaults();
+        pInitSimulation(levels);
 
 		maxDetect=numberOfFaults;
 		testVectors.clear();
@@ -572,7 +561,6 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 				wFaultStream = wFaultFile.rdbuf();
 			}
 			break;		// destination fault file (complete fault list)
-		case 'H': simMode='h'; break;								// HOPE simulation
 		case '0': fillMode='0'; break;								// fill X's with 0s
 		case '1': fillMode='1'; break;								// fill X's with 1s
 		case 'X': fillMode='x'; break;								// don't fill X's
@@ -596,7 +584,7 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 			}
 			break; // aborted faults file name
 		case 'v': uFaultMode = 2; break;									// undetected faults are printed to a file as well (with -U)
-		case 'S': simulationMode = 1; simMode='h'; break;			// perform pattern simulation, not TPG
+		case 'S': simulationMode = 1; break;			// perform pattern simulation, not TPG
 		case 'm': 
 			maskFile.open(array[++i], ios::out); 
 			if(!maskFile.is_open()) {
@@ -631,12 +619,12 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 			lfsrPoly = array[++i];
 			lfsrSeed = array[++i];
 			sscanf(array[++i],"%i",&lfsrNum);
-			simulationMode = 1; simMode='h';
+			simulationMode = 1;
 			break;
 		case 'g':
 			lfsrSimMode = 2;											// LFSR simulation with generating poly and seed
 			sscanf(array[++i], "%i", &lfsrNum);
-			simulationMode = 1; simMode='h';
+			simulationMode = 1;
 			genResFile.open(array[++i], fstream::out);
 			if(!genResFile.is_open()) {
 				stringstream ss;
@@ -729,7 +717,6 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 				}
 			}
 
-			if(fillMode=='x') simMode='h';
 			if(genAllPat=='y')
 			{
 				randomLimit=0;
@@ -738,7 +725,6 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 				fillMode='x';
 				compact='n';
 				maxCompact=0;
-				simMode='h';
 				noFaultSim='y';
 			}
 
@@ -749,9 +735,7 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 				fillMode='x';
 				compact='n';
 				maxCompact=0;
-				simMode='h';
 			}
-			if ( wTestMode == 4 ) simMode = 'h';
 			return 0;
 	}
 
@@ -1347,7 +1331,6 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 			}
 		}
 		//wFaultFile = p->getWFaultFile();
-		simMode = p->getSimMode();
 		fillMode = p->getFillMode();
 		genAllPat = p->getGenAllPat();
 		setEachLimit(p->getEachLimit());

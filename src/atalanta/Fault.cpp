@@ -534,11 +534,7 @@ namespace hiatpg {
 		{
 			istream fault(fn);
 
-			if(simMode=='f')
-				numberOfFaults = readFaultsFsim(&fault,myNumberOfStems,myStem);
-#ifdef INCLUDE_HOPE
-			else readFaultsHope(&fault);
-#endif
+			numberOfFaults = readFaultsFsim(&fault,myNumberOfStems,myStem);
 
 			if(numberOfFaults<0)
 			{

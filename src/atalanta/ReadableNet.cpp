@@ -94,17 +94,13 @@ namespace hiatpg {
 #else
 		levels=maxlevel;
 #endif
+        allocateDynamicBuffers();
 
-		if(simMode=='f')
-		{
-			allocateDynamicBuffers();
-
-			myNumberOfStems=0;
-			for(i=0;i<numberOfGates;i++)
-				if(net[i]->isFanout() || net[i]->fn==PO) myNumberOfStems++;
-			myStem=new Gate*[myNumberOfStems];
-			setFanoutStemp(myStem,myNumberOfStems);
-		}
+        myNumberOfStems=0;
+        for(i=0;i<numberOfGates;i++)
+            if(net[i]->isFanout() || net[i]->fn==PO) myNumberOfStems++;
+        myStem=new Gate*[myNumberOfStems];
+        setFanoutStemp(myStem,myNumberOfStems);
 		return levels;
 	}
 

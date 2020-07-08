@@ -231,7 +231,7 @@ level SimulateEngine::pFaultSimulation(Gate *gut, level observe, Gate *dominator
 
             if (gut == dominator) {
                 restoreFaultFreeValue();
-                return observe | val ^ gut->output1;
+                return observe | (val ^ gut->output1);
             }
             if (gut->fn == PO) {
                 observe |= val ^ gut->output1;
