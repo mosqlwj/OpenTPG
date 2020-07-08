@@ -1,8 +1,7 @@
 #include "SimGood.h"
-
-#include <queue>
-
+#include "model.h"
 #include "SimUtil.h"
+#include <queue>
 
 SimGood::SimGood(NetlistParser* parser) : netlistParser(parser) {
     valueManager = new ValueManager(parser->GetFlattenGates().size());
