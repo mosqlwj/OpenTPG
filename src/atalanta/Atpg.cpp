@@ -23,14 +23,11 @@
 #include "Fault.h"
 
 #include "Globals.h"
-
 #include "FaultSimulation.h"
 #include "ReadableNet.h"
 #include "Random.h"
-
 #include "Simulation.h"
-
-//#include "windows.h"
+#include "windows.h"
 
 int hiatpg::Atalanta::testGen(int levels, int maxBits, int nStem, Gate **stem, int maxBackTrack, int phase, int *nRedundant, int *nOverBackTrack, int *nBackTrack, int *nTest, int *nPacket, int *nBit, double *fanTime)
 {
@@ -1533,7 +1530,7 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 	}
 
 	void Atalanta::OpenFile(fstream *file, streambuf **buf, string filename, ios_base::open_mode mode) {
-		file->open(filename.data(), mode); 
+		file->open(filename.data(), ios_base::in | ios_base::out);
 		if(!file->is_open()) {
 			stringstream ss;
 			ss << "Fatal error: Cannot open processed faults file: " << filename;

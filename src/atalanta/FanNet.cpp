@@ -23,6 +23,11 @@
 #include "ParralelPattern.h"
 #include "Fault.h"
 
+#ifdef WIN32
+#include <string.h>
+#include <limits>
+#endif
+
 using namespace std;
 
 namespace hiatpg {

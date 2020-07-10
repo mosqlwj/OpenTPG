@@ -171,7 +171,7 @@ namespace hiatpg {
 
 			if(c=='#')
 			{	
-				circuit.ignore(INT_MAX,'\n');
+				circuit.ignore(INT32_MAX,'\n');
 				continue;
 			}
 			/*		if(comm==1)

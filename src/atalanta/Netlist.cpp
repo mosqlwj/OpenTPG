@@ -18,7 +18,7 @@
 #include "Netlist.h"
 #include "Atpg.h"
 #include "Globals.h"
-
+#include <string.h>
 //#include "fault.h"
 
 namespace hiatpg {
