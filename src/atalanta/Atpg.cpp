@@ -1448,7 +1448,9 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 		return run();
 	}
 
-	void Atalanta::setParams(Params *p) {
+	void Atalanta::setParams() {
+        auto p = &Params::getInstance();
+
 		cctMode = p->getCctMode();
 		randomLimit = p->getRandomLimit();
 		iseed = p->getIseed();
