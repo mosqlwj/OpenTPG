@@ -35,11 +35,19 @@ namespace hiatpg {
 	const int PO=20;
 	const int FAULTY=50;
 
-	const int ZERO=0;
-	const int ONE=1;
-	const int X=2;
-	const int D=3;
-	const int DBAR=4;
+	enum Value {
+		ZERO,
+		ONE,
+		X,
+		D,
+		DBAR
+	};
+
+//	const int ZERO=0;
+//	const int ONE=1;
+//	const int X=2;
+//	const int D=3;
+//	const int DBAR=4;
 
     const int FAIL=	0;					//Learning
     const int PASS=1;

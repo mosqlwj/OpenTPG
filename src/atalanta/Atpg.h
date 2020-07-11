@@ -156,7 +156,7 @@ namespace hiatpg {
 		Atalanta();
 		int run(int argc, char **argv);
 		int run();
-		void setParams(Params *p);
+		void setParams();
 
         int testGen(int levels, int maxBits, int nStem, Gate **stem, int maxBackTrack, int phase, int *nRedundant, int *nOverBackTrack, int *nBackTrack, int *nTest, int *nPacket, int *nBit, double *fanTime);
     };
