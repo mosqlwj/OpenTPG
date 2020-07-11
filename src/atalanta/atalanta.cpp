@@ -1,6 +1,6 @@
 // atalanta.cpp : Defines the entry point for the console application.
 //
-#include "Atpg.h"
+#include "AtpgEngine.h"
 #include "Simulation.h"
 
 #include <stdio.h>
@@ -13,9 +13,9 @@ int main(int argc, char** argv)
     auto params = &Params::getInstance();
     params->parseCheck(argc, argv);
 
-    Atalanta* atlanta =new Atalanta();
-    atlanta->setParams();
-    atlanta->run();
+    AtpgEngine* atpgEngine =new AtpgEngine();
+    atpgEngine->setParams();
+    atpgEngine->run();
 
     return 0;
 }

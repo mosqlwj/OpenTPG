@@ -22,7 +22,7 @@ namespace hiatpg {
 		unsigned int numberOfFlipFlops;
 		unsigned int numberOfPrimaryInputs;
 		unsigned int numberOfPrimaryOutputs;
-		struct TestVectors tv;
+		struct TestVectors testVector;
 
 		int PPOlevel;
 		int POlevel;

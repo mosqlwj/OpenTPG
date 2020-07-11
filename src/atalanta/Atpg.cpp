@@ -904,9 +904,9 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 		if(patternStream != NULL)
 		{
 			istream f(patternStream);
-			tv.num = 0;
-			tv.inpVars=numberOfPrimaryInputs;
-			tv.outVars=numberOfPrimaryOutputs;
+            testVector.num = 0;
+            testVector.inpVars=numberOfPrimaryInputs;
+            testVector.outVars=numberOfPrimaryOutputs;
 
 			while(f.peek() > 0)
 			{
@@ -992,8 +992,8 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 		list<TestVector*>::iterator current,final;
 		int det=0;
 
-		current=tv.vectors.begin();
-		final=tv.vectors.end();
+		current=testVector.vectors.begin();
+		final=testVector.vectors.end();
 
 		while(current!=final)
 		{
@@ -1131,8 +1131,8 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 		int det=0;
 		TestVector *temp;
 
-		current=tv.vectors.begin();
-		end=tv.vectors.end();
+		current=testVector.vectors.begin();
+		end=testVector.vectors.end();
 
 		setFaults();
 		initFS();
@@ -1161,7 +1161,7 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 	{
 		int i;
 		int nDetect3=0;
-		level *LFSR = new level[numberOfPrimaryInputs];//level LFSR[MAXPI];
+		level* testCube = new level[numberOfPrimaryInputs];
 		status state;
 		Fault *f;
 		int nOverBackTrack = 0;
@@ -1169,22 +1169,9 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 		double fan1Time;
 		int shuf = 0;
 
-		tv.num = 0;
-		tv.inpVars = numberOfPrimaryInputs;
-		tv.outVars = numberOfPrimaryOutputs;
-
-		/*****************************************************************
-		*                                                               *
-		*         step 2: Random pattern testing session                *
-		*              1. generate 32 random patterns                   *
-		*              2. fault free simulation                         *
-		*              3. fault simulation                              *
-		*              4. fault dropping                                *
-		*                                                               *
-		*****************************************************************/
-
-		if(rptMode=='y')
-			mnDetect=randomSim(levels,myNumberOfStems,myStem,LFSR,randomLimit,BITSIZE,maxDetect,&mnTest,&mnPacket,&mnBit);
+        testVector.num = 0;
+        testVector.inpVars = numberOfPrimaryInputs;
+        testVector.outVars = numberOfPrimaryOutputs;
 
 		/******************************************************************
 		*                                                                *
@@ -1193,7 +1180,6 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 		*                                                                *
 		******************************************************************/
 		fantime=0;
-
 		mnDetect+=testGen(levels,BITSIZE,myNumberOfStems,myStem,maxBackTrack,false,&nRedundant,&nOverBackTrack,&tBackTrack,&mnTest,&mnPacket,&mnBit,&fantime);
 		nTest2=mnTest;
 
@@ -1265,8 +1251,8 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 			ostream file(patternStream);
 			file.clear();
 
-			current = tv.vectors.begin();
-			final = tv.vectors.end();
+			current = testVector.vectors.begin();
+			final = testVector.vectors.end();
 
 			while(current != final)
 			{
@@ -1290,8 +1276,8 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 			ostream file(patternStream);
 			file.clear();
 
-			current=tv.vectors.begin();
-			final=tv.vectors.end();
+			current=testVector.vectors.begin();
+			final=testVector.vectors.end();
 
 			while(current!=final)
 			{
@@ -1315,8 +1301,8 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 			ostream file(patternStream);
 			file.clear();
 
-			current=tv.vectors.begin();
-			final=tv.vectors.end();
+			current=testVector.vectors.begin();
+			final=testVector.vectors.end();
 
 			while(current!=final)
 			{
@@ -1341,8 +1327,8 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 			ostream file(patternStream);
 			file.clear();
 
-			current=tv.vectors.begin();
-			final=tv.vectors.end();
+			current=testVector.vectors.begin();
+			final=testVector.vectors.end();
 
 			while(current!=final)
 			{
