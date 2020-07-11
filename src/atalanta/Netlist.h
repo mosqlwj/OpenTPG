@@ -89,8 +89,8 @@ namespace hiatpg {
 #ifdef INCLUDE_HOPE
 		void printIOValues( vector<int> iarray, vector<int> oarray);
 #endif
-		void printIO(int nth_bit,int start);
-
+		void printIO(int nth_bit, int start);
+        void getTestVector(int nBit);
 	};
 }
 #endif // __ATALANTA_GATENET_H__

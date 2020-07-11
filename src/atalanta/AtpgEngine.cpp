@@ -135,6 +135,19 @@ int hiatpg::AtpgEngine::testGen(int levels, int maxBits, int nStem, Gate **stem,
             pCurrentFault->detected=PROCESSED;
             // assign random zero and ones to the unassigned bits
             (*nTest)++;
+
+            // print test cube
+            unordered_map<int, int> testcube;
+            for(j=0;j<numberOfPrimaryInputs;j++) {
+                int32_t value = net[j]->output;
+                if (value != X) {
+//                    cout << "GateId: " << j << endl;
+//                    cout << "Value: " << net[j]->output << endl;
+                    testcube[j] = value;
+                }
+            }
+            testCubes.push_back(move(testcube));
+
             fillPatterns(fillMode,*nPacket,*nBit);
             for(j=0;j<numberOfPrimaryInputs;j++)
             {
@@ -1144,7 +1157,6 @@ namespace hiatpg {
     {
         int i;
         int nDetect3=0;
-        level* testCube = new level[numberOfPrimaryInputs];
         status state;
         Fault *f;
         int nOverBackTrack = 0;
@@ -1166,6 +1178,7 @@ namespace hiatpg {
 
         mnDetect+=testGen(levels,BITSIZE,myNumberOfStems,myStem,maxBackTrack,false,&nRedundant,&nOverBackTrack,&tBackTrack,&mnTest,&mnPacket,&mnBit,&fantime);
         nTest2=mnTest;
+        cout << "---test cube end---" << endl;
 
         /******************************************************************
         *                                                                *
@@ -1197,7 +1210,6 @@ namespace hiatpg {
         *               + shuffling compaction   	                       *
         *                                                                  *
         ********************************************************************/
-
         if(mnTest==0)
         {
             nTest3=0;
@@ -1211,7 +1223,20 @@ namespace hiatpg {
             if(maxCompact==0) {
                 compact='r';
             }
+
+            // get test pattern
+//            int k= mnPacket + 1;
+//            while(--k>=0) {
+//                for(int j=0;j<numberOfPrimaryInputs;j++)
+//                    net[j]->output1=net[j]->output=testVectors[k][j];
+//            }
+//            for(i=mnBit-1;i>=0;i--) {
+//                getTestVector(i);
+//            }
+//            printTestVector("after atpg");
+
             nTest3= compactTest(levels,myNumberOfStems,myStem,&shuf,&nDetect3,mnPacket,mnBit,BITSIZE);
+            printTestVector("after atpg");
             if(nDetect3 != mnDetect)
             {
                 /*cout<<"Error in test compaction: m_ndetect="<<mnDetect<<", ndetect3="<<nDetect3<<endl;
@@ -1223,11 +1248,26 @@ namespace hiatpg {
         }
     }
 
+    void AtpgEngine::printTestVector(string label)
+    {
+        cout << label << endl;
+        list<TestVector*>::iterator current,final;
+
+        current = testVector.vectors.begin();
+        final = testVector.vectors.end();
+
+        while(current != final)
+        {
+            cout << (*current)->ivct << endl;
+            current++;
+        }
+        cout << "end of pattern!" << endl;
+    }
+
     void AtpgEngine::writeTestFile()
     {
         //    Writes a test file. Only test vectors (pat format).
         //    For -D n does not distinguish between vectors for the same fault - do not use here!
-        cout << __FUNCTION__ << endl;
 
         list<TestVector*>::iterator current,final;
 

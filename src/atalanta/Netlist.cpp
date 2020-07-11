@@ -113,8 +113,6 @@ namespace hiatpg {
 		
 		testv->no = no;
 		testVector.vectors.push_front(testv);
-//		testv->next = tv.vcts;
-//		tv.vcts = testv;
 		testVector.num++;
 	}
 	
@@ -140,6 +138,18 @@ namespace hiatpg {
 				(*s)[j] = '1';
 			return s;
 	}
+
+	void Netlist::getTestVector(int nBit)
+    {
+        string *iv,*ov;
+
+        iv = printInputs(nBit);
+        ov = printOutputs(nBit);
+        addTestVector(iv, ov, 1);
+
+        delete iv;
+        delete ov;
+    }
 	
 	void Netlist::printIO(int nth_bit, int start)
 	{

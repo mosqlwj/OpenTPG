@@ -7,6 +7,7 @@
 
 #include <list>
 #include <ctime>
+#include <unordered_map>
 
 #include "Fault.h"
 #include "Simulation.h"
@@ -48,6 +49,9 @@ namespace hiatpg {
 
     class AtpgEngine : public Simulation
     {
+    private:
+        vector<unordered_map<int, int>> testCubes;
+
         char inputMode;
         int iseed;
         char faultMode;
@@ -121,6 +125,7 @@ namespace hiatpg {
         void	initFS();
         int		optionSet(int argc,char **argv);
         int		readOption(char option,char **array,int i,int n);
+        void printTestVector(string label);
         void	readTestFile();
         void	writeTestFile();
         void	writeTestFileOut();
