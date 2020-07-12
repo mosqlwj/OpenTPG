@@ -22,6 +22,7 @@ function do_help()
 {
     echo  "Usage:"
     echo  "   build.sh  [compile] [build|release]"
+    echo  "   build.sh  package   [<NAME>]"
     echo  "   build.sh  format"
     echo  "   build.sh  install"
 
@@ -175,7 +176,7 @@ function main()
         return      "$?"
     fi
 
-    if [[ "${action}" == "install" ]]; then
+    if [[ "${action}" == "package" ]]; then
         do_package  "$@"
         return      "$?"
     fi
