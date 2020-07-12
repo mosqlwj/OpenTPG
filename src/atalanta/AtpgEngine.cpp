@@ -548,13 +548,6 @@ namespace hiatpg {
     {
         int ix;
         Gate *gut;
-        //struct EDEN *temp;
-        //struct LEARN *record;
-
-#ifdef DEBUGLEARN
-        gettime(&slearntime_beg,&ulearntime_beg,&learntime_beg);
-		printf("DEBUG: Start learn(nog,maxdpi), nog=%d, maxdpi=%d\n",nog,maxdpi);
-#endif
 
         impo.clear();
 
@@ -573,11 +566,6 @@ namespace hiatpg {
             gut=net[ix];
             if(gut->isFree()) continue;
             if(gut->ninput==1) continue;
-
-#ifdef DEBUGLEARN
-            printf("** Learn node %d: symbol=%s fi=%d fo=%d\n",
-				gut->index, gut->symbol->symbol, gut->ninput, gut->noutput);
-#endif
 
             switch(gut->fn)
             {
@@ -601,15 +589,6 @@ namespace hiatpg {
         }
 
         stack->clear();
-
-#ifdef DEBUGLEARN
-        gettime(&slearntime_end,&ulearntime_end,&learntime_end);
-		printf("\n*** End of learning\n");
-		printf("*** Number of redundant nodes = %d\n",noimpo);
-		printf("*** Number of learning records = %d\n",norecord);
-		printf("*** Memory required = %d bytes\n",learnmemory);
-		printf("*** CPU time spent = %.2f seconds\n",learntime_end-learntime_beg);
-#endif
     }
 
     void AtpgEngine::initFS()
@@ -652,245 +631,6 @@ namespace hiatpg {
         testStore1.setSecondSize(numberOfPrimaryInputs);
 
         allOne=ALL1;
-    }
-
-    // This is used to read options from command line
-    int AtpgEngine::readOption(char option,char **array,int i,int n)
-    {
-        // Every switch has 1 parameter
-        if(i+1 >= n) return((-1));
-        int temp;
-
-        switch(option)
-        {
-            case 'd': inputMode='d'; break;
-#ifdef ISCAS85_NETLIST_MODE
-                case 'I': cctMode=ISCAS85; break;
-#endif
-            case 'r':
-                sscanf(array[++i],"%d",&randomLimit);           // RPT limit
-                if(randomLimit==0) rptMode='n'; break;
-            case 's': sscanf(array[++i],"%d",&iseed); break;          // initial seed
-            case 'N': compact='n'; maxCompact=0; break;		// no test compaction
-            case 'c': sscanf(array[++i],"%d",&maxCompact); break;		// limit of shuffeling compaction
-            case 'b': sscanf(array[++i],"%d",&maxBackTrack); break;				// max. backtracks for FAN
-            case 'B': sscanf(array[++i],"%d",&maxBackTrack1); break;			// max. backtracks (2 phases)
-            case 't':
-                sPatternFile = array[++i];
-                break;					// test pattern file
-                //   case 'l': logmode='y'; strcpy(name3,array[++i]); break;
-            case 'n':
-                benchFile.open(array[++i], ios::in);
-                if(!benchFile.is_open()) {
-                    stringstream ss;
-                    ss << "Fatal error: Cannot open bench file: " << array[i];
-                    throw ss.str();
-                }
-                else {
-                    benchStream = benchFile.rdbuf();
-                }
-                break;					// .bench file
-            case 'L': learnMode='y'; break;							// static learning
-            case 'f':
-                faultMode='f';
-                faultFile.open(array[++i], ios::in | ios::binary);
-                if(!faultFile.is_open()) {
-                    stringstream ss;
-                    ss << "Fatal error: Cannot open fault file: " << array[i];
-                    throw ss.str();
-                }
-                else {
-                    faultStream = faultFile.rdbuf();
-                }
-                break;		// source fault file
-            case 'F':
-                wFaults = 1;
-                wFaultFile.open(array[++i], ios::out);
-                if(!wFaultFile.is_open()) {
-                    stringstream ss;
-                    ss << "Fatal error: Cannot open processed faults file: " << array[i];
-                    throw ss.str();
-                }
-                else {
-                    wFaultStream = wFaultFile.rdbuf();
-                }
-                break;		// destination fault file (complete fault list)
-            case '0': fillMode='0'; break;								// fill X's with 0s
-            case '1': fillMode='1'; break;								// fill X's with 1s
-            case 'X': fillMode='x'; break;								// don't fill X's
-            case 'R': fillMode='r'; break;								// randomly fill X's
-            case 'A': genAllPat='y'; break;							// generate all patterns for each fault
-            case 'D': sscanf(array[++i],"%d",&temp);							// debug mode limit
-                setEachLimit(temp);
-                genAllPat='y'; break;
-            case 'Z': noFaultSim='y'; break;							// one test pattern for each fault
-                //    case 'u': ufaultmode='y'; break;
-            case 'U':
-                uFaultMode = 1;
-                udFaultsFile.open(array[++i], ios::out);
-                if(!udFaultsFile.is_open()) {
-                    stringstream ss;
-                    ss << "Fatal error: Cannot open aborted faults file: " << array[i];
-                    throw ss.str();
-                }
-                else {
-                    udFaultsStream = udFaultsFile.rdbuf();
-                }
-                break; // aborted faults file name
-            case 'v': uFaultMode = 2; break;									// undetected faults are printed to a file as well (with -U)
-            case 'S': simulationMode = 1; break;			// perform pattern simulation, not TPG
-            case 'm':
-                maskFile.open(array[++i], ios::out);
-                if(!maskFile.is_open()) {
-                    stringstream ss;
-                    ss << "Fatal error: Cannot open mask file: " << array[i];
-                    throw ss.str();
-                }
-                else {
-                    maskStream = maskFile.rdbuf();
-                }
-                break;						// mask file name
-            case 'P':
-                reportFile.open(array[++i], ios::out);
-                if(!reportFile.is_open()) {
-                    stringstream ss;
-                    ss << "Fatal error: Cannot open report file.";
-                    throw ss.str();
-                }
-                else {
-                    reportStream = reportFile.rdbuf();
-                }
-                break;					// report file name
-            case 'W': wTestMode = array[++i][0] - '0'; break;					// test output file
-                //        0 - no test
-                //        1 - PAT file
-                //        2 - input + output
-                //        3 - more test vectors for each fault, output
-                //        4 - more test vectors for each fault, output, with fault mask
-            case 'l': lfsrSimMode = 1;
-                //sscanf(array[++i],"%s",&lfsrPoly);             // LFSR simulation
-                //sscanf(array[++i],"%s",&lfsrSeed);
-                lfsrPoly = array[++i];
-                lfsrSeed = array[++i];
-                sscanf(array[++i],"%i",&lfsrNum);
-                simulationMode = 1;
-                break;
-            case 'g':
-                lfsrSimMode = 2;											// LFSR simulation with generating poly and seed
-                sscanf(array[++i], "%i", &lfsrNum);
-                simulationMode = 1;
-                genResFile.open(array[++i], fstream::out);
-                if(!genResFile.is_open()) {
-                    stringstream ss;
-                    ss << "Fatal error: Cannot open generator file.";
-                    throw ss.str();
-                }
-                else {
-                    genResStream = genResFile.rdbuf();
-                }
-                break;
-            default:  i=-1;
-        }
-        return i;
-    }
-
-    void AtpgEngine::help()
-    {
-        stringstream ss;
-
-        ss<< "AtpgEngine-M 1.1b\n\n ";
-
-        ss<<"SYNOPSIS: AtpgEngine-M [options] circuit_file\n\n";
-        ss<<"OPTIONS:\n\n";
-        ss<<"   File specification:\n";
-        ss<<"      -n fn      Name of the .bench file. The -n statement is optional, the benchmark name can be specified without any prequisite parameter.\n";
-        ss<<"      -f fn      The fault file is read from fn. If not specified, all the s-a-faults are set as default.\n";
-        ss<<"      -F fn      The processed fault list is written to a file fn.\n";
-        ss<<"      -t fn      Test patterns are are written or read from the file fn (written in TPG mode, read in simulation mode).\n";
-        ss<<"      -U fn      AtpgEngine writes aborted faults to the given file name.\n";
-        ss<<"      -v         AtpgEngine prints out all identified redundant faults as well as aborted fauts in a file. The -U option has to be specified.\n";
-        ss<<"      -m fn      The fault mask is written to the file fn. The order of faults corresponds to the fault list.\n";
-        ss<<"      -P fn      The ATPG/FS report is written to a file fn.\n";
-        ss<<"      -W n       The output test file format (for TPG only).\n";
-        ss<<"                   n = 0 - no test pattern output (default).\n";
-        ss<<"                   n = 1 - PAT file (test vectors only). Do not use together with -D n option, since all the test vectors are put together.\n";
-        ss<<"                   n = 2 - input + output. Do not use together with -D n option, since all the test vectors are put together.\n";
-        ss<<"                   n = 3 - more test vectors for each fault, output.\n";
-        ss<<"                   n = 4 - more test vectors for each fault, output, with fault mask. HOPE simulator is employed.\n";
-        ss<<"\n";
-        ss<<"   ATPG Options. These options have no sense in the simulation mode (-S).\n";
-        ss<<"      -A         AtpgEngine derives all test patterns for each fault. In this option, all unspecified inputs are left unknown, and fault simulation is not performed. HOPE fault simulator is employed. Note: it does not work properly. Not all existing test patterns are produced.\n";
-        ss<<"      -D n       AtpgEngine derives n test patterns for each fault. In this option, all unspecified inputs are left unknown, and fault simulation is not performed. If both -A and -D option are specified, -D option is applied. HOPE fault simulator is employed. Note: it does not work properly. Not all existing test patterns are produced.\n";
-        ss<<"      -b n        	The number of maximum backtracks for the FAN algorithm phase 1. (default: -b 10)\n";
-        ss<<"      -B n       If -B n (n > 0) option is specified, AtpgEngine generates test patterns in two phases. In phase 1, static unique path sensitization is employed. If the test generation for a target fault is aborted in phase 1, the test generation is tried in phase 2. In phase 2, dynamic unique path sensitization is employed. If n=0, phase 2 is not performed. If n > 0, phase 2 test generation is performed with the backtrack limit of n. (default: -B 0, i.e., phase 2 is not performed.)\n";
-        ss<<"      -H         HOPE is employed for fault simulation. In this option, three logic values (0, 1 and X), instead of two logic values (0 and 1), are employed. Due to the embedding of the unknown logic value and the parallel fault fault simulation algorithm, the test generation time is slower than the default mode.) (default: FSIM, which is a parallel pattern fault simulator, is employed, and two logic values are used.)\n";
-        ss<<"      -L         Static learning is performed. (default: no learning)\n";
-        ss<<"      -c n       AtpgEngine compacts test patterns using two different methods: reverse order compaction and shuffling compaction. First, test patterns are applied in the reverse order and fault simulated (reverse order compaction). Second, test patterns are shuffled randomly and fault simulated (shuffling compaction). During the fault simulations, all the test patterns which do not detect a new fault are eliminated. The option -c n specifies the limit of shuffling compaction. If n>0, shuffling compaction is terminated if n consecutive shuffles do not drop a test pattern. If n=0, shuffling compaction is not included and compaction is done only by the reverse order fault simulation. (default: -c 2)\n";
-        ss<<"      -N         Test compaction is not performed.\n";
-        ss<<"      -r n       Random Pattern Testing (RPT) Session is included before deterministic test pattern generation session. The RPT session stops if any n consecutive packets of 32 random patterns do not detect any new fault. If n=0, the RPT session is not included. (default: -r 16)\n";
-        ss<<"      -s n       Initial seed for the random number generator (random()). If n=0, the initial seed is the current time. (default: -s 0)\n";
-        ss<<"      -Z         AtpgEngine derives one test pattern for each fault. In this option, no fault simulation is performed during the entire test generation (including random pattern test generation session, deterministic test generation session and test compaction session). All unspecified inputs are left unknown.\n";
-        ss<<"      -0, -1, -X, -R    During test generation, some inputs can be unspecified. AtpgEngine provides various options to set these unspecified inputs into a certain value. (default: -R)\n";
-        ss<<"   Fault Simulation Options:\n";
-        ss<<"      -S          	Simulation mode is performed, instead of TPG. The pattern file has to be specified (-t option), if the -l option is not present.\n";
-        ss<<"      -l poly seed num    	Simulates num LFSR patterns. The LFSR polynomial and seed are specified in octal form (poly, seed).\n";
-
-        throw ss.str();
-    }
-
-    int AtpgEngine::optionSet(int argc,char **argv)
-    {
-        int i;
-
-        if(argc==1)
-        {
-            // Display help when no parameter has been passed
-            // First param is program name
-            help();
-        } else
-            for(i=1;i<argc;i++)
-            {
-                if(argv[i][0]=='-')
-                {
-                    if((i=readOption(argv[i][1],argv,i,argc))<0)
-                    {
-                        help();
-                        break;
-                    }
-                }
-                else {
-                    benchFile.open(argv[i], ios::in);
-                    if(!benchFile.is_open()) {
-                        stringstream ss;
-                        ss << "Cannot open bench file: " << argv[i];
-                        throw ss.str();
-                    }
-                    else {
-                        benchStream = benchFile.rdbuf();
-                    }
-                }
-            }
-
-        if(genAllPat=='y')
-        {
-            randomLimit=0;
-            rptMode='n';
-            maxBackTrack1=0;
-            fillMode='x';
-            compact='n';
-            maxCompact=0;
-            noFaultSim='y';
-        }
-
-        if(noFaultSim=='y')
-        {
-            randomLimit=0;
-            rptMode='n';
-            fillMode='x';
-            compact='n';
-            maxCompact=0;
-        }
-        return 0;
     }
 
     void AtpgEngine::readTestFile()
@@ -983,105 +723,6 @@ namespace hiatpg {
         return num;
     }
 
-    int AtpgEngine::simulateTest()
-    {
-        list<TestVector*>::iterator current,final;
-        int det=0;
-
-        current=testVector.vectors.begin();
-        final=testVector.vectors.end();
-
-        while(current!=final)
-        {
-            det+=simulateVector((*current)->ivct);
-            current++;
-        }
-        mnDetect = det;
-        return det;
-    }
-
-    int AtpgEngine::generatePolyAndSeed(void)
-    {
-        long tmp;
-        string state, newState;
-        string poly;
-        int i, j, t, order;
-        bool end = false;
-        // check if number of lsfrnum is less than number of combination of primary inp.
-        if(numberOfPrimaryInputs <= sizeof(int) * 8) {
-            tmp = (1 << (numberOfPrimaryInputs + 1)) - 1;
-            if(tmp < lfsrNum) {
-                stringstream ss;
-                ss << "Fatal error: Number of lsfr cycles is too big.";
-                throw ss.str();
-            }
-        }
-
-        while(!end) {
-            end = true;
-            Random::getRandomOctVector(numberOfPrimaryInputs, &lfsrSeed);
-            //strcpy(newState, lfsrSeed);
-            newState = octToBin(&lfsrSeed);
-            state = newState;
-            Random::getRandomOctVector(numberOfPrimaryInputs, &lfsrPoly);
-            poly = octToBin(&lfsrPoly);
-            order = numberOfPrimaryInputs - 1;
-            for(i = 1; i < lfsrNum; i++) {
-
-                t=newState[order-1]-'0';
-                for(j=order-1;j>0;j--)
-                    newState[j]=(newState[j-1]-'0' != t*(lfsrPoly[j]-'0') ? 1 : 0)+'0';
-                newState[0]=t+'0';
-                //				if(!strcmp(newState, lfsrSeed)) {
-                if(!newState.compare(state)) {
-                    end = false;
-                    break;
-                }
-            }
-        }
-        return order;
-    }
-
-    int AtpgEngine::simulateLFSR()
-    {
-        int i, j, t;
-        int det;
-        string poly;
-        string state;
-        int order;
-
-        if(lfsrSimMode == 2) {
-            generatePolyAndSeed();
-        }
-        det = 0;
-        try {
-            poly=octToBin(&lfsrPoly);
-            state=octToBin(&lfsrSeed);
-        }
-        catch (...) {
-            stringstream ss;
-            ss << "FatalError: poly and state parameters have to be equal to number of inputs ("
-               << numberOfPrimaryInputs << ")";
-            throw ss.str();
-        }
-        order = poly.length() - 1;
-
-        for ( i = 0; i < lfsrNum; i++ )
-        {
-            det+=simulateVector(state);
-
-            t=state[order-1]-'0';
-            for(j = order-1;j>0;j--) {
-                state[j]=(state[j-1]-'0' != t*(poly[j]-'0') ? 1 : 0)+'0';
-            }
-            state[0]=t+'0';
-
-            //printf("%s\n", state);
-        }
-        mnDetect = det;
-        return det;
-    }
-
     AtpgStatus AtpgEngine::getResults()
     {
         AtpgStatus ar;
@@ -1100,56 +741,32 @@ namespace hiatpg {
 
     void AtpgEngine::writeResults(AtpgStatus ar)
     {
-
         if(reportStream != NULL) {
             ostream file(reportStream);
-
             file.precision(3);
 
             file<<"gates: "<<ar.gates<<endl;
-            file<<"iv: "<<ar.iv<<endl;
-            file<<"ov: "<<ar.ov<<endl;
-            file<<"i_patterns: "<<ar.iPatterns<<endl;
-            file<<"patterns: "<<ar.patterns<<endl;
+            file<<"primary input: "<<ar.iv<<endl;
+            file<<"primary output: "<<ar.ov<<endl;
+            file<<"simulate patterns: "<<ar.iPatterns<<endl;
+            file<<"final patterns: "<<ar.patterns<<endl;
             file<<"faults: "<<ar.faults<<endl;
-            file<<"d_faults: "<<ar.detectedFaults<<endl;
-            file<<"r_faults: "<<ar.redundantFaults<<endl;
+            file<<"detect faults: "<<ar.detectedFaults<<endl;
+            file<<"redundant faults: "<<ar.redundantFaults<<endl;
             file<<"time: "<<ar.time<<endl;
             file.flush();
-        }
-    }
 
-    void AtpgEngine::simulateAllVectors()
-    {
-        list<TestVector*>::iterator current,end;
-
-        int i;
-        int det=0;
-        TestVector *temp;
-
-        current=testVector.vectors.begin();
-        end=testVector.vectors.end();
-
-        setFaults();
-        initFS();
-
-        while(current!=end)
-        {
-            temp=*current;
-
-            for(i=0;i<numberOfFaults;i++)
-            {
-                faultList[i]->detected=UNDETECTED;
-                faultList[i]->observe=ALL0;
-            }
-
-            det=simulateVector(temp->ivct);
-            delete temp->mask;
-            temp->mask=new char[numberOfFaults];
-
-            for(i=0;i<numberOfFaults;i++) temp->mask[i]=faultList[i]->detected;
-
-            current++;
+            cout << "---report---" << endl;
+            cout<<"gates: "<<ar.gates<<endl;
+            cout<<"primary input: "<<ar.iv<<endl;
+            cout<<"primary output: "<<ar.ov<<endl;
+            cout<<"simulate patterns: "<<ar.iPatterns<<endl;
+            cout<<"final patterns: "<<ar.patterns<<endl;
+            cout<<"faults: "<<ar.faults<<endl;
+            cout<<"detect faults: "<<ar.detectedFaults<<endl;
+            cout<<"redundant faults: "<<ar.redundantFaults<<endl;
+            cout<<"time: "<<ar.time<<endl;
+            cout<<endl;
         }
     }
 
@@ -1178,7 +795,6 @@ namespace hiatpg {
 
         mnDetect+=testGen(levels,BITSIZE,myNumberOfStems,myStem,maxBackTrack,false,&nRedundant,&nOverBackTrack,&tBackTrack,&mnTest,&mnPacket,&mnBit,&fantime);
         nTest2=mnTest;
-        cout << "---test cube end---" << endl;
 
         /******************************************************************
         *                                                                *
@@ -1236,7 +852,7 @@ namespace hiatpg {
 //            printTestVector("after atpg");
 
             nTest3= compactTest(levels,myNumberOfStems,myStem,&shuf,&nDetect3,mnPacket,mnBit,BITSIZE);
-            printTestVector("after atpg");
+//            printTestVector("after atpg");
             if(nDetect3 != mnDetect)
             {
                 /*cout<<"Error in test compaction: m_ndetect="<<mnDetect<<", ndetect3="<<nDetect3<<endl;
@@ -1279,6 +895,7 @@ namespace hiatpg {
             current = testVector.vectors.begin();
             final = testVector.vectors.end();
 
+            cout << "---test pattern---" << endl;
             while(current != final)
             {
                 file << (*current)->ivct << endl;
@@ -1413,7 +1030,6 @@ namespace hiatpg {
         atpgStatus = getResults();
         faultlist->updateFaultList();
 
-        //if(wTestMode==4) simulateAllVectors();
         end = clock();
         atpgStatus.time = (end-start)/(double)CLOCKS_PER_SEC;
         writeResults(atpgStatus);
@@ -1454,12 +1070,6 @@ namespace hiatpg {
         if(genResFile.is_open()) { genResFile.close(); genResStream = NULL; };
 
         return 0;
-    }
-
-    int AtpgEngine::run(int argc, char **argv)
-    {
-        optionSet(argc,argv);
-        return run();
     }
 
     void AtpgEngine::setParams() {

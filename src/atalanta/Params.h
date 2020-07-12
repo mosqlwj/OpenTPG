@@ -52,6 +52,7 @@ namespace hiatpg {
         int lfsrNum;
         fstream bench;
         fstream pat;
+        fstream report;
 
         Params(void) {
             // 加入指定类型的输入參数
@@ -111,10 +112,15 @@ namespace hiatpg {
         {
             options.parse_check(argc, argv);
             string benchFile = options.get<string>("bench");
+            string pureName = benchFile.substr(0, benchFile.rfind(".bench"));
+            string patternFile = pureName + ".pat";
+            string reportFile = pureName + ".report";
             bench.open(benchFile, ios::in);
-            pat.open("c17.pat", ios::out);
+            pat.open(patternFile, ios::out);
+            report.open(reportFile, ios::out);
             setBenchStream(bench.rdbuf());
             setSPatternStream(pat.rdbuf());
+            setReportStream(report.rdbuf());
             setWTestMode(1);
             setCctMode('9');
             setIseed(23);
