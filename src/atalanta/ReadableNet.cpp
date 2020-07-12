@@ -37,7 +37,6 @@ namespace hiatpg {
 	{
 		int i, j;
 
-		
 		circuit.rdbuf(buf);
 		if(readCircuit()<0) {
 			Error::fatalerror(CIRCUITERROR);
@@ -218,7 +217,7 @@ namespace hiatpg {
 		this->numberOfPrimaryInputs = this->numberOfPrimaryOutputs = 
 			this->numberOfGates = this->numberOfFlipFlops = 0;
 		net.clear();
-		tv.vectors.clear();
+		testVector.vectors.clear();
 		hashTable.clear();
 
 		/* Pass 1:

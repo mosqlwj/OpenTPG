@@ -90,11 +90,11 @@ namespace hiatpg {
 	{
 		TestVectorType *testv;
 		testv = (TestVectorType *)malloc(sizeof(TestVectorType));
-		testv->ivct = (char *)malloc( tv.inpVars + 1 );
+		testv->ivct = (char *)malloc(testVector.inpVars + 1 );
 		testv->mask = strdup("");
 		strcpy(testv->ivct, ivct->c_str());
 		if ( ovct != NULL ) {
-			testv->ovct = (char *)malloc( tv.outVars + 1 );
+			testv->ovct = (char *)malloc(testVector.outVars + 1 );
 			strcpy(testv->ovct, ovct->c_str());
 		} else testv->ovct = NULL;
 		if ( myCurrFault != NULL ) {
@@ -112,10 +112,8 @@ namespace hiatpg {
 		}
 		
 		testv->no = no;
-		tv.vectors.push_front(testv);
-//		testv->next = tv.vcts;
-//		tv.vcts = testv;
-		tv.num++;
+		testVector.vectors.push_front(testv);
+		testVector.num++;
 	}
 	
 	string* Netlist::printInputs(int nth_bit)
@@ -140,6 +138,18 @@ namespace hiatpg {
 				(*s)[j] = '1';
 			return s;
 	}
+
+	void Netlist::getTestVector(int nBit)
+    {
+        string *iv,*ov;
+
+        iv = printInputs(nBit);
+        ov = printOutputs(nBit);
+        addTestVector(iv, ov, 1);
+
+        delete iv;
+        delete ov;
+    }
 	
 	void Netlist::printIO(int nth_bit, int start)
 	{

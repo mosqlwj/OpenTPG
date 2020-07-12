@@ -28,10 +28,10 @@ enum FaultStatus { TESTED, UNKNOW};
 enum GateType { PI, PO, AND, NAND, OR, NOR, XOR, XNOR, INV, BUF };
 
 unordered_map<string, GateType> str2GateType = {{"AND", AND}, {"NAND", NAND}, {"OR", OR},   {"NOR", NOR},
-                                                {"XOR", XOR}, {"XNOR", XNOR}, {"INV", INV}, {"BUF", BUF}};
+                                                {"XOR", XOR}, {"XNOR", XNOR}, {"NOT", INV}, {"BUFF", BUF}};
 
 unordered_map<GateType, string> gateType2Str = {{AND, "AND"}, {NAND, "NAND"}, {OR, "OR"},   {NOR, "NOR"},
-                                                {XOR, "XOR"}, {XNOR, "XNOR"}, {INV, "INV"}, {BUF, "BUF"}};
+                                                {XOR, "XOR"}, {XNOR, "XNOR"}, {INV, "NOT"}, {BUF, "BUFF"}};
 enum EventDir { FORWARD, BACKWORD, BOTH };
 
 struct Options {};
