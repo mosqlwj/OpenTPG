@@ -49,4 +49,5 @@ cmake_install.cmake
 *.cbp
 
 build-*/
+software/
 

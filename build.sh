@@ -105,6 +105,7 @@ function do_format()
 #   $2  team
 function do_package
 {
+    local team="$2"
     if [[ "${team}" == "" ]]; then
         echo    "The 'package' action need a team name for the next parameter"
         return  3
@@ -119,7 +120,6 @@ function do_package
     #   如果没有指定该脚本,那么采用默认打包行为
     local arch=$(arch)
     local os=$(uname -s)
-    os=${os,,}
     if [[ "${os}" == "" ]]; then
         echo    "Unknown operation system: '${os}'"
         return  4
