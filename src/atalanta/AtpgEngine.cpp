@@ -227,6 +227,12 @@ namespace hiatpg {
     void CustomFaultlist::updateFaultList()
     {
         for(int i=0;i<fault;i++) mask[i]=faultList[i]->detected;
+
+        // print all fault status
+        for (int i = 0; i < fault; i++) {
+            auto pCurrentFault = faultList[i];
+            cout << pCurrentFault->gate->symbol->symbol << " " << pCurrentFault->type << " " << pCurrentFault->detected << endl;
+        }
     }
 
     void CustomFaultlist::writeFaultMask(std::streambuf *fn)
