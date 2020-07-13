@@ -79,7 +79,7 @@ namespace hiatpg {
 
 		int restoreDetectedFaultList();
 		int checkRedundantFaults();
-		int setAllFaultList(int noStem,Gate **stem);
+		int createFaultList(int noStem, Gate **stem);
 	};
 
 	class ReadableFaultList:public FaultList

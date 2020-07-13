@@ -69,7 +69,7 @@ int hiatpg::AtpgEngine::testGen(int levels, int maxBits, int nStem, Gate **stem,
                         pCurrentFault=faultList[lastFault];
                         gut=pCurrentFault->gate;
                         if(pCurrentFault->line!=OUTFAULT)
-                            gut=gut->inlis[pCurrentFault->line];
+                            gut=gut->fanins[pCurrentFault->line];
                         if(gut->isCheckPoint()) break;
                         pCurrentFault=0;
                     }
@@ -203,7 +203,7 @@ namespace hiatpg {
         {
             if(faultList[i]->line>=0)
             {
-                names[i]=faultList[i]->gate->inlis[faultList[i]->line]->symbol->symbol;
+                names[i]=faultList[i]->gate->fanins[faultList[i]->line]->symbol->symbol;
                 names[i]+="->";
             }
             /*names[i]+="i:";
@@ -319,12 +319,9 @@ namespace hiatpg {
         else
         {
             // FSIM
-            numberOfFaults = setAllFaultList(myNumberOfStems,myStem);
-
+            numberOfFaults = createFaultList(myNumberOfStems, myStem);
             if(numberOfFaults<0)
             {
-                /*cerr<<"Fatal error: error in setting fault list"<<endl;
-                exit(0);*/
                 stringstream ss;
                 ss << "Fatal error: error in setting fault list";
                 throw ss.str();
@@ -367,7 +364,7 @@ namespace hiatpg {
 
         // forward gate evaluation
         gate->changed=false;
-        p=gate->inlis;
+        p=gate->fanins;
 
         j = 0;
 
@@ -376,7 +373,7 @@ namespace hiatpg {
 
         // fault free gate evaluation
         for(i=0; i<gate->ninput; i++)
-            if(gate->inlis[i]->numzero==lid) { gate->numzero=lid; break; }
+            if(gate->fanins[i]->numzero == lid) { gate->numzero=lid; break; }
 
         gateEval1(gate,&val,&f);
 
@@ -996,7 +993,7 @@ namespace hiatpg {
     int AtpgEngine::run()
     {
         AtpgStatus atpgStatus;
-        CustomFaultlist *faultlist;
+        CustomFaultlist *customFaultlist;
         clock_t start, end;
 
         levels = setBenchStream(benchStream);
@@ -1004,10 +1001,10 @@ namespace hiatpg {
         // create faultlist
         setFaults();
         indexFaults();
-        faultlist = new CustomFaultlist(numberOfFaults,faultList);
+        customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
 
         // if read from file, print faultlist.
-        if(wFaults) faultlist->printList(wFaultStream);
+        if(wFaults) customFaultlist->printList(wFaultStream);
 
         iseed=Random::seed(iseed);
 
@@ -1016,22 +1013,9 @@ namespace hiatpg {
         // reset net status and init simulation
         initFS();
 
-        // Open pattern File for writing
-        if(sPatternFile.length() > 0) {
-            patternFile.open(sPatternFile.c_str(), fstream::out);
-            if(!patternFile.is_open()) {
-                stringstream ss;
-                ss << "Fatal error: Cannot open pattern file " << sPatternFile;
-                throw ss.str();
-            }
-            else {
-                patternStream = patternFile.rdbuf();
-            }
-        }
-
         generateTest();
         atpgStatus = getResults();
-        faultlist->updateFaultList();
+        customFaultlist->updateFaultList();
 
         end = clock();
         atpgStatus.time = (end-start)/(double)CLOCKS_PER_SEC;
@@ -1054,13 +1038,11 @@ namespace hiatpg {
                 break;
         }
 
-        faultlist->writeFaultMask(maskStream);
+        customFaultlist->writeFaultMask(maskStream);
         if(uFaultMode == 1)
-            faultlist->writeABFaults(udFaultsStream);
+            customFaultlist->writeABFaults(udFaultsStream);
         else if (uFaultMode == 2)
-            faultlist->writeUDFaults(udFaultsStream);
-
-        printf("\nComputing time: %.2fs\n", (end-start)/(double)CLOCKS_PER_SEC);
+            customFaultlist->writeUDFaults(udFaultsStream);
 
         //Close opened files
         if(benchFile.is_open()) { benchFile.close(); benchStream = NULL; };

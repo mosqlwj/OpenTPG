@@ -52,7 +52,7 @@ void SimulateEngine::updateAll() {
             while (!gut->freach) {
                 gut->freach = true;
                 if (gut->noutput == 1)
-                    gut = gut->outlis[0];
+                    gut = gut->fanouts[0];
                 else if (!gut->uPath.empty())
                     gut = gut->uPath.front();
             }
@@ -72,9 +72,9 @@ void SimulateEngine::updateAll() {
     while (!fanNet->stack->isEmpty()) {
         gut = fanNet->stack->pop();
         for (i = 0; i < gut->noutput; i++) {
-            if (!gut->outlis[i]->freach) {
-                gut->outlis[i]->freach = true;
-                fanNet->stack->push(gut->outlis[i]);
+            if (!gut->fanouts[i]->freach) {
+                gut->fanouts[i]->freach = true;
+                fanNet->stack->push(gut->fanouts[i]);
             }
         }
     }
@@ -86,7 +86,7 @@ void SimulateEngine::updateAll() {
         if (gut->freach) {
             gut->freach = false;
             fanNet->freeGates->push(gut);
-            for (j = 0; j < gut->ninput; j++) gut->inlis[j]->freach = false;
+            for (j = 0; j < gut->ninput; j++) gut->fanins[j]->freach = false;
         }
     }
 
@@ -103,7 +103,7 @@ void SimulateEngine::updateAll() {
             gut->freach = true;
             (*fanNet->dynamicStack)[++fanNet->nsStack] = gut;
             if (gut->noutput == 1) {
-                gut = gut->outlis[0];
+                gut = gut->fanouts[0];
             }
         }
     }
@@ -155,7 +155,7 @@ void SimulateEngine::pInitSimulation(int maxDpi) {
             p->freach = true;
             (*fanNet->dynamicStack)[++fanNet->nsStack] = p;
             if (p->noutput == 1) {
-                p = p->outlis[0];
+                p = p->fanouts[0];
             }
         }
     }
@@ -249,45 +249,45 @@ level SimulateEngine::pFaultSimulation(Gate *gut, level observe, Gate *dominator
 }
 
 void SimulateEngine::pGateEval1(Gate *gate, level *val) {
-    *val = (gate->fn == NOT || gate->fn == NAND || gate->fn == NOR) ? ~gate->inlis[0]->output1
-                                                                    : gate->inlis[0]->output1;
+    *val = (gate->fn == NOT || gate->fn == NAND || gate->fn == NOR) ? ~gate->fanins[0]->output1
+                                                                    : gate->fanins[0]->output1;
 }
 
 void SimulateEngine::pGateEval2(Gate *gate, level *val) {
     switch (gate->fn) {
         case AND:
-            *val = gate->inlis[0]->output1 & gate->inlis[1]->output1;
+            *val = gate->fanins[0]->output1 & gate->fanins[1]->output1;
             break;
         case NAND:
-            *val = ~(gate->inlis[0]->output1 & gate->inlis[1]->output1);
+            *val = ~(gate->fanins[0]->output1 & gate->fanins[1]->output1);
             break;
         case OR:
-            *val = gate->inlis[0]->output1 | gate->inlis[1]->output1;
+            *val = gate->fanins[0]->output1 | gate->fanins[1]->output1;
             break;
         case NOR:
-            *val = ~(gate->inlis[0]->output1 | gate->inlis[1]->output1);
+            *val = ~(gate->fanins[0]->output1 | gate->fanins[1]->output1);
             break;
         case XOR:
-            *val = gate->inlis[0]->output1 ^ gate->inlis[1]->output1;
+            *val = gate->fanins[0]->output1 ^ gate->fanins[1]->output1;
             break;
         case XNOR:
-            *val = ~(gate->inlis[0]->output1 ^ gate->inlis[1]->output1);
+            *val = ~(gate->fanins[0]->output1 ^ gate->fanins[1]->output1);
     }
 }
 
 void SimulateEngine::pGateEval3(Gate *gate, level *val) {
     switch (gate->fn) {
         case AND:
-            *val = gate->inlis[0]->output1 & gate->inlis[1]->output1 & gate->inlis[2]->output1;
+            *val = gate->fanins[0]->output1 & gate->fanins[1]->output1 & gate->fanins[2]->output1;
             break;
         case NAND:
-            *val = ~(gate->inlis[0]->output1 & gate->inlis[1]->output1 & gate->inlis[2]->output1);
+            *val = ~(gate->fanins[0]->output1 & gate->fanins[1]->output1 & gate->fanins[2]->output1);
             break;
         case OR:
-            *val = gate->inlis[0]->output1 | gate->inlis[1]->output1 | gate->inlis[2]->output1;
+            *val = gate->fanins[0]->output1 | gate->fanins[1]->output1 | gate->fanins[2]->output1;
             break;
         default:
-            *val = ~(gate->inlis[0]->output1 | gate->inlis[1]->output1 | gate->inlis[2]->output1);
+            *val = ~(gate->fanins[0]->output1 | gate->fanins[1]->output1 | gate->fanins[2]->output1);
     }
 }
 
@@ -296,24 +296,24 @@ void SimulateEngine::pGateEval4(Gate *gate, level *val) {
     switch (gate->fn) {
         case AND:
             *val =
-                gate->inlis[0]->output1 & gate->inlis[1]->output1 & gate->inlis[2]->output1 & gate->inlis[3]->output1;
-            for (cnt = 4; cnt < gate->ninput; cnt++) *val &= gate->inlis[cnt]->output1;
+                    gate->fanins[0]->output1 & gate->fanins[1]->output1 & gate->fanins[2]->output1 & gate->fanins[3]->output1;
+            for (cnt = 4; cnt < gate->ninput; cnt++) *val &= gate->fanins[cnt]->output1;
             break;
         case NAND:
             *val =
-                gate->inlis[0]->output1 & gate->inlis[1]->output1 & gate->inlis[2]->output1 & gate->inlis[3]->output1;
-            for (cnt = 4; cnt < gate->ninput; cnt++) *val &= gate->inlis[cnt]->output1;
+                    gate->fanins[0]->output1 & gate->fanins[1]->output1 & gate->fanins[2]->output1 & gate->fanins[3]->output1;
+            for (cnt = 4; cnt < gate->ninput; cnt++) *val &= gate->fanins[cnt]->output1;
             *val = ~*val;
             break;
         case OR:
             *val =
-                gate->inlis[0]->output1 | gate->inlis[1]->output1 | gate->inlis[2]->output1 | gate->inlis[3]->output1;
-            for (cnt = 4; cnt < gate->ninput; cnt++) *val |= gate->inlis[cnt]->output1;
+                    gate->fanins[0]->output1 | gate->fanins[1]->output1 | gate->fanins[2]->output1 | gate->fanins[3]->output1;
+            for (cnt = 4; cnt < gate->ninput; cnt++) *val |= gate->fanins[cnt]->output1;
             break;
         default:
             *val =
-                gate->inlis[0]->output1 | gate->inlis[1]->output1 | gate->inlis[2]->output1 | gate->inlis[3]->output1;
-            for (cnt = 4; cnt < gate->ninput; cnt++) *val |= gate->inlis[cnt]->output1;
+                    gate->fanins[0]->output1 | gate->fanins[1]->output1 | gate->fanins[2]->output1 | gate->fanins[3]->output1;
+            for (cnt = 4; cnt < gate->ninput; cnt++) *val |= gate->fanins[cnt]->output1;
             *val = ~*val;
     }
 }
@@ -322,28 +322,28 @@ void SimulateEngine::pGateEvalX(Gate *gate, level *val) {
     int cnt;
     switch (gate->fn) {
         case AND:
-            *val = gate->inlis[0]->output1 & gate->inlis[1]->output1 & gate->inlis[2]->output1;
-            for (cnt = 3; cnt < gate->ninput; cnt++) *val &= gate->inlis[cnt]->output1;
+            *val = gate->fanins[0]->output1 & gate->fanins[1]->output1 & gate->fanins[2]->output1;
+            for (cnt = 3; cnt < gate->ninput; cnt++) *val &= gate->fanins[cnt]->output1;
             break;
         case NAND:
-            *val = gate->inlis[0]->output1 & gate->inlis[1]->output1 & gate->inlis[2]->output1;
-            for (cnt = 3; cnt < gate->ninput; cnt++) *val &= gate->inlis[cnt]->output1;
+            *val = gate->fanins[0]->output1 & gate->fanins[1]->output1 & gate->fanins[2]->output1;
+            for (cnt = 3; cnt < gate->ninput; cnt++) *val &= gate->fanins[cnt]->output1;
             *val = ~(*val);
             break;
         case OR:
-            *val = gate->inlis[0]->output1 | gate->inlis[1]->output1 | gate->inlis[2]->output1;
-            for (cnt = 3; cnt < gate->ninput; cnt++) *val |= gate->inlis[cnt]->output1;
+            *val = gate->fanins[0]->output1 | gate->fanins[1]->output1 | gate->fanins[2]->output1;
+            for (cnt = 3; cnt < gate->ninput; cnt++) *val |= gate->fanins[cnt]->output1;
             break;
         case NOR:
-            *val = gate->inlis[0]->output1 | gate->inlis[1]->output1 | gate->inlis[2]->output1;
-            for (cnt = 3; cnt < gate->ninput; cnt++) *val |= gate->inlis[cnt]->output1;
+            *val = gate->fanins[0]->output1 | gate->fanins[1]->output1 | gate->fanins[2]->output1;
+            for (cnt = 3; cnt < gate->ninput; cnt++) *val |= gate->fanins[cnt]->output1;
             *val = ~(*val);
             break;
         case XOR:
-            *val = gate->inlis[0]->output1 ^ gate->inlis[1]->output1;
+            *val = gate->fanins[0]->output1 ^ gate->fanins[1]->output1;
             break;
         case XNOR:
-            *val = ~(gate->inlis[0]->output1 ^ gate->inlis[1]->output1);
+            *val = ~(gate->fanins[0]->output1 ^ gate->fanins[1]->output1);
             break;
     }
 }
@@ -351,7 +351,7 @@ void SimulateEngine::pGateEvalX(Gate *gate, level *val) {
 void SimulateEngine::pScheduleOutput(Gate *gate) {
     Gate *tempGate;
     for (int cnt = 0; cnt < gate->noutput; cnt++) {
-        tempGate = gate->outlis[cnt];
+        tempGate = gate->fanouts[cnt];
         if (!tempGate->changed) {
             fanNet->eventList[tempGate->dpi]->push(tempGate);
             tempGate->changed = true;
@@ -364,32 +364,32 @@ level SimulateEngine::feval(Fault *pf, Gate *gut) {
     level val;
     Gate *g;
 
-    g = gut->inlis[pf->line];
+    g = gut->fanins[pf->line];
     if ((val = g->output1 ^ (pf->type == SA0 ? ALL0 : ALL1)) == ALL0) {
         return val;
     }
     if (gut->ninput == 2) {
         if (gut->fn <= NAND) {
-            return val & (pf->line == 0 ? gut->inlis[1]->output1 : gut->inlis[0]->output1);
+            return val & (pf->line == 0 ? gut->fanins[1]->output1 : gut->fanins[0]->output1);
         } else if (gut->fn <= NOR) {
-            return val & (pf->line == 0 ? ~gut->inlis[1]->output1 : ~gut->inlis[0]->output1);
+            return val & (pf->line == 0 ? ~gut->fanins[1]->output1 : ~gut->fanins[0]->output1);
         } else {
             return val;
         }
     }
 
-    g->output1 = gut->inlis[0]->output;
+    g->output1 = gut->fanins[0]->output;
     switch (gut->fn) {
         case AND:
         case NAND:
             for (i = 1; i < gut->ninput; i++) {
-                val &= gut->inlis[i]->output1;
+                val &= gut->fanins[i]->output1;
             }
             break;
         case OR:
         case NOR:
             for (i = 1; i < gut->ninput; i++) {
-                val &= (~gut->inlis[i]->output1);
+                val &= (~gut->fanins[i]->output1);
             }
     }
     g->output1 = g->output;
@@ -493,22 +493,22 @@ int SimulateEngine::ftpReverse(Gate *stem, status *flag, status flag2, int nbit,
             observe |= gut->observe & gut->cobserve;
         }
         if (gut->ninput == 1) {
-            g = gut->inlis[0];
+            g = gut->fanins[0];
             if (g->noutput == 1 && g->freach) {
                 g->observe = gut->observe;
                 fanNet->stack->push(g);
             }
         } else if (gut->ninput == 2) {
-            g = gut->inlis[0];
+            g = gut->fanins[0];
             if (g->noutput == 1 && g->freach) {
                 switch (gut->fn) {
                     case AND:
                     case NAND:
-                        g->observe = gut->observe & gut->inlis[1]->output1;
+                        g->observe = gut->observe & gut->fanins[1]->output1;
                         break;
                     case OR:
                     case NOR:
-                        g->observe = gut->observe & ~(gut->inlis[1]->output1);
+                        g->observe = gut->observe & ~(gut->fanins[1]->output1);
                         break;
                     default:
                         g->observe = gut->observe;
@@ -518,16 +518,16 @@ int SimulateEngine::ftpReverse(Gate *stem, status *flag, status flag2, int nbit,
                 }
             }
 
-            g = gut->inlis[1];
+            g = gut->fanins[1];
             if (g->noutput == 1 && g->freach) {
                 switch (gut->fn) {
                     case AND:
                     case NAND:
-                        g->observe = gut->observe & gut->inlis[0]->output1;
+                        g->observe = gut->observe & gut->fanins[0]->output1;
                         break;
                     case OR:
                     case NOR:
-                        g->observe = gut->observe & ~(gut->inlis[0]->output1);
+                        g->observe = gut->observe & ~(gut->fanins[0]->output1);
                         break;
                     default:
                         g->observe = gut->observe;
@@ -538,7 +538,7 @@ int SimulateEngine::ftpReverse(Gate *stem, status *flag, status flag2, int nbit,
             }
         } else
             for (i = 0; i < gut->ninput; i++) {
-                g = gut->inlis[i];
+                g = gut->fanins[i];
                 if (g->noutput == 1 && g->freach) {
                     g->output1 = ~g->output1;
                     if (gut->ninput == 1) {
@@ -597,13 +597,13 @@ int SimulateEngine::fault1Simulation(int maxDpi, int nStem, Gate **stem, int nbi
                             (*fanNet->dynamicStack)[++fanNet->ndStack] = g;
                             g->cobserve = gut->observe;
                             if (g->noutput == 1) {
-                                g = g->outlis[0];
+                                g = g->fanouts[0];
                                 while (!g->freach) {
                                     g->freach = true;
                                     (*fanNet->dynamicStack)[++fanNet->ndStack] = g;
                                     g->cobserve = ALL0;
                                     if (g->noutput == 1) {
-                                        g = g->outlis[0];
+                                        g = g->fanouts[0];
                                     }
                                 }
                             }
@@ -727,7 +727,7 @@ void SimulateEngine::updateAll1() {
                 gut->freach = true;
                 (*fanNet->dynamicStack)[++fanNet->nsStack] = gut;
                 if (gut->noutput == 1) {
-                    gut = gut->outlis[0];
+                    gut = gut->fanouts[0];
                 }
             }
         }
@@ -773,7 +773,7 @@ int SimulateEngine::fault0Simulation(int maxDpi, int nbit, int *tArray) {
             gut->freach = true;
             gut->cobserve = ALL0;
             if (gut->noutput == 1) {
-                gut = gut->outlis[0];
+                gut = gut->fanouts[0];
             }
         }
     }
@@ -801,11 +801,11 @@ int SimulateEngine::fault0Simulation(int maxDpi, int nbit, int *tArray) {
                         g->freach = true;
                         g->cobserve = gut->observe;
                         if (g->noutput == 1) {
-                            g = g->outlis[0];
+                            g = g->fanouts[0];
                             while (!g->freach) {
                                 g->freach = true;
                                 if (g->noutput == 1) {
-                                    g = g->outlis[0];
+                                    g = g->fanouts[0];
                                 }
                             }
                         }

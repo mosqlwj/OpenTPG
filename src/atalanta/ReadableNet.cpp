@@ -279,10 +279,10 @@ namespace hiatpg {
 					numberOfPrimaryInputs++;
 					pg->index=numberOfGates++;
 					pg->ninput=0;
-					pg->inlis=0;
+					pg->fanins=0;
 					pg->fn=PI;
 					pg->noutput=0;
-					pg->outlis=0;
+					pg->fanouts=0;
 					break;
 				case PO:
 					if(numberOfPrimaryOutputs >= poGates.size()) {
@@ -317,14 +317,14 @@ namespace hiatpg {
 					currentGate->index=numberOfGates++;
 					currentGate->fn=fn;
 					if((currentGate->ninput=nofanin) == 0) 
-						currentGate->inlis=0;
+						currentGate->fanins=0;
 					else
-						currentGate->inlis=new Gate*[currentGate->ninput];
+						currentGate->fanins=new Gate*[currentGate->ninput];
 					for(i=0;i<nofanin;i++) {
-						currentGate->inlis[i]=pfanin[i];
+						currentGate->fanins[i]=pfanin[i];
 					}
 					currentGate->noutput=0;
-					currentGate->outlis=0;
+					currentGate->fanouts=0;
 
 					nofanin=0;
 					currentGate=0;
@@ -404,7 +404,7 @@ namespace hiatpg {
 #ifdef LEARNFLG
 			currentGate->pLearn.clear();
 #endif
-			for(int j=0;j<currentGate->ninput;j++) currentGate->inlis[j]->noutput++;
+			for(int j=0;j<currentGate->ninput;j++) currentGate->fanins[j]->noutput++;
 			switch(currentGate->fn)
 			{
 			case PI: 
@@ -425,7 +425,7 @@ namespace hiatpg {
 			currentGate=net[i];
 			if(currentGate->noutput>0)
 			{
-				currentGate->outlis=new Gate*[currentGate->noutput];
+				currentGate->fanouts=new Gate*[currentGate->noutput];
 				maxFout=MAX(maxFout,currentGate->noutput);
 				currentGate->noutput=0;
 			}
@@ -435,7 +435,7 @@ namespace hiatpg {
 		{
 			currentGate=net[i];
 			for(int j=0;j<currentGate->ninput;j++)
-				currentGate->inlis[j]->outlis[(currentGate->inlis[j]->noutput)++]=currentGate;
+				currentGate->fanins[j]->fanouts[(currentGate->fanins[j]->noutput)++]=currentGate;
 		};
 
 		for(i=0; i<this->numberOfGates; i++)
@@ -494,7 +494,7 @@ namespace hiatpg {
 					currentGate=stack1->pop();
 					for(i=0;i<currentGate->noutput;i++)
 					{
-						ng=currentGate->outlis[i];
+						ng=currentGate->fanouts[i];
 						if(++ng->changed==ng->ninput)
 						{
 							ng->dpi=currentGate->dpi+1;
@@ -508,7 +508,7 @@ namespace hiatpg {
 							currentGate=stack2->pop();
 							for(i=0;i<currentGate->noutput;i++)
 							{
-								ng=currentGate->outlis[i];
+								ng=currentGate->fanouts[i];
 								if(++ng->changed==ng->ninput)
 								{
 									ng->dpi=currentGate->dpi+1;
@@ -538,7 +538,7 @@ namespace hiatpg {
 		{
 			currentGate=net[flipFlops[i]];
 			for(j=0; j<currentGate->ninput; j++)
-				if(currentGate->inlis[j]->dpi>=maxlevel) {maxlevel=currentGate->inlis[j]->dpi; flag=2; }
+				if(currentGate->fanins[j]->dpi >= maxlevel) { maxlevel=currentGate->fanins[j]->dpi; flag=2; }
 		}
 
 		// Renumber levels of POs and PPO(DFF)s 
@@ -703,10 +703,10 @@ namespace hiatpg {
 			last->index=numberOfGates;
 			last->fn=PO;
 			last->ninput=1;
-			last->inlis=new Gate*();
-			last->inlis[0]=gut;
+			last->fanins=new Gate*();
+			last->fanins[0]=gut;
 			last->noutput=0;
-			last->outlis=NULL;
+			last->fanouts=NULL;
 #ifdef LEARNFLG
 			last->pLearn.clear();
 #endif
@@ -720,11 +720,11 @@ namespace hiatpg {
 			else
 				last->symbol->pnode=last;
 
-			outlist=gut->outlis;
-			gut->outlis=new Gate*[gut->noutput+1];
+			outlist=gut->fanouts;
+			gut->fanouts=new Gate*[gut->noutput + 1];
 
-			for(j=0;j<gut->noutput;j++) gut->outlis[j]=outlist[j];
-			gut->outlis[gut->noutput]=last;
+			for(j=0;j<gut->noutput;j++) gut->fanouts[j]=outlist[j];
+			gut->fanouts[gut->noutput]=last;
 			gut->noutput+=1;
 
 			primaryOut[i]=numberOfGates;
@@ -750,9 +750,9 @@ namespace hiatpg {
 			gut->index=numberOfGates+2*i;
 			gut->fn=DUMMY;
 			gut->ninput=0;
-			gut->inlis=NULL;
+			gut->fanins=NULL;
 			gut->noutput=1;
-			gut->outlis=new Gate*();
+			gut->fanouts=new Gate*();
 			gut->dpi=0;
 			gut->changed=false;
 			gut->symbol=NULL;
@@ -767,10 +767,10 @@ namespace hiatpg {
 			gut->index=numberOfGates+2*i+1;
 			gut->fn=DUMMY;
 			gut->ninput=2;
-			gut->inlis=new Gate*[2];
-			gut->inlis[0]=net[numberOfGates+2*i];
+			gut->fanins=new Gate*[2];
+			gut->fanins[0]=net[numberOfGates + 2 * i];
 			gut->noutput=0;
-			gut->outlis=new Gate*[maxFout];
+			gut->fanouts=new Gate*[maxFout];
 			gut->dpi=0;
 			gut->changed=false;
 			gut->gid=0;
@@ -785,8 +785,8 @@ namespace hiatpg {
 			gut=net[primaryOut[i]];
 			if(gut->noutput==0)
 			{
-				gut->outlis=new Gate*;
-				gut->outlis[0]=0;
+				gut->fanouts=new Gate*;
+				gut->fanouts[0]=0;
 			}
 		}
 	}

@@ -42,12 +42,12 @@ namespace hiatpg {
 		Stack** eventList;
 
 		void scheduleOutput(Gate *gate) {
-			for(int i=0;i<gate->noutput;i++) pushEvent(gate->outlis[i]);
+			for(int i=0;i<gate->noutput;i++) pushEvent(gate->fanouts[i]);
 		}
 		void scheduleInput(Gate *gate,int i) 
 		{
-			pushEvent(gate->inlis[i]);
-			scheduleOutput(gate->inlis[i]);
+			pushEvent(gate->fanins[i]);
+			scheduleOutput(gate->fanins[i]);
 		}
 		void pushGate(Gate *gut) {eventList[gut->dpi]->push(gut);};
 

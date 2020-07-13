@@ -56,7 +56,7 @@ namespace hiatpg {
 				while(!gut->freach)
 				{
 					gut->freach=true;
-					if(gut->noutput==1) gut=gut->outlis[0];
+					if(gut->noutput==1) gut=gut->fanouts[0];
 					else if(!gut->uPath.empty()) gut=gut->uPath.front();
 				}
 			}
@@ -77,10 +77,10 @@ namespace hiatpg {
 		{
 			gut=stack->pop();
 			for(i=0;i<gut->noutput;i++)
-				if(!gut->outlis[i]->freach)
+				if(!gut->fanouts[i]->freach)
 				{
-					gut->outlis[i]->freach = true;
-					stack->push(gut->outlis[i]);
+					gut->fanouts[i]->freach = true;
+					stack->push(gut->fanouts[i]);
 				}
 		}
 
@@ -93,7 +93,7 @@ namespace hiatpg {
 			{
 				gut->freach=false;
 				freeGates->push(gut);
-				for(j=0;j<gut->ninput;j++) gut->inlis[j]->freach=false;
+				for(j=0;j<gut->ninput;j++) gut->fanins[j]->freach=false;
 			}
 		}
 
@@ -109,7 +109,7 @@ namespace hiatpg {
 			{
 				gut->freach=true;
 				(*dynamicStack)[++nsStack]=gut;
-				if(gut->noutput==1) gut=gut->outlis[0];
+				if(gut->noutput==1) gut=gut->fanouts[0];
 			}
 		}
 		ndStack=nsStack;
@@ -156,7 +156,7 @@ namespace hiatpg {
 			{
 				p->freach=true;
 				(*dynamicStack)[++nsStack]=p;
-				if(p->noutput==1) p=p->outlis[0];
+				if(p->noutput==1) p=p->fanouts[0];
 			}
 		}
 		ndStack=nsStack;
@@ -240,19 +240,19 @@ namespace hiatpg {
 
 	void ParralelPattern::pGateEval1(Gate *gate,unsigned *val)
 	{
-		*val=(gate->fn==NOT || gate->fn==NAND || gate->fn==NOR)?~gate->inlis[0]->output1:gate->inlis[0]->output1;
+		*val= (gate->fn==NOT || gate->fn==NAND || gate->fn==NOR) ? ~gate->fanins[0]->output1 : gate->fanins[0]->output1;
 	}
 
 	void ParralelPattern::pGateEval2(Gate *gate,unsigned *val)
 	{
 		switch(gate->fn)
 		{
-		case AND: *val=gate->inlis[0]->output1&gate->inlis[1]->output1; break;
-		case NAND: *val=~(gate->inlis[0]->output1&gate->inlis[1]->output1); break;
-		case OR: *val=gate->inlis[0]->output1|gate->inlis[1]->output1; break;
-		case NOR: *val=~(gate->inlis[0]->output1|gate->inlis[1]->output1); break;
-		case XOR: *val=gate->inlis[0]->output1^gate->inlis[1]->output1; break;
-		case XNOR: *val=~(gate->inlis[0]->output1^gate->inlis[1]->output1);
+		case AND: *val= gate->fanins[0]->output1 & gate->fanins[1]->output1; break;
+		case NAND: *val=~(gate->fanins[0]->output1 & gate->fanins[1]->output1); break;
+		case OR: *val= gate->fanins[0]->output1 | gate->fanins[1]->output1; break;
+		case NOR: *val=~(gate->fanins[0]->output1 | gate->fanins[1]->output1); break;
+		case XOR: *val= gate->fanins[0]->output1 ^ gate->fanins[1]->output1; break;
+		case XNOR: *val=~(gate->fanins[0]->output1 ^ gate->fanins[1]->output1);
 		}
 	}
 
@@ -260,10 +260,10 @@ namespace hiatpg {
 	{
 		switch(gate->fn)
 		{
-		case AND: *val=gate->inlis[0]->output1&gate->inlis[1]->output1&gate->inlis[2]->output1; break;
-		case NAND: *val=~(gate->inlis[0]->output1&gate->inlis[1]->output1&gate->inlis[2]->output1); break;
-		case OR: *val=gate->inlis[0]->output1|gate->inlis[1]->output1|gate->inlis[2]->output1; break;
-		default: *val=~(gate->inlis[0]->output1|gate->inlis[1]->output1|gate->inlis[2]->output1);
+		case AND: *val= gate->fanins[0]->output1 & gate->fanins[1]->output1 & gate->fanins[2]->output1; break;
+		case NAND: *val=~(gate->fanins[0]->output1 & gate->fanins[1]->output1 & gate->fanins[2]->output1); break;
+		case OR: *val= gate->fanins[0]->output1 | gate->fanins[1]->output1 | gate->fanins[2]->output1; break;
+		default: *val=~(gate->fanins[0]->output1 | gate->fanins[1]->output1 | gate->fanins[2]->output1);
 		}
 	}
 
@@ -273,18 +273,18 @@ namespace hiatpg {
 		switch(gate->fn)
 		{
 		case AND:
-			*val=gate->inlis[0]->output1&gate->inlis[1]->output1&gate->inlis[2]->output1&gate->inlis[3]->output1;
-			for(cnt=4;cnt<gate->ninput;cnt++) *val&=gate->inlis[cnt]->output1; break;
+			*val= gate->fanins[0]->output1 & gate->fanins[1]->output1 & gate->fanins[2]->output1 & gate->fanins[3]->output1;
+			for(cnt=4;cnt<gate->ninput;cnt++) *val&=gate->fanins[cnt]->output1; break;
 		case NAND:
-			*val=gate->inlis[0]->output1&gate->inlis[1]->output1&gate->inlis[2]->output1&gate->inlis[3]->output1;
-			for(cnt=4;cnt<gate->ninput;cnt++) *val&=gate->inlis[cnt]->output1;
+			*val= gate->fanins[0]->output1 & gate->fanins[1]->output1 & gate->fanins[2]->output1 & gate->fanins[3]->output1;
+			for(cnt=4;cnt<gate->ninput;cnt++) *val&=gate->fanins[cnt]->output1;
 			*val=~*val; break;
 		case OR:
-			*val=gate->inlis[0]->output1|gate->inlis[1]->output1|gate->inlis[2]->output1|gate->inlis[3]->output1;
-			for(cnt=4;cnt<gate->ninput;cnt++) *val|=gate->inlis[cnt]->output1; break;
+			*val= gate->fanins[0]->output1 | gate->fanins[1]->output1 | gate->fanins[2]->output1 | gate->fanins[3]->output1;
+			for(cnt=4;cnt<gate->ninput;cnt++) *val|=gate->fanins[cnt]->output1; break;
 		default:
-			*val=gate->inlis[0]->output1|gate->inlis[1]->output1|gate->inlis[2]->output1|gate->inlis[3]->output1;
-			for(cnt=4;cnt<gate->ninput;cnt++) *val|=gate->inlis[cnt]->output1;
+			*val= gate->fanins[0]->output1 | gate->fanins[1]->output1 | gate->fanins[2]->output1 | gate->fanins[3]->output1;
+			for(cnt=4;cnt<gate->ninput;cnt++) *val|=gate->fanins[cnt]->output1;
 			*val=~*val;
 		}
 	}
@@ -295,22 +295,22 @@ namespace hiatpg {
 		switch(gate->fn)
 		{ 
 		case AND:
-			*val=gate->inlis[0]->output1&gate->inlis[1]->output1&gate->inlis[2]->output1;
-			for(cnt=3;cnt<gate->ninput;cnt++) *val&=gate->inlis[cnt]->output1; break;
+			*val= gate->fanins[0]->output1 & gate->fanins[1]->output1 & gate->fanins[2]->output1;
+			for(cnt=3;cnt<gate->ninput;cnt++) *val&=gate->fanins[cnt]->output1; break;
 		case NAND:
-			*val=gate->inlis[0]->output1&gate->inlis[1]->output1&gate->inlis[2]->output1;
-			for(cnt=3;cnt<gate->ninput;cnt++) *val&=gate->inlis[cnt]->output1;
+			*val= gate->fanins[0]->output1 & gate->fanins[1]->output1 & gate->fanins[2]->output1;
+			for(cnt=3;cnt<gate->ninput;cnt++) *val&=gate->fanins[cnt]->output1;
 			*val=~(*val); break;
 		case OR:
-			*val=gate->inlis[0]->output1|gate->inlis[1]->output1|gate->inlis[2]->output1;
-			for(cnt=3;cnt<gate->ninput;cnt++) *val|=gate->inlis[cnt]->output1; break;
+			*val= gate->fanins[0]->output1 | gate->fanins[1]->output1 | gate->fanins[2]->output1;
+			for(cnt=3;cnt<gate->ninput;cnt++) *val|=gate->fanins[cnt]->output1; break;
 		case NOR:
-			*val=gate->inlis[0]->output1|gate->inlis[1]->output1|gate->inlis[2]->output1;
-			for(cnt=3;cnt<gate->ninput;cnt++) *val|=gate->inlis[cnt]->output1;
+			*val= gate->fanins[0]->output1 | gate->fanins[1]->output1 | gate->fanins[2]->output1;
+			for(cnt=3;cnt<gate->ninput;cnt++) *val|=gate->fanins[cnt]->output1;
 			*val=~(*val);
 			break;
-		case XOR: *val=gate->inlis[0]->output1^gate->inlis[1]->output1; break;
-		case XNOR: *val=~(gate->inlis[0]->output1^gate->inlis[1]->output1); break;
+		case XOR: *val= gate->fanins[0]->output1 ^ gate->fanins[1]->output1; break;
+		case XNOR: *val=~(gate->fanins[0]->output1 ^ gate->fanins[1]->output1); break;
 		}
 	}
 
@@ -319,7 +319,7 @@ namespace hiatpg {
 		Gate *tempGate;
 		for(int cnt=0;cnt<gate->noutput;cnt++)
 		{
-			tempGate=gate->outlis[cnt];
+			tempGate=gate->fanouts[cnt];
 			if(!tempGate->changed)
 			{
 				eventList[tempGate->dpi]->push(tempGate);
@@ -334,27 +334,27 @@ namespace hiatpg {
 		level val;
 		Gate *g;
 
-		g=gut->inlis[pf->line];
+		g=gut->fanins[pf->line];
 		if((val=g->output1^(pf->type==SA0 ? ALL0 : ALL1))==ALL0) return val;
 		if(gut->ninput==2)
 		{
-			if(gut->fn<=NAND) return  val&(pf->line==0 ? gut->inlis[1]->output1 : gut->inlis[0]->output1);
-			else if(gut->fn<=NOR) return val&(pf->line==0?~gut->inlis[1]->output1:~gut->inlis[0]->output1); 
+			if(gut->fn<=NAND) return  val&(pf->line==0 ? gut->fanins[1]->output1 : gut->fanins[0]->output1);
+			else if(gut->fn<=NOR) return val&(pf->line==0 ? ~gut->fanins[1]->output1 : ~gut->fanins[0]->output1);
 			else return val;
 		}
 
-		g->output1=gut->inlis[0]->output;
+		g->output1=gut->fanins[0]->output;
 		switch(gut->fn)
 		{
 		case AND:
 		case NAND:
 			for(i=1;i<gut->ninput;i++) 
-				val&=gut->inlis[i]->output1;
+				val&=gut->fanins[i]->output1;
 			break;
 		case OR:
 		case NOR:
 			for(i=1;i<gut->ninput;i++) 
-				val&=(~gut->inlis[i]->output1);
+				val&=(~gut->fanins[i]->output1);
 		}
 		g->output1=g->output;
 		return val;
@@ -458,7 +458,7 @@ namespace hiatpg {
 			if(gut->cobserve!=ALL0) observe|=gut->observe & gut->cobserve;
 			if(gut->ninput==1)
 			{
-				g=gut->inlis[0];
+				g=gut->fanins[0];
 				if( g->noutput==1 && g->freach)
 				{
 					g->observe=gut->observe;
@@ -467,18 +467,18 @@ namespace hiatpg {
 			} 
 			else if(gut->ninput==2)
 			{
-				g=gut->inlis[0];
+				g=gut->fanins[0];
 				if( g->noutput==1 && g->freach)
 				{
 					switch(gut->fn)
 					{
 					case AND:
 					case NAND:
-						g->observe=gut->observe & gut->inlis[1]->output1;
+						g->observe=gut->observe & gut->fanins[1]->output1;
 						break;
 					case OR:
 					case NOR:
-						g->observe=gut->observe & ~(gut->inlis[1]->output1);
+						g->observe=gut->observe & ~(gut->fanins[1]->output1);
 						break;
 					default:
 						g->observe=gut->observe;
@@ -486,18 +486,18 @@ namespace hiatpg {
 					if(g->observe!=ALL0) stack->push(g);
 				}
 
-				g=gut->inlis[1];
+				g=gut->fanins[1];
 				if( g->noutput==1 && g->freach)
 				{
 					switch(gut->fn)
 					{
 					case AND:
 					case NAND:
-						g->observe=gut->observe & gut->inlis[0]->output1;
+						g->observe=gut->observe & gut->fanins[0]->output1;
 						break;
 					case OR:
 					case NOR:
-						g->observe=gut->observe & ~(gut->inlis[0]->output1);
+						g->observe=gut->observe & ~(gut->fanins[0]->output1);
 						break;
 					default:
 						g->observe=gut->observe;
@@ -508,7 +508,7 @@ namespace hiatpg {
 			else
 				for(i=0;i<gut->ninput;i++)
 				{
-					g=gut->inlis[i];
+					g=gut->fanins[i];
 					if( g->noutput==1 && g->freach)
 					{
 						g->output1=~g->output1;
@@ -569,13 +569,13 @@ namespace hiatpg {
 								g->cobserve=gut->observe;
 								if(g->noutput==1)
 								{
-									g=g->outlis[0];
+									g=g->fanouts[0];
 									while(!g->freach)
 									{
 										g->freach=true;
 										(*dynamicStack)[++ndStack]=g;
 										g->cobserve=ALL0;
-										if(g->noutput==1) g=g->outlis[0];
+										if(g->noutput==1) g=g->fanouts[0];
 									}
 								}
 							}
@@ -707,7 +707,7 @@ namespace hiatpg {
 				{
 					gut->freach=true;
 					(*dynamicStack)[++nsStack]=gut;
-					if(gut->noutput==1) gut=gut->outlis[0];
+					if(gut->noutput==1) gut=gut->fanouts[0];
 				}
 			}
 		}
@@ -748,7 +748,7 @@ namespace hiatpg {
 			{
 				gut->freach=true;
 				gut->cobserve=ALL0;
-				if(gut->noutput==1) gut=gut->outlis[0];
+				if(gut->noutput==1) gut=gut->fanouts[0];
 			}
 		}
 
@@ -780,11 +780,11 @@ namespace hiatpg {
 								g->cobserve=gut->observe;
 								if(g->noutput==1)
 								{
-									g=g->outlis[0];
+									g=g->fanouts[0];
 									while(!g->freach)
 									{
 										g->freach=true;
-										if(g->noutput==1) g=g->outlis[0];
+										if(g->noutput==1) g=g->fanouts[0];
 									}
 								}
 							}

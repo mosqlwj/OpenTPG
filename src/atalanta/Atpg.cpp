@@ -64,7 +64,7 @@ int hiatpg::Atalanta::testGen(int levels, int maxBits, int nStem, Gate **stem, i
                     pCurrentFault=faultList[lastFault];
                     gut=pCurrentFault->gate;
                     if(pCurrentFault->line!=OUTFAULT)
-                        gut=gut->inlis[pCurrentFault->line];
+                        gut=gut->fanins[pCurrentFault->line];
                     if(gut->isCheckPoint()) break;
                     pCurrentFault=0;
                 }
@@ -206,7 +206,7 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 		{
 			if(faultList[i]->line>=0)
 			{
-				names[i]=faultList[i]->gate->inlis[faultList[i]->line]->symbol->symbol;
+				names[i]=faultList[i]->gate->fanins[faultList[i]->line]->symbol->symbol;
 				names[i]+="->";
 			}
 			/*names[i]+="i:";
@@ -322,7 +322,7 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 		else
 		{
 		    // FSIM
-		    numberOfFaults = setAllFaultList(myNumberOfStems,myStem);
+		    numberOfFaults = createFaultList(myNumberOfStems, myStem);
 
 			if(numberOfFaults<0) 
 			{
@@ -370,7 +370,7 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 
 		// forward gate evaluation
 		gate->changed=false;
-		p=gate->inlis;
+		p=gate->fanins;
 
 		j = 0;
 
@@ -379,7 +379,7 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 
 		// fault free gate evaluation
 		for(i=0; i<gate->ninput; i++)
-			if(gate->inlis[i]->numzero==lid) { gate->numzero=lid; break; }
+			if(gate->fanins[i]->numzero == lid) { gate->numzero=lid; break; }
 
 			gateEval1(gate,&val,&f);
 
@@ -1387,7 +1387,6 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
         atpgStatus = getResults();
         faultlist->updateFaultList();
 
-        //if(wTestMode==4) simulateAllVectors();
         end = clock();
         atpgStatus.time = (end-start)/(double)CLOCKS_PER_SEC;
         writeResults(atpgStatus);
