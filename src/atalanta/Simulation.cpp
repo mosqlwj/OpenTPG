@@ -433,7 +433,7 @@ namespace hiatpg {
         int nRestoredFault;
         int nDetect=0;
         int noTest=0;
-        int nComp=INFINITY, stop=ONE;
+        int nComp=INFINITE, stop=ONE;
         int bit=0, packet=0;
         int profile[BITSIZE];
         int nArray[MAXTEST], store=0;

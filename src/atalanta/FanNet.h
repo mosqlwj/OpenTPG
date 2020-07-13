@@ -98,7 +98,7 @@ namespace hiatpg {
 
 	public:
 		FanNet():unjustified(1000),initObj(1000),currObj(1000),fanObj(1000),finalObj(1000),
-			dFrontier(1000),dyID(INFINITY), noFaultSim('n'), learnMode('n'), genAllPat('n') {
+			dFrontier(1000),dyID(INFINITE), noFaultSim('n'), learnMode('n'), genAllPat('n') {
 			unjustified.push(0);
 		};
 

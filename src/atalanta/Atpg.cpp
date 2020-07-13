@@ -27,7 +27,9 @@
 #include "ReadableNet.h"
 #include "Random.h"
 #include "Simulation.h"
+#ifdef WIN32
 #include "windows.h"
+#endif
 
 int hiatpg::Atalanta::testGen(int levels, int maxBits, int nStem, Gate **stem, int maxBackTrack, int phase, int *nRedundant, int *nOverBackTrack, int *nBackTrack, int *nTest, int *nPacket, int *nBit, double *fanTime)
 {

@@ -31,7 +31,10 @@
 #include "ReadableNet.h"
 #include "Random.h"
 #include "Simulation.h"
+
+#ifdef WIN32
 #include "windows.h"
+#endif
 
 int hiatpg::AtpgEngine::testGen(int levels, int maxBits, int nStem, Gate **stem, int maxBackTrack, int phase, int *nRedundant, int *nOverBackTrack, int *nBackTrack, int *nTest, int *nPacket, int *nBit, double *fanTime)
 {
@@ -895,11 +898,11 @@ namespace hiatpg {
             current = testVector.vectors.begin();
             final = testVector.vectors.end();
 
-            cout << "---test pattern---" << endl;
+//            cout << "---test pattern---" << endl;
             while(current != final)
             {
                 file << (*current)->ivct << endl;
-                cout << (*current)->ivct << endl;
+//                cout << (*current)->ivct << endl;
                 current++;
             }
         }

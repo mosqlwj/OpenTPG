@@ -1013,7 +1013,7 @@ namespace hiatpg {
 		Gate *g;
 		int first;
 
-		first=INFINITY;
+		first=INFINITE;
 		for(i=0;i<=dFrontier.getCount()-1;)
 		{
 			g=dFrontier[i];
@@ -1233,7 +1233,7 @@ namespace hiatpg {
 
 					// Find the easiest input
 					input=aCurrObj->inlis;
-					easyCont=INFINITY;
+					easyCont=INFINITE;
 					easiest=0;
 
 					if(v1==ZERO)
@@ -1793,7 +1793,7 @@ namespace hiatpg {
 				{
 					gut=eventList[i]->pop();
 					nGate--;
-					if(gut->fn==PO) {nGate=INFINITY; break;}
+					if(gut->fn==PO) {nGate=INFINITE; break;}
 					for(j=0; j<gut->noutput; j++)
 					{
 						next=gut->outlis[j];
@@ -1808,7 +1808,7 @@ namespace hiatpg {
 						}
 					}
 				}
-				if(nGate==INFINITY) break;
+				if(nGate==INFINITE) break;
 			}
 
 			// Assign non-controlling values to dominators
@@ -2231,7 +2231,7 @@ namespace hiatpg {
 								state=98;	//when dfrontier is not zero
 							else
 							{	// box 6
-								if(dyID>=INFINITY-3)
+								if(dyID>=INFINITE-3)
 								{
 									for(i=0;i<numberOfGates;i++) net[i]->freach1=0;
 									dyID=0;
