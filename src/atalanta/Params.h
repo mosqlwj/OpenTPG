@@ -52,6 +52,8 @@ namespace hiatpg {
         int lfsrNum;
         fstream bench;
         fstream pat;
+        fstream report;
+        fstream fault;
 
         Params(void) {
             // 加入指定类型的输入參数
@@ -111,10 +113,18 @@ namespace hiatpg {
         {
             options.parse_check(argc, argv);
             string benchFile = options.get<string>("bench");
+            string pureName = benchFile.substr(0, benchFile.rfind(".bench"));
+            string patternFile = pureName + ".pat";
+            string reportFile = pureName + ".report";
+//            string faultFile = pureName + ".flist";
             bench.open(benchFile, ios::in);
-            pat.open("c17.pat", ios::out);
+            pat.open(patternFile, ios::out);
+            report.open(reportFile, ios::out);
+//            fault.open(faultFile, ios::out);
             setBenchStream(bench.rdbuf());
             setSPatternStream(pat.rdbuf());
+            setReportStream(report.rdbuf());
+//            setfaultStream(fault.rdbuf());
             setWTestMode(1);
             setCctMode('9');
             setIseed(23);
@@ -351,45 +361,6 @@ namespace hiatpg {
             lfsrSeed = p_lfsrSeed;
             lfsrNum = p_lfsrNum;
         };
-
-//        Params operator=(Params *p) {
-//            cctMode = p->getCctMode();
-//            randomLimit = p->getRandomLimit();
-//            iseed = p->getIseed();
-//            maxCompact = p->getMaxCompact();
-//            compact = p->getCompact();
-//            maxBackTrack = p->getMaxBackTrack();
-//            maxBackTrack1 = p->getMaxBackTrack1();
-//            sPatternFile = p->getSPatternFile();
-//            sPatternStream = p->getSPatternStream();
-//            benchFile = p->getBenchFile();
-//            benchStream = p->getBenchStream();
-//            learnMode = p->getLearnMode();
-//            faultMode = p->getFaultMode();
-//            faultFile = p->getFaultFile();
-//            faultStream = p->getFaultStream();
-//            wFaultFile = p->getWFaultFile();
-//            wFaultStream = p->getWFaultFileStream();
-//            simMode = p->getSimMode();
-//            fillMode = p->getFillMode();
-//            genAllPat = p->getGenAllPat();
-//            eachLimit = p->getEachLimit();
-//            noFaultSim = p->getNoFaultSim();
-//            uFaultMode = p->getUFaultMode();
-//            udFaultsFile = p->getUdFaultsFile();
-//            udFaultsStream = p->getUdFaultsStream();
-//            simulationMode = p->getSimulationMode();
-//            maskFile = p->getMaskFile();
-//            maskStream = p->getMaskStream();
-//            reportFile = p->getReportFile();
-//            reportStream = p->getReportStream();
-//            wTestMode = p->getWTestMode();
-//            lfsrSimMode = p->getLfsrSimMode();
-//            lfsrPoly = p->getLfsrPoly();
-//            lfsrSeed = p->getLfsrSeed();
-//            lfsrNum = p->getLfsrNum();
-//            return *this;
-//        };
     };
 }
 #endif //__ATALANTA_PARAMS_H__

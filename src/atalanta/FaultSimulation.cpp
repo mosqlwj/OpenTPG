@@ -38,7 +38,7 @@ namespace hiatpg {
 			gut=net[i];
 			gut->changed=false;
 			if(gut->noutput!=1) numberOfStems++;
-			else if(gut->outlis[0]->fn==DFF) numberOfStems++;
+			else if(gut->fanouts[0]->fn == DFF) numberOfStems++;
 			gut->stem=0;
 		}
 
@@ -79,7 +79,7 @@ namespace hiatpg {
 
 		for(i=0; i<numberOfFlipFlops; i++)
 		{	// PPO
-			gut=net[flipFlops[i]]->inlis[0];
+			gut=net[flipFlops[i]]->fanins[0];
 			if(gut->noutput!=1) continue;
 			gut->stem=++numberOfStems;
 			stems[numberOfStems].gate=gut->index;
@@ -93,13 +93,13 @@ namespace hiatpg {
 		{
 			gut=net[stems[i].gate];
 			for(j=0;j<gut->ninput;j++)
-				if(gut->inlis[j]->stem<=0) stack1->push(gut->inlis[j]);
+				if(gut->fanins[j]->stem <= 0) stack1->push(gut->fanins[j]);
 			while(!stack1->isEmpty()) 
 			{
 				gut=stack1->pop();
 				gut->stem=(-1)*i;
 				for(j=0;j<gut->ninput;j++)
-					if(gut->inlis[j]->stem<=0) stack1->push(gut->inlis[j]);
+					if(gut->fanins[j]->stem <= 0) stack1->push(gut->fanins[j]);
 			}
 		}
 
@@ -120,9 +120,9 @@ namespace hiatpg {
 			gCount=0;
 			for(j=0;j<gut->noutput;j++)
 			{
-				pushGate(gut->outlis[j]);
+				pushGate(gut->fanouts[j]);
 				gCount++;
-				gut->outlis[j]->changed=true;
+				gut->fanouts[j]->changed=true;
 			}
 
 			for(j=0;j<=PPOlevel;j++)
@@ -149,10 +149,10 @@ namespace hiatpg {
 							}
 						}
 					}
-					else if(!gut->outlis[0]->changed)
+					else if(!gut->fanouts[0]->changed)
 					{
-						pushGate(gut->outlis[0]);
-						gut->outlis[0]->changed=true;
+						pushGate(gut->fanouts[0]);
+						gut->fanouts[0]->changed=true;
 						gCount++;
 					}
 				}
@@ -183,10 +183,10 @@ namespace hiatpg {
 
 			for(j=0;j<gut->noutput;j++)
 			{
-				if(gut->outlis[j]->ninput==1)
+				if(gut->fanouts[j]->ninput == 1)
 				{
 					gCount=1;
-					if(gut->outlis[j]->fn==DFF) gCount=1;
+					if(gut->fanouts[j]->fn == DFF) gCount=1;
 
 					/*				for(k=0;k<gut->outlis[j]->noutput;k++)
 					{
@@ -315,7 +315,7 @@ namespace hiatpg {
 
 			for(i=0;i<gut->noutput;i++)
 			{
-				temp=gut->outlis[i];
+				temp=gut->fanouts[i];
 				if(!temp->changed)
 				{
 					pushGate(temp);
@@ -356,7 +356,7 @@ namespace hiatpg {
 				copyLevel(gate->FV,val);
 				for(i=0;i<gate->noutput;i++)
 				{
-					temp=gate->outlis[i];
+					temp=gate->fanouts[i];
 					if(!temp->changed)
 					{
 						pushGate(temp);
@@ -367,7 +367,7 @@ namespace hiatpg {
 		} else
 		{	// input line fault
 			if(gate->changed) return 0;
-			temp=gate->inlis[fline];
+			temp=gate->fanins[fline];
 			if(temp->gid==groupID)
 			{
 				val[0]=temp->FV[0] & BITMASK[bit];
@@ -396,7 +396,7 @@ namespace hiatpg {
 		{
 			if(sut[bit].line>=0)
 			{
-				temp=gut->inlis[sut[bit].line];
+				temp=gut->fanins[sut[bit].line];
 				if(temp->gid!=groupID)
 				{
 					copyLevel(temp->FV,temp->GV);
@@ -432,7 +432,7 @@ namespace hiatpg {
 		{
 			if(sut[bit].line>=0)
 			{
-				temp=gut->inlis[sut[bit].line];
+				temp=gut->fanins[sut[bit].line];
 				if(temp->changed>=3)
 				{
 					copyLevel(temp->FV,sut[bit].Val);
@@ -465,95 +465,95 @@ namespace hiatpg {
 		switch(gut->fn)
 		{
 		case NOT:
-			if(gut->inlis[0]->gid==ggid)
+			if(gut->fanins[0]->gid == ggid)
 			{
-				val[0]=gut->inlis[0]->FV[1];
-				val[1]=gut->inlis[0]->FV[0];
+				val[0]=gut->fanins[0]->FV[1];
+				val[1]=gut->fanins[0]->FV[0];
 			} else
 			{
-				val[0]=gut->inlis[0]->GV[1];
-				val[1]=gut->inlis[0]->GV[0];
+				val[0]=gut->fanins[0]->GV[1];
+				val[1]=gut->fanins[0]->GV[0];
 			}
 			break;
 		case AND:
-			if(gut->inlis[0]->gid==ggid)
-			{copyLevel(val,gut->inlis[0]->FV);}
+			if(gut->fanins[0]->gid == ggid)
+			{copyLevel(val,gut->fanins[0]->FV);}
 			else
-			{copyLevel(val,gut->inlis[0]->GV);}
+			{copyLevel(val,gut->fanins[0]->GV);}
 
 			for(j=1;j<gut->ninput;j++)
-				if(gut->inlis[j]->gid==ggid) 
+				if(gut->fanins[j]->gid == ggid)
 				{ 
-					val[0] |= gut->inlis[j]->FV[0];
-					val[1] &= gut->inlis[j]->FV[1];
+					val[0] |= gut->fanins[j]->FV[0];
+					val[1] &= gut->fanins[j]->FV[1];
 				} else
 				{
-					val[0] |= gut->inlis[j]->GV[0];
-					val[1] &= gut->inlis[j]->GV[1];
+					val[0] |= gut->fanins[j]->GV[0];
+					val[1] &= gut->fanins[j]->GV[1];
 				}
 				break;
 		case NAND:
-			if(gut->inlis[0]->gid==ggid)
-			{copyLevel(val,gut->inlis[0]->FV);}
+			if(gut->fanins[0]->gid == ggid)
+			{copyLevel(val,gut->fanins[0]->FV);}
 			else 
-			{copyLevel(val,gut->inlis[0]->GV);}
+			{copyLevel(val,gut->fanins[0]->GV);}
 
 			for(j=1;j<gut->ninput;j++)
-				if(gut->inlis[j]->gid==ggid)
+				if(gut->fanins[j]->gid == ggid)
 				{
-					val[0] |= gut->inlis[j]->FV[0];
-					val[1] &= gut->inlis[j]->FV[1];
+					val[0] |= gut->fanins[j]->FV[0];
+					val[1] &= gut->fanins[j]->FV[1];
 				} else
 				{					
-					val[0] |= gut->inlis[j]->GV[0];
-					val[1] &= gut->inlis[j]->GV[1];
+					val[0] |= gut->fanins[j]->GV[0];
+					val[1] &= gut->fanins[j]->GV[1];
 				}
 				*v=val[0]; val[0]=val[1]; val[1]=*v;
 				break;
 		case OR:
-			if(gut->inlis[0]->gid==ggid)
-			{copyLevel(val,gut->inlis[0]->FV);}
+			if(gut->fanins[0]->gid == ggid)
+			{copyLevel(val,gut->fanins[0]->FV);}
 			else
-			{copyLevel(val,gut->inlis[0]->GV);}
+			{copyLevel(val,gut->fanins[0]->GV);}
 
 			for(j=1;j<gut->ninput;j++)
-				if(gut->inlis[j]->gid==ggid) 
+				if(gut->fanins[j]->gid == ggid)
 				{
-					val[0] &= gut->inlis[j]->FV[0];
-					val[1] |= gut->inlis[j]->FV[1];
+					val[0] &= gut->fanins[j]->FV[0];
+					val[1] |= gut->fanins[j]->FV[1];
 				} else
 				{
-					val[0] &= gut->inlis[j]->GV[0];
-					val[1] |= gut->inlis[j]->GV[1];
+					val[0] &= gut->fanins[j]->GV[0];
+					val[1] |= gut->fanins[j]->GV[1];
 				}
 				break;
 		case NOR:
-			if(gut->inlis[0]->gid==ggid)
-			{copyLevel(val,gut->inlis[0]->FV);}
+			if(gut->fanins[0]->gid == ggid)
+			{copyLevel(val,gut->fanins[0]->FV);}
 			else
-			{copyLevel(val,gut->inlis[0]->GV);}
+			{copyLevel(val,gut->fanins[0]->GV);}
 
 			for(j=1;j<gut->ninput;j++)
-				if(gut->inlis[j]->gid==ggid)
+				if(gut->fanins[j]->gid == ggid)
 				{
-					val[0] &= gut->inlis[j]->FV[0];
-					val[1] |= gut->inlis[j]->FV[1];
+					val[0] &= gut->fanins[j]->FV[0];
+					val[1] |= gut->fanins[j]->FV[1];
 				} else 
 				{ 
-					val[0] &= gut->inlis[j]->GV[0];
-					val[1] |= gut->inlis[j]->GV[1];
+					val[0] &= gut->fanins[j]->GV[0];
+					val[1] |= gut->fanins[j]->GV[1];
 				}
 				*v=val[0]; val[0]=val[1]; val[1]=*v;
 				break;
 		case XOR:
-			if(gut->inlis[0]->gid==ggid)
-			{copyLevel(val,gut->inlis[0]->FV);}
+			if(gut->fanins[0]->gid == ggid)
+			{copyLevel(val,gut->fanins[0]->FV);}
 			else
-			{copyLevel(val,gut->inlis[0]->GV);}
+			{copyLevel(val,gut->fanins[0]->GV);}
 
 			for(j=1;j<gut->ninput;j++)
 			{
-				temp=gut->inlis[j];
+				temp=gut->fanins[j];
 				*v=val[0];
 				if(temp->gid==ggid)
 				{
@@ -567,14 +567,14 @@ namespace hiatpg {
 			}
 			break;
 		case XNOR:
-			if(gut->inlis[0]->gid==ggid)
-			{copyLevel(val,gut->inlis[0]->FV);}
+			if(gut->fanins[0]->gid == ggid)
+			{copyLevel(val,gut->fanins[0]->FV);}
 			else
-			{copyLevel(val,gut->inlis[0]->GV);}
+			{copyLevel(val,gut->fanins[0]->GV);}
 
 			for(j=1;j<gut->ninput;j++)
 			{
-				temp=gut->inlis[j];
+				temp=gut->fanins[j];
 				*v=val[0];
 				if(temp->gid==ggid)
 				{
@@ -591,10 +591,10 @@ namespace hiatpg {
 		case DUMMY:
 		case PO:
 		case BUFF:
-			if(gut->inlis[0]->gid==ggid)
-			{copyLevel(val,gut->inlis[0]->FV);}
+			if(gut->fanins[0]->gid == ggid)
+			{copyLevel(val,gut->fanins[0]->FV);}
 			else
-			{copyLevel(val,gut->inlis[0]->GV);}
+			{copyLevel(val,gut->fanins[0]->GV);}
 			break;
 		default:
 			faultyGateEval(gut,val);
@@ -621,7 +621,7 @@ namespace hiatpg {
 					gut->gid=gid;
 					for(j=gut->noutput-1;j>=0;j--)
 					{
-						temp=gut->outlis[j];
+						temp=gut->fanouts[j];
 						if(!temp->changed)
 						{
 							pushGate(temp);
@@ -644,10 +644,10 @@ namespace hiatpg {
 		{
 			gut=eventList[POlevel]->pop();
 			gut->changed=false;
-			if(gut->inlis[0]->gid==groupID)
-			{copyLevel(gut->FV,gut->inlis[0]->FV);}
+			if(gut->fanins[0]->gid == groupID)
+			{copyLevel(gut->FV,gut->fanins[0]->FV);}
 			else
-			{copyLevel(gut->FV,gut->inlis[0]->GV);};
+			{copyLevel(gut->FV,gut->fanins[0]->GV);};
 			gut->gid=groupID;
 
 			if(gut->fn >= FAULTY)
@@ -745,10 +745,10 @@ namespace hiatpg {
 			node=gut->index;
 			gut->changed=false;
 
-			if(gut->inlis[0]->gid==groupID)
-			{copyLevel(fVal,gut->inlis[0]->FV);}
+			if(gut->fanins[0]->gid == groupID)
+			{copyLevel(fVal,gut->fanins[0]->FV);}
 			else
-			{copyLevel(fVal,gut->inlis[0]->GV);}
+			{copyLevel(fVal,gut->fanins[0]->GV);}
 
 			if(gut->fn >= FAULTY)
 			{
@@ -773,7 +773,7 @@ namespace hiatpg {
 				}
 			}
 
-			gut=gut->inlis[0];
+			gut=gut->fanins[0];
 
 			if((s=(gut->GV[0]^fVal[0]) | (gut->GV[1]^fVal[1]))==ALL0) continue;
 
@@ -821,7 +821,7 @@ namespace hiatpg {
 
 		for(i=0;i<gut->noutput;i++)
 		{
-			temp=gut->outlis[i];
+			temp=gut->fanouts[i];
 			if(!temp->changed) { pushGate(temp); temp->changed=true; }
 		}
 
@@ -830,15 +830,15 @@ namespace hiatpg {
 			{
 				gut=eventList[i]->pop();
 				gut->changed=false;
-				val= gut->inlis[0]->gid==gid ?
-					truthtbl1[gut->fn][gut->inlis[0]->FV[0]]:
-				truthtbl1[gut->fn][gut->inlis[0]->SGV];
+				val= gut->fanins[0]->gid == gid ?
+					truthtbl1[gut->fn][gut->fanins[0]->FV[0]] :
+				truthtbl1[gut->fn][gut->fanins[0]->SGV];
 
 				if(gut->ninput>1)
 					for(j=1;j<gut->ninput;j++)
-						val= gut->inlis[j]->gid==gid ?
-						truthtbl2[gut->fn][val][gut->inlis[j]->FV[0]] :
-				truthtbl2[gut->fn][val][gut->inlis[j]->SGV];
+						val= gut->fanins[j]->gid == gid ?
+						truthtbl2[gut->fn][val][gut->fanins[j]->FV[0]] :
+				truthtbl2[gut->fn][val][gut->fanins[j]->SGV];
 
 				if(val!=gut->SGV)
 				{
@@ -847,7 +847,7 @@ namespace hiatpg {
 					if(gut==dom) return gut;
 					for(j=0;j<gut->noutput;j++)
 					{
-						temp=gut->outlis[j];
+						temp=gut->fanouts[j];
 						if(!temp->changed) {pushGate(temp); temp->changed=true;}
 					}
 				}
@@ -864,14 +864,14 @@ namespace hiatpg {
 
 		for(i=0;i<gut->noutput;i++)
 		{
-			temp=gut->outlis[i];
-			val = (temp->inlis[0]->gid==gid) ?
-				truthtbl1[temp->fn][temp->inlis[0]->FV[0]] :
-			truthtbl1[temp->fn][temp->inlis[0]->SGV];
+			temp=gut->fanouts[i];
+			val = (temp->fanins[0]->gid == gid) ?
+				truthtbl1[temp->fn][temp->fanins[0]->FV[0]] :
+			truthtbl1[temp->fn][temp->fanins[0]->SGV];
 			for(j=1;j<temp->ninput;j++)
-				val = (temp->inlis[j]->gid==gid) ? 
-				truthtbl2[temp->fn][val][temp->inlis[j]->FV[0]] :
-			truthtbl2[temp->fn][val][temp->inlis[j]->SGV];
+				val = (temp->fanins[j]->gid == gid) ?
+				truthtbl2[temp->fn][val][temp->fanins[j]->FV[0]] :
+			truthtbl2[temp->fn][val][temp->fanins[j]->SGV];
 			if(val != temp->SGV) return gut;
 		}
 		return 0;
@@ -887,15 +887,15 @@ namespace hiatpg {
 
 		while(gut->stem<=0)
 		{
-			gut=gut->outlis[0];
-			val= gut->inlis[0]->gid==gid ? 
-				truthtbl1[gut->fn][gut->inlis[0]->FV[0]] :
-			truthtbl1[gut->fn][gut->inlis[0]->SGV];
+			gut=gut->fanouts[0];
+			val= gut->fanins[0]->gid == gid ?
+				truthtbl1[gut->fn][gut->fanins[0]->FV[0]] :
+			truthtbl1[gut->fn][gut->fanins[0]->SGV];
 			if(gut->ninput>1)
 				for(i=1;i<gut->ninput;i++)
-					val=gut->inlis[i]->gid==gid ?
-					truthtbl2[gut->fn][val][gut->inlis[i]->FV[0]] :
-			truthtbl2[gut->fn][val][gut->inlis[i]->SGV];
+					val= gut->fanins[i]->gid == gid ?
+					truthtbl2[gut->fn][val][gut->fanins[i]->FV[0]] :
+			truthtbl2[gut->fn][val][gut->fanins[i]->SGV];
 
 			if(val==gut->SGV) return 0;
 			gut->FV[0]=val ;
@@ -970,7 +970,7 @@ namespace hiatpg {
 					hopeEventList.pop_front();
 				}
 
-				event->node=gut->outlis[0]->index;
+				event->node=gut->fanouts[0]->index;
 				event->value=ALL0;
 				if(!bitb(PLEVELTBL[j][0],0)) event->value=setb(event->value,0);
 				if(!bitb(PLEVELTBL[j][1],0)) event->value=setb(event->value,1);	
@@ -1163,7 +1163,7 @@ namespace hiatpg {
 				}
 				else
 				{
-					if(gut->inlis[f->line]->SGV==k) continue;
+					if(gut->fanins[f->line]->SGV == k) continue;
 
 					if(gut->fn==DFF)
 					{
@@ -1184,7 +1184,7 @@ namespace hiatpg {
 					k=truthtbl1[gut->fn][k];
 					for(j=0;j<gut->ninput;j++) {
 						if(j!=f->line) {
-							k=truthtbl2[gut->fn][k][gut->inlis[j]->SGV];
+							k=truthtbl2[gut->fn][k][gut->fanins[j]->SGV];
 						}
 					}
 					if(k==gut->SGV)	continue;

@@ -63,7 +63,7 @@ namespace hiatpg {
 #else
 		if(line >= 0)
 		{
-			gut = gate->inlis[line];
+			gut = gate->fanins[line];
 			*fp<<gut->symbol->symbol.c_str()<<"->";
 		}
 		*fp<<gate->symbol->symbol.c_str();
@@ -128,22 +128,22 @@ namespace hiatpg {
 			if(net[i]->noutput>1)
 			{
 				gut=net[i];
-				for(j=0;j<gut->noutput;j++) gut->outlis[j]->changed++;
+				for(j=0;j<gut->noutput;j++) gut->fanouts[j]->changed++;
 				for(j=0;j<gut->noutput;j++)
 				{
-					if(gut->outlis[j]->changed>1)
+					if(gut->fanouts[j]->changed > 1)
 					{
 						list<Fault*>::iterator current,final;
 
-						current=gut->outlis[j]->pfault.begin();
-						final=gut->outlis[j]->pfault.end();
+						current=gut->fanouts[j]->pfault.begin();
+						final=gut->fanouts[j]->pfault.end();
 
 						while(current!=final)
 						{
 							f=*current;
 							if(f->line>=0)
 							{
-								if(f->gate->inlis[f->line]==gut)
+								if(f->gate->fanins[f->line] == gut)
 								{
 									f->detected=REDUNDANT;
 									current=f->gate->pfault.erase(current);		
@@ -153,13 +153,13 @@ namespace hiatpg {
 							} else current++;
 						}
 					}
-					gut->outlis[j]->changed=0;
+					gut->fanouts[j]->changed=0;
 				}
 			}
 			return n;
 	}
 
-	int FaultList::setAllFaultList(int noStem,Gate **stem)
+	int FaultList::createFaultList(int noStem, Gate **stem)
 	{
 		Gate *g;
 		Fault* p;
@@ -190,7 +190,7 @@ namespace hiatpg {
 				f=(g->fn==AND || g->fn==NAND) ? SA1 : SA0;
 				for(int j=0;j<g->ninput;j++)
 				{
-					if(g->inlis[j]->noutput>1)
+					if(g->fanins[j]->noutput > 1)
 					{
 						p=new Fault;
 						p->gate=g;
@@ -215,9 +215,9 @@ namespace hiatpg {
 			}
 
 			if(	(g->noutput==1) &&
-				(g->outlis[0]->ninput>1 || g->outlis[0]->fn==PO))
+				(g->fanouts[0]->ninput > 1 || g->fanouts[0]->fn == PO))
 			{
-				f=(g->outlis[0]->fn==OR || g->outlis[0]->fn==NOR) ? SA0 : SA1;
+				f= (g->fanouts[0]->fn == OR || g->fanouts[0]->fn == NOR) ? SA0 : SA1;
 				p=new Fault;
 				p->gate=g;
 				p->type=f;
@@ -226,7 +226,7 @@ namespace hiatpg {
 				g->pfault.push_back(p);
 
 				// case of high level gates 
-				if(g->outlis[0]->fn>PI)
+				if(g->fanouts[0]->fn > PI)
 				{
 					p=new Fault;
 					p->gate=g;
@@ -250,7 +250,7 @@ namespace hiatpg {
 				p->line=OUTFAULT;
 				nfault++;
 				g->pfault.push_back(p);
-			} else if( g->fn==PO && g->inlis[0]->noutput>1)
+			} else if( g->fn==PO && g->fanins[0]->noutput > 1)
 			{
 				p=new Fault();
 				p->gate=g;
@@ -295,7 +295,7 @@ namespace hiatpg {
 					n++;
 				}
 				for(int j=0;j<g->ninput;j++)
-					if(g->inlis[j]->noutput==1) stack->push(g->inlis[j]);
+					if(g->fanins[j]->noutput == 1) stack->push(g->fanins[j]);
 			}
 			stem[i]->dfault=new Fault*[n];
 		}
@@ -307,7 +307,7 @@ namespace hiatpg {
 
 	void FaultList::setParity(Gate *gut,int par) {gut->changed=inverseParity[parityOfGate[gut->fn]][par];}
 	void FaultList::mark(Gate *gut) {gut->changed+=2;}
-	bool FaultList::isStem(Gate *gut) {return ((gut->noutput != 1) || (gut->outlis[0]->fn==DFF));}
+	bool FaultList::isStem(Gate *gut) {return ((gut->noutput != 1) || (gut->fanouts[0]->fn == DFF));}
 	bool FaultList::isNotMarked(Gate *gut) {return gut->changed<2;}
 
 	void FaultList::insertFault(Gate *gut,int line,fault_type type)
@@ -346,8 +346,8 @@ namespace hiatpg {
 				insertFault(gut,OUTFAULT,SA1);
 			} else
 			{
-				to=gut->outlis[0];
-				if(to->fn==DUMMY) to=to->outlis[0];
+				to=gut->fanouts[0];
+				if(to->fn==DUMMY) to=to->fanouts[0];
 				switch(to->fn)
 				{
 				case AND:
@@ -367,8 +367,8 @@ namespace hiatpg {
 			}
 		} else 
 		{
-			from=gut->inlis[line];
-			if(from->fn==DUMMY || from->fn==PO) from=from->inlis[0];
+			from=gut->fanins[line];
+			if(from->fn==DUMMY || from->fn==PO) from=from->fanins[0];
 			if(from->noutput>1)
 				switch(gut->fn)
 			{
@@ -404,7 +404,7 @@ namespace hiatpg {
 			defaultLineFault(gut,OUTFAULT);
 			for(int ix=0;ix<gut->ninput;ix++)
 			{
-				temp=gut->inlis[ix];
+				temp=gut->fanins[ix];
 				if(isStem(temp))
 					defaultLineFault(gut,ix);
 				else
@@ -435,8 +435,8 @@ namespace hiatpg {
 		for(int i=0;i<child->ninput;i++)
 		{
 			// preWORK for input lines
-			if(isNotMarked(child->inlis[i]))
-				DFSpo(child,child->inlis[i]);
+			if(isNotMarked(child->fanins[i]))
+				DFSpo(child,child->fanins[i]);
 		}
 	}
 
@@ -587,7 +587,7 @@ namespace hiatpg {
 				if((to=h->pnode->index)<0) Error::fatalerror(FAULTERROR);
 				gut=net[to];
 				for(int i=0;i<gut->ninput;i++)
-					if(gut->inlis[i]->index==from) {line=i; break;};
+					if(gut->fanins[i]->index == from) { line=i; break;};
 			} else if(s[0]=='/')
 			{
 				if(s[1]=='1') type=SA1; else type=SA0;
@@ -629,7 +629,7 @@ namespace hiatpg {
 					current++;
 				}
 				for(int j=0;j<gut->ninput;j++)
-					if(gut->inlis[j]->noutput==1) stack->push(gut->inlis[j]);
+					if(gut->fanins[j]->noutput == 1) stack->push(gut->fanins[j]);
 			}
 			stem[i]->dfault=new Fault*[n];
 		}	
@@ -680,7 +680,7 @@ namespace hiatpg {
 				if((to=h->pnode->index)<0) Error::fatalerror(FAULTERROR);
 				gut=net[to];
 				for(i=0;i<gut->ninput;i++)
-					if(gut->inlis[i]->index==from) { line=i; break; }
+					if(gut->fanins[i]->index == from) { line=i; break; }
 			} else if(s[0]=='/')
 			{
 				if(s[1]=='1') type=SA1; else type=SA0;

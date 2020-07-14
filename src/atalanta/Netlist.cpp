@@ -99,7 +99,7 @@ namespace hiatpg {
 		} else testv->ovct = NULL;
 		if ( myCurrFault != NULL ) {
 			if(myCurrFault->line >= 0)
-				testv->fltLineHash = myCurrFault->gate->inlis[myCurrFault->line]->symbol->key;
+				testv->fltLineHash = myCurrFault->gate->fanins[myCurrFault->line]->symbol->key;
 			else testv->fltLineHash = -1;
 			testv->fltHash = myCurrFault->gate->symbol->key;
 			testv->type = myCurrFault->type % 2;
@@ -181,7 +181,7 @@ namespace hiatpg {
 				
 				depth=-1;
 				for(j=0;j<net[i]->ninput;j++)
-					depth=MAX(depth,net[i]->inlis[j]->cont0);
+					depth=MAX(depth,net[i]->fanins[j]->cont0);
 				net[i]->cont0=depth+1;
 			}
 			net[i]->cont1=net[i]->cont0;
@@ -196,7 +196,7 @@ namespace hiatpg {
 			{
 				depth=-1;
 				for(j=0;j<net[i]->noutput;j++)
-					depth=MAX(depth,net[i]->outlis[j]->dpo);
+					depth=MAX(depth,net[i]->fanouts[j]->dpo);
 				net[i]->dpo=depth+1;
 			}
 		}

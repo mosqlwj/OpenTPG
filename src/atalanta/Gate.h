@@ -52,9 +52,9 @@ namespace hiatpg {
 		int index;
 		logic fn;				// type of gate
 		short ninput;			// number of fanins
-		Gate **inlis;			// fan-in list
+		Gate **fanins;			// fan-in list
 		short noutput;			// number of fan-outs
-		Gate **outlis;			// fan-out list
+		Gate **fanouts;			// fan-out list
 		short dpi, dpo;			// depth from PIs & POs
 		status changed;			// flag for event queue operations
 		HashData *symbol;		// pointer to the symbol table
