@@ -62,7 +62,7 @@ function install_hadoop()
     fi
 
     #   安装配置和入口配置脚本
-    cp  -rf "${SELFDIR}/etc-tmpl/"/*    "${INSTALL_DIR}/hadoop/etc"
+    cp  -rf "${SELFDIR}/tmpl-hadoop-etc/"/*    "${INSTALL_DIR}/hadoop/etc"
     if [[ ! -f "${INSTALL_DIR}/settings.sh" ]]; then
         cp  -rf "${SELFDIR}/settings.sh"    "${INSTALL_DIR}"
     fi
@@ -114,7 +114,7 @@ function main()
     fi
     INSTALL_DIR=$(realpath "${INSTALL_DIR}")
 
-    #   清楚 install 目录下的所有内容
+    #   清除 install 目录下的所有内容
     rm -rf   "${INSTALL_DIR}"
     if [[ -d "${INSTALL_DIR}" ]]; then
         echo    "Clean install dir failed: '${INSTALL_DIR}'"
