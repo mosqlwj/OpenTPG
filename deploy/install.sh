@@ -62,8 +62,10 @@ function install_hadoop()
     fi
 
     #   安装配置和入口配置脚本
-    cp  -rf "${SELFDIR}/etc/"/*         "${INSTALL_DIR}/hadoop/etc" &&  \
-    cp  -rf "${SELFDIR}/settings.sh"    "${INSTALL_DIR}"
+    cp  -rf "${SELFDIR}/etc-tmpl/"/*    "${INSTALL_DIR}/hadoop/etc"
+    if [[ ! -f "${INSTALL_DIR}/settings.sh" ]]; then
+        cp  -rf "${SELFDIR}/settings.sh"    "${INSTALL_DIR}"
+    fi
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Setup configurations of hadoop failed(${RESULT}): '${SELFDIR}/etc' -> '${INSTALL_DIR}/hadoop/etc'"
