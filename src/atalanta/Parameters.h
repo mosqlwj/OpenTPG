@@ -13,7 +13,7 @@ namespace hiatpg {
 	const int HASHSIZE=19999;   // symbol table size, prime 
 	//const int SPAREGATES=100;   // should be larger than SIZE_OF_FUC*2
 	const int MAXINTEGER=99999999;
-	const int INFINITY=99999999;
+	const int INFINITE=99999999;
 
 	// For ISCAS85 circuits
 	const int MAXLINE=12000;	// size of a line

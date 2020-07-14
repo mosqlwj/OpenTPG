@@ -42,12 +42,12 @@ namespace hiatpg {
 		Stack** eventList;
 
 		void scheduleOutput(Gate *gate) {
-			for(int i=0;i<gate->noutput;i++) pushEvent(gate->outlis[i]);
+			for(int i=0;i<gate->noutput;i++) pushEvent(gate->fanouts[i]);
 		}
 		void scheduleInput(Gate *gate,int i) 
 		{
-			pushEvent(gate->inlis[i]);
-			scheduleOutput(gate->inlis[i]);
+			pushEvent(gate->fanins[i]);
+			scheduleOutput(gate->fanins[i]);
 		}
 		void pushGate(Gate *gut) {eventList[gut->dpi]->push(gut);};
 
@@ -98,7 +98,7 @@ namespace hiatpg {
 
 	public:
 		FanNet():unjustified(1000),initObj(1000),currObj(1000),fanObj(1000),finalObj(1000),
-			dFrontier(1000),dyID(INFINITY), noFaultSim('n'), learnMode('n'), genAllPat('n') {
+			dFrontier(1000),dyID(INFINITE), noFaultSim('n'), learnMode('n'), genAllPat('n') {
 			unjustified.push(0);
 		};
 

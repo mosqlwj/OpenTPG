@@ -145,23 +145,17 @@ namespace hiatpg {
         status leval(Gate* gate);
         void learn(int maxDpi);
         void learnNode(int maxDpi,int node,level val);
-        int  simulateLFSR();
-        int  simulateTest();
         int  simulateVector(string vct);
-        void simulateAllVectors();
         void storeLearn(Gate *gut,level val);
         void generateTest();
 
         string octToBin(string *c);
-        int generatePolyAndSeed(void);
         void OpenFile(fstream *file, streambuf **buf, string filename, ios_base::open_mode);
 
     public:
         AtpgEngine();
-        int run(int argc, char **argv);
         int run();
         void setParams();
-
         int testGen(int levels, int maxBits, int nStem, Gate **stem, int maxBackTrack, int phase, int *nRedundant, int *nOverBackTrack, int *nBackTrack, int *nTest, int *nPacket, int *nBit, double *fanTime);
     };
 }
