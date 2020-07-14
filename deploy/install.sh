@@ -36,7 +36,7 @@ function check_java()
     fi
 
     local java_version=$(java -version 2>&1 | grep 'java version' | awk '{print $3}' | sed 's/"//g')
-    if [[ "${java_version}" != '1.8.0_251' ]]; then
+    if [[ $(echo "${java_version}" | sed 's/_[0-9]*//g') != '1.8.0' ]]; then
         echo    "JDK is installed but version is not matched:"
         echo    "    JAVA_HOME is '${JAVA_HOME}'"
         echo    "    jdk-version is '${java_version}'"
