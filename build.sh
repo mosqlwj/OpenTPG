@@ -105,10 +105,14 @@ function do_format()
 #   $2  team
 function do_package
 {
-    local team="$2"
-    if [[ "${team}" == "" ]]; then
+    local buildteam="$2"
+    if [[ "${buildteam}" == "" ]]; then
         echo    "The 'package' action need a team name for the next parameter"
         return  3
+    fi
+    if [[ ! "${buildteam}" =~ [A-Za-z][A-Za-z0-9]* ]]; then
+        echo    "The name of the team is invalid, expect the name match with '[A-Za-z][A-Za-z0-9]'"
+        return  7
     fi
 
     #   如果竞赛团队指定了打包脚本,那么直接调用该脚本
@@ -118,28 +122,37 @@ function do_package
     fi
 
     #   如果没有指定该脚本,那么采用默认打包行为
-    local arch=$(arch)
-    local os=$(uname -s)
-    if [[ "${os}" == "" ]]; then
-        echo    "Unknown operation system: '${os}'"
+    local buildos=$(uname -s)
+    if [[ "${buildos}" == "" ]]; then
+        echo    "Unknown operation system: '${buildos}'"
         return  4
     fi
 
-    if [[ "${arch}" == "" ]]; then
+    local buildarch=$(arch)
+    if [[ "${buildarch}" == "" ]]; then
         echo    "Unknown arch of this system."
         return  5
     fi
 
-    local pkgname="atpg-os-${team}"
-    local pkgdir="${PROJECT_ROOT}/.tmp-package/${pkgname}"
+    local buildtime=$(date +'%y%m%d%H%M%S')
+    local buildcommitid=$(git rev-parse HEAD)
+    local buildgccversion=$(gcc --version)
+    local installname="hiatpg-${buildteam}"
+    local pkgname="${installname}-${buildos}-${buildtime}"
+    local pkgdir="${PROJECT_ROOT}/.tmp-package/${installname}"
     rm -rf      "${PROJECT_ROOT}/.tmp-package"
-    rm -rf      "${PROJECT_ROOT}/${pkgname}.tar.gz"
-    mkdir -p    "${pkgdir}"                                     &&  \
-    cp -rf      "${PROJECT_ROOT}/deplpy/*"       "${pakdir}"    &&  \
-    cp -rf      "${PROJECT_ROOT}/bin/*"          "${pakdir}"    &&  \
+    rm -rf      "${PROJECT_ROOT}"/hiatpg-"${buildteam}"-"${buildos}"-*
+    mkdir -p    "${pkgdir}"                                                         &&  \
+    echo        "BUILD_TEAM :   '${buildteam}'"         >>  "${pkgdir}/.properties" &&  \
+    echo        "BUILD_TIME :   '${buildtime}'"         >>  "${pkgdir}/.properties" &&  \
+    echo        "BUILD_ARCH :   '${buildarch}'"         >>  "${pkgdir}/.properties" &&  \
+    echo        "BUILD_ID   :   '${buildcommitid}'"     >>  "${pkgdir}/.properties" &&  \
+    echo        "BUILD_GCC  :   '${buildgccversion}'"   >>  "${pkgdir}/.properties" &&  \
+    cp -rf      "${PROJECT_ROOT}/deploy"/*      "${pkgdir}"     &&  \
+    cp -rf      "${PROJECT_ROOT}/bin"           "${pkgdir}"     &&  \
     cd          "${PROJECT_ROOT}/.tmp-package"                  &&  \
-    tar cvf     "${pkgname}"                                    &&  \
-    gzip        "${pkgname}"                                    &&  \
+    tar cvf     "${pkgname}.tar"        "${installname}"        &&  \
+    gzip        "${pkgname}.tar"                                &&  \
     mv          "${pkgname}.tar.gz"     "${PROJECT_ROOT}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
@@ -147,6 +160,9 @@ function do_package
         return  6
     fi
 
+    rm -rf "${PROJECT_ROOT}/.tmp-package"
+
+    echo    "Create package success: '${PROJECT_ROOT}/${pkgname}.tar.gz'"
     return  0
 }
 
