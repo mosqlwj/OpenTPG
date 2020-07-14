@@ -55,5 +55,16 @@ y
 t
 yy
 tt
+yyy
+ttt
+
+*.tar
+*.gz
+*.zip
+*.bz2
+
+test*/
+tmp/
+*.log
 
 
