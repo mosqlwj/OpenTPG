@@ -62,7 +62,7 @@ function install_hadoop()
     fi
 
     #   安装配置和入口配置脚本
-    cp  -rf "${SELFDIR}/tmpl-hadoop-etc/"/*    "${INSTALL_DIR}/hadoop/etc"
+    cp  -rf "${SELFDIR}/tmpl-hadoop-etc"/*    "${INSTALL_DIR}/hadoop/etc"
     if [[ ! -f "${INSTALL_DIR}/settings.sh" ]]; then
         cp  -rf "${SELFDIR}/settings.sh"    "${INSTALL_DIR}"
     fi
