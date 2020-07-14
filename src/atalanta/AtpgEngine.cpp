@@ -206,9 +206,6 @@ namespace hiatpg {
                 names[i]=faultList[i]->gate->fanins[faultList[i]->line]->symbol->symbol;
                 names[i]+="->";
             }
-            /*names[i]+="i:";
-            names[i]+=faultList[i]->gate->index+'0';
-            names[i]+=";";*/
             names[i]+=faultList[i]->gate->symbol->symbol;
             names[i]+=fault2str[faultList[i]->type];
         }
@@ -228,10 +225,13 @@ namespace hiatpg {
     {
         for(int i=0;i<fault;i++) mask[i]=faultList[i]->detected;
 
+        fstream faultFile("c17.flist");
+        faultFile << "#name type detect" << endl;
+
         // print all fault status
         for (int i = 0; i < fault; i++) {
             auto pCurrentFault = faultList[i];
-            cout << pCurrentFault->gate->symbol->symbol << " " << pCurrentFault->type << " " << pCurrentFault->detected << endl;
+            faultFile << pCurrentFault->gate->symbol->symbol << " " << pCurrentFault->type << " " << pCurrentFault->detected << endl;
         }
     }
 
