@@ -115,8 +115,8 @@ function main()
     INSTALL_DIR=$(realpath "${INSTALL_DIR}")
 
     #   清楚 install 目录下的所有内容
-    rm -rf   "${INSTALL_DIR}"
-    if [[ -d "${INSTALL_DIR}" ]]; then
+    rm -rf   "${INSTALL_DIR}"/hadoop
+    if [[ -d "${INSTALL_DIR}"/hadoop ]]; then
         echo    "Clean install dir failed: '${INSTALL_DIR}'"
         return  6
     fi
