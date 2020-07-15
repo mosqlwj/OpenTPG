@@ -40,7 +40,7 @@ namespace hiatpg {
 
 		// clear freach
 		freeGates->resetFreach();
-		for(i=0;i<numberOfPrimaryInputs;i++) net[i]->freach=false;
+		for(i=0;i<numberOfPrimaryInputs;i++) gates[i]->freach=false;
 
 		// faulty gates
 		j=faultyGates->getCount()-1;
@@ -98,7 +98,7 @@ namespace hiatpg {
 		}
 
 		// schedule of freach
-		for(i=0;i<numberOfPrimaryInputs;i++) net[i]->freach=true;
+		for(i=0;i<numberOfPrimaryInputs;i++) gates[i]->freach=true;
 
 		nsStack=-1;
 
@@ -123,10 +123,10 @@ namespace hiatpg {
 		// clear changed ochange and set freach
 		for(i=0;i<numberOfGates;i++)
 		{
-			net[i]->changed=false;
-			net[i]->freach=false;
-			net[i]->cobserve=ALL0;
-			net[i]->observe=ALL0;
+            gates[i]->changed=false;
+            gates[i]->freach=false;
+            gates[i]->cobserve=ALL0;
+            gates[i]->observe=ALL0;
 		}
 
 		// clear all sets
@@ -140,11 +140,11 @@ namespace hiatpg {
 		// initialize all stacks 
 		for(i=0;i<numberOfGates;i++)
 		{
-			p=net[i];
+			p=gates[i];
 			if(p->pfault.size()>0) faultyGates->push(p);
 			if(p->noutput != 1) evalGates->push(p);
 		}
-		for(i=numberOfGates-1;i>=numberOfPrimaryInputs;i--) freeGates->push(net[i]);
+		for(i=numberOfGates-1;i>=numberOfPrimaryInputs;i--) freeGates->push(gates[i]);
 
 		// schedule freach
 		nsStack=-1;
@@ -202,7 +202,7 @@ namespace hiatpg {
 		stack->push(gut);
 		pScheduleOutput(gut);
 
-		if(gut->fn!=PO) observe=ALL0;
+		if(gut->type != PO) observe=ALL0;
 		if(dominator!=NULL) maxDpi=dominator->dpi+1;
 
 		// evaluate event list
@@ -224,7 +224,7 @@ namespace hiatpg {
 					restoreFaultFreeValue();
 					return observe | (val ^ gut->output1);
 				}
-				if(gut->fn==PO) observe |= val^gut->output1;
+				if(gut->type == PO) observe |= val ^ gut->output1;
 
 				if(val!=gut->output1)
 				{
@@ -240,12 +240,12 @@ namespace hiatpg {
 
 	void ParralelPattern::pGateEval1(Gate *gate,unsigned *val)
 	{
-		*val= (gate->fn==NOT || gate->fn==NAND || gate->fn==NOR) ? ~gate->fanins[0]->output1 : gate->fanins[0]->output1;
+		*val= (gate->type == NOT || gate->type == NAND || gate->type == NOR) ? ~gate->fanins[0]->output1 : gate->fanins[0]->output1;
 	}
 
 	void ParralelPattern::pGateEval2(Gate *gate,unsigned *val)
 	{
-		switch(gate->fn)
+		switch(gate->type)
 		{
 		case AND: *val= gate->fanins[0]->output1 & gate->fanins[1]->output1; break;
 		case NAND: *val=~(gate->fanins[0]->output1 & gate->fanins[1]->output1); break;
@@ -258,7 +258,7 @@ namespace hiatpg {
 
 	void ParralelPattern::pGateEval3(Gate *gate,unsigned *val)
 	{
-		switch(gate->fn)
+		switch(gate->type)
 		{
 		case AND: *val= gate->fanins[0]->output1 & gate->fanins[1]->output1 & gate->fanins[2]->output1; break;
 		case NAND: *val=~(gate->fanins[0]->output1 & gate->fanins[1]->output1 & gate->fanins[2]->output1); break;
@@ -270,7 +270,7 @@ namespace hiatpg {
 	void ParralelPattern::pGateEval4(Gate *gate,unsigned *val)
 	{
 		int cnt;
-		switch(gate->fn)
+		switch(gate->type)
 		{
 		case AND:
 			*val= gate->fanins[0]->output1 & gate->fanins[1]->output1 & gate->fanins[2]->output1 & gate->fanins[3]->output1;
@@ -292,7 +292,7 @@ namespace hiatpg {
 	void ParralelPattern::pGateEvalX(Gate *gate,unsigned *val)
 	{
 		int cnt;
-		switch(gate->fn)
+		switch(gate->type)
 		{ 
 		case AND:
 			*val= gate->fanins[0]->output1 & gate->fanins[1]->output1 & gate->fanins[2]->output1;
@@ -338,13 +338,13 @@ namespace hiatpg {
 		if((val=g->output1^(pf->type==SA0 ? ALL0 : ALL1))==ALL0) return val;
 		if(gut->ninput==2)
 		{
-			if(gut->fn<=NAND) return  val&(pf->line==0 ? gut->fanins[1]->output1 : gut->fanins[0]->output1);
-			else if(gut->fn<=NOR) return val&(pf->line==0 ? ~gut->fanins[1]->output1 : ~gut->fanins[0]->output1);
+			if(gut->type <= NAND) return val & (pf->line == 0 ? gut->fanins[1]->output1 : gut->fanins[0]->output1);
+			else if(gut->type <= NOR) return val & (pf->line == 0 ? ~gut->fanins[1]->output1 : ~gut->fanins[0]->output1);
 			else return val;
 		}
 
 		g->output1=gut->fanins[0]->output;
-		switch(gut->fn)
+		switch(gut->type)
 		{
 		case AND:
 		case NAND:
@@ -470,7 +470,7 @@ namespace hiatpg {
 				g=gut->fanins[0];
 				if( g->noutput==1 && g->freach)
 				{
-					switch(gut->fn)
+					switch(gut->type)
 					{
 					case AND:
 					case NAND:
@@ -489,7 +489,7 @@ namespace hiatpg {
 				g=gut->fanins[1];
 				if( g->noutput==1 && g->freach)
 				{
-					switch(gut->fn)
+					switch(gut->type)
 					{
 					case AND:
 					case NAND:
@@ -548,7 +548,7 @@ namespace hiatpg {
 			if(!gut->freach) continue;
 			gut->observe=allOne;
 
-			if(gut->fn==PO)
+			if(gut->type == PO)
 				nDetect+=ftpReverse(gut,&updateFlag,true,nbit,tArray);
 			else {
 				if((gut->observe=ftpReverse(gut,&updateFlag,false,nbit,tArray))!=ALL0)
@@ -592,7 +592,7 @@ namespace hiatpg {
 			if(!gut->uPath.empty())
 			{
 				g=gut->uPath.front();
-				gut->observe &= g->observe & net[g->fos]->observe;
+				gut->observe &= g->observe & gates[g->fos]->observe;
 			}
 
 			if(gut->observe!=ALL0)
@@ -651,11 +651,11 @@ namespace hiatpg {
 		// set freach from each faulty gate to its stem
 		for(i=0;i<=faultyGates->getCount()-1;i++)
 		{
-			gut=net[(*faultyGates)[i]->fos];
+			gut=gates[(*faultyGates)[i]->fos];
 			while(!gut->changed)
 			{
 				gut->changed=true;
-				if(!gut->uPath.empty()) gut=net[gut->uPath.front()->fos];
+				if(!gut->uPath.empty()) gut=gates[gut->uPath.front()->fos];
 			}
 		}
 
@@ -687,8 +687,8 @@ namespace hiatpg {
 		for(i=0;i<=freeGates->getCount()-1;i++) {
 			(*freeGates)[i]->freach=false;
 		}
-		for(i=0;i<numberOfPrimaryInputs;i++) 
-			net[i]->freach=false;
+		for(i=0;i<numberOfPrimaryInputs;i++)
+            gates[i]->freach=false;
 
 		// faulty gates
 		j=faultyGates->getCount()-1;
@@ -760,7 +760,7 @@ namespace hiatpg {
 			gut=(*evalGates)[i];
 			if(!gut->freach) continue;
 			gut->observe=allOne;
-			if(gut->fn==PO)
+			if(gut->type == PO)
 				nDetect+=ftpReverse(gut,&updateFlag,true,nbit,tArray);
 			else
 				if((gut->observe=ftpReverse(gut,&updateFlag,false,nbit,tArray))!=ALL0)
@@ -801,7 +801,7 @@ namespace hiatpg {
 			if(!gut->uPath.empty())
 			{
 				g=gut->uPath.front();
-				gut->observe &= g->observe & net[g->fos]->observe;
+				gut->observe &= g->observe & gates[g->fos]->observe;
 			}
 
 			if(gut->observe!=ALL0)

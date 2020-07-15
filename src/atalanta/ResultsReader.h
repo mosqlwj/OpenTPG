@@ -12,7 +12,7 @@ namespace hiatpg {
 
 	class ResultsReader  
 	{
-		//Gate **net;	/////////////////////////initialize somewhere
+		//Gate **gates;	/////////////////////////initialize somewhere
 		Netlist *net;
 
 		bool checkBit(level word,int n) {return (word & (1<<n)) != 0;};

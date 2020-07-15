@@ -35,10 +35,10 @@ namespace hiatpg {
 
 		for(i=0;i<numberOfGates;i++)
 		{
-			gut=net[i];
+			gut=gates[i];
 			gut->changed=false;
 			if(gut->noutput!=1) numberOfStems++;
-			else if(gut->fanouts[0]->fn == DFF) numberOfStems++;
+			else if(gut->fanouts[0]->type == DFF) numberOfStems++;
 			gut->stem=0;
 		}
 
@@ -47,7 +47,7 @@ namespace hiatpg {
 
 		for(i=0;i<numberOfFlipFlops;i++)
 		{	// PPI
-			gut=net[flipFlops[i]];
+			gut=gates[flipFlops[i]];
 			if(gut->noutput!=1)
 			{
 				gut->stem=++numberOfStems;
@@ -58,8 +58,8 @@ namespace hiatpg {
 
 		for(i=0;i<numberOfGates;i++)
 		{
-			gut=net[i];
-			if(gut->fn==DFF || gut->fn==PO) continue;
+			gut=gates[i];
+			if(gut->type == DFF || gut->type == PO) continue;
 			if(gut->noutput!=1)
 			{
 				gut->stem=++numberOfStems;
@@ -71,7 +71,7 @@ namespace hiatpg {
 		rstem=numberOfStems;
 		for(i=0; i<numberOfPrimaryOutputs; i++)
 		{	// PO
-			gut=net[primaryOut[i]];
+			gut=gates[primaryOut[i]];
 			gut->stem=++numberOfStems;
 			stems[numberOfStems].gate=gut->index;
 			stems[numberOfStems].dominator=-1;
@@ -79,7 +79,7 @@ namespace hiatpg {
 
 		for(i=0; i<numberOfFlipFlops; i++)
 		{	// PPO
-			gut=net[flipFlops[i]]->fanins[0];
+			gut=gates[flipFlops[i]]->fanins[0];
 			if(gut->noutput!=1) continue;
 			gut->stem=++numberOfStems;
 			stems[numberOfStems].gate=gut->index;
@@ -91,7 +91,7 @@ namespace hiatpg {
 		// FFR region analysis 
 		for(i=numberOfStems;i>0;i--)
 		{
-			gut=net[stems[i].gate];
+			gut=gates[stems[i].gate];
 			for(j=0;j<gut->ninput;j++)
 				if(gut->fanins[j]->stem <= 0) stack1->push(gut->fanins[j]);
 			while(!stack1->isEmpty()) 
@@ -113,7 +113,7 @@ namespace hiatpg {
 
 		for(i=numberOfStems;i>0;i--)
 		{
-			gut=net[stems[i].gate];
+			gut=gates[stems[i].gate];
 			stems[i].fault[0]=stems[i].fault[1]=stems[i].fault[2]=0;
 			if(i>rstem) continue;
 
@@ -134,13 +134,13 @@ namespace hiatpg {
 					if(gCount<=0) continue;
 					if(--gCount==0) { stems[i].dominator=gut->index; break; }
 
-					if(gut->noutput==0 || gut->fn==DFF) gCount=0;
+					if(gut->noutput==0 || gut->type == DFF) gCount=0;
 					else if(gut->noutput>1)
 					{
 						if(stems[gut->stem].dominator==-1) gCount=0;
 						else
 						{
-							dominator=net[stems[gut->stem].dominator];
+							dominator=gates[stems[gut->stem].dominator];
 							if(!dominator->changed)
 							{
 								pushGate(dominator);
@@ -168,12 +168,12 @@ namespace hiatpg {
 		// Check-up criteria
 		for(i=numberOfStems;i>0;i--)
 		{
-			gut=net[stems[i].gate];
+			gut=gates[stems[i].gate];
 			if(gut->noutput<=1) continue;
 			if(stems[i].dominator>0)
 			{
-				gut=net[stems[i].gate];
-				stems[i].dominator=stems[abs(net[stems[i].dominator]->stem)].gate;
+				gut=gates[stems[i].gate];
+				stems[i].dominator=stems[abs(gates[stems[i].dominator]->stem)].gate;
 				//			if((j=sizeSR(gut))<100)
 				stems[i].checkup=1;
 				continue;
@@ -186,7 +186,7 @@ namespace hiatpg {
 				if(gut->fanouts[j]->ninput == 1)
 				{
 					gCount=1;
-					if(gut->fanouts[j]->fn == DFF) gCount=1;
+					if(gut->fanouts[j]->type == DFF) gCount=1;
 
 					/*				for(k=0;k<gut->outlis[j]->noutput;k++)
 					{
@@ -223,7 +223,7 @@ namespace hiatpg {
 
 		for(i=0;i<numberOfGates;i++)
 		{
-			gut=net[i];
+			gut=gates[i];
 			gut->SGV=X;
 			setx(&gut->GV[0],&gut->GV[1]);
 			setx(&gut->FV[0],&gut->FV[1]);
@@ -275,16 +275,16 @@ namespace hiatpg {
 		Event* event;	
 		int val[2];
 
-		if(gate->fn < FAULTY)
+		if(gate->type < FAULTY)
 		{
-			sut[bit].fn=gate->fn;
+			sut[bit].gateType=gate->type;
 			sut[bit].papa = -1;
 		} else
 		{
-			sut[bit].fn=sut[gate->fn-FAULTY].fn;
-			sut[bit].papa=gate->fn-FAULTY;
+			sut[bit].gateType=sut[gate->type - FAULTY].gateType;
+			sut[bit].papa= gate->type - FAULTY;
 		}
-		gate->fn=bit+FAULTY;
+		gate->type= static_cast<GateType>(bit + FAULTY);
 
 		// Flip-Flops 
 		list<Event*>::iterator current,final;
@@ -297,7 +297,7 @@ namespace hiatpg {
 			hopeEventList.push_back(*current);
 			event=*current;
 
-			gut=net[event->node];
+			gut=gates[event->node];
 			if(gut->gid!=groupID)
 			{
 				gut->gid=groupID;
@@ -391,8 +391,8 @@ namespace hiatpg {
 		level v;
 		Gate *temp;
 
-		fn=gut->fn;
-		for(bit=fn-FAULTY,gut->fn=sut[bit].fn; bit>=0; bit=sut[bit].papa)
+		fn=gut->type;
+		for(bit=fn-FAULTY,gut->type=sut[bit].gateType; bit >= 0; bit=sut[bit].papa)
 		{
 			if(sut[bit].line>=0)
 			{
@@ -428,7 +428,7 @@ namespace hiatpg {
 
 		feval(gut,val,&v,groupID);
 
-		for(bit=fn-FAULTY,gut->fn=fn; bit>=0; bit=sut[bit].papa)
+		for(bit=fn-FAULTY,gut->type= static_cast<GateType>(fn); bit >= 0; bit=sut[bit].papa)
 		{
 			if(sut[bit].line>=0)
 			{
@@ -462,7 +462,7 @@ namespace hiatpg {
 	{
 		Gate *temp;
 		int j;
-		switch(gut->fn)
+		switch(gut->type)
 		{
 		case NOT:
 			if(gut->fanins[0]->gid == ggid)
@@ -650,9 +650,9 @@ namespace hiatpg {
 			{copyLevel(gut->FV,gut->fanins[0]->GV);};
 			gut->gid=groupID;
 
-			if(gut->fn >= FAULTY)
+			if(gut->type >= FAULTY)
 			{
-				for(i=gut->fn-FAULTY; i>=0; i=sut[i].papa)
+				for(i= gut->type - FAULTY; i >= 0; i=sut[i].papa)
 				{
 					switch(sut[i].type)
 					{
@@ -750,9 +750,9 @@ namespace hiatpg {
 			else
 			{copyLevel(fVal,gut->fanins[0]->GV);}
 
-			if(gut->fn >= FAULTY)
+			if(gut->type >= FAULTY)
 			{
-				for(i=gut->fn-FAULTY; i>=0; i=sut[i].papa)
+				for(i= gut->type - FAULTY; i >= 0; i=sut[i].papa)
 				{
 					if(sut[i].line<0) continue;
 					switch(sut[i].type)
@@ -831,14 +831,14 @@ namespace hiatpg {
 				gut=eventList[i]->pop();
 				gut->changed=false;
 				val= gut->fanins[0]->gid == gid ?
-					truthtbl1[gut->fn][gut->fanins[0]->FV[0]] :
-				truthtbl1[gut->fn][gut->fanins[0]->SGV];
+					truthtbl1[gut->type][gut->fanins[0]->FV[0]] :
+				truthtbl1[gut->type][gut->fanins[0]->SGV];
 
 				if(gut->ninput>1)
 					for(j=1;j<gut->ninput;j++)
 						val= gut->fanins[j]->gid == gid ?
-						truthtbl2[gut->fn][val][gut->fanins[j]->FV[0]] :
-				truthtbl2[gut->fn][val][gut->fanins[j]->SGV];
+						truthtbl2[gut->type][val][gut->fanins[j]->FV[0]] :
+				truthtbl2[gut->type][val][gut->fanins[j]->SGV];
 
 				if(val!=gut->SGV)
 				{
@@ -866,12 +866,12 @@ namespace hiatpg {
 		{
 			temp=gut->fanouts[i];
 			val = (temp->fanins[0]->gid == gid) ?
-				truthtbl1[temp->fn][temp->fanins[0]->FV[0]] :
-			truthtbl1[temp->fn][temp->fanins[0]->SGV];
+				truthtbl1[temp->type][temp->fanins[0]->FV[0]] :
+			truthtbl1[temp->type][temp->fanins[0]->SGV];
 			for(j=1;j<temp->ninput;j++)
 				val = (temp->fanins[j]->gid == gid) ?
-				truthtbl2[temp->fn][val][temp->fanins[j]->FV[0]] :
-			truthtbl2[temp->fn][val][temp->fanins[j]->SGV];
+				truthtbl2[temp->type][val][temp->fanins[j]->FV[0]] :
+			truthtbl2[temp->type][val][temp->fanins[j]->SGV];
 			if(val != temp->SGV) return gut;
 		}
 		return 0;
@@ -889,13 +889,13 @@ namespace hiatpg {
 		{
 			gut=gut->fanouts[0];
 			val= gut->fanins[0]->gid == gid ?
-				truthtbl1[gut->fn][gut->fanins[0]->FV[0]] :
-			truthtbl1[gut->fn][gut->fanins[0]->SGV];
+				truthtbl1[gut->type][gut->fanins[0]->FV[0]] :
+			truthtbl1[gut->type][gut->fanins[0]->SGV];
 			if(gut->ninput>1)
 				for(i=1;i<gut->ninput;i++)
 					val= gut->fanins[i]->gid == gid ?
-					truthtbl2[gut->fn][val][gut->fanins[i]->FV[0]] :
-			truthtbl2[gut->fn][val][gut->fanins[i]->SGV];
+					truthtbl2[gut->type][val][gut->fanins[i]->FV[0]] :
+			truthtbl2[gut->type][val][gut->fanins[i]->SGV];
 
 			if(val==gut->SGV) return 0;
 			gut->FV[0]=val ;
@@ -906,7 +906,7 @@ namespace hiatpg {
 		{
 			if((j=stems[gut->stem].dominator)>0)
 			{	//dominator
-				if((temp=sSimToDominator(gut,net[j],gid))!=0)
+				if((temp=sSimToDominator(gut, gates[j], gid)) != 0)
 				{
 					sStem=gut->stem;
 					sSval=gut->FV[0];
@@ -931,7 +931,7 @@ namespace hiatpg {
 		if(gut!=0)
 		{
 			j=gut->FV[0];
-			if(gut->fn==PO)
+			if(gut->type == PO)
 			{	//PO
 				if((k=whatIs(gut->GV[0],gut->GV[1])) != X)
 				{
@@ -955,7 +955,7 @@ namespace hiatpg {
 				{
 					stems[sStem].flag[sSval]=SIMULATED;
 					stems[sStem].fault[sSval]=f;
-					stack1->push(net[stems[sStem].gate]);
+					stack1->push(gates[stems[sStem].gate]);
 				}
 
 				gut=0;
@@ -982,7 +982,7 @@ namespace hiatpg {
 				{
 					stems[sStem].flag[sSval]=SIMULATED;
 					stems[sStem].fault[sSval]=f;
-					stack1->push(net[stems[sStem].gate]);
+					stack1->push(gates[stems[sStem].gate]);
 				}
 				gut=0;
 
@@ -1034,7 +1034,7 @@ namespace hiatpg {
 						{
 							stems[sStem].flag[sSval]=SIMULATED;
 							stems[sStem].fault[sSval]=g;
-							stack1->push(net[stems[sStem].gate]);
+							stack1->push(gates[stems[sStem].gate]);
 						}
 						gut=0;
 						break;
@@ -1047,7 +1047,7 @@ namespace hiatpg {
 						stems[sStem].fault[sSval]=f;
 						sStems[++nsStems].stem=sStem;
 						sStems[nsStems].val=sSval;
-						stack1->push(net[stems[sStem].gate]);
+						stack1->push(gates[stems[sStem].gate]);
 					}
 					gut=0;
 				}
@@ -1165,7 +1165,7 @@ namespace hiatpg {
 				{
 					if(gut->fanins[f->line]->SGV == k) continue;
 
-					if(gut->fn==DFF)
+					if(gut->type == DFF)
 					{
 						if(hopeEventList.size()==0)
 							event=new Event;
@@ -1181,10 +1181,10 @@ namespace hiatpg {
 					}
 
 					//try {
-					k=truthtbl1[gut->fn][k];
+					k=truthtbl1[gut->type][k];
 					for(j=0;j<gut->ninput;j++) {
 						if(j!=f->line) {
-							k=truthtbl2[gut->fn][k][gut->fanins[j]->SGV];
+							k=truthtbl2[gut->type][k][gut->fanins[j]->SGV];
 						}
 					}
 					if(k==gut->SGV)	continue;
@@ -1216,7 +1216,7 @@ namespace hiatpg {
 					stems[sStem].fault[sSval]=f;
 					sStems[++nsStems].stem=sStem;
 					sStems[nsStems].val=sSval;
-					stack1->push(net[stems[sStem].gate]);
+					stack1->push(gates[stems[sStem].gate]);
 				}	
 			} else
 			{
@@ -1292,7 +1292,7 @@ namespace hiatpg {
 
 				for(i=0;i<nFut;i++)
 				{
-					sut[i].gate->fn=sut[i].fn;
+					sut[i].gate->type=sut[i].gateType;
 
 					if(sut[i].event.size()!=0) continue;
 					stems[sut[i].gate->stem].flag[sut[i].type]=SIMULATED;
@@ -1353,7 +1353,7 @@ namespace hiatpg {
 			if(groupID>MAXINTEGER)
 			{
 				groupID=0;
-				for(i=0;i<numberOfGates;i++) net[i]->gid=0;
+				for(i=0;i<numberOfGates;i++) gates[i]->gid=0;
 			}
 
 			return nDetected;

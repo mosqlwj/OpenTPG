@@ -33,7 +33,7 @@ namespace hiatpg {
 		vector<int> primaryOut;
 		int *flipFlops;
 
-		vector<Gate *> net; //Gate **net;
+		vector<Gate*> gates; //Gate **gates;
 
 		Stack *freeGates;
         Stack *faultyGates;
@@ -68,7 +68,7 @@ namespace hiatpg {
 			headlines.clear();  //headlines=0;
 
 			primaryIn.clear(); //primaryIn = 0;
-			net.clear(); //net=0;
+			gates.clear(); //gates=0;
 
 			faultyGates=evalGates=activeStems=0;
 			dynamicStack=stack=stack1=stack2=0;

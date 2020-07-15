@@ -73,12 +73,12 @@ namespace hiatpg {
 		
 		for(j = 0; j < numberOfPrimaryInputs; j++)
 		{
-			gut=net[iarray[j]];
+			gut=gates[iarray[j]];
 			iv[j] = levelToString[logiclevel(gut->GV[0],gut->GV[1],0)][0];
 		}
 		iv[j] = 0;
 		for(j = 0; j < numberOfPrimaryOutputs; j++) {
-			gut=net[oarray[j]];
+			gut=gates[oarray[j]];
 			ov[j] = levelToString[logiclevel(gut->GV[0],gut->GV[1],0)][0];
 		}
 		ov[j] = 0;
@@ -122,7 +122,7 @@ namespace hiatpg {
 		s->resize(numberOfPrimaryInputs, '0');
 		
 		for(int j=0;j<numberOfPrimaryInputs;j++)
-			if(checkBit(net[j]->output1,nth_bit)) 
+			if(checkBit(gates[j]->output1, nth_bit))
 				(*s)[j] = '1'; 
 			
 			return s;
@@ -134,7 +134,7 @@ namespace hiatpg {
 		s->resize(numberOfPrimaryOutputs, '0');
 		
 		for(int j=0;j<numberOfPrimaryOutputs;j++)
-			if(checkBit(net[primaryOut[j]]->output1,nth_bit)) 
+			if(checkBit(gates[primaryOut[j]]->output1, nth_bit))
 				(*s)[j] = '1';
 			return s;
 	}
@@ -170,7 +170,7 @@ namespace hiatpg {
 		// cont0 and cont1
 		for(i=0;i<numberOfGates;i++) 
 		{
-			if(net[i]->isFree() || net[i]->isHead()) net[i]->cont0=0;
+			if(gates[i]->isFree() || gates[i]->isHead()) gates[i]->cont0=0;
 			else
 			{
 				if(i==200)
@@ -180,24 +180,24 @@ namespace hiatpg {
 				
 				
 				depth=-1;
-				for(j=0;j<net[i]->ninput;j++)
-					depth=MAX(depth,net[i]->fanins[j]->cont0);
-				net[i]->cont0=depth+1;
+				for(j=0; j < gates[i]->ninput; j++)
+					depth=MAX(depth, gates[i]->fanins[j]->cont0);
+                gates[i]->cont0= depth + 1;
 			}
-			net[i]->cont1=net[i]->cont0;
+            gates[i]->cont1=gates[i]->cont0;
 		}
 		
 		/* depth from output */
 		for(i=numberOfGates-1;i>=0;i--)
 		{
-			if(net[i]->fn==PO)
-				net[i]->dpo=0;
+			if(gates[i]->type == PO)
+                gates[i]->dpo=0;
 			else
 			{
 				depth=-1;
-				for(j=0;j<net[i]->noutput;j++)
-					depth=MAX(depth,net[i]->fanouts[j]->dpo);
-				net[i]->dpo=depth+1;
+				for(j=0; j < gates[i]->noutput; j++)
+					depth=MAX(depth, gates[i]->fanouts[j]->dpo);
+                gates[i]->dpo= depth + 1;
 			}
 		}
 	}
@@ -215,10 +215,10 @@ namespace hiatpg {
 		
 		
 		for(i=0; i<numberOfPrimaryInputs; i++)
-			iv[i] = dLevelToString[net[primaryIn[i]]->output][0];
+			iv[i] = dLevelToString[gates[primaryIn[i]]->output][0];
 		iv[i] = 0;
 		for(i=0; i<numberOfPrimaryOutputs; i++)
-			ov[i] = dLevelToString[net[primaryOut[i]]->output][0];
+			ov[i] = dLevelToString[gates[primaryOut[i]]->output][0];
 		ov[i] = 0;
 		addTestVector( &iv, &ov, no );
 		

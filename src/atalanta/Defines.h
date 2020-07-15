@@ -16,24 +16,21 @@ namespace hiatpg {
 	const int DEFAULTMODE=0;
 	const int CHECKPOINTMODE=1;
 
-#ifdef INCLUDE_HOPE
-#define		output		FV[0]
-#define		output1		FV[1]
-#endif
-	
-	const int AND=0;
-	const int NAND=1;
-	const int OR=2;
-	const int NOR=3;
-	const int PI=4;
-	const int XOR=5;
-	const int XNOR=6;
-	const int DFF=7;
-	const int DUMMY=8;
-	const int BUFF=9;
-	const int NOT=10;
-	const int PO=20;
-	const int FAULTY=50;
+	enum GateType {
+        AND=0,
+        NAND=1,
+        OR=2,
+        NOR=3,
+        PI=4,
+        XOR=5,
+        XNOR=6,
+        DFF=7,
+        DUMMY=8,
+        BUFF=9,
+        NOT=10,
+        PO=20,
+        FAULTY=50
+	};
 
 	enum Value {
 		ZERO,

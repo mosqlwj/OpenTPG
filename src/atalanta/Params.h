@@ -116,15 +116,18 @@ namespace hiatpg {
             string pureName = benchFile.substr(0, benchFile.rfind(".bench"));
             string patternFile = pureName + ".pat";
             string reportFile = pureName + ".report";
-//            string faultFile = pureName + ".flist";
+
             bench.open(benchFile, ios::in);
             pat.open(patternFile, ios::out);
             report.open(reportFile, ios::out);
-//            fault.open(faultFile, ios::out);
             setBenchStream(bench.rdbuf());
             setSPatternStream(pat.rdbuf());
             setReportStream(report.rdbuf());
+
+//            string faultFile = pureName + ".flist";
+//            fault.open(faultFile, ios::out);
 //            setfaultStream(fault.rdbuf());
+
             setWTestMode(1);
             setCctMode('9');
             setIseed(23);

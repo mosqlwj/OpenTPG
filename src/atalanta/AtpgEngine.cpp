@@ -142,10 +142,10 @@ int hiatpg::AtpgEngine::testGen(int levels, int maxBits, int nStem, Gate **stem,
             // print test cube
             unordered_map<int, int> testcube;
             for(j=0;j<numberOfPrimaryInputs;j++) {
-                int32_t value = net[j]->output;
+                int32_t value = gates[j]->output;
                 if (value != X) {
 //                    cout << "GateId: " << j << endl;
-//                    cout << "Value: " << net[j]->output << endl;
+//                    cout << "Value: " << gates[j]->output << endl;
                     testcube[j] = value;
                 }
             }
@@ -154,10 +154,10 @@ int hiatpg::AtpgEngine::testGen(int levels, int maxBits, int nStem, Gate **stem,
             fillPatterns(fillMode,*nPacket,*nBit);
             for(j=0;j<numberOfPrimaryInputs;j++)
             {
-                net[j]->changed=false;
-                net[j]->freach=false;
-                net[j]->cobserve=ALL0;
-                net[j]->output=net[j]->output1;
+                gates[j]->changed=false;
+                gates[j]->freach=false;
+                gates[j]->cobserve=ALL0;
+                gates[j]->output=gates[j]->output1;
             }
 
             if(++(*nBit)==maxBits) {*nBit=0; (*nPacket)++;}
@@ -342,7 +342,7 @@ namespace hiatpg {
         if(gut->ninput < 2) return;
         if(gut->numzero != lid) return;
 
-        switch(gut->fn)
+        switch(gut->type)
         {
             case AND: case NOR: if(val==ZERO) return; break;
             case OR: case NAND: if(val==ONE) return; break;
@@ -404,20 +404,20 @@ namespace hiatpg {
 
         // backward implication
 
-        switch(gate->fn)
+        switch(gate->type)
         {
             case AND:
             case NAND:
             case OR:
             case NOR:
-                v1 = (gate->fn==AND || gate->fn==NOR) ? ONE : ZERO;
+                v1 = (gate->type == AND || gate->type == NOR) ? ONE : ZERO;
                 if(gate->output==v1)
                 {
                     gate->changed=true;
                     for(i=0;i<gate->ninput;i++)
                         if(p[i]->output==X)
                         {
-                            p[i]->output=a_truthtbl1[gate->fn][v1];
+                            p[i]->output=a_truthtbl1[gate->type][v1];
                             stack->push(p[i]);
                             scheduleInput(gate,i);
                         }
@@ -430,7 +430,7 @@ namespace hiatpg {
 
                     if(numX==1)
                     {
-                        p[j]->output = a_truthtbl1[gate->fn][gate->output];
+                        p[j]->output = a_truthtbl1[gate->type][gate->output];
                         gate->changed=true;
                         stack->push(p[j]);
                         scheduleInput(gate,j);
@@ -442,7 +442,7 @@ namespace hiatpg {
             case BUFF:
             case NOT:
             case PO:
-                p[0]->output=a_truthtbl1[gate->fn][gate->output];
+                p[0]->output=a_truthtbl1[gate->type][gate->output];
                 gate->changed=true;
                 stack->push(p[0]);
                 scheduleInput(gate,0);
@@ -457,7 +457,7 @@ namespace hiatpg {
                 if(numX==1)
                 {
                     v1=(j==0) ? p[1]->output : p[0]->output;
-                    val=a_truthtbl1[gate->fn][gate->output];
+                    val=a_truthtbl1[gate->type][gate->output];
                     if(v1==ONE) val=a_truthtbl1[NOT][val];
                     p[j]->output=val;
                     gate->changed=true;
@@ -512,7 +512,7 @@ namespace hiatpg {
     void AtpgEngine::learnNode(int maxDpi,int node,level val)
     {
         int ix;
-        Gate *gut=net[node];
+        Gate *gut=gates[node];
 
         snode=node;
         gut->output=val;
@@ -559,7 +559,7 @@ namespace hiatpg {
 
         for(ix=0; ix<numberOfGates;ix++)
         {
-            gut=net[ix];
+            gut=gates[ix];
             gut->changed=false;
             gut->numzero=-1;
             gut->output=X;
@@ -569,11 +569,11 @@ namespace hiatpg {
 
         for(ix=0; ix<numberOfGates; ix++)
         {
-            gut=net[ix];
+            gut=gates[ix];
             if(gut->isFree()) continue;
             if(gut->ninput==1) continue;
 
-            switch(gut->fn)
+            switch(gut->type)
             {
                 case AND:
                 case NOR:
@@ -605,10 +605,10 @@ namespace hiatpg {
 
         for(i=0;i<numberOfGates;i++)
         {
-            net[i]->changed=false;
-            net[i]->freach=numberOfGates;
-            if(net[i]->dpi>=PPOlevel)
-                cout<<"Error: gut="<<net[i]->symbol->symbol<<" dpi="<<net[i]->dpi<<endl;
+            gates[i]->changed=false;
+            gates[i]->freach=numberOfGates;
+            if(gates[i]->dpi >= PPOlevel)
+                cout << "Error: gut=" << gates[i]->symbol->symbol << " dpi=" << gates[i]->dpi << endl;
         }
 
         FanNet::setDominator(levels);
@@ -850,7 +850,7 @@ namespace hiatpg {
 //            int k= mnPacket + 1;
 //            while(--k>=0) {
 //                for(int j=0;j<numberOfPrimaryInputs;j++)
-//                    net[j]->output1=net[j]->output=testVectors[k][j];
+//                    gates[j]->output1=gates[j]->output=testVectors[k][j];
 //            }
 //            for(i=mnBit-1;i>=0;i--) {
 //                getTestVector(i);
@@ -1016,7 +1016,7 @@ namespace hiatpg {
 
         start = clock();
 
-        // reset net status and init simulation
+        // reset gates status and init simulation
         initFS();
 
         generateTest();
@@ -1091,11 +1091,11 @@ namespace hiatpg {
         faultMode = p->getFaultMode();
         if(p->getFaultStream() != NULL) {
             faultStream = p->getFaultStream();
-        }
-        else {
+        } else {
             if(p->getFaultFile().length()) {
                 OpenFile(&faultFile, &faultStream, p->getFaultFile(), ios::in);
-            }}
+            }
+        }
         //faultFile = p->getFaultFile();
         if(p->getFaultStream() != NULL) {
             faultStream = p->getFaultStream();
