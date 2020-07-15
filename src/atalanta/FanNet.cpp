@@ -57,7 +57,7 @@ namespace hiatpg {
 		int *levelPopulation=new int[maxlevel+2];
 		memset(levelPopulation,0,sizeof(int)*(maxlevel+2));
 
-		for(i=0;i<numberOfGates;i++) levelPopulation[net[i]->dpi]++;
+		for(i=0;i<numberOfGates;i++) levelPopulation[gates[i]->dpi]++;
 
 		eventList=new Stack *[maxlevel+2];
 		for(i=0;i<maxlevel+2;i++) eventList[i]=new Stack(levelPopulation[i]);
@@ -78,7 +78,7 @@ namespace hiatpg {
 		{
 			for(i=0;i<numberOfFlipFlops;i++)
 			{
-				gut=net[flipFlops[i]];
+				gut=gates[flipFlops[i]];
 				switch(initialMode)
 				{
 				case '0': val=0; break;
@@ -96,7 +96,7 @@ namespace hiatpg {
 		} else 
 			for(i=0;i<numberOfFlipFlops;i++)
 			{
-				gut=net[primaryIn[i]];
+				gut=gates[primaryIn[i]];
 				val=gut->fanins[0]->SGV;
 				if(val)
 				{
@@ -110,7 +110,7 @@ namespace hiatpg {
 			// schedule event in primary inputs 
 			for(i=0;i<numberOfPrimaryInputs;i++)
 			{
-				gut=net[primaryIn[i]];
+				gut=gates[primaryIn[i]];
 				if(gut->SGV!=inVal[i])
 				{
 					gut->SGV=inVal[i];
@@ -129,15 +129,15 @@ namespace hiatpg {
 
 					if(gut->ninput==1)
 					{
-						gut->SGV=val=truthtbl1[gut->fn][gut->fanins[0]->SGV];
+						gut->SGV=val=truthtbl1[gut->type][gut->fanins[0]->SGV];
 						gut->GV[0]=TABLE[val][0];
 						gut->GV[1]=TABLE[val][1];
 						scheduleGate(gut);
 					} else
 					{
-						val=truthtbl1[gut->fn][gut->fanins[0]->SGV];
+						val=truthtbl1[gut->type][gut->fanins[0]->SGV];
 						for(int j=1;j<gut->ninput;j++)
-							val=truthtbl2[gut->fn][val][gut->fanins[j]->SGV];
+							val=truthtbl2[gut->type][val][gut->fanins[j]->SGV];
 						if(gut->SGV!=val)
 						{
 							gut->SGV=val;
@@ -169,22 +169,22 @@ namespace hiatpg {
 		if(genAllPat=='y')
 		{
 			for(i=0;i<numberOfGates;i++)
-				net[i]->ltype= (net[i]->fn==PI) ? HEAD : BOUND;
+                gates[i]->ltype= (gates[i]->type == PI) ? HEAD : BOUND;
 			headCount=numberOfPrimaryInputs;
 		} else
 			for(i=0;i<numberOfGates;i++)
 			{
-				net[i]->ltype=LFREE;
-				if(net[i]->fn != PI)
-					for(j=0;j<net[i]->ninput;j++)
-						if(!net[i]->fanins[j]->isFree()) net[i]->ltype=BOUND;
-				if(net[i]->isFree() && net[i]->noutput != 1) net[i]->ltype=HEAD;
-				if(net[i]->isHead()) headCount++;
-				if(net[i]->isBound())
-					for(j=0;j<net[i]->ninput;j++)
-						if(net[i]->fanins[j]->isFree())
+                gates[i]->ltype=LFREE;
+				if(gates[i]->type != PI)
+					for(j=0; j < gates[i]->ninput; j++)
+						if(!gates[i]->fanins[j]->isFree()) gates[i]->ltype=BOUND;
+				if(gates[i]->isFree() && gates[i]->noutput != 1) gates[i]->ltype=HEAD;
+				if(gates[i]->isHead()) headCount++;
+				if(gates[i]->isBound())
+					for(j=0; j < gates[i]->ninput; j++)
+						if(gates[i]->fanins[j]->isFree())
 						{
-							net[i]->fanins[j]->ltype=HEAD;
+                            gates[i]->fanins[j]->ltype=HEAD;
 							headCount++;
 						}
 
@@ -194,7 +194,7 @@ namespace hiatpg {
 			for(i=0;i<numberOfPrimaryInputs;i++) headlines[i]=-1;
 			j=headCount;
 			for(i=numberOfGates-1;i>=0;i--) {
-				if(net[i]->isHead()) 
+				if(gates[i]->isHead())
 					headlines[--j]=i;
 			}
 
@@ -216,25 +216,25 @@ namespace hiatpg {
 		// define line type (free,head,bound) and distance from input
 		for(i=0;i<numberOfGates;i++)
 		{
-			net[i]->ltype=LFREE;
+			gates[i]->ltype=LFREE;
 			depth=-1;
-			if(net[i]->fn != PI)
-				for(j=0;j<net[i]->ninput;j++)
+			if(gates[i]->fn != PI)
+				for(j=0;j<gates[i]->ninput;j++)
 				{
-					if(!net[i]->inlis[j]->isFree()) net[i]->ltype=BOUND;
-					depth=MAX(net[i]->inlis[j]->dpi,depth);
+					if(!gates[i]->inlis[j]->isFree()) gates[i]->ltype=BOUND;
+					depth=MAX(gates[i]->inlis[j]->dpi,depth);
 				}
-				if(net[i]->isFree() && net[i]->noutput!=1) net[i]->ltype=HEAD;
-				net[i]->dpi=depth+1;
-				if(net[i]->isHead()) headCount++;
-				if(net[i]->isBound())
-					for(j=0;j<net[i]->ninput;j++)
-						if(net[i]->inlis[j]->isFree())
+				if(gates[i]->isFree() && gates[i]->noutput!=1) gates[i]->ltype=HEAD;
+				gates[i]->dpi=depth+1;
+				if(gates[i]->isHead()) headCount++;
+				if(gates[i]->isBound())
+					for(j=0;j<gates[i]->ninput;j++)
+						if(gates[i]->inlis[j]->isFree())
 						{
-							net[i]->inlis[j]->ltype=HEAD;
+							gates[i]->inlis[j]->ltype=HEAD;
 							headCount++;
 						}
-						maxDpi=MAX(net[i]->dpi,maxDpi);
+						maxDpi=MAX(gates[i]->dpi,maxDpi);
 		}
 
 		// allocate memory for event_listt and reset event counter
@@ -248,9 +248,9 @@ namespace hiatpg {
 
 		for(i=numberOfGates-1;i>0;i--)
 		{
-			if(net[i]->isHead()) headlines[--j]=i;
+			if(gates[i]->isHead()) headlines[--j]=i;
 			// count the number of gates in each depth
-			depths[net[i]->dpi]++;
+			depths[gates[i]->dpi]++;
 		}
 
 		// allocate space for each event list
@@ -297,7 +297,7 @@ namespace hiatpg {
 
 		for(i=numberOfGates-1;i>=0;i--)
 		{
-			gut=net[i];
+			gut=gates[i];
 			if(gut->noutput<=1) {
 				gut->uPath.clear();
 			}
@@ -367,7 +367,7 @@ namespace hiatpg {
 
 		for(i=numberOfGates-1;i>=0;i--)
 		{
-			gut=net[i];
+			gut=gates[i];
 			if(gut->uPath.size()==0) continue;
 			count=0;
 			gut->freach=i;
@@ -397,7 +397,7 @@ namespace hiatpg {
 						for(k=0;k<gut->ninput;k++)
 						{
 							g=gut->fanins[k];
-							if(g->freach==i) net[i]->uPath.push_back(g);
+							if(g->freach==i) gates[i]->uPath.push_back(g);
 						}
 						break;
 					}
@@ -425,7 +425,7 @@ namespace hiatpg {
 
 		j=0;
 		for(i=0;i<numberOfGates;i++)
-			if(net[i]->noutput != 1) stem[j++]=net[i];
+			if(gates[i]->noutput != 1) stem[j++]=gates[i];
 		stack->clear();
 		for(i=0;i<nstem;i++)
 		{
@@ -467,13 +467,13 @@ namespace hiatpg {
 		// clear changed ochange and set freach
 		for(i=0;i<numberOfGates;i++)
 		{
-			if(net[i]->isFree()) 
-				net[i]->changed=true;
+			if(gates[i]->isFree())
+                gates[i]->changed=true;
 			else
-				net[i]->changed=false;
-			net[i]->freach=false;
-			net[i]->output=X;
-			net[i]->xpath=1;
+                gates[i]->changed=false;
+            gates[i]->freach=false;
+            gates[i]->output=X;
+            gates[i]->xpath=1;
 		}
 
 		// clear all sets
@@ -513,12 +513,12 @@ namespace hiatpg {
 		while(!stack->isEmpty())
 		{
 			p=stack->pop();
-			value=(p->fn==AND || p->fn==NAND) ? ONE : ZERO;
+			value= (p->type == AND || p->type == NAND) ? ONE : ZERO;
 			for(i=0;i<p->ninput;i++)
 				if(p->fanins[i]->output == X)
 					p->fanins[i]->output=value;
 				else
-					p->output=a_truthtbl1[p->fn][p->fanins[i]->output];
+					p->output=a_truthtbl1[p->type][p->fanins[i]->output];
 			if(p->isFree()) stack->push(p->fanouts[0]);
 		}
 
@@ -546,7 +546,7 @@ namespace hiatpg {
 			//input line fault
 			faultyLine->output= v2==D ? ONE : ZERO; //faulty line;
 			stack->push(faultyLine);
-			switch(p->fn)
+			switch(p->type)
 			{
 			case AND:
 			case NAND:
@@ -561,7 +561,7 @@ namespace hiatpg {
                         else if(p->fanins[i]->output != ONE) return -1;
 					}
 
-                    p->output= p->fn==NAND ? aNot(v2) : v2;
+                    p->output= p->type == NAND ? aNot(v2) : v2;
                     stack->push(p);
                     break;
 			case OR:
@@ -577,7 +577,7 @@ namespace hiatpg {
                         else if(p->fanins[i]->output != ZERO) return -1;
 					}
 
-                    p->output=p->fn==NOR ? aNot(v2) : v2;
+                    p->output= p->type == NOR ? aNot(v2) : v2;
                     stack->push(p);
                     break;
 			case NOT:
@@ -614,16 +614,16 @@ namespace hiatpg {
 				{
 					p->changed=true;
 					v1= v2==D ? ONE : ZERO;
-					p->fanins[0]->output=a_truthtbl1[p->fn][v1];
+					p->fanins[0]->output=a_truthtbl1[p->type][v1];
 					stack->push(p->fanins[0]);
 					scheduleInput(p,0);
 					last=p->fanins[0]->dpi;
 				}
-				else if( (v2==D &&    (p->fn==AND  || p->fn==NOR)) ||
-					(v2==DBAR && (p->fn==NAND || p->fn==OR )))
+				else if((v2==D &&    (p->type == AND || p->type == NOR)) ||
+                        (v2==DBAR && (p->type == NAND || p->type == OR )))
 				{
 					p->changed=true;
-					v1=(p->fn==AND || p->fn==NAND) ? ONE : ZERO;
+					v1= (p->type == AND || p->type == NAND) ? ONE : ZERO;
 					for(i=0;i<p->ninput;i++)
 						if(p->fanins[i]->output == X)
 						{
@@ -653,7 +653,7 @@ namespace hiatpg {
 		// sensitize the current gate */
 		if(gate!=faultyGate)
 		{
-			v1= (gate->fn==AND || gate->fn==NAND) ? ONE : (gate->fn==OR || gate->fn==NOR) ? ZERO : X;
+			v1= (gate->type == AND || gate->type == NAND) ? ONE : (gate->type == OR || gate->type == NOR) ? ZERO : X;
 			if(v1!=X)
 				for(i=0;i<gate->ninput;i++)
 					if(gate->fanins[i]->output == X)
@@ -674,7 +674,7 @@ namespace hiatpg {
 			else if(curr->uPath.size()==0) break;
 			else next=curr->uPath.front();
 
-			v1=(next->fn==AND || next->fn==NAND) ? ONE : (next->fn==OR || next->fn==NOR) ? ZERO : X;
+			v1= (next->type == AND || next->type == NAND) ? ONE : (next->type == OR || next->type == NOR) ? ZERO : X;
 			if(v1!=X)
 			{
 				if(curr->noutput==1)
@@ -747,15 +747,15 @@ namespace hiatpg {
 		}
 
 		if(g->ninput==1) 
-			val=a_truthtbl1[g->fn][val];
+			val=a_truthtbl1[g->type][val];
 		else
 		{
-			f=(g->fn==NAND) ? AND : (g->fn==NOR) ? OR : g->fn;		
+			f= (g->type == NAND) ? AND : (g->type == NOR) ? OR : g->type;
 			for(i=0;i<j;i++)
 				val=a_truthtbl2[f][val][g->fanins[i]->output];
 			for(++i;i<g->ninput;i++)
 				val=a_truthtbl2[f][val][g->fanins[i]->output];
-			if(g->fn==NAND||g->fn==NOR) val=aNot(val);
+			if(g->type == NAND || g->type == NOR) val=aNot(val);
 		}
 
 
@@ -771,16 +771,16 @@ namespace hiatpg {
 	void FanNet::gateEval1(Gate *gate,level *val,logic *f)
 	{
 		if(gate->ninput==1) 
-			*val=a_truthtbl1[gate->fn][gate->fanins[0]->output];
+			*val=a_truthtbl1[gate->type][gate->fanins[0]->output];
 		else if(gate->ninput==2)
-			*val=a_truthtbl2[gate->fn][gate->fanins[0]->output][gate->fanins[1]->output];
+			*val=a_truthtbl2[gate->type][gate->fanins[0]->output][gate->fanins[1]->output];
 		else
 		{
-			*f=(gate->fn==NAND) ? AND : (gate->fn==NOR) ? OR : gate->fn;
+			*f= (gate->type == NAND) ? AND : (gate->type == NOR) ? OR : gate->type;
 			*val=a_truthtbl2[*f][gate->fanins[0]->output][gate->fanins[1]->output];
 			for(int i=2;i<gate->ninput;i++)
 				*val=a_truthtbl2[*f][*val][gate->fanins[i]->output];
-			if(gate->fn==NAND || gate->fn==NOR) *val=aNot(*val);
+			if(gate->type == NAND || gate->type == NOR) *val=aNot(*val);
 		}
 	}
 
@@ -814,8 +814,8 @@ namespace hiatpg {
 						if(numX==1)
 						{	// backward implication
 							val=(gate->output==D) ? ONE : (gate->output==DBAR) ? ZERO : gate->output;
-							val=a_truthtbl1[gate->fn][val];
-							switch(gate->fn)
+							val=a_truthtbl1[gate->type][val];
+							switch(gate->type)
 							{
 							case XOR:
 							case XNOR:
@@ -869,20 +869,20 @@ namespace hiatpg {
 		if(val!=X) return CONFLICT;		// conflict 
 
 		// backward implication 
-		switch(gate->fn)
+		switch(gate->type)
 		{
 		case AND:
 		case NAND:
 		case OR:
 		case NOR:
-			v1 = (gate->fn==AND || gate->fn==NOR) ? ONE : ZERO;
+			v1 = (gate->type == AND || gate->type == NOR) ? ONE : ZERO;
 			if(gate->output==v1)
 			{
 				gate->changed=true;
 				for(i=0;i<gate->ninput;i++)
 					if(p[i]->output==X)
 					{
-						p[i]->output=a_truthtbl1[gate->fn][v1];
+						p[i]->output=a_truthtbl1[gate->type][v1];
 						stack->push(p[i]);
 						scheduleInput(gate,i);
 					}
@@ -897,7 +897,7 @@ namespace hiatpg {
 				}
 					if(numX==1)
 					{
-						p[j]->output = a_truthtbl1[gate->fn][gate->output];
+						p[j]->output = a_truthtbl1[gate->type][gate->output];
 						gate->changed=true;
 						stack->push(p[j]);
 						scheduleInput(gate,j);
@@ -915,7 +915,7 @@ namespace hiatpg {
 		case BUFF:
 		case NOT:
 		case PO:
-			p[0]->output=a_truthtbl1[gate->fn][gate->output];
+			p[0]->output=a_truthtbl1[gate->type][gate->output];
 			gate->changed=true;
 			stack->push(p[0]);
 			scheduleInput(gate,0);
@@ -928,7 +928,7 @@ namespace hiatpg {
 				if(numX==1)
 				{
 					v1=(j==0) ? p[1]->output : p[0]->output;
-					val=a_truthtbl1[gate->fn][gate->output];
+					val=a_truthtbl1[gate->type][gate->output];
 					if(v1==ONE) val=a_truthtbl1[NOT][val];
 					p[j]->output=val;
 					gate->changed=true;
@@ -1046,7 +1046,7 @@ namespace hiatpg {
 		}
 
 		// base step --- if an X-path exist, return TRUE
-		if((gate->fn==PO) || (gate->xpath==2))
+		if((gate->type == PO) || (gate->xpath == 2))
 		{
 			gate->xpath=2;
 			return true;
@@ -1129,7 +1129,7 @@ namespace hiatpg {
 					aCurrObj->setLine(0,1);
 					break;
 				default:	//dFrontier
-					switch(aCurrObj->fn)
+					switch(aCurrObj->type)
 					{
 					case AND:
 					case NOR: 
@@ -1167,7 +1167,7 @@ namespace hiatpg {
 					headObj->push(aCurrObj);	//box 5
 				else
 				{	//box 9,10,11
-					switch(aCurrObj->fn)
+					switch(aCurrObj->type)
 					{
 					case AND:
 						n0=aCurrObj->numzero;
@@ -1368,8 +1368,8 @@ namespace hiatpg {
 				*backtrace=false;	//box 7
 				for(i=0;i<numberOfGates;i++)
 				{	// initialization
-					net[i]->numzero=0;
-					net[i]->numone=0;
+					gates[i]->numzero=0;
+                    gates[i]->numone=0;
 				}
 				initObj.clear();
 				currObj.clear();
@@ -1510,7 +1510,7 @@ namespace hiatpg {
 					if(unjustified[i]->output==X) unjustified.deleteItem(i);
 
 				//reset xpath
-				for(i=faultyGate->index;i<numberOfGates;i++) net[i]->xpath=1;
+				for(i=faultyGate->index;i<numberOfGates;i++) gates[i]->xpath=1;
 				return true;
 			}
 			return false;
@@ -1542,14 +1542,14 @@ namespace hiatpg {
 			if(p->output==D) p->output=ONE;
 			else if(p->output==DBAR) p->output=ZERO;
 
-			if(!(p->fn==PI || p->output==X))
+			if(!(p->type == PI || p->output == X))
 			{
 				currObj.clear();
 				currObj.push(p);
 				while(!currObj.isEmpty())
 				{
 					p=currObj.pop();
-					switch(p->fn)
+					switch(p->type)
 					{
 					case PI: break;
 					case XOR:
@@ -1573,12 +1573,12 @@ namespace hiatpg {
 					case PO:
 					case BUFF:
 					case NOT:
-						p->fanins[0]->output=a_truthtbl1[p->fn][p->output];
+						p->fanins[0]->output=a_truthtbl1[p->type][p->output];
 						currObj.push(p->fanins[0]);
 						break;
 					default: // and,or,nor,nand
-						value=a_truthtbl1[p->fn][p->output];
-						gtype=(p->fn==AND || p->fn==NAND) ? ONE : ZERO;
+						value=a_truthtbl1[p->type][p->output];
+						gtype= (p->type == AND || p->type == NAND) ? ONE : ZERO;
 						if(value==gtype)
 							for(j=0;j<p->ninput;j++)
 							{
@@ -1608,7 +1608,7 @@ namespace hiatpg {
 		for(i=0;i<numberOfPrimaryInputs;i++)
 		{
 			if(headlines[i]<0) break;
-			p=net[headlines[i]];
+			p=gates[headlines[i]];
 			if(p==cf->gate && of!=0)
 			{
 				restoreFaults(of);
@@ -1617,14 +1617,14 @@ namespace hiatpg {
 
 			if(p->output==D) p->output=ONE;
 			else if(p->output==DBAR) p->output=ZERO;
-			if(!(p->fn==PI) || p->output==X)
+			if(!(p->type == PI) || p->output == X)
 			{
 				currObj.clear();
 				currObj.push(p);
 				while(!currObj.isEmpty())
 				{
 					p=currObj.pop();
-					switch(p->fn)
+					switch(p->type)
 					{
 					case PI: break;
 					case XOR:
@@ -1648,12 +1648,12 @@ namespace hiatpg {
 					case PO:
 					case BUFF:
 					case NOT:
-						p->fanins[0]->output=a_truthtbl1[p->fn][p->output];
+						p->fanins[0]->output=a_truthtbl1[p->type][p->output];
 						currObj.push(p->fanins[0]);
 						break;
 					default:	// and,or,nor,nand 
-						value=a_truthtbl1[p->fn][p->output];
-						gtype= (p->fn==AND || p->fn==NAND) ? ONE : ZERO;
+						value=a_truthtbl1[p->type][p->output];
+						gtype= (p->type == AND || p->type == NAND) ? ONE : ZERO;
 						if(value==gtype)
 							for(j=0;j<p->ninput;j++)
 							{
@@ -1710,7 +1710,7 @@ namespace hiatpg {
 			while(!eventList[i]->isEmpty())
 			{
 				gut=eventList[i]->pop();
-				if(gut->fn==PO) {
+				if(gut->type == PO) {
 					if(nxPo >= xPo.size()) {
 						xPo.resize(nxPo + 1, NULL);
 					}
@@ -1793,7 +1793,7 @@ namespace hiatpg {
 				{
 					gut=eventList[i]->pop();
 					nGate--;
-					if(gut->fn==PO) {nGate=INFINITE; break;}
+					if(gut->type == PO) { nGate=INFINITE; break;}
 					for(j=0; j<gut->noutput; j++)
 					{
 						next=gut->fanouts[j];
@@ -1818,7 +1818,7 @@ namespace hiatpg {
 				gut=domArray[k];
 				//printf("dominator: gut=%d #Dfrontier=%d\n",gut->index,nod+1);
 				if(gut==faultyGate) continue;
-				v1=(gut->fn==AND || gut->fn==NAND) ? ONE : (gut->fn==OR || gut->fn==NOR) ? ZERO : X;
+				v1= (gut->type == AND || gut->type == NAND) ? ONE : (gut->type == OR || gut->type == NOR) ? ZERO : X;
 				if(v1 != X)
 				{
 					for(i=0; i<gut->ninput; i++)
@@ -1933,7 +1933,7 @@ namespace hiatpg {
 
 				faultPropagateToPo=false;
 				for(i=0;i<numberOfPrimaryOutputs;i++)
-					if(net[primaryOut[i]]->output==D || net[primaryOut[i]]->output==DBAR)
+					if(gates[primaryOut[i]]->output == D || gates[primaryOut[i]]->output == DBAR)
 					{
 						faultPropagateToPo=true;
 						break;
@@ -1972,8 +1972,8 @@ namespace hiatpg {
 						//update dFrontier
 						if(!dFrontier.isEmpty()) updateDFrontier();
 						for(i=gut->index;i<numberOfGates;i++) {
-							if(net[i]->xpath==2) 
-								net[i]->xpath=1;
+							if(gates[i]->xpath == 2)
+                                gates[i]->xpath=1;
 						}
 						for(i=dFrontier.getCount()-1;i>=0;i--)
 							if(!xPath(dFrontier[i])) dFrontier.deleteItem(i);
@@ -2046,8 +2046,8 @@ namespace hiatpg {
 			case 98:	//box 8
 #ifdef _ALG_DEBUG
 				dbgFile << "fan case 98 index:" << gut->index << "\n" ;
-			for(int qwer = 0; qwer < net[172]->noutput; qwer++) {
-				dbgFile << "fan case 98, outlist " << qwer << ", index:" << net[172]->outlis[qwer]->index << "\n";
+			for(int qwer = 0; qwer < gates[172]->noutput; qwer++) {
+				dbgFile << "fan case 98, outlist " << qwer << ", index:" << gates[172]->outlis[qwer]->index << "\n";
 			}
 #endif
 				if(tree.back().isFlagged()) (*nbacktrack)++;
@@ -2192,7 +2192,7 @@ namespace hiatpg {
 
 					faultPropagateToPo=false;
 					for(i=0;i<numberOfPrimaryOutputs;i++)
-						if(net[primaryOut[i]]->output==D || net[primaryOut[i]]->output==DBAR)
+						if(gates[primaryOut[i]]->output == D || gates[primaryOut[i]]->output == DBAR)
 						{
 							faultPropagateToPo=true;
 							break;
@@ -2223,7 +2223,7 @@ namespace hiatpg {
 						{	//box 5
 							//update dFrontier
 							if(!dFrontier.isEmpty()) updateDFrontier();
-							for(i=gut->index;i<numberOfGates;i++) if(net[i]->xpath==2) net[i]->xpath=1;
+							for(i=gut->index;i<numberOfGates;i++) if(gates[i]->xpath == 2) gates[i]->xpath=1;
 							for(i=dFrontier.getCount()-1;i>=0;i--)
 								if(!xPath(dFrontier[i])) dFrontier.deleteItem(i);
 
@@ -2233,7 +2233,7 @@ namespace hiatpg {
 							{	// box 6
 								if(dyID>=INFINITE-3)
 								{
-									for(i=0;i<numberOfGates;i++) net[i]->freach1=0;
+									for(i=0;i<numberOfGates;i++) gates[i]->freach1=0;
 									dyID=0;
 								}
 
@@ -2320,7 +2320,7 @@ namespace hiatpg {
 #ifdef _ALG_DEBUG
 		dbgFile << "implyLearn begin, index:" << gut->index << "\n";
 #endif
-		switch(gut->fn) {
+		switch(gut->type) {
 		case AND: case NOR: if(val==ONE) return(FORWARD); break;
 		case OR: case NAND: if(val==ZERO) return(FORWARD); break;
 		}
@@ -2328,7 +2328,7 @@ namespace hiatpg {
 		state=FORWARD;
 		for(i = gut->pLearn.begin(); i != gut->pLearn.end(); ++i) {
 			if(i->sval==val) {
-				tg=net[i->node];
+				tg=gates[i->node];
 				switch(conflictTbl[tg->output][i->tval]) {
 				case PASS: break;
 				case FAIL: 
@@ -2368,7 +2368,7 @@ namespace hiatpg {
 		if(val==D) val=1;
 		else if(val==DBAR) val=0;
 
-		switch(gut->fn) {
+		switch(gut->type) {
 		case AND: case NOR: if(val==ONE) return(FORWARD); break;
 		case OR: case NAND: if(val==ZERO) return(FORWARD); break;
 		}
@@ -2376,7 +2376,7 @@ namespace hiatpg {
 		state=FORWARD;
 		for(i=gut->pLearn.begin(); i != gut->pLearn.end(); ++i)
 			if(i->sval==val) {
-				tg=net[i->node];
+				tg=gates[i->node];
 				if(tg->freach) continue;
 				switch(conflictTbl[tg->output][i->tval]) {
 				case PASS: break;

@@ -31,7 +31,7 @@ namespace hiatpg {
 		int line;			// faulty line
 		list<Fault*> extra;	// extra faults simulated
 		list<Event*> event;
-		int fn;
+		GateType gateType;
 		int papa;
 		level Val[2];
 	};

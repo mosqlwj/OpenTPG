@@ -141,10 +141,10 @@ int hiatpg::Atalanta::testGen(int levels, int maxBits, int nStem, Gate **stem, i
             fillPatterns(fillMode,*nPacket,*nBit);
                 for(j=0;j<numberOfPrimaryInputs;j++)
                 {
-                    net[j]->changed=false;
-                    net[j]->freach=false;
-                    net[j]->cobserve=ALL0;
-                    net[j]->output=net[j]->output1;
+                    gates[j]->changed=false;
+                    gates[j]->freach=false;
+                    gates[j]->cobserve=ALL0;
+                    gates[j]->output=gates[j]->output1;
                 }
 
                 if(++(*nBit)==maxBits) {*nBit=0; (*nPacket)++;}
@@ -342,7 +342,7 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 		if(gut->ninput < 2) return;
 		if(gut->numzero != lid) return;
 
-		switch(gut->fn)
+		switch(gut->type)
 		{
 		case AND: case NOR: if(val==ZERO) return; break;
 		case OR: case NAND: if(val==ONE) return; break;
@@ -404,20 +404,20 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 
 			// backward implication 
 
-			switch(gate->fn)
+			switch(gate->type)
 			{
 			case AND:
 			case NAND:
 			case OR:
 			case NOR:
-				v1 = (gate->fn==AND || gate->fn==NOR) ? ONE : ZERO;
+				v1 = (gate->type == AND || gate->type == NOR) ? ONE : ZERO;
 				if(gate->output==v1)
 				{
 					gate->changed=true;
 					for(i=0;i<gate->ninput;i++)
 						if(p[i]->output==X)
 						{
-							p[i]->output=a_truthtbl1[gate->fn][v1];
+							p[i]->output=a_truthtbl1[gate->type][v1];
 							stack->push(p[i]);
 							scheduleInput(gate,i);						
 						}
@@ -430,7 +430,7 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 
 						if(numX==1)
 						{
-							p[j]->output = a_truthtbl1[gate->fn][gate->output];
+							p[j]->output = a_truthtbl1[gate->type][gate->output];
 							gate->changed=true;
 							stack->push(p[j]);
 							scheduleInput(gate,j);
@@ -442,7 +442,7 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 			case BUFF:
 			case NOT:
 			case PO:
-				p[0]->output=a_truthtbl1[gate->fn][gate->output];
+				p[0]->output=a_truthtbl1[gate->type][gate->output];
 				gate->changed=true;
 				stack->push(p[0]);
 				scheduleInput(gate,0);
@@ -457,7 +457,7 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 					if(numX==1)
 					{
 						v1=(j==0) ? p[1]->output : p[0]->output;
-						val=a_truthtbl1[gate->fn][gate->output];
+						val=a_truthtbl1[gate->type][gate->output];
 						if(v1==ONE) val=a_truthtbl1[NOT][val];
 						p[j]->output=val;
 						gate->changed=true;
@@ -512,7 +512,7 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 	void Atalanta::learnNode(int maxDpi,int node,level val)
 	{
 		int ix;
-		Gate *gut=net[node];
+		Gate *gut=gates[node];
 
 		snode=node;
 		gut->output=val;
@@ -566,7 +566,7 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 
 		for(ix=0; ix<numberOfGates;ix++)
 		{
-			gut=net[ix];
+			gut=gates[ix];
 			gut->changed=false;
 			gut->numzero=-1;
 			gut->output=X;
@@ -576,7 +576,7 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 
 		for(ix=0; ix<numberOfGates; ix++)
 		{
-			gut=net[ix];
+			gut=gates[ix];
 			if(gut->isFree()) continue;
 			if(gut->ninput==1) continue;
 
@@ -585,7 +585,7 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 				gut->index, gut->symbol->symbol, gut->ninput, gut->noutput);
 #endif
 
-			switch(gut->fn)
+			switch(gut->type)
 			{
 			case AND:
 			case NOR:
@@ -626,10 +626,10 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 
 		for(i=0;i<numberOfGates;i++)
 		{
-			net[i]->changed=false;
-			net[i]->freach=numberOfGates;
-			if(net[i]->dpi>=PPOlevel)
-				cout<<"Error: gut="<<net[i]->symbol->symbol<<" dpi="<<net[i]->dpi<<endl;
+            gates[i]->changed=false;
+            gates[i]->freach=numberOfGates;
+			if(gates[i]->dpi >= PPOlevel)
+				cout << "Error: gut=" << gates[i]->symbol->symbol << " dpi=" << gates[i]->dpi << endl;
 		}
 
 		FanNet::setDominator(levels);

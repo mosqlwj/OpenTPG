@@ -125,9 +125,9 @@ namespace hiatpg {
 		int n=0, j;
 
 		for(int i=0;i<numberOfGates;i++)
-			if(net[i]->noutput>1)
+			if(gates[i]->noutput > 1)
 			{
-				gut=net[i];
+				gut=gates[i];
 				for(j=0;j<gut->noutput;j++) gut->fanouts[j]->changed++;
 				for(j=0;j<gut->noutput;j++)
 				{
@@ -161,12 +161,12 @@ namespace hiatpg {
 
 	int FaultList::createFaultList(int noStem, Gate **stem)
 	{
-		Gate *g;
-		Fault* p;
+		Gate *gate;
+		Fault* fault;
 
 		Fault *current;
 		Fault *curr;
-		fault_type f;
+		FaultType faultType;
 		int nfault,n,nof,i;
 		int *test,size;
 
@@ -176,101 +176,96 @@ namespace hiatpg {
 		curr=new Fault;
 		current=new Fault;
 
+		// create fault for each gate.
 		for(i=0;i<numberOfGates;i++)
 		{
-			g=net[i];
-
+            gate=gates[i];
 			/* if the input of the gate has more than one fanouts, 
 			add a s-a-1 for each AND/NAND,
 			a s-a-0 for each OR/NOR and
 			a s-a-0 and s-a-1 for other gates. */
-
-			if(g->ninput>1)
+			if(gate->ninput > 1)
 			{
-				f=(g->fn==AND || g->fn==NAND) ? SA1 : SA0;
-				for(int j=0;j<g->ninput;j++)
+                faultType= (gate->type == AND || gate->type == NAND) ? SA1 : SA0;
+				for(int j=0; j < gate->ninput; j++)
 				{
-					if(g->fanins[j]->noutput > 1)
+					if(gate->fanins[j]->noutput > 1)
 					{
-						p=new Fault;
-						p->gate=g;
-						p->type=f;
-						p->line=j;
+                        fault=new Fault;
+                        fault->gate=gate;
+                        fault->type=faultType;
+                        fault->line=j;
 						nfault++;
-						g->pfault.push_back(p);
+						gate->pfault.push_back(fault);
 
 						/* case of high level gates */
-						if(g->fn>PI)
+						if(gate->type > PI)
 						{
-							p=new Fault();
-							p->gate=g;
-							p->type=(f==SA1) ? SA0 : SA1;
-							p->line=j;
+                            fault=new Fault();
+                            fault->gate=gate;
+                            fault->type= (faultType == SA1) ? SA0 : SA1;
+                            fault->line=j;
 							nfault++;
 
-							g->pfault.push_back(p);
+							gate->pfault.push_back(fault);
 						}
 					}
 				}
 			}
-
-			if(	(g->noutput==1) &&
-				(g->fanouts[0]->ninput > 1 || g->fanouts[0]->fn == PO))
+			if((gate->noutput == 1) &&
+               (gate->fanouts[0]->ninput > 1 || gate->fanouts[0]->type == PO))
 			{
-				f= (g->fanouts[0]->fn == OR || g->fanouts[0]->fn == NOR) ? SA0 : SA1;
-				p=new Fault;
-				p->gate=g;
-				p->type=f;
-				p->line=OUTFAULT;
+                faultType= (gate->fanouts[0]->type == OR || gate->fanouts[0]->type == NOR) ? SA0 : SA1;
+                fault=new Fault;
+                fault->gate=gate;
+                fault->type=faultType;
+                fault->line=OUTFAULT;
 				nfault++;
-				g->pfault.push_back(p);
+				gate->pfault.push_back(fault);
 
 				// case of high level gates 
-				if(g->fanouts[0]->fn > PI)
+				if(gate->fanouts[0]->type > PI)
 				{
-					p=new Fault;
-					p->gate=g;
-					p->type=(f==SA1) ? SA0 : SA1;
-					p->line=OUTFAULT;
+                    fault=new Fault;
+                    fault->gate=gate;
+                    fault->type= (faultType == SA1) ? SA0 : SA1;
+                    fault->line=OUTFAULT;
 					nfault++;
-					g->pfault.push_back(p);
+					gate->pfault.push_back(fault);
 				}
-			} else if(g->noutput>1)
-			{
-				p=new Fault();
-				p->gate=g;
-				p->type=SA1;
-				p->line=OUTFAULT;
+			} else if(gate->noutput > 1) {
+                fault=new Fault();
+                fault->gate=gate;
+                fault->type=SA1;
+                fault->line=OUTFAULT;
 				nfault++;
-				g->pfault.push_back(p);
+				gate->pfault.push_back(fault);
 
-				p=new Fault();
-				p->gate=g;
-				p->type=SA0;
-				p->line=OUTFAULT;
+                fault=new Fault();
+                fault->gate=gate;
+                fault->type=SA0;
+                fault->line=OUTFAULT;
 				nfault++;
-				g->pfault.push_back(p);
-			} else if( g->fn==PO && g->fanins[0]->noutput > 1)
-			{
-				p=new Fault();
-				p->gate=g;
-				p->type=SA1;
-				p->line=0;
+				gate->pfault.push_back(fault);
+			} else if(gate->type == PO && gate->fanins[0]->noutput > 1) {
+                fault=new Fault();
+                fault->gate=gate;
+                fault->type=SA1;
+                fault->line=0;
 				nfault++;
-				g->pfault.push_back(p);
+				gate->pfault.push_back(fault);
 
-				p=new Fault();
-				p->gate=g;
-				p->type=SA0;
-				p->line=0;
+                fault=new Fault();
+                fault->gate=gate;
+                fault->type=SA0;
+                fault->line=0;
 				nfault++;
-				g->pfault.push_back(p);
+				gate->pfault.push_back(fault);
 			}
 		}
 
 		// create the fault_list and
-		// enumerate faults in each fanout free region 
-
+		// enumerate faults in each fanout free region
 		faultList=new Fault*[nfault];
 		stack->clear();
 
@@ -281,12 +276,12 @@ namespace hiatpg {
 			n=1;
 			while(!stack->isEmpty())
 			{
-				g=stack->pop();
+                gate=stack->pop();
 
 				list<Fault*>::iterator current,final;
 
-				current=g->pfault.begin();
-				final=g->pfault.end();
+				current=gate->pfault.begin();
+				final=gate->pfault.end();
 
 				while(current!=final)
 				{
@@ -294,8 +289,8 @@ namespace hiatpg {
 					current++;
 					n++;
 				}
-				for(int j=0;j<g->ninput;j++)
-					if(g->fanins[j]->noutput == 1) stack->push(g->fanins[j]);
+				for(int j=0; j < gate->ninput; j++)
+					if(gate->fanins[j]->noutput == 1) stack->push(gate->fanins[j]);
 			}
 			stem[i]->dfault=new Fault*[n];
 		}
@@ -305,18 +300,18 @@ namespace hiatpg {
 
 #ifdef INCLUDE_HOPE
 
-	void FaultList::setParity(Gate *gut,int par) {gut->changed=inverseParity[parityOfGate[gut->fn]][par];}
+	void FaultList::setParity(Gate *gut,int par) {gut->changed=inverseParity[parityOfGate[gut->type]][par];}
 	void FaultList::mark(Gate *gut) {gut->changed+=2;}
-	bool FaultList::isStem(Gate *gut) {return ((gut->noutput != 1) || (gut->fanouts[0]->fn == DFF));}
+	bool FaultList::isStem(Gate *gut) {return ((gut->noutput != 1) || (gut->fanouts[0]->type == DFF));}
 	bool FaultList::isNotMarked(Gate *gut) {return gut->changed<2;}
 
-	void FaultList::insertFault(Gate *gut,int line,fault_type type)
+	void FaultList::insertFault(Gate *gut,int line,FaultType type)
 	{
 		int parity;
 		Fault *f;
 
 		parity = (gut->changed>=2) ? gut->changed-2 : gut->changed;
-		if(line<0) parity = inverseParity[parityOfGate[gut->fn]][parity];
+		if(line<0) parity = inverseParity[parityOfGate[gut->type]][parity];
 
 		f=new Fault();
 		f->gate=gut;
@@ -339,7 +334,7 @@ namespace hiatpg {
 		if(line<0)
 		{
 			//output line fault
-			if(gut->fn==DUMMY || gut->fn==PO) return;
+			if(gut->type == DUMMY || gut->type == PO) return;
 			if(gut->noutput!=1)
 			{
 				insertFault(gut,OUTFAULT,SA0);
@@ -347,45 +342,49 @@ namespace hiatpg {
 			} else
 			{
 				to=gut->fanouts[0];
-				if(to->fn==DUMMY) to=to->fanouts[0];
-				switch(to->fn)
+				if(to->type == DUMMY) to=to->fanouts[0];
+				switch(to->type)
 				{
-				case AND:
-				case NAND: 
-					if(to->ninput>1) insertFault(gut,OUTFAULT,SA1); break;
-				case OR:
-				case NOR: 
-					if(to->ninput>1) insertFault(gut,OUTFAULT,SA0); break;
-				case XOR:
-				case XNOR:
-				case DFF:
-				case PO:
-					insertFault(gut,OUTFAULT,SA0);
-					insertFault(gut,OUTFAULT,SA1);
-					break;
+                    case AND:
+                    case NAND:
+                        if(to->ninput>1) insertFault(gut,OUTFAULT,SA1); break;
+                    case OR:
+                    case NOR:
+                        if(to->ninput>1) insertFault(gut,OUTFAULT,SA0); break;
+                    case XOR:
+                    case XNOR:
+                    case DFF:
+                    case PO:
+                        insertFault(gut,OUTFAULT,SA0);
+                        insertFault(gut,OUTFAULT,SA1);
+                        break;
+				    default:
+				        break;
 				}
 			}
 		} else 
 		{
 			from=gut->fanins[line];
-			if(from->fn==DUMMY || from->fn==PO) from=from->fanins[0];
+			if(from->type == DUMMY || from->type == PO) from=from->fanins[0];
 			if(from->noutput>1)
-				switch(gut->fn)
-			{
-				case AND:
-				case NAND:
-					if(gut->ninput>1) insertFault(gut,line,SA1); break;
-				case OR:
-				case NOR:
-					if(gut->ninput>1) insertFault(gut,line,SA0); break;
-				case XOR:
-				case XNOR:
-				case DFF:
-				case PO:
-					insertFault(gut,line,SA0);
-					insertFault(gut,line,SA1);
-					break;
-			}
+				switch(gut->type)
+                {
+                    case AND:
+                    case NAND:
+                        if(gut->ninput>1) insertFault(gut,line,SA1); break;
+                    case OR:
+                    case NOR:
+                        if(gut->ninput>1) insertFault(gut,line,SA0); break;
+                    case XOR:
+                    case XNOR:
+                    case DFF:
+                    case PO:
+                        insertFault(gut,line,SA0);
+                        insertFault(gut,line,SA1);
+                        break;
+                    default:
+                        break;
+                }
 		}
 	}
 
@@ -445,14 +444,14 @@ namespace hiatpg {
 		Gate *gut;
 		int i;
 
-		for(i=0;i<numberOfGates;i++) net[i]->changed=0;
+		for(i=0;i<numberOfGates;i++) gates[i]->changed=0;
 
 		//   init_fault_list();
 
 		// Primary Outputs
 		for(i=0;i<numberOfPrimaryOutputs;i++)
 		{
-			gut=net[primaryOut[i]];
+			gut=gates[primaryOut[i]];
 			DFSpo(0,gut);
 		}
 
@@ -572,7 +571,7 @@ namespace hiatpg {
 					Error::fatalerror(FAULTERROR);
 				}
 				if((to=h->pnode->index) < 0) Error::fatalerror(FAULTERROR);
-				gut=net[to];
+				gut=gates[to];
 				line=-1;
 			} else if(s[0]=='>')
 			{
@@ -585,7 +584,7 @@ namespace hiatpg {
 					Error::fatalerror(FAULTERROR);
 				}
 				if((to=h->pnode->index)<0) Error::fatalerror(FAULTERROR);
-				gut=net[to];
+				gut=gates[to];
 				for(int i=0;i<gut->ninput;i++)
 					if(gut->fanins[i]->index == from) { line=i; break;};
 			} else if(s[0]=='/')
@@ -597,7 +596,7 @@ namespace hiatpg {
 				f=new Fault;
 				f->gate=gut;
 				f->line=line;
-				f->type=type;
+				f->type= static_cast<FaultType>(type);
 				gut->pfault.push_front(f);
 				nfault++;
 			} else Error::fatalerror(FAULTERROR);
@@ -664,7 +663,7 @@ namespace hiatpg {
 					Error::fatalerror(FAULTERROR);
 				}
 				if((to=h->pnode->index)<0) Error::fatalerror(FAULTERROR);
-				gut=net[to];
+				gut=gates[to];
 				line=OUTFAULT;
 			} else if(s[0]=='>')
 			{
@@ -678,7 +677,7 @@ namespace hiatpg {
 				}
 
 				if((to=h->pnode->index)<0) Error::fatalerror(FAULTERROR);
-				gut=net[to];
+				gut=gates[to];
 				for(i=0;i<gut->ninput;i++)
 					if(gut->fanins[i]->index == from) { line=i; break; }
 			} else if(s[0]=='/')
@@ -687,7 +686,7 @@ namespace hiatpg {
 				f=new Fault;
 				f->gate=gut;
 				f->line=line;
-				f->type=type;
+				f->type=static_cast<FaultType>(type);
 
 				hopeFaultList.push_front(f);
 			} else Error::fatalerror(FAULTERROR);

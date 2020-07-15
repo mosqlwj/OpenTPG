@@ -60,7 +60,7 @@ namespace hiatpg {
 
 
             for(i=0;i<numberOfPrimaryInputs;i++) {
-                net[i]->output1=net[i]->output=lfsr[i];
+                gates[i]->output1= gates[i]->output=lfsr[i];
             }
             pFaultFreeSimulation();
             for(i=0;i<maxBit;i++) profile[i]=0;
@@ -73,7 +73,7 @@ namespace hiatpg {
                         (*nTest)++;
                         nDetect+=profile[i];
                         for(j=0;j<numberOfPrimaryInputs;j++) {
-                            if((net[j]->output1 & BITMASK[i]) != ALL0) {
+                            if((gates[j]->output1 & BITMASK[i]) != ALL0) {
                                 setBit(&testVectors[*nPacket][j],*nBit);
                             }
                             else
@@ -186,42 +186,42 @@ namespace hiatpg {
         {
             case '0':
                 for(j=0;j<numberOfPrimaryInputs;j++)
-                    switch(net[j]->output)
+                    switch(gates[j]->output)
                     {
                         case ONE:
                             setBit(&testVectors[nPacket][j],nBit);
-                            net[j]->output1=ALL1;
+                            gates[j]->output1=ALL1;
                             break;
                         default:
                             resetBit(&testVectors[nPacket][j],nBit);
-                            net[j]->output1=ALL0;
+                            gates[j]->output1=ALL0;
                     }
                 break;
             case '1':
                 for(j=0;j<numberOfPrimaryInputs;j++)
-                    switch(net[j]->output)
+                    switch(gates[j]->output)
                     {
                         case ZERO:
                             resetBit(&testVectors[nPacket][j],nBit);
-                            net[j]->output1=ALL0;
+                            gates[j]->output1=ALL0;
                             break;
                         default:
                             resetBit(&testVectors1[nPacket][j],nBit);
-                            net[j]->output1=ALL1;
+                            gates[j]->output1=ALL1;
                     }
                 break;
             case 'r':
             case 'x':
                 for(j=0;j<numberOfPrimaryInputs;j++)
-                    switch(net[j]->output)
+                    switch(gates[j]->output)
                     {
                         case ZERO:
                             resetBit(&testVectors[nPacket][j],nBit);
-                            net[j]->output1=ALL0;
+                            gates[j]->output1=ALL0;
                             break;
                         case ONE:
                             setBit(&testVectors[nPacket][j],nBit);
-                            net[j]->output1=ALL1;
+                            gates[j]->output1=ALL1;
                             break;
                         default:
                             ran=(int)rand()&01;
@@ -229,7 +229,7 @@ namespace hiatpg {
                                 setBit(&testVectors[nPacket][j],nBit);
                             else
                                 resetBit(&testVectors[nPacket][j],nBit);
-                            net[j]->output1=ran;
+                            gates[j]->output1=ran;
                     }
         }
     }
@@ -242,7 +242,7 @@ namespace hiatpg {
         {
             case '0':
                 for(j=0;j<numberOfPrimaryInputs;j++)
-                    switch(net[j]->output)
+                    switch(gates[j]->output)
                     {
                         case ONE:
                             setb1(&testVectors[nPacket][j], &testVectors1[nPacket][j],nBit);
@@ -256,7 +256,7 @@ namespace hiatpg {
                 break;
             case '1':
                 for(j=0;j<numberOfPrimaryInputs;j++)
-                    switch(net[j]->output)
+                    switch(gates[j]->output)
                     {
                         case ZERO:
                             setb0(&testVectors[nPacket][j], &testVectors1[nPacket][j],nBit);
@@ -270,7 +270,7 @@ namespace hiatpg {
                 break;
             case 'r':
                 for(j=0;j<numberOfPrimaryInputs;j++)
-                    switch(net[j]->output)
+                    switch(gates[j]->output)
                     {
                         case ZERO:
                             setb0(&testVectors[nPacket][j], &testVectors1[nPacket][j],nBit);
@@ -292,7 +292,7 @@ namespace hiatpg {
                 break;
             case 'x':
                 for(j=0;j<numberOfPrimaryInputs;j++)
-                    switch(net[j]->output)
+                    switch(gates[j]->output)
                     {
                         case ZERO:
                             setb0(&testVectors[nPacket][j], &testVectors1[nPacket][j],nBit);
@@ -356,7 +356,7 @@ namespace hiatpg {
         int noTest=0;
         int profile[BITSIZE];
 
-        for(i=0;i<numberOfGates;i++) net[i]->pfault.clear();
+        for(i=0;i<numberOfGates;i++) gates[i]->pfault.clear();
 
         if((nRestoredFault=restoreDetectedFaultList())<0)
         {
@@ -383,7 +383,7 @@ namespace hiatpg {
             allOne= (nBit==BITSIZE) ? ALL1 : ~(ALL1<<nBit);
 
             for(j=0;j<numberOfPrimaryInputs;j++)
-                net[j]->output1=net[j]->output=testVectors[k][j];
+                gates[j]->output1= gates[j]->output=testVectors[k][j];
             pFaultFreeSimulation();
 
             for(i=0;i<nBit;i++) profile[i]=0;
@@ -451,7 +451,7 @@ namespace hiatpg {
             while((!done))
             {
                 (*nShuf)++;
-                for(i=0;i<numberOfGates;i++) net[i]->pfault.clear();
+                for(i=0;i<numberOfGates;i++) gates[i]->pfault.clear();
 
                 if((nRestoredFault=restoreDetectedFaultList())<0)
                 {
@@ -496,7 +496,7 @@ namespace hiatpg {
                     allOne= nBit==BITSIZE ? ALL1 : ~(ALL1<<nBit);
 
                     for(j=0;j<numberOfPrimaryInputs;j++)
-                        net[j]->output1=net[j]->output=testVectors[k][j];
+                        gates[j]->output1= gates[j]->output=testVectors[k][j];
                     pFaultFreeSimulation();
 
                     for(i=0;i<nBit;i++) profile[i]=0;
@@ -524,7 +524,7 @@ namespace hiatpg {
                                 }
                                 flagBit=true;
                                 for(j=0;j<numberOfPrimaryInputs;j++)
-                                    if((net[j]->output1&BITMASK[i])!=ALL0)
+                                    if((gates[j]->output1 & BITMASK[i]) != ALL0)
                                         setBit(&testStore[packet][j],bit);
                                     else
                                         resetBit(&testStore[packet][j],bit);

@@ -50,7 +50,7 @@ namespace hiatpg {
 	{
 	public: 
 		int index;
-		logic fn;				// type of gate
+		GateType type;			// type of gate
 		short ninput;			// number of fanins
 		Gate **fanins;			// fan-in list
 		short noutput;			// number of fan-outs
@@ -101,7 +101,7 @@ namespace hiatpg {
 		//#endif
 		bool isFanout() {return noutput>1;};
 		int  isReachableFormFault() {return freach;};
-		bool isCheckPoint() {return (fn>=PI || noutput>1);};
+		bool isCheckPoint() {return (type >= PI || noutput > 1);};
 
 		bool isConflict() {return numzero>0 && numone>0;};
 
