@@ -260,7 +260,7 @@ namespace hiatpg {
 		undfault=new Fault();
 		undfault->gate=0;
 		undfault->line=0;
-		undfault->type=0;
+		undfault->type=SA0;
 		undfault->detected=UNDETECTED;
 		undfault->event.clear();
 

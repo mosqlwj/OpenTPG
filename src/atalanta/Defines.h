@@ -36,7 +36,7 @@ namespace hiatpg {
         SA0=0,               /* stuck-at fault */
         SA1=1,
         SAX=2,
-        OUTFAULT=3
+        OUTFAULT=-1
 	};
 
 	enum Value {

@@ -30,7 +30,7 @@ namespace hiatpg {
 	public:	
 		Gate *gate;			// faulty gate 
 		int line;			// faulty line, -1 if output fault 
-		fault_type type;	// fault type 
+		FaultType type;	// fault type
 		int detected;		// detected or not 
 		level observe;		// detectability 
 		int index;          // added by me. Index of the fault. Computed by IndexFaults
@@ -68,7 +68,7 @@ namespace hiatpg {
 		void DFSpo(Gate* parent, Gate* child);
 		void FFRfault(Gate* gut);
 		void defaultLineFault(Gate* gut,int line);
-		void insertFault(Gate* gut,int line,fault_type type);
+		void insertFault(Gate* gut,int line,FaultType type);
 
 		void FWDfaults();
 		int restoreHopeFaultList();

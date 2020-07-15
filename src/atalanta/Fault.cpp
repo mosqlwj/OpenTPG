@@ -166,7 +166,7 @@ namespace hiatpg {
 
 		Fault *current;
 		Fault *curr;
-		fault_type f;
+		FaultType f;
 		int nfault,n,nof,i;
 		int *test,size;
 
@@ -310,7 +310,7 @@ namespace hiatpg {
 	bool FaultList::isStem(Gate *gut) {return ((gut->noutput != 1) || (gut->fanouts[0]->type == DFF));}
 	bool FaultList::isNotMarked(Gate *gut) {return gut->changed<2;}
 
-	void FaultList::insertFault(Gate *gut,int line,fault_type type)
+	void FaultList::insertFault(Gate *gut,int line,FaultType type)
 	{
 		int parity;
 		Fault *f;
@@ -597,7 +597,7 @@ namespace hiatpg {
 				f=new Fault;
 				f->gate=gut;
 				f->line=line;
-				f->type=type;
+				f->type= static_cast<FaultType>(type);
 				gut->pfault.push_front(f);
 				nfault++;
 			} else Error::fatalerror(FAULTERROR);
@@ -687,7 +687,7 @@ namespace hiatpg {
 				f=new Fault;
 				f->gate=gut;
 				f->line=line;
-				f->type=type;
+				f->type=static_cast<FaultType>(type);
 
 				hopeFaultList.push_front(f);
 			} else Error::fatalerror(FAULTERROR);
