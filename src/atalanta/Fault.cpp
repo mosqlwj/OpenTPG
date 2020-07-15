@@ -166,7 +166,7 @@ namespace hiatpg {
 
 		Fault *current;
 		Fault *curr;
-		fault_type f;
+		FaultType faultType;
 		int nfault,n,nof,i;
 		int *test,size;
 
@@ -176,25 +176,24 @@ namespace hiatpg {
 		curr=new Fault;
 		current=new Fault;
 
+		// create fault for each gate.
 		for(i=0;i<numberOfGates;i++)
 		{
             gate=gates[i];
-
 			/* if the input of the gate has more than one fanouts, 
 			add a s-a-1 for each AND/NAND,
 			a s-a-0 for each OR/NOR and
 			a s-a-0 and s-a-1 for other gates. */
-
 			if(gate->ninput > 1)
 			{
-				f= (gate->type == AND || gate->type == NAND) ? SA1 : SA0;
+                faultType= (gate->type == AND || gate->type == NAND) ? SA1 : SA0;
 				for(int j=0; j < gate->ninput; j++)
 				{
 					if(gate->fanins[j]->noutput > 1)
 					{
                         fault=new Fault;
                         fault->gate=gate;
-                        fault->type=f;
+                        fault->type=faultType;
                         fault->line=j;
 						nfault++;
 						gate->pfault.push_back(fault);
@@ -204,7 +203,7 @@ namespace hiatpg {
 						{
                             fault=new Fault();
                             fault->gate=gate;
-                            fault->type= (f == SA1) ? SA0 : SA1;
+                            fault->type= (faultType == SA1) ? SA0 : SA1;
                             fault->line=j;
 							nfault++;
 
@@ -213,14 +212,13 @@ namespace hiatpg {
 					}
 				}
 			}
-
 			if((gate->noutput == 1) &&
                (gate->fanouts[0]->ninput > 1 || gate->fanouts[0]->type == PO))
 			{
-				f= (gate->fanouts[0]->type == OR || gate->fanouts[0]->type == NOR) ? SA0 : SA1;
+                faultType= (gate->fanouts[0]->type == OR || gate->fanouts[0]->type == NOR) ? SA0 : SA1;
                 fault=new Fault;
                 fault->gate=gate;
-                fault->type=f;
+                fault->type=faultType;
                 fault->line=OUTFAULT;
 				nfault++;
 				gate->pfault.push_back(fault);
@@ -230,13 +228,12 @@ namespace hiatpg {
 				{
                     fault=new Fault;
                     fault->gate=gate;
-                    fault->type= (f == SA1) ? SA0 : SA1;
+                    fault->type= (faultType == SA1) ? SA0 : SA1;
                     fault->line=OUTFAULT;
 					nfault++;
 					gate->pfault.push_back(fault);
 				}
-			} else if(gate->noutput > 1)
-			{
+			} else if(gate->noutput > 1) {
                 fault=new Fault();
                 fault->gate=gate;
                 fault->type=SA1;
@@ -250,8 +247,7 @@ namespace hiatpg {
                 fault->line=OUTFAULT;
 				nfault++;
 				gate->pfault.push_back(fault);
-			} else if(gate->type == PO && gate->fanins[0]->noutput > 1)
-			{
+			} else if(gate->type == PO && gate->fanins[0]->noutput > 1) {
                 fault=new Fault();
                 fault->gate=gate;
                 fault->type=SA1;
@@ -269,8 +265,7 @@ namespace hiatpg {
 		}
 
 		// create the fault_list and
-		// enumerate faults in each fanout free region 
-
+		// enumerate faults in each fanout free region
 		faultList=new Fault*[nfault];
 		stack->clear();
 
@@ -310,7 +305,7 @@ namespace hiatpg {
 	bool FaultList::isStem(Gate *gut) {return ((gut->noutput != 1) || (gut->fanouts[0]->type == DFF));}
 	bool FaultList::isNotMarked(Gate *gut) {return gut->changed<2;}
 
-	void FaultList::insertFault(Gate *gut,int line,fault_type type)
+	void FaultList::insertFault(Gate *gut,int line,FaultType type)
 	{
 		int parity;
 		Fault *f;
@@ -350,19 +345,21 @@ namespace hiatpg {
 				if(to->type == DUMMY) to=to->fanouts[0];
 				switch(to->type)
 				{
-				case AND:
-				case NAND: 
-					if(to->ninput>1) insertFault(gut,OUTFAULT,SA1); break;
-				case OR:
-				case NOR: 
-					if(to->ninput>1) insertFault(gut,OUTFAULT,SA0); break;
-				case XOR:
-				case XNOR:
-				case DFF:
-				case PO:
-					insertFault(gut,OUTFAULT,SA0);
-					insertFault(gut,OUTFAULT,SA1);
-					break;
+                    case AND:
+                    case NAND:
+                        if(to->ninput>1) insertFault(gut,OUTFAULT,SA1); break;
+                    case OR:
+                    case NOR:
+                        if(to->ninput>1) insertFault(gut,OUTFAULT,SA0); break;
+                    case XOR:
+                    case XNOR:
+                    case DFF:
+                    case PO:
+                        insertFault(gut,OUTFAULT,SA0);
+                        insertFault(gut,OUTFAULT,SA1);
+                        break;
+				    default:
+				        break;
 				}
 			}
 		} else 
@@ -371,21 +368,23 @@ namespace hiatpg {
 			if(from->type == DUMMY || from->type == PO) from=from->fanins[0];
 			if(from->noutput>1)
 				switch(gut->type)
-			{
-				case AND:
-				case NAND:
-					if(gut->ninput>1) insertFault(gut,line,SA1); break;
-				case OR:
-				case NOR:
-					if(gut->ninput>1) insertFault(gut,line,SA0); break;
-				case XOR:
-				case XNOR:
-				case DFF:
-				case PO:
-					insertFault(gut,line,SA0);
-					insertFault(gut,line,SA1);
-					break;
-			}
+                {
+                    case AND:
+                    case NAND:
+                        if(gut->ninput>1) insertFault(gut,line,SA1); break;
+                    case OR:
+                    case NOR:
+                        if(gut->ninput>1) insertFault(gut,line,SA0); break;
+                    case XOR:
+                    case XNOR:
+                    case DFF:
+                    case PO:
+                        insertFault(gut,line,SA0);
+                        insertFault(gut,line,SA1);
+                        break;
+                    default:
+                        break;
+                }
 		}
 	}
 
@@ -597,7 +596,7 @@ namespace hiatpg {
 				f=new Fault;
 				f->gate=gut;
 				f->line=line;
-				f->type=type;
+				f->type= static_cast<FaultType>(type);
 				gut->pfault.push_front(f);
 				nfault++;
 			} else Error::fatalerror(FAULTERROR);
@@ -687,7 +686,7 @@ namespace hiatpg {
 				f=new Fault;
 				f->gate=gut;
 				f->line=line;
-				f->type=type;
+				f->type=static_cast<FaultType>(type);
 
 				hopeFaultList.push_front(f);
 			} else Error::fatalerror(FAULTERROR);

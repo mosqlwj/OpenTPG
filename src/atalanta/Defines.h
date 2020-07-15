@@ -4,7 +4,7 @@
 namespace hiatpg {
 	typedef		int	logic;
 	typedef		unsigned level;
-	typedef		int	fault_type;
+
 	typedef		int	boolean;
 	typedef		int	status;
 	typedef		int	line_type;
@@ -32,6 +32,13 @@ namespace hiatpg {
         FAULTY=50
 	};
 
+	enum FaultType {
+        SA0=0,               /* stuck-at fault */
+        SA1=1,
+        SAX=2,
+        OUTFAULT=-1
+	};
+
 	enum Value {
 		ZERO,
 		ONE,
@@ -39,12 +46,6 @@ namespace hiatpg {
 		D,
 		DBAR
 	};
-
-//	const int ZERO=0;
-//	const int ONE=1;
-//	const int X=2;
-//	const int D=3;
-//	const int DBAR=4;
 
     const int FAIL=	0;					//Learning
     const int PASS=1;
@@ -63,12 +64,6 @@ namespace hiatpg {
 	const int  	TEST_FOUND=0;
 	const int  	OVER_BACKTRACK=1;
 	const int  	NO_TEST=2;
-
-
-	const int SA0=0;               /* stuck-at fault */
-	const int SA1=1;
-	const int SAX=2;
-	const int OUTFAULT=-1;
 
 	const char ISCAS85='5';
 	const char ISCAS89='9';
