@@ -234,7 +234,7 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 
 	void MyFaultlist::writeFaultMask(std::streambuf *fn)
 	{
-		//  Writes the faltlist mask, according the order in faultlist
+		//  Writes the faltlist mask, according the order in fault
 		//  0 = not detected
 		//  1 = detected
 		//  3 = redundant

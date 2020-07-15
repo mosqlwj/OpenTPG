@@ -127,24 +127,37 @@ struct NetListTable : virtual public Interface
     virtual const std::vector<const Gate*>& GetGates() const = 0;
 
     virtual std::vector<Gate*>& GetGates() = 0;
+
+    virtual void Access(std::function<int(Gate*)> handler) = 0;
+    virtual void Access(std::function<int(const Gate*)> handler) const = 0;
 };
 
 
 
-//
+//! Fault 表
 struct FaultListTable : virtual public Clearable
 {
-    virtual int Create(NetListTable& netlist) = 0;
+    //! 根据网表创建 FaultList
+    virtual int Create(const NetListTable& netlist) = 0;
 
+    //! 从指定的 reader 流加载 FaultList
     virtual int Load(Reader& reader) = 0;
 
+    //! 将所有的 Fault 写入指定的Writter
     virtual int Save(Writer& writer) = 0;
 
+    //! 更新指定的 Fault 的状态
     virtual void UpdateFaultStatus(FaultStatus status) = 0;
 
+    //! 获取 Fault 列表
     virtual const vector<const Fault*> GetFaults() const = 0;
 
+    //! 获取 Fault 列表
     virtual vector<Fault*> GetFaults() = 0;
+
+    //! 枚举 Fault 列表
+    virtual void Access(std::function<int(Fault*)> handler) = 0;
+    virtual void Access(std::function<int(const Fault*)> handler) const = 0;
 };
 
 
@@ -156,6 +169,7 @@ struct Cube;
 //! Cube 输出接口
 struct CubeOutput : virtual public Interface
 {
+    //! 当 Cube 需要被输出时,会调用该接口
     virtual int Handle(Cube* cube) = 0;
 };
 
@@ -164,18 +178,22 @@ struct CubeOutput : virtual public Interface
 //! Pattern 输出接口
 struct PatternOutput : virtual public Interface
 {
+    //! 当 Pattern 需要被输出时,会调用该接口
     virtual int Handle(Pattern* pattern) = 0;
 };
 
 
 
+//! Fault 状态标记
 struct FaultMaker : virtual public Interface
 {
+    //! 更新 Fault 的状态
     virtual void UpdateFaultStatus(int32_t faultIndex, FaultStatus status) = 0;
 };
 
 
 
+//! ATPG 驱动
 struct ATPGDriver : virtual public Clearable
 {
     //! 设置输入
@@ -190,6 +208,7 @@ struct ATPGDriver : virtual public Clearable
 
 
 
+//! 仿真驱动
 struct SimulateDriver : virtual public Clearable
 {
     //! 设置输入
@@ -200,6 +219,31 @@ struct SimulateDriver : virtual public Clearable
 
     //! 执行仿真
     virtual int Simulate(Pattern* pattern) = 0;
+};
+
+
+
+//!  用于写 Pattern
+struct PatternWriter
+{
+    //! 设置输出
+    virtual int Setup(Writer* w) = 0;
+
+    //! 指定处理Pattern
+    virtual int Handle(const Pattern* p) = 0;
+
+    //! 当Pattern写入完成之后,可提交,以完成首尾工作
+    virtual int Commit() = 0;
+};
+
+
+
+//! Pattern表的管理
+struct PatternListTable : virtual public Clearable
+{
+    //! 枚举所有的 Pattern
+    virtual void Access(std::function<int(Pattern*)> handler) = 0;
+    virtual void Access(std::function<int(const Pattern*)> handler) = 0;
 };
 
 

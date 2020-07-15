@@ -39,7 +39,7 @@ enum GateType
     PI, PO, AND, NAND, OR, NOR, XOR, XNOR, INV, BUF
 };
 
-unordered_map<string, GateType> str2GateType = {
+static unordered_map<string, GateType> str2GateType = {
     //
     {"AND",  AND},
     {"NAND", NAND},
@@ -51,7 +51,7 @@ unordered_map<string, GateType> str2GateType = {
     {"BUFF", BUF},
 };
 
-unordered_map<GateType, string> gateType2Str = {
+static unordered_map<GateType, string> gateType2Str = {
     //
     {AND,  "AND"},
     {NAND, "NAND"},

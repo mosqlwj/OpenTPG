@@ -2,7 +2,7 @@
 // Created by luolijun on 2020/7/6.
 //
 
-#include "Context.h"
+#include "HIATPG.h"
 
 #include <cassert>
 
@@ -23,7 +23,7 @@ static inline void module_insert_tail(T* item, T* prev, T* next) {
 
 struct ModuleImpl {
     ModuleDefinition defines;
-    Module* object;
+    Interface* object;
     ModuleImpl() { object = nullptr; }
 };
 
@@ -62,7 +62,7 @@ extern int CreateModule(int mid, const char* name) {
         return -1;
     }
 
-    Module* module = def->creator();
+    Interface* module = def->creator();
     if (nullptr == module) {
         return -1;
     }
@@ -71,7 +71,7 @@ extern int CreateModule(int mid, const char* name) {
     return 0;
 }
 
-extern Module* ReferModule(int mid) {
+extern Interface* ReferModule(int mid) {
     ASSERT(mid >= 0);
     ASSERT(mid < MODULE_COUNT_MAX);
 
@@ -80,7 +80,7 @@ extern Module* ReferModule(int mid) {
         if (&(impl->defines) == impl->defines.next) {
             return nullptr;
         }
-        Module* module = impl->defines.next->creator();
+        Interface* module = impl->defines.next->creator();
         if (nullptr == module) {
             return nullptr;
         }

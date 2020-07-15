@@ -237,7 +237,7 @@ namespace hiatpg {
 
     void CustomFaultlist::writeFaultMask(std::streambuf *fn)
     {
-        //  Writes the faltlist mask, according the order in faultlist
+        //  Writes the faltlist mask, according the order in fault
         //  0 = not detected
         //  1 = detected
         //  3 = redundant
@@ -1004,12 +1004,12 @@ namespace hiatpg {
 
         levels = setBenchStream(benchStream);
 
-        // create faultlist
+        // create fault
         setFaults();
         indexFaults();
         customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
 
-        // if read from file, print faultlist.
+        // if read from file, print fault.
         if(wFaults) customFaultlist->printList(wFaultStream);
 
         iseed=Random::seed(iseed);
