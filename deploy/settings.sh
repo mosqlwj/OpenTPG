@@ -8,6 +8,9 @@ export  PATH="${PATH}:${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin"
 templateFiles=$(cd "${HADOOP_HOME}/etc/hadoop" && ls)
 
 for f in ${templateFiles} ; do
+    if [[ -d "${HADOOP_HOME}/etc/hadoop/${f}" ]]; then
+        continue
+    fi
     sed "s#\${HADOOP_HOME}#${HADOOP_HOME}#g"    -i  "${HADOOP_HOME}/etc/hadoop/${f}"    &&  \
     sed "s#\${JAVA_HOME}#${JAVA_HOME}#g"        -i  "${HADOOP_HOME}/etc/hadoop/${f}"
 done
