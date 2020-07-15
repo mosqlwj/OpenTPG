@@ -166,7 +166,7 @@ namespace hiatpg {
 
 		Fault *current;
 		Fault *curr;
-		FaultType f;
+		FaultType faultType;
 		int nfault,n,nof,i;
 		int *test,size;
 
@@ -187,14 +187,14 @@ namespace hiatpg {
 
 			if(gate->ninput > 1)
 			{
-				f= (gate->type == AND || gate->type == NAND) ? SA1 : SA0;
+                faultType= (gate->type == AND || gate->type == NAND) ? SA1 : SA0;
 				for(int j=0; j < gate->ninput; j++)
 				{
 					if(gate->fanins[j]->noutput > 1)
 					{
                         fault=new Fault;
                         fault->gate=gate;
-                        fault->type=f;
+                        fault->type=faultType;
                         fault->line=j;
 						nfault++;
 						gate->pfault.push_back(fault);
@@ -204,7 +204,7 @@ namespace hiatpg {
 						{
                             fault=new Fault();
                             fault->gate=gate;
-                            fault->type= (f == SA1) ? SA0 : SA1;
+                            fault->type= (faultType == SA1) ? SA0 : SA1;
                             fault->line=j;
 							nfault++;
 
@@ -217,10 +217,10 @@ namespace hiatpg {
 			if((gate->noutput == 1) &&
                (gate->fanouts[0]->ninput > 1 || gate->fanouts[0]->type == PO))
 			{
-				f= (gate->fanouts[0]->type == OR || gate->fanouts[0]->type == NOR) ? SA0 : SA1;
+                faultType= (gate->fanouts[0]->type == OR || gate->fanouts[0]->type == NOR) ? SA0 : SA1;
                 fault=new Fault;
                 fault->gate=gate;
-                fault->type=f;
+                fault->type=faultType;
                 fault->line=OUTFAULT;
 				nfault++;
 				gate->pfault.push_back(fault);
@@ -230,7 +230,7 @@ namespace hiatpg {
 				{
                     fault=new Fault;
                     fault->gate=gate;
-                    fault->type= (f == SA1) ? SA0 : SA1;
+                    fault->type= (faultType == SA1) ? SA0 : SA1;
                     fault->line=OUTFAULT;
 					nfault++;
 					gate->pfault.push_back(fault);
@@ -350,19 +350,21 @@ namespace hiatpg {
 				if(to->type == DUMMY) to=to->fanouts[0];
 				switch(to->type)
 				{
-				case AND:
-				case NAND: 
-					if(to->ninput>1) insertFault(gut,OUTFAULT,SA1); break;
-				case OR:
-				case NOR: 
-					if(to->ninput>1) insertFault(gut,OUTFAULT,SA0); break;
-				case XOR:
-				case XNOR:
-				case DFF:
-				case PO:
-					insertFault(gut,OUTFAULT,SA0);
-					insertFault(gut,OUTFAULT,SA1);
-					break;
+                    case AND:
+                    case NAND:
+                        if(to->ninput>1) insertFault(gut,OUTFAULT,SA1); break;
+                    case OR:
+                    case NOR:
+                        if(to->ninput>1) insertFault(gut,OUTFAULT,SA0); break;
+                    case XOR:
+                    case XNOR:
+                    case DFF:
+                    case PO:
+                        insertFault(gut,OUTFAULT,SA0);
+                        insertFault(gut,OUTFAULT,SA1);
+                        break;
+				    default:
+				        break;
 				}
 			}
 		} else 
@@ -371,21 +373,23 @@ namespace hiatpg {
 			if(from->type == DUMMY || from->type == PO) from=from->fanins[0];
 			if(from->noutput>1)
 				switch(gut->type)
-			{
-				case AND:
-				case NAND:
-					if(gut->ninput>1) insertFault(gut,line,SA1); break;
-				case OR:
-				case NOR:
-					if(gut->ninput>1) insertFault(gut,line,SA0); break;
-				case XOR:
-				case XNOR:
-				case DFF:
-				case PO:
-					insertFault(gut,line,SA0);
-					insertFault(gut,line,SA1);
-					break;
-			}
+                {
+                    case AND:
+                    case NAND:
+                        if(gut->ninput>1) insertFault(gut,line,SA1); break;
+                    case OR:
+                    case NOR:
+                        if(gut->ninput>1) insertFault(gut,line,SA0); break;
+                    case XOR:
+                    case XNOR:
+                    case DFF:
+                    case PO:
+                        insertFault(gut,line,SA0);
+                        insertFault(gut,line,SA1);
+                        break;
+                    default:
+                        break;
+                }
 		}
 	}
 
