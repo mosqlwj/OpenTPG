@@ -71,7 +71,7 @@ extern int CreateModule(int mid, const char* name) {
     return 0;
 }
 
-extern Module* ImportModule(int mid) {
+extern Module* ReferModule(int mid) {
     ASSERT(mid >= 0);
     ASSERT(mid < MODULE_COUNT_MAX);
 

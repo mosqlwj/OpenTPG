@@ -4,10 +4,15 @@ set(CMAKE_CXX_STANDARD 14)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../../bin)
 
 
-
 add_executable(hiatpg
     main.cpp
-    utils/StringUtils.cpp)
+    Context.cpp
+    utils/StringUtils.cpp
+
+    include/model.h
+    include/Context.h
+    include/HIATPG.h
+    )
 
 target_include_directories(hiatpg PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/

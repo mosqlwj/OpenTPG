@@ -19,83 +19,166 @@ using namespace std;
 using GateId = int;
 
 
-enum Value { X, ZERO, ONE, UNDEF };
+enum Value
+{
+    X, ZERO, ONE, UNDEF
+};
 
-enum FaultType { STUCK_AT_0, STUCK_AT_1 };
+enum FaultType
+{
+    STUCK_AT_0, STUCK_AT_1
+};
 
-enum FaultStatus { TESTED, UNKNOW};
+enum FaultStatus
+{
+    TESTED, UNKNOW
+};
 
-enum GateType { PI, PO, AND, NAND, OR, NOR, XOR, XNOR, INV, BUF };
+enum GateType
+{
+    PI, PO, AND, NAND, OR, NOR, XOR, XNOR, INV, BUF
+};
 
-unordered_map<string, GateType> str2GateType = {{"AND", AND}, {"NAND", NAND}, {"OR", OR},   {"NOR", NOR},
-                                                {"XOR", XOR}, {"XNOR", XNOR}, {"NOT", INV}, {"BUFF", BUF}};
+unordered_map<string, GateType> str2GateType = {
+    //
+    {"AND",  AND},
+    {"NAND", NAND},
+    {"OR",   OR},
+    {"NOR",  NOR},
+    {"XOR",  XOR},
+    {"XNOR", XNOR},
+    {"NOT",  INV},
+    {"BUFF", BUF},
+};
 
-unordered_map<GateType, string> gateType2Str = {{AND, "AND"}, {NAND, "NAND"}, {OR, "OR"},   {NOR, "NOR"},
-                                                {XOR, "XOR"}, {XNOR, "XNOR"}, {INV, "NOT"}, {BUF, "BUFF"}};
-enum EventDir { FORWARD, BACKWORD, BOTH };
+unordered_map<GateType, string> gateType2Str = {
+    //
+    {AND,  "AND"},
+    {NAND, "NAND"},
+    {OR,   "OR"},
+    {NOR,  "NOR"},
+    {XOR,  "XOR"},
+    {XNOR, "XNOR"},
+    {INV,  "NOT"},
+    {BUF,  "BUFF"},
+};
 
-struct Options {};
+enum EventDir
+{
+    FORWARD,
+    BACKWORD,
+    BOTH,
+};
+
+struct Options
+{
+};
 
 
-struct Gate {
+
+struct Gate
+{
     GateId gateId;
+
     GateType type;
+
     vector<Gate*> fanins;
+
     vector<Gate*> fanouts;
+
     string name;
 
-    GateType GetGateType() const { return type; }
-    GateId GetGateId() const { return gateId; }
-    Gate* GetFaninGate(int index) const { return fanins[index]; }
-    Gate* GetFanoutGate(int index) const { return fanouts[index]; }
-    Gate(GateId gateId, GateType type, const string& name) : gateId(gateId), type(type), name(name) {}
+    GateType GetGateType() const
+    { return type; }
+
+    GateId GetGateId() const
+    { return gateId; }
+
+    Gate* GetFaninGate(int index) const
+    { return fanins[index]; }
+
+    Gate* GetFanoutGate(int index) const
+    { return fanouts[index]; }
+
+    Gate(GateId gateId, GateType type, const string& name) : gateId(gateId), type(type), name(name)
+    {}
 };
 
-struct Fault {
+
+
+struct Fault
+{
     GateId gateId;
+
     Value value;
+
     FaultType faultType;
+
     FaultStatus faultStatus;
+
     int index;
+
     bool detected;
+
     int faultSitePin;
 
-    FaultStatus GetFaultStatusType() const { return faultStatus; }
-    int GetFaultSitePin() const { return faultSitePin; }
-    FaultType GetFaultType() const { return faultType; }
-    int GetFaultSiteGateId() const { return gateId; }
-    Fault(GateId gateId, int index, Value value) : gateId(gateId), index(index), value(value), detected(false) {}
+    Fault(GateId gateId, int index, Value value) : gateId(gateId), index(index), value(value), detected(false)
+    {}
+
+    FaultStatus GetFaultStatusType() const
+    { return faultStatus; }
+
+    int GetFaultSitePin() const
+    { return faultSitePin; }
+
+    FaultType GetFaultType() const
+    { return faultType; }
+
+    int GetFaultSiteGateId() const
+    { return gateId; }
 };
 
-struct AtpgValue {
+
+
+struct AtpgValue
+{
     Value goodVal;
     Value faultyVal;
 };
 
-class NetList {
+
+
+class NetList
+{
 private:
     vector<Gate*> gates;
+
     unordered_map<string, Gate*> name2GatePointer;
 
     static NetList* instance;
 
 public:
-    static NetList* GetInstance() {
-        if (instance == nullptr) {
+    static NetList* GetInstance()
+    {
+        if (instance == nullptr)
+        {
             instance = new NetList;
         }
 
         return instance;
     }
 
-    void Parse(string fileName) {
+    void Parse(string fileName)
+    {
         ifstream in(fileName);
         GateId curGateId = 0;
         unordered_map<string, Gate*> primaryOutput;
         string line;
 
-        while (getline(in, line)) {
-            if (line.length() == 0) {
+        while (getline(in, line))
+        {
+            if (line.length() == 0)
+            {
                 continue;
             }
 
@@ -105,21 +188,27 @@ public:
             paras = StringUtils::split(line, "[=,()]");
             Gate* gate;
 
-            if (paras[0] == "INPUT") {
+            if (paras[0] == "INPUT")
+            {
                 auto name = paras[1];
                 gate = new Gate(curGateId, PI, name);
                 name2GatePointer[name] = gate;
-            } else if (paras[0] == "OUTPUT") {
+            }
+            else if (paras[0] == "OUTPUT")
+            {
                 auto name = paras[1];
                 gate = new Gate(curGateId, PO, name);
                 primaryOutput[name] = gate;
-            } else {
+            }
+            else
+            {
                 auto name = paras[0];
                 GateType type = str2GateType[paras[1]];
                 gate = new Gate(curGateId, type, name);
                 name2GatePointer[name] = gate;
                 // add fanins
-                for (int i = 2; i < paras.size(); ++i) {
+                for (int i = 2; i < paras.size(); ++i)
+                {
                     auto fanin = name2GatePointer[paras[i]];
                     gate->fanins.push_back(fanin);
                     fanin->fanouts.push_back(gate);
@@ -129,14 +218,16 @@ public:
             curGateId++;
         }
 
-        for (auto& po : primaryOutput) {
+        for (auto& po : primaryOutput)
+        {
             auto name = po.first;
             auto gate = po.second;
             Gate* fanin = name2GatePointer[name];
             gate->fanins.push_back(fanin);
             fanin->fanouts.push_back(gate);
         }
-        for (auto& po : primaryOutput) {
+        for (auto& po : primaryOutput)
+        {
             auto name = po.first;
             auto gate = po.second;
             gate->name = name + "_PO";
@@ -146,55 +237,73 @@ public:
         return;
     }
 
-    void PrintGates() {
-        for (auto gate : gates) {
+    void PrintGates()
+    {
+        for (auto gate : gates)
+        {
             cout << "GateId: " << gate->gateId << endl;
             cout << "GateName: " << gate->name << endl;
             cout << "GateType: " << gate->type << endl;
 
-            for (auto fanin : gate->fanins) {
+            for (auto fanin : gate->fanins)
+            {
                 cout << "Fanin: " << fanin->name << endl;
             }
-            for (auto fanout : gate->fanouts) {
+            for (auto fanout : gate->fanouts)
+            {
                 cout << "Fanout: " << fanout->name << endl;
             }
             cout << endl;
         }
     }
 
-    Gate* FindGateByName(string name) { return name2GatePointer[name]; }
+    Gate* FindGateByName(string name)
+    { return name2GatePointer[name]; }
 
-    vector<Gate*>& GetGates() { return gates; }
+    vector<Gate*>& GetGates()
+    { return gates; }
 
-    void ClearGates() {
+    void ClearGates()
+    {
         gates.clear();
         name2GatePointer.clear();
     }
 };
+
+
+
 NetList* NetList::instance = nullptr;
 
-class FaultList {
+
+
+class FaultList
+{
 private:
     vector<Fault*> faults;
 
     static FaultList* instance;
 
 public:
-    static FaultList* GetInstance() {
-        if (instance == nullptr) {
+    static FaultList* GetInstance()
+    {
+        if (instance == nullptr)
+        {
             instance = new FaultList;
         }
 
         return instance;
     }
 
-    void Parse(string fileName) {
+    void Parse(string fileName)
+    {
         ifstream in(fileName);
         int curFaultIndex = 0;
         string line;
 
-        while (getline(in, line)) {
-            if (line.length() == 0) {
+        while (getline(in, line))
+        {
+            if (line.length() == 0)
+            {
                 continue;
             }
 
@@ -203,7 +312,7 @@ public:
             auto netlist = NetList::GetInstance();
             auto gateName = paras[0];
             Gate* gate = netlist->FindGateByName(gateName);
-            Value value = (Value)(stoi(paras[1]) + ZERO);
+            Value value = (Value) (stoi(paras[1]) + ZERO);
             Fault* fault = new Fault(gate->gateId, curFaultIndex, value);
             faults.push_back(fault);
             curFaultIndex++;
@@ -212,18 +321,43 @@ public:
         return;
     }
 
-    void PrintFaults() {
-        for (auto fault : faults) {
+    void PrintFaults()
+    {
+        for (auto fault : faults)
+        {
             cout << "Fault gate id: " << fault->gateId << endl;
             cout << "Fault value: " << fault->value - ZERO << endl;
         }
     }
 };
+
+
+
 FaultList* FaultList::instance = nullptr;
 
-class AtpgEngine {
+
+
+class AtpgEngine
+{
     unordered_map<GateId, AtpgValue> window;
+
     unordered_map<GateId, Value> testCube;
 };
+
+
+
+struct Cube
+{
+    Cube* next;
+    Cube* prev;
+    int32_t faultIndex;
+};
+
+struct Pattern
+{
+    Pattern* next;
+    Pattern* prev;
+};
+
 
 #endif  // HIATPG_MODEL_H

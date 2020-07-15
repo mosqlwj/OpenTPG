@@ -69,3 +69,7 @@ tmp/
 
 
 .tmp-package/
+
+test1/
+hadoop/
+redis-*/
