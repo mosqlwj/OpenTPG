@@ -37,7 +37,7 @@ void SimulateEngine::updateAll() {
     // clear freach
     fanNet->freeGates->resetFreach();
     for (i = 0; i < fanNet->numberOfPrimaryInputs; i++) {
-        fanNet->net[i]->freach = false;
+        fanNet->gates[i]->freach = false;
     }
 
     // faulty gates
@@ -92,7 +92,7 @@ void SimulateEngine::updateAll() {
 
     // schedule of freach
     for (i = 0; i < fanNet->numberOfPrimaryInputs; i++) {
-        fanNet->net[i]->freach = true;
+        fanNet->gates[i]->freach = true;
     }
 
     fanNet->nsStack = -1;
@@ -116,10 +116,10 @@ void SimulateEngine::pInitSimulation(int maxDpi) {
 
     // clear changed ochange and set freach
     for (i = 0; i < fanNet->numberOfGates; i++) {
-        fanNet->net[i]->changed = false;
-        fanNet->net[i]->freach = false;
-        fanNet->net[i]->cobserve = ALL0;
-        fanNet->net[i]->observe = ALL0;
+        fanNet->gates[i]->changed = false;
+        fanNet->gates[i]->freach = false;
+        fanNet->gates[i]->cobserve = ALL0;
+        fanNet->gates[i]->observe = ALL0;
     }
 
     // clear all sets
@@ -134,7 +134,7 @@ void SimulateEngine::pInitSimulation(int maxDpi) {
 
     // initialize all stacks
     for (i = 0; i < fanNet->numberOfGates; i++) {
-        p = fanNet->net[i];
+        p = fanNet->gates[i];
         if (p->pfault.size() > 0) {
             fanNet->faultyGates->push(p);
         }
@@ -143,7 +143,7 @@ void SimulateEngine::pInitSimulation(int maxDpi) {
         }
     }
     for (i = fanNet->numberOfGates - 1; i >= fanNet->numberOfPrimaryInputs; i--) {
-        fanNet->freeGates->push(fanNet->net[i]);
+        fanNet->freeGates->push(fanNet->gates[i]);
     }
 
     // schedule freach
@@ -206,7 +206,7 @@ level SimulateEngine::pFaultSimulation(Gate *gut, level observe, Gate *dominator
     fanNet->stack->push(gut);
     pScheduleOutput(gut);
 
-    if (gut->fn != PO) {
+    if (gut->type != PO) {
         observe = ALL0;
     }
     if (dominator != NULL) {
@@ -233,7 +233,7 @@ level SimulateEngine::pFaultSimulation(Gate *gut, level observe, Gate *dominator
                 restoreFaultFreeValue();
                 return observe | (val ^ gut->output1);
             }
-            if (gut->fn == PO) {
+            if (gut->type == PO) {
                 observe |= val ^ gut->output1;
             }
 
@@ -249,12 +249,12 @@ level SimulateEngine::pFaultSimulation(Gate *gut, level observe, Gate *dominator
 }
 
 void SimulateEngine::pGateEval1(Gate *gate, level *val) {
-    *val = (gate->fn == NOT || gate->fn == NAND || gate->fn == NOR) ? ~gate->fanins[0]->output1
-                                                                    : gate->fanins[0]->output1;
+    *val = (gate->type == NOT || gate->type == NAND || gate->type == NOR) ? ~gate->fanins[0]->output1
+                                                                          : gate->fanins[0]->output1;
 }
 
 void SimulateEngine::pGateEval2(Gate *gate, level *val) {
-    switch (gate->fn) {
+    switch (gate->type) {
         case AND:
             *val = gate->fanins[0]->output1 & gate->fanins[1]->output1;
             break;
@@ -272,11 +272,14 @@ void SimulateEngine::pGateEval2(Gate *gate, level *val) {
             break;
         case XNOR:
             *val = ~(gate->fanins[0]->output1 ^ gate->fanins[1]->output1);
+            break;
+        default:
+            break;
     }
 }
 
 void SimulateEngine::pGateEval3(Gate *gate, level *val) {
-    switch (gate->fn) {
+    switch (gate->type) {
         case AND:
             *val = gate->fanins[0]->output1 & gate->fanins[1]->output1 & gate->fanins[2]->output1;
             break;
@@ -293,7 +296,7 @@ void SimulateEngine::pGateEval3(Gate *gate, level *val) {
 
 void SimulateEngine::pGateEval4(Gate *gate, level *val) {
     int cnt;
-    switch (gate->fn) {
+    switch (gate->type) {
         case AND:
             *val =
                     gate->fanins[0]->output1 & gate->fanins[1]->output1 & gate->fanins[2]->output1 & gate->fanins[3]->output1;
@@ -320,7 +323,7 @@ void SimulateEngine::pGateEval4(Gate *gate, level *val) {
 
 void SimulateEngine::pGateEvalX(Gate *gate, level *val) {
     int cnt;
-    switch (gate->fn) {
+    switch (gate->type) {
         case AND:
             *val = gate->fanins[0]->output1 & gate->fanins[1]->output1 & gate->fanins[2]->output1;
             for (cnt = 3; cnt < gate->ninput; cnt++) *val &= gate->fanins[cnt]->output1;
@@ -344,6 +347,8 @@ void SimulateEngine::pGateEvalX(Gate *gate, level *val) {
             break;
         case XNOR:
             *val = ~(gate->fanins[0]->output1 ^ gate->fanins[1]->output1);
+            break;
+        default:
             break;
     }
 }
@@ -369,9 +374,9 @@ level SimulateEngine::feval(Fault *pf, Gate *gut) {
         return val;
     }
     if (gut->ninput == 2) {
-        if (gut->fn <= NAND) {
+        if (gut->type <= NAND) {
             return val & (pf->line == 0 ? gut->fanins[1]->output1 : gut->fanins[0]->output1);
-        } else if (gut->fn <= NOR) {
+        } else if (gut->type <= NOR) {
             return val & (pf->line == 0 ? ~gut->fanins[1]->output1 : ~gut->fanins[0]->output1);
         } else {
             return val;
@@ -379,7 +384,7 @@ level SimulateEngine::feval(Fault *pf, Gate *gut) {
     }
 
     g->output1 = gut->fanins[0]->output;
-    switch (gut->fn) {
+    switch (gut->type) {
         case AND:
         case NAND:
             for (i = 1; i < gut->ninput; i++) {
@@ -391,6 +396,9 @@ level SimulateEngine::feval(Fault *pf, Gate *gut) {
             for (i = 1; i < gut->ninput; i++) {
                 val &= (~gut->fanins[i]->output1);
             }
+            break;
+        default:
+            break;
     }
     g->output1 = g->output;
     return val;
@@ -501,7 +509,7 @@ int SimulateEngine::ftpReverse(Gate *stem, status *flag, status flag2, int nbit,
         } else if (gut->ninput == 2) {
             g = gut->fanins[0];
             if (g->noutput == 1 && g->freach) {
-                switch (gut->fn) {
+                switch (gut->type) {
                     case AND:
                     case NAND:
                         g->observe = gut->observe & gut->fanins[1]->output1;
@@ -520,7 +528,7 @@ int SimulateEngine::ftpReverse(Gate *stem, status *flag, status flag2, int nbit,
 
             g = gut->fanins[1];
             if (g->noutput == 1 && g->freach) {
-                switch (gut->fn) {
+                switch (gut->type) {
                     case AND:
                     case NAND:
                         g->observe = gut->observe & gut->fanins[0]->output1;
@@ -581,7 +589,7 @@ int SimulateEngine::fault1Simulation(int maxDpi, int nStem, Gate **stem, int nbi
         }
         gut->observe = allOne;
 
-        if (gut->fn == PO) {
+        if (gut->type == PO) {
             nDetect += ftpReverse(gut, &updateFlag, true, nbit, tArray);
         } else {
             if ((gut->observe = ftpReverse(gut, &updateFlag, false, nbit, tArray)) != ALL0) {
@@ -619,7 +627,7 @@ int SimulateEngine::fault1Simulation(int maxDpi, int nStem, Gate **stem, int nbi
         gut = fanNet->activeStems->pop();
         if (!gut->uPath.empty()) {
             g = gut->uPath.front();
-            gut->observe &= g->observe & fanNet->net[g->fos]->observe;
+            gut->observe &= g->observe & fanNet->gates[g->fos]->observe;
         }
 
         if (gut->observe != ALL0) {
@@ -675,11 +683,11 @@ void SimulateEngine::updateEvalGates() {
 
     // set freach from each faulty gate to its stem
     for (i = 0; i <= fanNet->faultyGates->getCount() - 1; i++) {
-        gut = fanNet->net[(*fanNet->faultyGates)[i]->fos];
+        gut = fanNet->gates[(*fanNet->faultyGates)[i]->fos];
         while (!gut->changed) {
             gut->changed = true;
             if (!gut->uPath.empty()) {
-                gut = fanNet->net[gut->uPath.front()->fos];
+                gut = fanNet->gates[gut->uPath.front()->fos];
             }
         }
     }
@@ -709,7 +717,7 @@ void SimulateEngine::updateAll1() {
         (*fanNet->freeGates)[i]->freach = false;
     }
     for (i = 0; i < fanNet->numberOfPrimaryInputs; i++) {
-        fanNet->net[i]->freach = false;
+        fanNet->gates[i]->freach = false;
     }
 
     // faulty gates
@@ -787,7 +795,7 @@ int SimulateEngine::fault0Simulation(int maxDpi, int nbit, int *tArray) {
             continue;
         }
         gut->observe = allOne;
-        if (gut->fn == PO) {
+        if (gut->type == PO) {
             nDetect += ftpReverse(gut, &updateFlag, true, nbit, tArray);
         } else if ((gut->observe = ftpReverse(gut, &updateFlag, false, nbit, tArray)) != ALL0) {
             g = gut->uPath.empty() ? 0 : gut->uPath.front();
@@ -820,7 +828,7 @@ int SimulateEngine::fault0Simulation(int maxDpi, int nbit, int *tArray) {
         gut = fanNet->activeStems->pop();
         if (!gut->uPath.empty()) {
             g = gut->uPath.front();
-            gut->observe &= g->observe & fanNet->net[g->fos]->observe;
+            gut->observe &= g->observe & fanNet->gates[g->fos]->observe;
         }
 
         if (gut->observe != ALL0) {

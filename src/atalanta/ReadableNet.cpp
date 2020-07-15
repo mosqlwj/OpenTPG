@@ -97,7 +97,7 @@ namespace hiatpg {
 
         myNumberOfStems=0;
         for(i=0;i<numberOfGates;i++)
-            if(net[i]->isFanout() || net[i]->fn==PO) myNumberOfStems++;
+            if(gates[i]->isFanout() || gates[i]->type == PO) myNumberOfStems++;
         myStem=new Gate*[myNumberOfStems];
         setFanoutStemp(myStem,myNumberOfStems);
 		return levels;
@@ -216,7 +216,7 @@ namespace hiatpg {
 		symbol.reserve(200);
 		this->numberOfPrimaryInputs = this->numberOfPrimaryOutputs = 
 			this->numberOfGates = this->numberOfFlipFlops = 0;
-		net.clear();
+		gates.clear();
 		testVector.vectors.clear();
 		hashTable.clear();
 
@@ -280,7 +280,7 @@ namespace hiatpg {
 					pg->index=numberOfGates++;
 					pg->ninput=0;
 					pg->fanins=0;
-					pg->fn=PI;
+					pg->type=PI;
 					pg->noutput=0;
 					pg->fanouts=0;
 					break;
@@ -315,7 +315,7 @@ namespace hiatpg {
 						return -1;
 					}
 					currentGate->index=numberOfGates++;
-					currentGate->fn=fn;
+					currentGate->type=static_cast<GateType>(fn);
 					if((currentGate->ninput=nofanin) == 0) 
 						currentGate->fanins=0;
 					else
@@ -359,7 +359,7 @@ namespace hiatpg {
 
 		//netSize=numberOfGates+numberOfPrimaryOutputs+numberOfFlipFlops+SPAREGATES;
 
-		//net=new Gate*[netSize];
+		//gates=new Gate*[netSize];
 		//primaryIn=new int[numberOfPrimaryInputs];
 		//primaryOut=new int[numberOfPrimaryOutputs];
 		flipFlops=new int[numberOfFlipFlops+1];
@@ -376,20 +376,20 @@ namespace hiatpg {
 #endif
 			if(currentGate->index<0)
 			{
-				fprintf(stderr,"Error: floating net %s\n",currentGate->symbol->symbol.c_str());
+				fprintf(stderr,"Error: floating gates %s\n",currentGate->symbol->symbol.c_str());
 				fprintf(stderr, "Workaround. You have to take one of the two actions:\n");
 				fprintf(stderr, "   1. Remove all the floating input and associated gates, or\n");
 				fprintf(stderr, "   2. Make each floating input a primary output.\n");
 				return -1;
 			}
-			if(currentGate->index >= net.size()) {
-				net.resize(currentGate->index + 1, NULL);
+			if(currentGate->index >= gates.size()) {
+				gates.resize(currentGate->index + 1, NULL);
 			}
-			net[currentGate->index]=currentGate;
+            gates[currentGate->index]=currentGate;
 			this->numberOfGates++;
 		}
 
-//		for(i=this->numberOfGates;i<netSize;i++) net[i]=0;
+//		for(i=this->numberOfGates;i<netSize;i++) gates[i]=0;
 
 		if(this->numberOfGates!=numberOfGates)
 		{
@@ -400,12 +400,12 @@ namespace hiatpg {
 		// Pass 3: Compute fanout list
 		for(i=0;i<numberOfGates;i++)
 		{
-			currentGate=net[i];
+			currentGate=gates[i];
 #ifdef LEARNFLG
 			currentGate->pLearn.clear();
 #endif
 			for(int j=0;j<currentGate->ninput;j++) currentGate->fanins[j]->noutput++;
-			switch(currentGate->fn)
+			switch(currentGate->type)
 			{
 			case PI: 
 				primaryIn.push_back(i);
@@ -422,7 +422,7 @@ namespace hiatpg {
 		}
 		for(i=0;i<this->numberOfGates;i++)
 		{
-			currentGate=net[i];
+			currentGate=gates[i];
 			if(currentGate->noutput>0)
 			{
 				currentGate->fanouts=new Gate*[currentGate->noutput];
@@ -433,14 +433,14 @@ namespace hiatpg {
 
 		for(i=0;i<this->numberOfGates;i++)
 		{
-			currentGate=net[i];
+			currentGate=gates[i];
 			for(int j=0;j<currentGate->ninput;j++)
 				currentGate->fanins[j]->fanouts[(currentGate->fanins[j]->noutput)++]=currentGate;
 		};
 
 		for(i=0; i<this->numberOfGates; i++)
 		{
-			currentGate=net[i];
+			currentGate=gates[i];
 			if (currentGate->noutput > 0) continue;
 			for(j=0;j<numberOfPrimaryOutputs;j++)
 				if (currentGate == poGates[j]) break;
@@ -473,11 +473,11 @@ namespace hiatpg {
 
 		for(i=0;i<numberOfGates;i++)
 		{
-			currentGate=net[i];
-			if(currentGate->fn==PI || currentGate->fn==DFF)
+			currentGate=gates[i];
+			if(currentGate->type == PI || currentGate->type == DFF)
 			{
 				currentGate->dpi=0;
-				stack1->push(net[i]);
+				stack1->push(gates[i]);
 				currentGate->changed=currentGate->ninput;
 			} else
 			{
@@ -525,8 +525,8 @@ namespace hiatpg {
 		maxlevel=-1;
 		for(i=0;i<numberOfPrimaryOutputs;i++)
 		{
-			currentGate=net[primaryOut[i]];
-			if(currentGate->fn==PO)
+			currentGate=gates[primaryOut[i]];
+			if(currentGate->type == PO)
 			{
 				if(currentGate->dpi>maxlevel) {maxlevel=currentGate->dpi; flag=1;}
 			}
@@ -536,7 +536,7 @@ namespace hiatpg {
 
 		for(i=0;i<numberOfFlipFlops;i++)
 		{
-			currentGate=net[flipFlops[i]];
+			currentGate=gates[flipFlops[i]];
 			for(j=0; j<currentGate->ninput; j++)
 				if(currentGate->fanins[j]->dpi >= maxlevel) { maxlevel=currentGate->fanins[j]->dpi; flag=2; }
 		}
@@ -546,8 +546,8 @@ namespace hiatpg {
 		POlevel=maxlevel+1;
 		PPOlevel=maxlevel+2;
 		for(i=0;i<numberOfPrimaryOutputs;i++)
-			if(net[primaryOut[i]]->fn==PO) net[primaryOut[i]]->dpi=POlevel;
-		for(i=0;i<numberOfFlipFlops;i++) net[flipFlops[i]]->dpi=PPOlevel;
+			if(gates[primaryOut[i]]->type == PO) gates[primaryOut[i]]->dpi=POlevel;
+		for(i=0;i<numberOfFlipFlops;i++) gates[flipFlops[i]]->dpi=PPOlevel;
 
 		return(maxlevel+1);
 	}
@@ -560,7 +560,7 @@ namespace hiatpg {
 		// re-number gates 
 		for(i=0;i<numberOfGates;i++)
 		{
-			pushGate(net[i]);
+			pushGate(gates[i]);
 		}
 		for(i=0;i<maxlevel+2;i++) 
 		{
@@ -574,23 +574,23 @@ namespace hiatpg {
 
 		// update gate numbers
 		for(i=0;i<numberOfPrimaryInputs;i++)				// primaryin
-			primaryIn[i]=net[primaryIn[i]]->index;
+			primaryIn[i]=gates[primaryIn[i]]->index;
 		for(i=0;i<numberOfPrimaryOutputs;i++)				/* primaryout */
-			primaryOut[i]=net[primaryOut[i]]->index;
+			primaryOut[i]=gates[primaryOut[i]]->index;
 		for(i=0;i<numberOfFlipFlops;i++)				/* flip_flops */
-			flipFlops[i]=net[flipFlops[i]]->index;
+			flipFlops[i]=gates[flipFlops[i]]->index;
 
 		// sort gates by index 
 		i=0;
 		while(i<numberOfGates)
 		{
-			if(i==net[i]->index) 
+			if(i == gates[i]->index)
 				i++;
-			else 			/* swap net[i] and net[net[i]->gid] */
+			else 			/* swap gates[i] and gates[gates[i]->gid] */
 			{
-				cg=net[i];
-				net[i]=net[cg->index];
-				net[cg->index]=cg;
+				cg=gates[i];
+                gates[i]=gates[cg->index];
+                gates[cg->index]=cg;
 			}
 		}
 		return 0;
@@ -607,7 +607,7 @@ namespace hiatpg {
 
 		// initialize
 		for(i=0; i<n; i++)
-			if((ele=net[i]) != 0)
+			if((ele=gates[i]) != 0)
 			{
 				ele->changed=ele->ninput;
 				ele->dpi=-1;
@@ -618,13 +618,13 @@ namespace hiatpg {
 			// Find gates with indegree=0 
 			for(i=0; i<numberOfPrimaryInputs; i++)
 			{
-				ele=net[primaryIn[i]];
+				ele=gates[primaryIn[i]];
 				ele->changed=0;
 				*last++=ele;
 				primaryIn[i]=gIndex++;
 			}
 			for(i=0; i<numberOfFlipFlops; i++) {
-				ele=net[flipFlops[i]];
+				ele=gates[flipFlops[i]];
 				ele->changed=0;
 				*last++=ele;
 				flipFlops[i]=gIndex++;
@@ -655,7 +655,7 @@ namespace hiatpg {
 				fprintf(stderr,"Some gates are not reachable from PIs.\n");
 				for(i=0; i<n; i++)
 				{
-					ele=net[i];
+					ele=gates[i];
 					if(ele->changed>0 || ele->dpi<0)
 					{
 						fprintf(stderr,"*** Unreachable gate from an input:");
@@ -667,18 +667,18 @@ namespace hiatpg {
 			}
 
 			for(i=0; i<numberOfPrimaryOutputs; i++)	// primaryout 
-				primaryOut[i]=net[primaryOut[i]]->index;
+				primaryOut[i]=gates[primaryOut[i]]->index;
 
 			// sort gates by index 
 			for(i=0; i<n; )
 			{
-				if(i==net[i]->index) 
+				if(i==gates[i]->index)
 					i++;
-				else 			// swap net[i] and net[net[i]->index] 
+				else 			// swap gates[i] and gates[gates[i]->index]
 				{
-					ele=net[i];
-					net[i]=net[ele->index];
-					net[ele->index]=ele;
+					ele=gates[i];
+					gates[i]=gates[ele->index];
+					gates[ele->index]=ele;
 				}
 			}
 
@@ -695,13 +695,13 @@ namespace hiatpg {
 
 		for(i=0;i<numberOfPrimaryOutputs;i++)
 		{
-			gut=net[primaryOut[i]];
-			//if((last=net[numberOfGates])==0) last=new Gate();
-			//last = net[numberOfGates]; 
-			last = numberOfGates >= net.size() ? new Gate() : net[numberOfGates];
+			gut=gates[primaryOut[i]];
+			//if((last=gates[numberOfGates])==0) last=new Gate();
+			//last = gates[numberOfGates];
+			last = numberOfGates >= gates.size() ? new Gate() : gates[numberOfGates];
 
 			last->index=numberOfGates;
-			last->fn=PO;
+			last->type=PO;
 			last->ninput=1;
 			last->fanins=new Gate*();
 			last->fanins[0]=gut;
@@ -728,10 +728,10 @@ namespace hiatpg {
 			gut->noutput+=1;
 
 			primaryOut[i]=numberOfGates;
-			if(numberOfGates >= net.size()) {
-				net.resize(numberOfGates + 1, NULL);
+			if(numberOfGates >= gates.size()) {
+				gates.resize(numberOfGates + 1, NULL);
 			}
-			net[numberOfGates++]=last;
+            gates[numberOfGates++]=last;
 		}
 
 		return(numberOfPrimaryOutputs);
@@ -748,7 +748,7 @@ namespace hiatpg {
 		{
 			gut=new Gate();	// CONSTANT Gate 
 			gut->index=numberOfGates+2*i;
-			gut->fn=DUMMY;
+			gut->type=DUMMY;
 			gut->ninput=0;
 			gut->fanins=NULL;
 			gut->noutput=1;
@@ -758,17 +758,17 @@ namespace hiatpg {
 			gut->symbol=NULL;
 			gut->gid=0;
 			gut->stem=0;
-			if(gut->index + 1 >= net.size()) {
-				net.resize(gut->index + 2); // +2 due to creation of next gate
+			if(gut->index + 1 >= gates.size()) {
+				gates.resize(gut->index + 2); // +2 due to creation of next gate
 			}
-			net[gut->index]=gut;
+            gates[gut->index]=gut;
 
 			gut=new Gate();   // 2-input AND, OR, XOR 
 			gut->index=numberOfGates+2*i+1;
-			gut->fn=DUMMY;
+			gut->type=DUMMY;
 			gut->ninput=2;
 			gut->fanins=new Gate*[2];
-			gut->fanins[0]=net[numberOfGates + 2 * i];
+			gut->fanins[0]=gates[numberOfGates + 2 * i];
 			gut->noutput=0;
 			gut->fanouts=new Gate*[maxFout];
 			gut->dpi=0;
@@ -776,13 +776,13 @@ namespace hiatpg {
 			gut->gid=0;
 			gut->stem=0;
 			gut->symbol=NULL;
-			net[gut->index]=gut;    // There is alredy reserved place to this gate. See above.
+            gates[gut->index]=gut;    // There is alredy reserved place to this gate. See above.
 		}
 
 		// add one memory space for output list of POs 
 		for(i=0; i<numberOfPrimaryOutputs; i++)
 		{
-			gut=net[primaryOut[i]];
+			gut=gates[primaryOut[i]];
 			if(gut->noutput==0)
 			{
 				gut->fanouts=new Gate*;
@@ -809,7 +809,7 @@ namespace hiatpg {
 		numberOfPrimaryInputs=0;
 		numberOfPrimaryOutputs=0;
 
-		//net=new Gate*[MAXGATE];
+		//gates=new Gate*[MAXGATE];
 		//primaryIn=new int[MAXPI];
 		//primaryOut=new int[MAXPO];
 		//headlines=new int[MAXPI];
@@ -843,33 +843,33 @@ namespace hiatpg {
 					for(i=currentline-1;i>=0;i--)
 						if(!strcmp(fromLine,nameList[i]))
 						{
-							lineindex[lineno]=net[i]->index;
+							lineindex[lineno]=gates[i]->index;
 							break;
 						}
 				} else //else, construct gate structures
 				{
 					strcpy(nameList[currentline],name); //store label
-					if(currentline >= net.size()) {
-						net.resize(currentline + 1, NULL);
+					if(currentline >= gates.size()) {
+						gates.resize(currentline + 1, NULL);
 					}
-					net[currentline]=new Gate;
+					gates[currentline]=new Gate;
 					lineindex[lineno]=currentline;
-					net[currentline]->index=currentline; //internal netlist
-					net[currentline]->gid=lineno;	//actual netlist
-					net[currentline]->ninput=nfin;
-					if(nfin!=0)	net[currentline]->inlis=new Gate*[nfin];
-					net[currentline]->noutput=nfout;
+					gates[currentline]->index=currentline; //internal netlist
+					gates[currentline]->gid=lineno;	//actual netlist
+					gates[currentline]->ninput=nfin;
+					if(nfin!=0)	gates[currentline]->inlis=new Gate*[nfin];
+					gates[currentline]->noutput=nfout;
 #ifdef LEARNFLG
-					net[currentline]->plearn=0;
+					gates[currentline]->plearn=0;
 #endif
 					if(nfout!=0)
 					{
-						net[currentline]->outlis=new Gate*[nfout];
-						memset(net[currentline]->outlis,0,sizeof(Gate*)*nfout);
+						gates[currentline]->outlis=new Gate*[nfout];
+						memset(gates[currentline]->outlis,0,sizeof(Gate*)*nfout);
 					}
 					if(!strcmp(gtype,"inpt"))
 					{
-						net[currentline]->fn=PI;
+						gates[currentline]->fn=PI;
 						if(numberOfPrimaryInputs >= primaryIn.size()) {
 							primaryIn.resize(numberOfPrimaryInputs + 1, 0);
 						}
@@ -877,14 +877,14 @@ namespace hiatpg {
 						numberOfPrimaryInputs++;
 					} else 
 					{
-						if(!strcmp(gtype,"and")) net[currentline]->fn=AND;
-						else if(!strcmp(gtype,"nand")) net[currentline]->fn=NAND;
-						else if(!strcmp(gtype,"or"  )) net[currentline]->fn=OR;
-						else if(!strcmp(gtype,"nor"))  net[currentline]->fn=NOR;
-						else if(!strcmp(gtype,"not"))  net[currentline]->fn=NAND;
-						else if(!strcmp(gtype,"xor"))  net[currentline]->fn=XOR;
-						else if(!strcmp(gtype,"buff")) net[currentline]->fn=AND;
-						else if(!strcmp(gtype,"buf"))  net[currentline]->fn=AND;
+						if(!strcmp(gtype,"and")) gates[currentline]->fn=AND;
+						else if(!strcmp(gtype,"nand")) gates[currentline]->fn=NAND;
+						else if(!strcmp(gtype,"or"  )) gates[currentline]->fn=OR;
+						else if(!strcmp(gtype,"nor"))  gates[currentline]->fn=NOR;
+						else if(!strcmp(gtype,"not"))  gates[currentline]->fn=NAND;
+						else if(!strcmp(gtype,"xor"))  gates[currentline]->fn=XOR;
+						else if(!strcmp(gtype,"buff")) gates[currentline]->fn=AND;
+						else if(!strcmp(gtype,"buf"))  gates[currentline]->fn=AND;
 						else return false;
 
 						// get input list
@@ -894,11 +894,11 @@ namespace hiatpg {
 						// convert input index into internal and check fan-out list
 						for(i=0;i<nfin;i++)
 						{
-							net[currentline]->inlis[i]=net[lineindex[inputs[i]]];
-							for(j=0;j<net[lineindex[inputs[i]]]->noutput;j++)
-								if(net[lineindex[inputs[i]]]->outlis[j]==0)
+							gates[currentline]->inlis[i]=gates[lineindex[inputs[i]]];
+							for(j=0;j<gates[lineindex[inputs[i]]]->noutput;j++)
+								if(gates[lineindex[inputs[i]]]->outlis[j]==0)
 								{
-									net[lineindex[inputs[i]]]->outlis[j]=net[currentline];
+									gates[lineindex[inputs[i]]]->outlis[j]=gates[currentline];
 									break;
 								}
 						}
