@@ -74,6 +74,7 @@ extern Interface* ReferModule(int mid);
 //! Writer 对象用于支持以流的形式写入数据
 struct Writer : virtual public Interface
 {
+    //! 写入数据
     virtual int64_t Write(const uint8_t* data, int64_t) = 0;
 };
 
@@ -82,6 +83,7 @@ struct Writer : virtual public Interface
 //! Reader 对象用于支持按照流的形式读取数据
 struct Reader : virtual public Interface
 {
+    //! 读取数据
     virtual int64_t Read(const uint8_t* data, int64_t) = 0;
 };
 
@@ -90,6 +92,7 @@ struct Reader : virtual public Interface
 //! Clearable 支持清理机制,调用 Clear 函数后,对象内部的数据会被自动清理掉
 struct Clearable : virtual public Interface
 {
+    //! 对对象的内部状态进行清理
     virtual void Clear() = 0;
 };
 
@@ -98,8 +101,10 @@ struct Clearable : virtual public Interface
 //! 全局的清理管理机制,用于支持批量清理对象
 struct ClearManager : virtual public Clearable
 {
+    //! 注册一个自动清理器
     virtual void Register(Clearable* object) = 0;
 
+    //! 注销一个自动清理器
     virtual void Unregister(Clearable* object) = 0;
 };
 
@@ -112,23 +117,34 @@ struct Gate;
 //  网表操作接口
 struct NetListTable : virtual public Interface
 {
+    //! 从指定的 reader 读取网表信息
     virtual int Load(Reader& reader) = 0;
 
+    //! 将网表信息保存到文件
     virtual int Save(Writer& writer) = 0;
 
+    //! 根据gate的名字找到Gate对象
     virtual const Gate* GateOf(const std::string& name) const = 0;
 
+    //! 根据gate的名字找到Gate对象
     virtual Gate* GateOf(const std::string& name) = 0;
 
+    //! 根据gate的id找到Gate对象
     virtual const Gate* GateOf(GateId gateId) const = 0;
 
+    //! 根据gate的id找到Gate对象
     virtual Gate* GateOf(GateId gateId) = 0;
 
+    //! 获取所有的Gate
     virtual const std::vector<const Gate*>& GetGates() const = 0;
 
+    //! 获取所有的Gate
     virtual std::vector<Gate*>& GetGates() = 0;
 
+    //! 枚举所有的Gate
     virtual void Access(std::function<int(Gate*)> handler) = 0;
+
+    //! 枚举所有的Gate
     virtual void Access(std::function<int(const Gate*)> handler) const = 0;
 };
 
@@ -157,6 +173,8 @@ struct FaultListTable : virtual public Clearable
 
     //! 枚举 Fault 列表
     virtual void Access(std::function<int(Fault*)> handler) = 0;
+
+    //! 枚举 Fault 列表
     virtual void Access(std::function<int(const Fault*)> handler) const = 0;
 };
 
@@ -243,6 +261,8 @@ struct PatternListTable : virtual public Clearable
 {
     //! 枚举所有的 Pattern
     virtual void Access(std::function<int(Pattern*)> handler) = 0;
+
+    //! 枚举所有的 Pattern
     virtual void Access(std::function<int(const Pattern*)> handler) = 0;
 };
 
