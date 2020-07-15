@@ -176,15 +176,14 @@ namespace hiatpg {
 		curr=new Fault;
 		current=new Fault;
 
+		// create fault for each gate.
 		for(i=0;i<numberOfGates;i++)
 		{
             gate=gates[i];
-
 			/* if the input of the gate has more than one fanouts, 
 			add a s-a-1 for each AND/NAND,
 			a s-a-0 for each OR/NOR and
 			a s-a-0 and s-a-1 for other gates. */
-
 			if(gate->ninput > 1)
 			{
                 faultType= (gate->type == AND || gate->type == NAND) ? SA1 : SA0;
@@ -213,7 +212,6 @@ namespace hiatpg {
 					}
 				}
 			}
-
 			if((gate->noutput == 1) &&
                (gate->fanouts[0]->ninput > 1 || gate->fanouts[0]->type == PO))
 			{
@@ -235,8 +233,7 @@ namespace hiatpg {
 					nfault++;
 					gate->pfault.push_back(fault);
 				}
-			} else if(gate->noutput > 1)
-			{
+			} else if(gate->noutput > 1) {
                 fault=new Fault();
                 fault->gate=gate;
                 fault->type=SA1;
@@ -250,8 +247,7 @@ namespace hiatpg {
                 fault->line=OUTFAULT;
 				nfault++;
 				gate->pfault.push_back(fault);
-			} else if(gate->type == PO && gate->fanins[0]->noutput > 1)
-			{
+			} else if(gate->type == PO && gate->fanins[0]->noutput > 1) {
                 fault=new Fault();
                 fault->gate=gate;
                 fault->type=SA1;
@@ -269,8 +265,7 @@ namespace hiatpg {
 		}
 
 		// create the fault_list and
-		// enumerate faults in each fanout free region 
-
+		// enumerate faults in each fanout free region
 		faultList=new Fault*[nfault];
 		stack->clear();
 
