@@ -13,9 +13,11 @@ int main(int argc, char** argv)
     auto params = &Params::getInstance();
     params->parseCheck(argc, argv);
 
-    AtpgEngine* atpgEngine =new AtpgEngine();
-    atpgEngine->setParams();
-    atpgEngine->run();
+    if (params->getExecAction() == "atpg") {
+        AtpgEngine* atpgEngine =new AtpgEngine();
+        atpgEngine->setParams();
+        atpgEngine->run();
+    }
 
     return 0;
 }

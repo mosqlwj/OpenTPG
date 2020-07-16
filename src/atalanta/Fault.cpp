@@ -277,9 +277,7 @@ namespace hiatpg {
 			while(!stack->isEmpty())
 			{
                 gate=stack->pop();
-
 				list<Fault*>::iterator current,final;
-
 				current=gate->pFaultList.begin();
 				final=gate->pFaultList.end();
 

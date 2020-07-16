@@ -406,65 +406,68 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 
 			switch(gate->type)
 			{
-			case AND:
-			case NAND:
-			case OR:
-			case NOR:
-				v1 = (gate->type == AND || gate->type == NOR) ? ONE : ZERO;
-				if(gate->output==v1)
-				{
-					gate->changed=true;
-					for(i=0;i<gate->ninput;i++)
-						if(p[i]->output==X)
-						{
-							p[i]->output=a_truthtbl1[gate->type][v1];
-							stack->push(p[i]);
-							scheduleInput(gate,i);						
-						}
+                case AND:
+                case NAND:
+                case OR:
+                case NOR:
+                    v1 = (gate->type == AND || gate->type == NOR) ? ONE : ZERO;
+                    if(gate->output==v1)
+                    {
+                        gate->changed=true;
+                        for(i=0;i<gate->ninput;i++)
+                            if(p[i]->output==X)
+                            {
+                                p[i]->output=a_truthtbl1[gate->type][v1];
+                                stack->push(p[i]);
+                                scheduleInput(gate,i);
+                            }
 
-						return BACKWARD;
-				} else
-				{
-					for(i=numX=0; i<gate->ninput; i++)
-						if(p[i]->output==X) { numX++; j=i; }
+                            return BACKWARD;
+                    } else
+                    {
+                        for(i=numX=0; i<gate->ninput; i++)
+                            if(p[i]->output==X) { numX++; j=i; }
 
-						if(numX==1)
-						{
-							p[j]->output = a_truthtbl1[gate->type][gate->output];
-							gate->changed=true;
-							stack->push(p[j]);
-							scheduleInput(gate,j);
-							return BACKWARD;
-						}
-				}
-				break;
+                            if(numX==1)
+                            {
+                                p[j]->output = a_truthtbl1[gate->type][gate->output];
+                                gate->changed=true;
+                                stack->push(p[j]);
+                                scheduleInput(gate,j);
+                                return BACKWARD;
+                            }
+                    }
+                    break;
 
-			case BUFF:
-			case NOT:
-			case PO:
-				p[0]->output=a_truthtbl1[gate->type][gate->output];
-				gate->changed=true;
-				stack->push(p[0]);
-				scheduleInput(gate,0);
-				return BACKWARD;
-				break;
+                case BUFF:
+                case NOT:
+                case PO:
+                    p[0]->output=a_truthtbl1[gate->type][gate->output];
+                    gate->changed=true;
+                    stack->push(p[0]);
+                    scheduleInput(gate,0);
+                    return BACKWARD;
+                    break;
 
-			case XOR:
-			case XNOR:
-				for(i=numX=0;i<gate->ninput;i++)
-					if(p[i]->output==X) { numX++; j=i; }
+                case XOR:
+                case XNOR:
+                    for(i=numX=0;i<gate->ninput;i++)
+                        if(p[i]->output==X) { numX++; j=i; }
 
-					if(numX==1)
-					{
-						v1=(j==0) ? p[1]->output : p[0]->output;
-						val=a_truthtbl1[gate->type][gate->output];
-						if(v1==ONE) val=a_truthtbl1[NOT][val];
-						p[j]->output=val;
-						gate->changed=true;
-						stack->push(p[j]);
-						scheduleInput(gate,j);
-						return BACKWARD;
-					}
+                        if(numX==1)
+                        {
+                            v1=(j==0) ? p[1]->output : p[0]->output;
+                            val=a_truthtbl1[gate->type][gate->output];
+                            if(v1==ONE) val=a_truthtbl1[NOT][val];
+                            p[j]->output=val;
+                            gate->changed=true;
+                            stack->push(p[j]);
+                            scheduleInput(gate,j);
+                            return BACKWARD;
+                        }
+                        break;
+			    default:
+			        break;
 			}
 			return FORWARD;
 	}
