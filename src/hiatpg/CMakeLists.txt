@@ -10,7 +10,7 @@ add_executable(hiatpg
     utils/StringUtils.cpp
     include/model.h
     include/HIATPG.h
-    netlist/NetListTableImpl.cpp netlist/NetListTableImpl.h fault/FaultListTableImpl.cpp fault/FaultListTableImpl.h atpg/ATPGDriverImpl.cpp atpg/ATPGDriverImpl.hpp sim/SimulateDriverImpl.cpp sim/SimulateDriverImpl.h pattern/PatternWriterImpl.cpp pattern/PatternWriterImpl.h pattern/PatternListTableImpl.cpp pattern/PatternListTableImpl.h)
+    netlist/NetListTableImpl.cpp netlist/NetListTableImpl.h fault/FaultListTableImpl.cpp fault/FaultListTableImpl.h atpg/ATPGDriverImpl.cpp atpg/ATPGDriverImpl.h sim/SimulateDriverImpl.cpp sim/SimulateDriverImpl.h pattern/PatternWriterImpl.cpp pattern/PatternWriterImpl.h pattern/PatternListTableImpl.cpp pattern/PatternListTableImpl.h utils/GateUtils.cpp utils/GateUtils.h netlist/GateFactoryImpl.cpp netlist/GateFactoryImpl.h utils/line_reader.cpp utils/line_reader.h utils/LineReaderFile.cpp utils/LineReaderFile.h utils/AssertUtils.h app-hiatpg.cpp)
 
 target_include_directories(hiatpg PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/

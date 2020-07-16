@@ -3,3 +3,8 @@
 //
 
 #include "SimulateDriverImpl.h"
+
+
+
+IMPLEMENT_MODULE(ModuleID::MODULE_SIMULATEDRIVER, SimulateDriverImpl, "default");
+

@@ -66,25 +66,36 @@ extern Interface* ReferModule(int mid);
             creator = IMPL##Creator::CreateModule;           \
             ::DefineModule(MID, this);                       \
         }                                                    \
-        static Module* CreateModule() { return new IMPL(); } \
+        static Interface* CreateModule() { return new IMPL(); } \
     } IMPL##CreatorInstance
+
+
+//! 定义了所有的模块
+enum ModuleID : int
+{
+    MODULE_NETLIST = 0,
+    MODULE_FAULTLIST = 1,
+    MODULE_PATTERNLIST = 2,
+    MODULE_ATPGDRIVER = 3,
+    MODULE_SIMULATEDRIVER = 4,
+};
 
 
 
 //! Writer 对象用于支持以流的形式写入数据
 struct Writer : virtual public Interface
 {
-    //! 写入数据
-    virtual int64_t Write(const uint8_t* data, int64_t) = 0;
+    //! 写入数据(>=0 写入成功, -1 写入失败)
+    virtual int64_t Write(const uint8_t* data, int64_t len) = 0;
 };
 
 
 
-//! Reader 对象用于支持按照流的形式读取数据
+//! Reader 对象用于支持按行的形式读取数据
 struct Reader : virtual public Interface
 {
-    //! 读取数据
-    virtual int64_t Read(const uint8_t* data, int64_t) = 0;
+    //! 读取一行数据(0 成功, -1 读取失败, 1 文件结尾)
+    virtual int ReadLine(const uint8_t*& data, int64_t& len) = 0;
 };
 
 
@@ -115,7 +126,7 @@ struct Gate;
 
 
 //  网表操作接口
-struct NetListTable : virtual public Interface
+struct NetListTable : virtual public Clearable
 {
     //! 从指定的 reader 读取网表信息
     virtual int Load(Reader& reader) = 0;
@@ -153,8 +164,10 @@ struct NetListTable : virtual public Interface
 //! Fault 表
 struct FaultListTable : virtual public Clearable
 {
+    virtual int Setup(const NetListTable* netlist) = 0;
+
     //! 根据网表创建 FaultList
-    virtual int Create(const NetListTable& netlist) = 0;
+    virtual int Create() = 0;
 
     //! 从指定的 reader 流加载 FaultList
     virtual int Load(Reader& reader) = 0;
@@ -166,10 +179,10 @@ struct FaultListTable : virtual public Clearable
     virtual void UpdateFaultStatus(FaultStatus status) = 0;
 
     //! 获取 Fault 列表
-    virtual const vector<const Fault*> GetFaults() const = 0;
+    virtual const std::vector<const Fault*> GetFaults() const = 0;
 
     //! 获取 Fault 列表
-    virtual vector<Fault*> GetFaults() = 0;
+    virtual std::vector<Fault*> GetFaults() = 0;
 
     //! 枚举 Fault 列表
     virtual void Access(std::function<int(Fault*)> handler) = 0;

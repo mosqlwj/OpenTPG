@@ -7,6 +7,8 @@
 
 #include "HIATPG.h"
 
+
+
 class PatternWriterImpl : public PatternWriter
 {
 };
