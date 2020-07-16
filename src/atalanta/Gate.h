@@ -69,7 +69,7 @@ namespace hiatpg {
 		int fos;				// fanout stem indication 
 		//int nfault;
 		level cobserve,observe;	// cumulated and local detectabilities 
-		list<Fault*> pfault;
+		list<Fault*> pFaultList;
 		Fault **dfault;
 
 		list<Learn> pLearn;

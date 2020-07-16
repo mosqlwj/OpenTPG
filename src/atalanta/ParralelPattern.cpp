@@ -50,7 +50,7 @@ namespace hiatpg {
 		{
 //			gut=(*faultyGates)[i];
 			gut=(*prevFaultyGates)[i];
-			if(gut->pfault.size()>0)
+			if(gut->pFaultList.size() > 0)
 			{
 				faultyGates->push(gut);
 				while(!gut->freach)
@@ -141,7 +141,7 @@ namespace hiatpg {
 		for(i=0;i<numberOfGates;i++)
 		{
 			p=gates[i];
-			if(p->pfault.size()>0) faultyGates->push(p);
+			if(p->pFaultList.size() > 0) faultyGates->push(p);
 			if(p->noutput != 1) evalGates->push(p);
 		}
 		for(i=numberOfGates-1;i>=numberOfPrimaryInputs;i--) freeGates->push(gates[i]);
@@ -367,8 +367,8 @@ namespace hiatpg {
 
 		list<Fault*>::iterator current,final;
 
-		current=gut->pfault.begin();
-		final=gut->pfault.end();
+		current=gut->pFaultList.begin();
+		final=gut->pFaultList.end();
 
 		while(current!=final)
 		{
@@ -400,9 +400,9 @@ namespace hiatpg {
 		Fault *f;
 
 		list<Fault*>::iterator current;
-		current=gut->pfault.begin();
+		current=gut->pFaultList.begin();
 
-		while(current!=gut->pfault.end())
+		while(current!=gut->pFaultList.end())
 		{
 			f=*current;
 			observe=gut->observe;
@@ -417,13 +417,13 @@ namespace hiatpg {
 				nDetect++;
 				for(i=nbit-1;i>=0;i--)
 					if((observe & BITMASK[i])!=ALL0) {++tArray[i]; break;}
-					if(gut->pfault.size()==1)
+					if(gut->pFaultList.size() == 1)
 					{
-						gut->pfault.clear();
+						gut->pFaultList.clear();
 						*flag=true;
 						break;
 					} else {
-						current=gut->pfault.erase(current);
+						current=gut->pFaultList.erase(current);
 					}
 			} else current++;
 		}
@@ -447,7 +447,7 @@ namespace hiatpg {
 		while(!stack->isEmpty())
 		{
 			gut=stack->pop();
-			if(gut->pfault.size()>0) {
+			if(gut->pFaultList.size() > 0) {
                 if(flag2) {
                     nDetect += pCheckPo(gut, flag, nbit, tArray);
                 }
@@ -607,12 +607,12 @@ namespace hiatpg {
 							if((f->observe & BITMASK[i]) != ALL0) {++tArray[i];break;}
 							f->detected=DETECTED;
 							nDetect++;
-							if(f->gate->pfault.size()==1)
+							if(f->gate->pFaultList.size() == 1)
 							{
-								f->gate->pfault.clear();
+								f->gate->pFaultList.clear();
 								updateFlag=true;
 							} else
-								f->gate->pfault.remove(f);
+								f->gate->pFaultList.remove(f);
 					}
 					pf++;
 				}
@@ -638,7 +638,7 @@ namespace hiatpg {
 		{
 //			gut=(*faultyGates)[i];
 			gut=(*prevFaultyGates)[i];
-			if(gut->pfault.size()>0) faultyGates->push(gut);
+			if(gut->pFaultList.size() > 0) faultyGates->push(gut);
 		}
 	}
 
@@ -700,7 +700,7 @@ namespace hiatpg {
 		{
 //			gut=(*faultyGates)[i];
 			gut=(*prevFaultyGates)[i];
-			if(gut->pfault.size()>0)
+			if(gut->pFaultList.size() > 0)
 			{
 				faultyGates->push(gut);
 				while(!gut->freach)
@@ -816,12 +816,12 @@ namespace hiatpg {
 							if((f->observe & BITMASK[i])!=ALL0) {++tArray[i];break;}
 							f->detected=DETECTED;
 							nDetect++;
-							if(f->gate->pfault.size()==1)
+							if(f->gate->pFaultList.size() == 1)
 							{
-								f->gate->pfault.clear();
+								f->gate->pFaultList.clear();
 								updateFlag=true;
 							} else
-								f->gate->pfault.remove(f);
+								f->gate->pFaultList.remove(f);
 					}
 					pf++;
 				}

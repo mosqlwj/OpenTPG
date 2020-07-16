@@ -179,8 +179,8 @@ int hiatpg::Atalanta::testGen(int levels, int maxBits, int nStem, Gate **stem, i
         {	// redundant faults
             pCurrentFault->detected=REDUNDANT;
             (*nRedundant)++;
-gut->pfault.remove(pCurrentFault);
-if(gut->pfault.empty()) updateFlag=true;
+gut->pFaultList.remove(pCurrentFault);
+if(gut->pFaultList.empty()) updateFlag=true;
         }
         else
         {		 // over backtracking

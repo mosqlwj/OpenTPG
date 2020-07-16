@@ -356,7 +356,7 @@ namespace hiatpg {
         int noTest=0;
         int profile[BITSIZE];
 
-        for(i=0;i<numberOfGates;i++) gates[i]->pfault.clear();
+        for(i=0;i<numberOfGates;i++) gates[i]->pFaultList.clear();
 
         if((nRestoredFault=restoreDetectedFaultList())<0)
         {
@@ -451,7 +451,7 @@ namespace hiatpg {
             while((!done))
             {
                 (*nShuf)++;
-                for(i=0;i<numberOfGates;i++) gates[i]->pfault.clear();
+                for(i=0;i<numberOfGates;i++) gates[i]->pFaultList.clear();
 
                 if((nRestoredFault=restoreDetectedFaultList())<0)
                 {
