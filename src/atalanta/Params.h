@@ -54,6 +54,9 @@ namespace hiatpg {
         fstream pat;
         fstream report;
         fstream fault;
+        string execAction;      //  执行什么动作
+        string netlistFile;     //  网表文件地址
+        string cacheAddress;    //  网表文件存放在redis时,在redis上的地址
 
         Params(void) {
             // 加入指定类型的输入參数
@@ -62,7 +65,9 @@ namespace hiatpg {
             // 第三个參数：參数描写叙述
             // 第四个參数：bool值，表示该參数是否必须存在（可选。默认值是false）
             // 第五个參数：參数的默认值（可选，当第四个參数为false时该參数有效）
-            options.add<string>("bench", 'b', "bench file name", true, "");
+            options.add<string>("exec", 'e', "The function need to be execute, currently we support 'create-fault' 'upload-netlist' 'atpg' 'simulate'", true, "");
+            options.add<string>("netlist", 'n', "The netlist file name, support local file and redis address, such as 'file:~/c17.branch' and 'tcp://192.168.1.101:2345/NetList'", false, "");
+            options.add<string>("cache", 'c', "The url where the netlist saved in redi", false, "");
 //            options.add<string>("fault", 'f', "fault file name", true, "");
 
             cctMode = ISCAS89;
@@ -112,12 +117,15 @@ namespace hiatpg {
         void parseCheck(int argc, char* argv[])
         {
             options.parse_check(argc, argv);
-            string benchFile = options.get<string>("bench");
-            string pureName = benchFile.substr(0, benchFile.rfind(".bench"));
+            execAction = options.get<string>("exec");
+            netlistFile = options.get<string>("netlist");
+            cacheAddress = options.get<string>("cache");
+
+            string pureName = netlistFile.substr(0, netlistFile.rfind(".bench"));
             string patternFile = pureName + ".pat";
             string reportFile = pureName + ".report";
 
-            bench.open(benchFile, ios::in);
+            bench.open(netlistFile, ios::in);
             pat.open(patternFile, ios::out);
             report.open(reportFile, ios::out);
             setBenchStream(bench.rdbuf());

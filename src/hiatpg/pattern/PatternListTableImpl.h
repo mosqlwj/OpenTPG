@@ -9,6 +9,14 @@
 
 class PatternListTableImpl : public PatternListTable
 {
+public:
+    //! 枚举所有的 Pattern
+    virtual void Access(std::function<int(Pattern*)> handler) override ;
+
+    //! 枚举所有的 Pattern
+    virtual void Access(std::function<int(const Pattern*)> handler) override;
+
+    virtual void Clear() override ;
 };
 
 

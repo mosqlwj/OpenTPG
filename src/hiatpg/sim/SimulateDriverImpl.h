@@ -7,8 +7,19 @@
 
 #include "HIATPG.h"
 
+
+
 class SimulateDriverImpl : public SimulateDriver
 {
+public:
+    //! 设置输入
+    virtual int Setup(int id, const NetListTable* netlist, const FaultListTable* faultlist, Options* options) override;
+
+    //! 设置输出
+    virtual int Setup(CubeOutput* output, FaultMaker* marker) override;
+
+    //! 执行仿真
+    virtual int Simulate(Pattern* pattern) override;
 };
 
 
