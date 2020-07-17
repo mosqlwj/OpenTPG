@@ -6,11 +6,11 @@
 #include "Defines.h"
 #include "cmdline.h"
 #include <fstream>
+
 using namespace std;
 
 namespace hiatpg {
-    class Params
-    {
+    class Params {
     private:
         cmdline::parser options;
 
@@ -65,8 +65,12 @@ namespace hiatpg {
             // 第三个參数：參数描写叙述
             // 第四个參数：bool值，表示该參数是否必须存在（可选。默认值是false）
             // 第五个參数：參数的默认值（可选，当第四个參数为false时该參数有效）
-            options.add<string>("exec", 'e', "The function need to be execute, currently we support 'create-fault' 'upload-netlist' 'atpg' 'simulate'", true, "");
-            options.add<string>("netlist", 'n', "The netlist file name, support local file and redis address, such as 'file:~/c17.branch' and 'tcp://192.168.1.101:2345/NetList'", false, "");
+            options.add<string>("exec", 'e',
+                                "The function need to be execute, currently we support 'create-fault' 'upload-netlist' 'atpg' 'simulate'",
+                                true, "");
+            options.add<string>("netlist", 'n',
+                                "The netlist file name, support local file and redis address, such as 'file:~/c17.bench' and 'tcp://192.168.1.101:2345/NetList'",
+                                false, "");
             options.add<string>("cache", 'c', "The url where the netlist saved in redi", false, "");
 //            options.add<string>("fault", 'f', "fault file name", true, "");
 
@@ -75,14 +79,14 @@ namespace hiatpg {
             iseed = 0;
             maxCompact = 2;
             compact = 's';
-            maxBackTrack=10;
-            maxBackTrack1=0;
+            maxBackTrack = 10;
+            maxBackTrack1 = 0;
             sPatternFile = "";
             sPatternStream = NULL;
             benchFile = "";
             benchStream = NULL;
             learnMode = 'n';
-            faultMode='d';
+            faultMode = 'd';
             faultFile = "";
             faultStream = NULL;
             simMode = 'f';
@@ -92,7 +96,7 @@ namespace hiatpg {
             noFaultSim = 'n';
             udFaultsFile = "";
             udFaultsStream = NULL;
-            uFaultMode=0;
+            uFaultMode = 0;
             wFaultFile = "";
             wFaultStream = NULL;
             simulationMode = 0;
@@ -108,14 +112,12 @@ namespace hiatpg {
         };
 
     public:
-        static Params& getInstance()
-        {
+        static Params &getInstance() {
             static Params instance;
             return instance;
         }
 
-        void parseCheck(int argc, char* argv[])
-        {
+        void parseCheck(int argc, char *argv[]) {
             options.parse_check(argc, argv);
             execAction = options.get<string>("exec");
             netlistFile = options.get<string>("netlist");
@@ -141,10 +143,13 @@ namespace hiatpg {
             setIseed(23);
         }
 
+        const string& getExecAction() { return execAction; }
+
         //cctMode
-        char getCctMode(void) {return cctMode;}
+        char getCctMode(void) { return cctMode; }
+
         void setCctMode(char p_cctMode) {
-            if(p_cctMode == ISCAS89 || p_cctMode == ISCAS85) {
+            if (p_cctMode == ISCAS89 || p_cctMode == ISCAS85) {
                 cctMode = p_cctMode;
             } else {
                 stringstream ss;
@@ -152,10 +157,12 @@ namespace hiatpg {
                 throw ss.str();
             }
         };
+
         //randomLimit
-        int getRandomLimit (void) { return randomLimit; };
+        int getRandomLimit(void) { return randomLimit; };
+
         void setRandomLimit(char p_randomLimit) {
-            if(p_randomLimit >= 0 && p_randomLimit <= 32) {
+            if (p_randomLimit >= 0 && p_randomLimit <= 32) {
                 randomLimit = p_randomLimit;
             } else {
                 stringstream ss;
@@ -163,28 +170,36 @@ namespace hiatpg {
                 throw ss.str();
             }
         };
+
         //iseed
         unsigned int getIseed(void) { return iseed; };
+
         void setIseed(unsigned int p_iseed) { iseed = p_iseed; };
+
         //maxCompact
         int getMaxCompact(void) { return maxCompact; };
+
         void setMaxCompact(int p_maxCompact) { maxCompact = p_maxCompact; };
+
         //compact
         char getCompact(void) { return compact; };
+
         void setCompact(char p_compact) {
-            if(p_compact == 's' || p_compact == 'n') {
+            if (p_compact == 's' || p_compact == 'n') {
                 compact = p_compact;
-                if(p_compact == 'n') maxCompact = 0;
+                if (p_compact == 'n') maxCompact = 0;
             } else {
                 stringstream ss;
                 ss << "Wrong value. Value must be 's' or 'n'.";
                 throw ss.str();
             }
         };
+
         //maxBackTrack
         int getMaxBackTrack(void) { return maxBackTrack; };
+
         void setMaxBackTrack(int p_maxBackTrack) {
-            if(p_maxBackTrack >= 1) {
+            if (p_maxBackTrack >= 1) {
                 maxBackTrack = p_maxBackTrack;
             } else {
                 stringstream ss;
@@ -192,10 +207,12 @@ namespace hiatpg {
                 throw ss.str();
             }
         };
+
         //maxBackTrack1
         int getMaxBackTrack1(void) { return maxBackTrack1; };
+
         void setMaxBackTrack1(int p_maxBackTrack1) {
-            if(p_maxBackTrack1 >= 0) {
+            if (p_maxBackTrack1 >= 0) {
                 maxBackTrack1 = p_maxBackTrack1;
             } else {
                 stringstream ss;
@@ -203,22 +220,44 @@ namespace hiatpg {
                 throw ss.str();
             }
         };
+
         //sPatternFile
         string getSPatternFile(void) { return sPatternFile; };
-        void setSPatternFile(string p_sPatternFile) { sPatternFile = p_sPatternFile; sPatternStream = NULL; };
+
+        void setSPatternFile(string p_sPatternFile) {
+            sPatternFile = p_sPatternFile;
+            sPatternStream = NULL;
+        };
+
         //sPatternStream
         streambuf *getSPatternStream(void) { return sPatternStream; };
-        void setSPatternStream(streambuf *p_sPatternStream) { sPatternStream = p_sPatternStream; sPatternFile = "";};
+
+        void setSPatternStream(streambuf *p_sPatternStream) {
+            sPatternStream = p_sPatternStream;
+            sPatternFile = "";
+        };
+
         //benchFile
         string getBenchFile(void) { return benchFile; };
-        void setBenchFile(string p_benchFile) { benchFile = p_benchFile; benchStream = NULL; };
+
+        void setBenchFile(string p_benchFile) {
+            benchFile = p_benchFile;
+            benchStream = NULL;
+        };
+
         //benchStream
         streambuf *getBenchStream(void) { return benchStream; };
-        void setBenchStream(streambuf *p_benchStream) { benchStream = p_benchStream; benchFile = "";};
+
+        void setBenchStream(streambuf *p_benchStream) {
+            benchStream = p_benchStream;
+            benchFile = "";
+        };
+
         //learnMode
         char getLearnMode(void) { return learnMode; };
+
         void setLearnMode(char p_learnMode) {
-            if(p_learnMode == 'y' || p_learnMode == 'n') {
+            if (p_learnMode == 'y' || p_learnMode == 'n') {
                 learnMode = p_learnMode;
             } else {
                 stringstream ss;
@@ -226,34 +265,60 @@ namespace hiatpg {
                 throw ss.str();
             }
         };
+
         //faultMode
         char getFaultMode(void) { return faultMode; };
+
         void setFaultMode(char p_faultMode) {
-            if(p_faultMode == 'f' || p_faultMode == 'd') {
+            if (p_faultMode == 'f' || p_faultMode == 'd') {
                 faultMode = p_faultMode;
-                if(faultMode == 'd') faultFile = "";
+                if (faultMode == 'd') faultFile = "";
             } else {
                 stringstream ss;
                 ss << "Wrong value. Value must be 'f' or 'd'.";
                 throw ss.str();
             }
         };
+
         //faultFile
         string getFaultFile(void) { return faultFile; };
-        void setFaultFile(string p_faultFile) { faultFile = p_faultFile; faultMode = 'f'; faultStream = NULL;};
+
+        void setFaultFile(string p_faultFile) {
+            faultFile = p_faultFile;
+            faultMode = 'f';
+            faultStream = NULL;
+        };
+
         //faultStream
         streambuf *getFaultStream(void) { return faultStream; };
-        void setfaultStream(streambuf *p_faultStream) { faultStream = p_faultStream; faultMode = 'f'; faultFile = "";};
+
+        void setfaultStream(streambuf *p_faultStream) {
+            faultStream = p_faultStream;
+            faultMode = 'f';
+            faultFile = "";
+        };
+
         //wFaultFile
         string getWFaultFile(void) { return wFaultFile; };
-        void setWFaultFile(string p_wFaultFile) { wFaultFile = p_wFaultFile; wFaultStream = NULL; };
+
+        void setWFaultFile(string p_wFaultFile) {
+            wFaultFile = p_wFaultFile;
+            wFaultStream = NULL;
+        };
+
         //wFaultStream
         streambuf *getWFaultFileStream(void) { return wFaultStream; };
-        void setWFaultStream(streambuf *p_wFaultStream) { wFaultStream = p_wFaultStream; wFaultFile = "";};
+
+        void setWFaultStream(streambuf *p_wFaultStream) {
+            wFaultStream = p_wFaultStream;
+            wFaultFile = "";
+        };
+
         //simMode
         char getSimMode(void) { return simMode; };
+
         void setSimMode(char p_simMode) {
-            if(p_simMode == 'f' || p_simMode == 'h') {
+            if (p_simMode == 'f' || p_simMode == 'h') {
                 simMode = p_simMode;
             } else {
                 stringstream ss;
@@ -261,11 +326,13 @@ namespace hiatpg {
                 throw ss.str();
             }
         };
+
         //fillMode
         char getFillMode(void) { return fillMode; };
+
         void setFillMode(char p_fillMode) {
-            if(p_fillMode == 'r' || p_fillMode == 'x' ||
-               p_fillMode == '0' || p_fillMode == '1') {
+            if (p_fillMode == 'r' || p_fillMode == 'x' ||
+                p_fillMode == '0' || p_fillMode == '1') {
                 fillMode = p_fillMode;
             } else {
                 stringstream ss;
@@ -273,10 +340,12 @@ namespace hiatpg {
                 throw ss.str();
             }
         };
+
         //genAllPat
         char getGenAllPat(void) { return genAllPat; };
+
         void setGenAllPat(char p_genAllPat) {
-            if(p_genAllPat == 'y' || p_genAllPat == 'n') {
+            if (p_genAllPat == 'y' || p_genAllPat == 'n') {
                 genAllPat = p_genAllPat;
             } else {
                 stringstream ss;
@@ -284,13 +353,17 @@ namespace hiatpg {
                 throw ss.str();
             }
         };
+
         //eachLimit
         int getEachLimit(void) { return eachLimit; };
-        void setEachLimit(int p_eachLimit) { eachLimit = p_eachLimit;};
+
+        void setEachLimit(int p_eachLimit) { eachLimit = p_eachLimit; };
+
         //noFaultSim
         char getNoFaultSim(void) { return noFaultSim; };
+
         void setNoFaultSim(char p_noFaultSim) {
-            if(p_noFaultSim == 'y' || p_noFaultSim == 'n') {
+            if (p_noFaultSim == 'y' || p_noFaultSim == 'n') {
                 noFaultSim = p_noFaultSim;
             } else {
                 stringstream ss;
@@ -298,10 +371,12 @@ namespace hiatpg {
                 throw ss.str();
             }
         };
+
         //uFaultMode
         int getUFaultMode(void) { return uFaultMode; };
+
         void setUFaultMode(int p_uFaultMode) {
-            if(p_uFaultMode >= 0 && p_uFaultMode <= 2) {
+            if (p_uFaultMode >= 0 && p_uFaultMode <= 2) {
                 uFaultMode = p_uFaultMode;
             } else {
                 stringstream ss;
@@ -309,18 +384,30 @@ namespace hiatpg {
                 throw ss.str();
             }
         };
+
         //udFaultsFile
         string getUdFaultsFile(void) { return udFaultsFile; };
-        void setUdFaultsFile(string p_udFaultsFile) { udFaultsFile = p_udFaultsFile; udFaultsStream = NULL;	};
+
+        void setUdFaultsFile(string p_udFaultsFile) {
+            udFaultsFile = p_udFaultsFile;
+            udFaultsStream = NULL;
+        };
+
         //udFaultsStream
         streambuf *getUdFaultsStream(void) { return udFaultsStream; };
-        void setudFaultsStream(streambuf *p_udFaultsStream) { udFaultsStream = p_udFaultsStream; udFaultsFile = "";};
+
+        void setudFaultsStream(streambuf *p_udFaultsStream) {
+            udFaultsStream = p_udFaultsStream;
+            udFaultsFile = "";
+        };
+
         //simulationMode
         int getSimulationMode(void) { return simulationMode; };
+
         void setSimulationMode(int p_simulationMode) {
-            if(p_simulationMode == 0 || p_simulationMode == 1) {
+            if (p_simulationMode == 0 || p_simulationMode == 1) {
                 simulationMode = p_simulationMode;
-                if(simulationMode) {
+                if (simulationMode) {
                     simMode = 'h';
                 }
             } else {
@@ -329,22 +416,44 @@ namespace hiatpg {
                 throw ss.str();
             }
         };
+
         //maskFile
         string getMaskFile(void) { return maskFile; };
-        void setMaskFile(string p_maskFile) { maskFile = p_maskFile; maskStream = NULL; };
+
+        void setMaskFile(string p_maskFile) {
+            maskFile = p_maskFile;
+            maskStream = NULL;
+        };
+
         //maskStream
         streambuf *getMaskStream(void) { return maskStream; };
-        void setMaskStream(streambuf *p_maskStream) { maskStream = p_maskStream; maskFile = "";};
+
+        void setMaskStream(streambuf *p_maskStream) {
+            maskStream = p_maskStream;
+            maskFile = "";
+        };
+
         //reportFile
         string getReportFile(void) { return reportFile; };
-        void setReportFile(string p_reportFile) { reportFile = p_reportFile; reportStream = NULL; };
+
+        void setReportFile(string p_reportFile) {
+            reportFile = p_reportFile;
+            reportStream = NULL;
+        };
+
         //reportStream
         streambuf *getReportStream(void) { return reportStream; };
-        void setReportStream(streambuf *p_reportStream) { reportStream = p_reportStream; reportFile = "";};
+
+        void setReportStream(streambuf *p_reportStream) {
+            reportStream = p_reportStream;
+            reportFile = "";
+        };
+
         //wTestMode
         int getWTestMode(void) { return wTestMode; };
+
         void setWTestMode(int p_wTestMode) {
-            if(p_wTestMode >= 0 && p_wTestMode <= 4) {
+            if (p_wTestMode >= 0 && p_wTestMode <= 4) {
                 wTestMode = p_wTestMode;
             } else {
                 stringstream ss;
@@ -352,10 +461,12 @@ namespace hiatpg {
                 throw ss.str();
             }
         };
+
         //lfsrSimMode
         int getLfsrSimMode(void) { return lfsrSimMode; };
+
         void setLfsrSimMode(int p_lfsrSimMode) {
-            if(p_lfsrSimMode >= 0 && p_lfsrSimMode <= 2) {
+            if (p_lfsrSimMode >= 0 && p_lfsrSimMode <= 2) {
                 lfsrSimMode = p_lfsrSimMode;
             } else {
                 stringstream ss;
@@ -363,10 +474,14 @@ namespace hiatpg {
                 throw ss.str();
             }
         };
+
         //lfsrSimulation
         string getLfsrPoly(void) { return lfsrPoly; };
+
         string getLfsrSeed(void) { return lfsrSeed; };
+
         int getLfsrNum(void) { return lfsrNum; };
+
         void setLfsrSimulation(string p_lfsrPoly, string p_lfsrSeed, int p_lfsrNum) {
             lfsrPoly = p_lfsrPoly;
             lfsrSeed = p_lfsrSeed;

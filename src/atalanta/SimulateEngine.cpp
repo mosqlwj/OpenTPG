@@ -47,7 +47,7 @@ void SimulateEngine::updateAll() {
     for (i = 0; i <= j; i++) {
         //			gut=(*faultyGates)[i];
         gut = (*prevFaultyGates)[i];
-        if (gut->pfault.size() > 0) {
+        if (gut->pFaultList.size() > 0) {
             fanNet->faultyGates->push(gut);
             while (!gut->freach) {
                 gut->freach = true;
@@ -135,7 +135,7 @@ void SimulateEngine::pInitSimulation(int maxDpi) {
     // initialize all stacks
     for (i = 0; i < fanNet->numberOfGates; i++) {
         p = fanNet->gates[i];
-        if (p->pfault.size() > 0) {
+        if (p->pFaultList.size() > 0) {
             fanNet->faultyGates->push(p);
         }
         if (p->noutput != 1) {
@@ -410,8 +410,8 @@ level SimulateEngine::pCheckFault(Gate *gut, Fault ***pf, level stemobs) {
 
     list<Fault *>::iterator current, final;
 
-    current = gut->pfault.begin();
-    final = gut->pfault.end();
+    current = gut->pFaultList.begin();
+    final = gut->pFaultList.end();
 
     while (current != final) {
         f = *current;
@@ -441,9 +441,9 @@ int SimulateEngine::pCheckPo(Gate *gut, status *flag, int nbit, int *tArray) {
     Fault *f;
 
     list<Fault *>::iterator current;
-    current = gut->pfault.begin();
+    current = gut->pFaultList.begin();
 
-    while (current != gut->pfault.end()) {
+    while (current != gut->pFaultList.end()) {
         f = *current;
         observe = gut->observe;
         if (f->line == OUTFAULT) {
@@ -461,12 +461,12 @@ int SimulateEngine::pCheckPo(Gate *gut, status *flag, int nbit, int *tArray) {
                     break;
                 }
             }
-            if (gut->pfault.size() == 1) {
-                gut->pfault.clear();
+            if (gut->pFaultList.size() == 1) {
+                gut->pFaultList.clear();
                 *flag = true;
                 break;
             } else {
-                current = gut->pfault.erase(current);
+                current = gut->pFaultList.erase(current);
             }
         } else {
             current++;
@@ -490,7 +490,7 @@ int SimulateEngine::ftpReverse(Gate *stem, status *flag, status flag2, int nbit,
 
     while (!fanNet->stack->isEmpty()) {
         gut = fanNet->stack->pop();
-        if (gut->pfault.size() > 0) {
+        if (gut->pFaultList.size() > 0) {
             if (flag2) {
                 nDetect += pCheckPo(gut, flag, nbit, tArray);
             } else {
@@ -642,11 +642,11 @@ int SimulateEngine::fault1Simulation(int maxDpi, int nStem, Gate **stem, int nbi
                         }
                     f->detected = DETECTED;
                     nDetect++;
-                    if (f->gate->pfault.size() == 1) {
-                        f->gate->pfault.clear();
+                    if (f->gate->pFaultList.size() == 1) {
+                        f->gate->pFaultList.clear();
                         updateFlag = true;
                     } else {
-                        f->gate->pfault.remove(f);
+                        f->gate->pFaultList.remove(f);
                     }
                 }
                 pf++;
@@ -670,7 +670,7 @@ void SimulateEngine::updateFaultyGates() {
     for (i = 0; i <= j; i++) {
         //			gut=(*faultyGates)[i];
         gut = (*prevFaultyGates)[i];
-        if (gut->pfault.size() > 0) {
+        if (gut->pFaultList.size() > 0) {
             fanNet->faultyGates->push(gut);
         }
     }
@@ -729,7 +729,7 @@ void SimulateEngine::updateAll1() {
     for (i = 0; i <= j; i++) {
         //			gut=(*faultyGates)[i];
         gut = (*prevFaultyGates)[i];
-        if (gut->pfault.size() > 0) {
+        if (gut->pFaultList.size() > 0) {
             fanNet->faultyGates->push(gut);
             while (!gut->freach) {
                 gut->freach = true;
@@ -844,11 +844,11 @@ int SimulateEngine::fault0Simulation(int maxDpi, int nbit, int *tArray) {
                     }
                     f->detected = DETECTED;
                     nDetect++;
-                    if (f->gate->pfault.size() == 1) {
-                        f->gate->pfault.clear();
+                    if (f->gate->pFaultList.size() == 1) {
+                        f->gate->pFaultList.clear();
                         updateFlag = true;
                     } else {
-                        f->gate->pfault.remove(f);
+                        f->gate->pFaultList.remove(f);
                     }
                 }
                 pf++;

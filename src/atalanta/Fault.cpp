@@ -91,7 +91,7 @@ namespace hiatpg {
 
 	void Fault::addFault()
 	{
-		gate->pfault.push_back(this);
+		gate->pFaultList.push_back(this);
 	}
 
 	//	restore_detected_fault_list
@@ -135,8 +135,8 @@ namespace hiatpg {
 					{
 						list<Fault*>::iterator current,final;
 
-						current=gut->fanouts[j]->pfault.begin();
-						final=gut->fanouts[j]->pfault.end();
+						current=gut->fanouts[j]->pFaultList.begin();
+						final=gut->fanouts[j]->pFaultList.end();
 
 						while(current!=final)
 						{
@@ -146,7 +146,7 @@ namespace hiatpg {
 								if(f->gate->fanins[f->line] == gut)
 								{
 									f->detected=REDUNDANT;
-									current=f->gate->pfault.erase(current);		
+									current=f->gate->pFaultList.erase(current);
 									//current--;
 									n++;
 								} else current++;
@@ -196,7 +196,7 @@ namespace hiatpg {
                         fault->type=faultType;
                         fault->line=j;
 						nfault++;
-						gate->pfault.push_back(fault);
+						gate->pFaultList.push_back(fault);
 
 						/* case of high level gates */
 						if(gate->type > PI)
@@ -207,7 +207,7 @@ namespace hiatpg {
                             fault->line=j;
 							nfault++;
 
-							gate->pfault.push_back(fault);
+							gate->pFaultList.push_back(fault);
 						}
 					}
 				}
@@ -221,7 +221,7 @@ namespace hiatpg {
                 fault->type=faultType;
                 fault->line=OUTFAULT;
 				nfault++;
-				gate->pfault.push_back(fault);
+				gate->pFaultList.push_back(fault);
 
 				// case of high level gates 
 				if(gate->fanouts[0]->type > PI)
@@ -231,7 +231,7 @@ namespace hiatpg {
                     fault->type= (faultType == SA1) ? SA0 : SA1;
                     fault->line=OUTFAULT;
 					nfault++;
-					gate->pfault.push_back(fault);
+					gate->pFaultList.push_back(fault);
 				}
 			} else if(gate->noutput > 1) {
                 fault=new Fault();
@@ -239,28 +239,28 @@ namespace hiatpg {
                 fault->type=SA1;
                 fault->line=OUTFAULT;
 				nfault++;
-				gate->pfault.push_back(fault);
+				gate->pFaultList.push_back(fault);
 
                 fault=new Fault();
                 fault->gate=gate;
                 fault->type=SA0;
                 fault->line=OUTFAULT;
 				nfault++;
-				gate->pfault.push_back(fault);
+				gate->pFaultList.push_back(fault);
 			} else if(gate->type == PO && gate->fanins[0]->noutput > 1) {
                 fault=new Fault();
                 fault->gate=gate;
                 fault->type=SA1;
                 fault->line=0;
 				nfault++;
-				gate->pfault.push_back(fault);
+				gate->pFaultList.push_back(fault);
 
                 fault=new Fault();
                 fault->gate=gate;
                 fault->type=SA0;
                 fault->line=0;
 				nfault++;
-				gate->pfault.push_back(fault);
+				gate->pFaultList.push_back(fault);
 			}
 		}
 
@@ -277,11 +277,9 @@ namespace hiatpg {
 			while(!stack->isEmpty())
 			{
                 gate=stack->pop();
-
 				list<Fault*>::iterator current,final;
-
-				current=gate->pfault.begin();
-				final=gate->pfault.end();
+				current=gate->pFaultList.begin();
+				final=gate->pFaultList.end();
 
 				while(current!=final)
 				{
@@ -597,7 +595,7 @@ namespace hiatpg {
 				f->gate=gut;
 				f->line=line;
 				f->type= static_cast<FaultType>(type);
-				gut->pfault.push_front(f);
+				gut->pFaultList.push_front(f);
 				nfault++;
 			} else Error::fatalerror(FAULTERROR);
 		}
@@ -618,8 +616,8 @@ namespace hiatpg {
 
 				list<Fault*>::iterator current,final;
 
-				current=gut->pfault.begin();
-				final=gut->pfault.end();
+				current=gut->pFaultList.begin();
+				final=gut->pFaultList.end();
 
 				while(current!=final)
 				{

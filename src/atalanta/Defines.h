@@ -36,8 +36,8 @@ namespace hiatpg {
         SA0=0,               /* stuck-at fault */
         SA1=1,
         SAX=2,
-        OUTFAULT=-1
 	};
+	const int OUTFAULT=-1;
 
 	enum Value {
 		ZERO,
