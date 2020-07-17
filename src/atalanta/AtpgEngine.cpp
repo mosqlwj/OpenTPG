@@ -231,6 +231,8 @@ namespace hiatpg {
         // print all fault status
         for (int i = 0; i < fault; i++) {
             auto pCurrentFault = faultList[i];
+            string line;
+
             faultFile << pCurrentFault->gate->symbol->symbol << " " << pCurrentFault->type << " " << pCurrentFault->detected << endl;
         }
     }
@@ -465,6 +467,9 @@ namespace hiatpg {
                     scheduleInput(gate,j);
                     return BACKWARD;
                 }
+                break;
+            default:
+                break;
         }
         return FORWARD;
     }
