@@ -81,6 +81,41 @@ function install_hadoop()
 }
 
 
+function install_redis()
+{
+    #   找到 hadoop 的安装包,并解压安装
+    local redis_package=$(cd "${SOFTWARE_DIR}" && find -name redis-6.0.5.tar* | head -n 1)
+    mkdir -p    "${INSTALL_DIR}"                                        &&  \
+    cd          "${INSTALL_DIR}"                                        &&  \
+    tar xvfz    "${SOFTWARE_DIR}/${redis_package}"                      &&  \
+    mv          "${INSTALL_DIR}/redis-6.0.5"   "${INSTALL_DIR}/redis"
+    RESULT=$?
+    if [[ ${RESULT} -ne 0 ]]; then
+        echo    "Install redis failed(${RESULT}): '${SOFTWARE_DIR}/${redis_package}' -> '${INSTALL_DIR}'"
+        return  1
+    fi
+
+    #   安装配置和入口配置脚本
+    cp  -rf "${SELFDIR}/tmpl-hadoop-etc"/*    "${INSTALL_DIR}/hadoop/etc"
+    if [[ ! -f "${INSTALL_DIR}/settings.sh" ]]; then
+        cp  -rf "${SELFDIR}/settings.sh"    "${INSTALL_DIR}"
+    fi
+    RESULT=$?
+    if [[ ${RESULT} -ne 0 ]]; then
+        echo    "Setup configurations of hadoop failed(${RESULT}): '${SELFDIR}/etc' -> '${INSTALL_DIR}/hadoop/etc'"
+        return  1
+    fi
+    echo    "Setup configurations of hadoop success: '${SELFDIR}/etc' -> '${INSTALL_DIR}/hadoop/etc'"
+
+
+    export HADOOP_HOME="${INSTALL_DIR}/hadoop"
+
+    echo    "Install hadoop success: '${INSTALL_DIR}/java'"
+    return  0
+}
+
+
+
 #   $1  software-dir
 #   $2  install-dir
 function main()
