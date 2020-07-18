@@ -60,12 +60,14 @@ function clean_hadoop()
 
 function install_hadoop()
 {
+    export HADOOP_HOME="${INSTALL_DIR}/hadoop"
+
     #   找到 hadoop 的安装包,并解压安装
     local hadoop_package=$(cd "${SOFTWARE_DIR}" && ls hadoop-3.2.1.tar* | head -n 1)
     mkdir -p    "${INSTALL_DIR}"                                        &&  \
     cd          "${INSTALL_DIR}"                                        &&  \
     tar xvfz    "${SOFTWARE_DIR}/${hadoop_package}"                     &&  \
-    mv          "${INSTALL_DIR}/hadoop-3.2.1"   "${INSTALL_DIR}/hadoop"
+    mv          "${INSTALL_DIR}/hadoop-3.2.1"   "${HADOOP_HOME}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Install hadoop failed(${RESULT}): '${SOFTWARE_DIR}/${hadoop_package}' -> '${INSTALL_DIR}'"
@@ -73,7 +75,7 @@ function install_hadoop()
     fi
 
     #   安装配置和入口配置脚本
-    cp  -rf "${SELFDIR}/tmpl-hadoop"/*    "${INSTALL_DIR}/hadoop"
+    cp  -rf "${SELFDIR}/tmpl-hadoop"/*    "${HADOOP_HOME}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Setup configurations of hadoop failed(${RESULT}): '${SELFDIR}/etc' -> '${INSTALL_DIR}/hadoop/etc'"
@@ -81,8 +83,6 @@ function install_hadoop()
     fi
     echo    "Setup configurations of hadoop success: '${SELFDIR}/etc' -> '${INSTALL_DIR}/hadoop/etc'"
 
-
-    export HADOOP_HOME="${INSTALL_DIR}/hadoop"
 
     echo    "Install hadoop success: '${INSTALL_DIR}/java'"
     return  0
@@ -102,20 +102,36 @@ function clean_redis()
 
 function install_redis()
 {
+    export REDIS_HOME="${INSTALL_DIR}/redis"
+    mkdir -p    "${REDIS_HOME}"
+    RESULT=$?
+    if [[ ${RESULT} -ne 0 ]]; then
+        echo    "Error: Create installation direcory for redis failed(${RESULT})"
+        return  7
+    fi
+
+    mv          "${INSTALL_DIR}/redis-6.0.5"   "${INSTALL_DIR}/redis"   &&  \
+
     #   找到 redis 的安装包,并解压安装
     local redis_package=$(cd "${SOFTWARE_DIR}" && find -name redis-6.0.5.tar* | head -n 1)
     mkdir -p    "${INSTALL_DIR}"                                        &&  \
     cd          "${INSTALL_DIR}"                                        &&  \
     tar xvfz    "${SOFTWARE_DIR}/${redis_package}"                      &&  \
-    mv          "${INSTALL_DIR}/redis-6.0.5"   "${INSTALL_DIR}/redis"
+    cd          "${INSTALL_DIR}/redis-6.0.5"                            &&  \
+    make                                                                &&  \
+    make        "PREFIX=/${REDIS_HOME}"  install                        &&  \
+    mkdir -p    ""
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Install redis failed(${RESULT}): '${SOFTWARE_DIR}/${redis_package}' -> '${INSTALL_DIR}'"
         return  1
     fi
 
+    #   清除构建环境下的所有的东西
+    rm -f       "${REDIS_HOME}/redis-6.0.5"
+
     #   安装配置和入口配置脚本
-    cp  -rf "${SELFDIR}/tmpl-redis"/*       "${INSTALL_DIR}/redis"
+    cp  -rf "${SELFDIR}/tmpl-redis"/*       "${REDIS_HOME}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Setup configurations of redis failed(${RESULT}): '${SELFDIR}/etc' -> '${INSTALL_DIR}/redis/etc'"
@@ -123,8 +139,6 @@ function install_redis()
     fi
     echo    "Setup configurations of redis success: '${SELFDIR}/etc' -> '${INSTALL_DIR}/redis/etc'"
 
-
-    export REDIS_HOME="${INSTALL_DIR}/redis"
 
     echo    "Install redis success: '${REDIS_HOME}'"
     return  0
