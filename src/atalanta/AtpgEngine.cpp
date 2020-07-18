@@ -730,6 +730,7 @@ namespace hiatpg {
             file << "faults: " << ar.faults << endl;
             file << "detect faults: " << ar.detectedFaults << endl;
             file << "redundant faults: " << ar.redundantFaults << endl;
+            file << "test coverage:" << double(ar.detectedFaults)/double(ar.faults) << endl;
             file << "time: " << ar.time << endl;
             file.flush();
 
@@ -742,6 +743,7 @@ namespace hiatpg {
             cout << "faults: " << ar.faults << endl;
             cout << "detect faults: " << ar.detectedFaults << endl;
             cout << "redundant faults: " << ar.redundantFaults << endl;
+            cout << "test coverage:" << double(ar.detectedFaults)/double(ar.faults) << endl;
             cout << "time: " << ar.time << endl;
             cout << endl;
         }
