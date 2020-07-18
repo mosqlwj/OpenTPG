@@ -46,6 +46,17 @@ function check_java()
     return  0
 }
 
+function hadoop_clean()
+{
+    #   清除 install 目录下的所有内容
+    rm -rf   "${INSTALL_DIR}"/hadoop
+    if [[ -d "${INSTALL_DIR}"/hadoop ]]; then
+        echo    "Clean installed hadoop failed: '${INSTALL_DIR}'"
+        return  6
+    fi
+
+    return  0
+}
 
 function install_hadoop()
 {
@@ -62,10 +73,7 @@ function install_hadoop()
     fi
 
     #   安装配置和入口配置脚本
-    cp  -rf "${SELFDIR}/tmpl-hadoop-etc"/*    "${INSTALL_DIR}/hadoop/etc"
-    if [[ ! -f "${INSTALL_DIR}/settings.sh" ]]; then
-        cp  -rf "${SELFDIR}/settings.sh"    "${INSTALL_DIR}"
-    fi
+    cp  -rf "${SELFDIR}/tmpl-hadoop"/*    "${INSTALL_DIR}/hadoop"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Setup configurations of hadoop failed(${RESULT}): '${SELFDIR}/etc' -> '${INSTALL_DIR}/hadoop/etc'"
@@ -80,10 +88,21 @@ function install_hadoop()
     return  0
 }
 
-
-function install_redis()
+function redis_clean()
 {
-    #   找到 hadoop 的安装包,并解压安装
+    #   清除 install 目录下的所有内容
+    rm -rf   "${INSTALL_DIR}"/redis
+    if [[ -d "${INSTALL_DIR}"/redis ]]; then
+        echo    "Clean installed redis failed: '${INSTALL_DIR}'"
+        return  6
+    fi
+
+    return  0
+}
+
+function redis_install()
+{
+    #   找到 redis 的安装包,并解压安装
     local redis_package=$(cd "${SOFTWARE_DIR}" && find -name redis-6.0.5.tar* | head -n 1)
     mkdir -p    "${INSTALL_DIR}"                                        &&  \
     cd          "${INSTALL_DIR}"                                        &&  \
@@ -96,7 +115,28 @@ function install_redis()
     fi
 
     #   安装配置和入口配置脚本
-    cp  -rf "${SELFDIR}/tmpl-hadoop-etc"/*    "${INSTALL_DIR}/hadoop/etc"
+    cp  -rf "${SELFDIR}/tmpl-redis"/*       "${INSTALL_DIR}/redis"
+    RESULT=$?
+    if [[ ${RESULT} -ne 0 ]]; then
+        echo    "Setup configurations of redis failed(${RESULT}): '${SELFDIR}/etc' -> '${INSTALL_DIR}/redis/etc'"
+        return  1
+    fi
+    echo    "Setup configurations of redis success: '${SELFDIR}/etc' -> '${INSTALL_DIR}/redis/etc'"
+
+
+    export REDIS_HOME="${INSTALL_DIR}/redis"
+
+    echo    "Install redis success: '${REDIS_HOME}'"
+    return  0
+}
+
+function settings_clean()
+{
+    return  0
+}
+
+function settings_install()
+{
     if [[ ! -f "${INSTALL_DIR}/settings.sh" ]]; then
         cp  -rf "${SELFDIR}/settings.sh"    "${INSTALL_DIR}"
     fi
@@ -105,16 +145,9 @@ function install_redis()
         echo    "Setup configurations of hadoop failed(${RESULT}): '${SELFDIR}/etc' -> '${INSTALL_DIR}/hadoop/etc'"
         return  1
     fi
-    echo    "Setup configurations of hadoop success: '${SELFDIR}/etc' -> '${INSTALL_DIR}/hadoop/etc'"
 
-
-    export HADOOP_HOME="${INSTALL_DIR}/hadoop"
-
-    echo    "Install hadoop success: '${INSTALL_DIR}/java'"
     return  0
 }
-
-
 
 #   $1  software-dir
 #   $2  install-dir
@@ -149,29 +182,33 @@ function main()
     fi
     INSTALL_DIR=$(realpath "${INSTALL_DIR}")
 
-    #   清楚 install 目录下的所有内容
-    rm -rf   "${INSTALL_DIR}"/hadoop
-    if [[ -d "${INSTALL_DIR}"/hadoop ]]; then
-        echo    "Clean install dir failed: '${INSTALL_DIR}'"
-        return  6
-    fi
-
     echo    "SOFTWARE_DIR   :   '${SOFTWARE_DIR}'"
     echo    "INSTALL_DIR    :   '${INSTALL_DIR}'"
 
+    #   检查 java 运行环境
     check_java
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         return  7
     fi
 
-    install_hadoop
+    #   安装 hadoop
+    clean_hadopp && install_hadoop
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Hadoop installation was failed(${RESULT})"
         return  8
     fi
     echo    "Hadoop installation was success"
+
+    #   安装 redis
+    clean_redis && install_redis
+    RESULT=$?
+    if [[ ${RESULT} -ne 0 ]]; then
+        echo    "Redis installation was failed(${RESULT})"
+        return  8
+    fi
+    echo    "Redis installation was success"
 
     return 0
 }
