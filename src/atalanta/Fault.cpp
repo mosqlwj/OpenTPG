@@ -511,12 +511,26 @@ namespace hiatpg {
 		while(!inputf->eof())
 		{
 			c = inputf->get();
-			if(c == -1) continue;
+			if(c == -1)
+			    continue;
 			
-			if(isWhitespace(c)) {if(valid) break; else continue;}
-			if(isHeadSymbol(c)) {s->append(1, c);continue;}
-			if(isValid(c)) {s->append(1, c); valid=true;}
-			else Error::fatalerror(FAULTERROR);
+			if(isWhitespace(c)) {
+			    if(valid)
+			        break;
+			    else
+			        continue;
+			}
+			if(isHeadSymbol(c)) {
+			    s->append(1, c);
+			    continue;
+			}
+			if(isValid(c)) {
+			    s->append(1, c);
+			    valid=true;
+			}
+			else {
+                Error::fatalerror(FAULTERROR);
+			}
 		};
 		if(inputf->eof()) {
 			c=EOF;
@@ -568,11 +582,12 @@ namespace hiatpg {
 					cout<<" is not defined\n";
 					Error::fatalerror(FAULTERROR);
 				}
-				if((to=h->pnode->index) < 0) Error::fatalerror(FAULTERROR);
+				if((to=h->pnode->index) < 0) {
+                    Error::fatalerror(FAULTERROR);
+				}
 				gut=gates[to];
 				line=-1;
-			} else if(s[0]=='>')
-			{
+			} else if(s[0]=='>') {
 				from=to;
 				if((h=hashTable.findHash(string(&s[1]),0)) ==0)
 				{
@@ -585,8 +600,7 @@ namespace hiatpg {
 				gut=gates[to];
 				for(int i=0;i<gut->ninput;i++)
 					if(gut->fanins[i]->index == from) { line=i; break;};
-			} else if(s[0]=='/')
-			{
+			} else if(s[0]=='/') {
 				if(s[1]=='1') type=SA1; else type=SA0;
 				if(line>=0)
 					type=(type==SA1) ? SA1 : SA0;
@@ -597,7 +611,9 @@ namespace hiatpg {
 				f->type= static_cast<FaultType>(type);
 				gut->pFaultList.push_front(f);
 				nfault++;
-			} else Error::fatalerror(FAULTERROR);
+			} else {
+                Error::fatalerror(FAULTERROR);
+			}
 		}
 
 		// create the fault_list and

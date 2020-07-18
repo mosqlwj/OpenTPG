@@ -72,7 +72,7 @@ namespace hiatpg {
                                 "The netlist file name, support local file and redis address, such as 'file:~/c17.bench' and 'tcp://192.168.1.101:2345/NetList'",
                                 false, "");
             options.add<string>("cache", 'c', "The url where the netlist saved in redi", false, "");
-//            options.add<string>("fault", 'f', "fault file name", true, "");
+            options.add<string>("fault", 'f', "fault file name", false, "");
 
             cctMode = ISCAS89;
             randomLimit = 16;
@@ -134,9 +134,18 @@ namespace hiatpg {
             setSPatternStream(pat.rdbuf());
             setReportStream(report.rdbuf());
 
-//            string faultFile = pureName + ".flist";
-//            fault.open(faultFile, ios::out);
-//            setfaultStream(fault.rdbuf());
+            string faultFile = options.get<string>("fault");
+            if (!faultFile.empty()) {
+                fault.open(faultFile, ios::in);
+                setfaultStream(fault.rdbuf());
+//            while (!fault.eof()) {
+//                char c = fault.get();
+//                cout << c;
+//            }
+//            cout.flush();
+            } else {
+                cout << "create faultlist mode!" << endl;
+            }
 
             setWTestMode(1);
             setCctMode('9');
