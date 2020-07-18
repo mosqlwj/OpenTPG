@@ -225,16 +225,27 @@ namespace hiatpg {
     {
         for(int i=0;i<fault;i++) mask[i]=faultList[i]->detected;
 
-        fstream faultFile("c17.flist");
-        faultFile << "#name type detect" << endl;
+        fstream faultFile("c17.flist", ios::out | ios::trunc);
 
         // print all fault status
         for (int i = 0; i < fault; i++) {
             auto pCurrentFault = faultList[i];
             string line;
-
-            faultFile << pCurrentFault->gate->symbol->symbol << " " << pCurrentFault->type << " " << pCurrentFault->detected << endl;
+            Gate* targetGate = pCurrentFault->gate;
+            Gate* faninGate = nullptr;
+            string strTarget = targetGate->symbol->symbol;
+            string strFanin;
+            int faninIndex = pCurrentFault->line;
+            if (faninIndex != OUTFAULT) {
+                faninGate = pCurrentFault->gate->fanins[faninIndex];
+                strFanin = faninGate->symbol->symbol;
+                faultFile << strFanin << "->" << strTarget << " /" << pCurrentFault->type << endl;
+            } else {
+                faultFile << strTarget << " /" << pCurrentFault->type << endl;
+            }
         }
+
+        faultFile.close();
     }
 
     void CustomFaultlist::writeFaultMask(std::streambuf *fn)
