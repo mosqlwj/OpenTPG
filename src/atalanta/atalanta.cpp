@@ -17,6 +17,12 @@ int main(int argc, char** argv)
         AtpgEngine* atpgEngine =new AtpgEngine();
         atpgEngine->setParams();
         atpgEngine->run();
+    } else if (params->getExecAction() == "cube") {
+        AtpgEngine* atpgEngine =new AtpgEngine();
+        atpgEngine->setParams();
+        atpgEngine->run();
+    } else {
+        cerr << "unsupported work mode" << endl;
     }
 
     return 0;
