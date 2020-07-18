@@ -5,7 +5,7 @@
 
 #include <stdio.h>
 #include <vector>
-
+#include "PatternParser.h"
 using namespace hiatpg;
 
 int main(int argc, char** argv)
@@ -17,6 +17,11 @@ int main(int argc, char** argv)
         AtpgEngine* atpgEngine =new AtpgEngine();
         atpgEngine->setParams();
         atpgEngine->run();
+    }
+    if (params->getExecAction() == "rp"){
+        PatternParser* patternEngin = new PatternParser();
+        patternEngin->setParams();
+        patternEngin->run();
     }
 
     return 0;

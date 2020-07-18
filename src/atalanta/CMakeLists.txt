@@ -5,4 +5,4 @@ set(CMAKE_CXX_STANDARD 14)
 
 aux_source_directory(. src)
 
-add_executable(atalanta ${src} AtpgEngine.cpp AtpgEngine.h)
+add_executable(atlanta ${src} AtpgEngine.cpp AtpgEngine.h PatternParser.cpp PatternParser.h)

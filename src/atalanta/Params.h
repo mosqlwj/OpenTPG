@@ -57,6 +57,7 @@ namespace hiatpg {
         string execAction;      //  执行什么动作
         string netlistFile;     //  网表文件地址
         string cacheAddress;    //  网表文件存放在redis时,在redis上的地址
+        string patternPath;     // pattern文件地址
 
         Params(void) {
             // 加入指定类型的输入參数
@@ -73,7 +74,7 @@ namespace hiatpg {
                                 false, "");
             options.add<string>("cache", 'c', "The url where the netlist saved in redi", false, "");
             options.add<string>("fault", 'f', "fault file name", false, "");
-
+            options.add<string>("patternFilePath", 'p', "pattern file path",false, "");
             cctMode = ISCAS89;
             randomLimit = 16;
             iseed = 0;
@@ -122,6 +123,7 @@ namespace hiatpg {
             execAction = options.get<string>("exec");
             netlistFile = options.get<string>("netlist");
             cacheAddress = options.get<string>("cache");
+            patternPath = options.get<string>("patternFilePath");
 
             string pureName = netlistFile.substr(0, netlistFile.rfind(".bench"));
             string patternFile = pureName + ".pat";
@@ -173,6 +175,10 @@ namespace hiatpg {
 
         //randomLimit
         int getRandomLimit(void) { return randomLimit; };
+
+        const string& GetPatternPath() {
+            return patternPath;
+        }
 
         void setRandomLimit(char p_randomLimit) {
             if (p_randomLimit >= 0 && p_randomLimit <= 32) {
