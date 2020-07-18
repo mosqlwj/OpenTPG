@@ -134,7 +134,7 @@ namespace hiatpg {
             setSPatternStream(pat.rdbuf());
             setReportStream(report.rdbuf());
 
-            string faultFile = options.get<string>("fault");
+            faultFile = options.get<string>("fault");
             if (!faultFile.empty()) {
                 fault.open(faultFile, ios::in);
                 setfaultStream(fault.rdbuf());
@@ -144,6 +144,7 @@ namespace hiatpg {
 //            }
 //            cout.flush();
             } else {
+                faultFile = pureName + ".wflist";
                 cout << "create faultlist mode!" << endl;
             }
 
@@ -153,6 +154,7 @@ namespace hiatpg {
         }
 
         const string& getExecAction() { return execAction; }
+        const string& getFaultFileName() { return faultFile; }
 
         //cctMode
         char getCctMode(void) { return cctMode; }
