@@ -34,48 +34,60 @@ function do_help()
 # $2+ params
 function do_compile()
 {
-    local cmakeopts=""
-    local filter=$(uname -s)
-    case "${filter}" in
+    #   定义几个本函数中用到的局部变量
+    local builddir=""           #   构建时的工作目录
+    local buildsrc=""           #   待构建模块源代码根目录
+    local buildmodule=""        #   待构建模块名
+    local buildmode=""          #   构建模式
+    local buildopts=""          #   构建选项
+
+
+    #   确定与操作系统相关的几个参数
+    case $(uname -s) in
         Linux*)
-            cmakeopts="-DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++"
+            buildopts="-DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++"
         ;;
         Darwin*)
-            cmakeopts="-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
+            buildopts="-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
         ;;
         *)
-            echo    "Unknown system: '${filter}'"
+            echo    "Unknown system: '$(uname -s)'"
             return  1
         ;;
     esac
 
 
-    local buildmode=""
+    #   确定与构建模式相关的参数
     if   [[ "$2" == "debug" ]] || [[ "$2" == "" ]]; then
         buildmode="debug"
-        cmakeopts="${cmakeopts} -DCMAKE_BUILD_TYPE=Debug"
+        buildopts="${buildopts} -DCMAKE_BUILD_TYPE=Debug"
         cmakegens="CodeBlocks - Unix Makefiles"
     elif [[ "$2" == "release" ]]; then
         buildmode="release"
-        cmakeopts="${cmakeopts} -DCMAKE_BUILD_TYPE=Release"
+        buildopts="${buildopts} -DCMAKE_BUILD_TYPE=Release"
         cmakegens="CodeBlocks - Unix Makefiles"
     else
-        echo    "Unsupported compile mode '$2'"
+        echo    "Error: Unsupported compile mode '$2'"
         return  2
     fi
 
 
-    local builddir="${PROJECT_ROOT}/cmake-build/${buildmode}"
-    mkdir -p "${builddir}"
-    cd    "${builddir}" && cmake ${cmakeopts} -G "${cmakegens}" "${PROJECT_ROOT}/src/hiatpg"  &&  \
-    make clean  &&  \
-    make
-    RESULT=$?
-    if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Build project failed(${RESULT})"
-        return  3
-    fi
-    echo    "Build project success"
+    #   执行构建
+#    local module_list="hiatpg atalanta"
+    local module_list="atalanta"
+    for module  in  ${module_list} ; do
+        #   构建 hiatpg
+        buildmodule="${module}"
+        buildsrc="${PROJECT_ROOT}/src/${buildmodule}"
+        builddir="${PROJECT_ROOT}/cmake-build-${buildmodule}-${buildmode}"
+        mkdir -p "${builddir}" && cd "${builddir}" && cmake ${buildopts} -G "${cmakegens}" "${buildsrc}" && make clean && make
+        RESULT=$?
+        if [[ ${RESULT} -ne 0 ]]; then
+            echo    "Error: Build '${buildmodule}' failed(${RESULT})"
+            return  3
+        fi
+        echo    "Build '${buildmodule}' success"
+    done
 
 
     return  0
@@ -107,11 +119,17 @@ function do_package
 {
     local buildteam="$2"
     if [[ "${buildteam}" == "" ]]; then
-        echo    "The 'package' action need a team name for the next parameter"
-        return  3
+        echo    "Warning: Can not given the name of the team, try to read the team name from local file: '${SELFDIR}/TEAM'"
+        if [[ -f "${SELFDIR}/TEAM" ]]; then
+            buildteam=$(cat "${SELFDIR}/TEAM")
+        fi
+        if [[ "${buildteam}" == "" ]]; then
+            echo    "Error: Can not resolve the team name."
+            return  3
+        fi
     fi
     if [[ ! "${buildteam}" =~ [A-Za-z][A-Za-z0-9]* ]]; then
-        echo    "The name of the team is invalid, expect the name match with '[A-Za-z][A-Za-z0-9]'"
+        echo    "Error: The name of the team is invalid, expect the name match with '[A-Za-z][A-Za-z0-9]'"
         return  7
     fi
 
@@ -124,13 +142,13 @@ function do_package
     #   如果没有指定该脚本,那么采用默认打包行为
     local buildos=$(uname -s)
     if [[ "${buildos}" == "" ]]; then
-        echo    "Unknown operation system: '${buildos}'"
+        echo    "Error: Unknown operation system: '${buildos}'"
         return  4
     fi
 
     local buildarch=$(arch)
     if [[ "${buildarch}" == "" ]]; then
-        echo    "Unknown arch of this system."
+        echo    "Error: Unknown arch of this system."
         return  5
     fi
 
@@ -156,13 +174,13 @@ function do_package
     mv          "${pkgname}.tar.gz"     "${PROJECT_ROOT}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Create package failed(${RESULT}): '${PROJECT_ROOT}/.tmp-package'"
+        echo    "Error: Create package failed(${RESULT}): '${PROJECT_ROOT}/.tmp-package'"
         return  6
     fi
 
     rm -rf "${PROJECT_ROOT}/.tmp-package"
 
-    echo    "Create package success: '${PROJECT_ROOT}/${pkgname}.tar.gz'"
+    echo    "Error: Create package success: '${PROJECT_ROOT}/${pkgname}.tar.gz'"
     return  0
 }
 
@@ -197,7 +215,7 @@ function main()
         return      "$?"
     fi
 
-    echo  "Unsupported action '${action}', type 'help' for help"
+    echo  "Error: Unsupported action '${action}', type 'help' for help"
     return  $?
 }
 
