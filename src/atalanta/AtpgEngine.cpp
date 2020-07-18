@@ -968,40 +968,6 @@ namespace hiatpg {
         atpgStatus.time = (end - start) / (double) CLOCKS_PER_SEC;
 
         writeResults(atpgStatus);
-
-        //Close opened files
-        if (benchFile.is_open()) {
-            benchFile.close();
-            benchStream = NULL;
-        };
-        if (faultFile.is_open()) {
-            faultFile.close();
-            faultStream = NULL;
-        };
-        if (patternFile.is_open()) {
-            patternFile.close();
-            patternStream = NULL;
-        };
-        if (udFaultsFile.is_open()) {
-            udFaultsFile.close();
-            udFaultsStream = NULL;
-        };
-        if (wFaultFile.is_open()) {
-            wFaultFile.close();
-            wFaultStream = NULL;
-        };
-        if (maskFile.is_open()) {
-            maskFile.close();
-            maskStream = NULL;
-        };
-        if (reportFile.is_open()) {
-            reportFile.close();
-            reportStream = NULL;
-        };
-        if (genResFile.is_open()) {
-            genResFile.close();
-            genResStream = NULL;
-        };
     }
 
     int AtpgEngine::run() {
