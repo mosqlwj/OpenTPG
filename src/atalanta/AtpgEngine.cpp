@@ -225,7 +225,7 @@ namespace hiatpg {
     {
         for(int i=0;i<fault;i++) mask[i]=faultList[i]->detected;
 
-        fstream faultFile("c17.flist", ios::out | ios::trunc);
+        fstream faultFile("c17.wflist", ios::out | ios::trunc);
 
         // print all fault status
         for (int i = 0; i < fault; i++) {
@@ -1112,15 +1112,15 @@ namespace hiatpg {
                 OpenFile(&faultFile, &faultStream, p->getFaultFile(), ios::in);
             }
         }
-        //faultFile = p->getFaultFile();
-        if(p->getFaultStream() != NULL) {
-            faultStream = p->getFaultStream();
-        }
-        else {
-            if(p->getWFaultFile().length()) {
-                OpenFile(&wFaultFile, &wFaultStream, p->getWFaultFile(), ios::out);
-            }
-        }
+//        //faultFile = p->getFaultFile();
+//        if(p->getFaultStream() != NULL) {
+//            faultStream = p->getFaultStream();
+//        }
+//        else {
+//            if(p->getWFaultFile().length()) {
+//                OpenFile(&wFaultFile, &wFaultStream, p->getWFaultFile(), ios::out);
+//            }
+//        }
         //wFaultFile = p->getWFaultFile();
         fillMode = p->getFillMode();
         genAllPat = p->getGenAllPat();
