@@ -46,7 +46,7 @@ function check_java()
     return  0
 }
 
-function hadoop_clean()
+function clean_hadoop()
 {
     #   清除 install 目录下的所有内容
     rm -rf   "${INSTALL_DIR}"/hadoop
@@ -88,7 +88,7 @@ function install_hadoop()
     return  0
 }
 
-function redis_clean()
+function clean_redis()
 {
     #   清除 install 目录下的所有内容
     rm -rf   "${INSTALL_DIR}"/redis
@@ -100,7 +100,7 @@ function redis_clean()
     return  0
 }
 
-function redis_install()
+function install_redis()
 {
     #   找到 redis 的安装包,并解压安装
     local redis_package=$(cd "${SOFTWARE_DIR}" && find -name redis-6.0.5.tar* | head -n 1)
@@ -130,12 +130,12 @@ function redis_install()
     return  0
 }
 
-function settings_clean()
+function clean_settings()
 {
     return  0
 }
 
-function settings_install()
+function install_settings()
 {
     if [[ ! -f "${INSTALL_DIR}/settings.sh" ]]; then
         cp  -rf "${SELFDIR}/settings.sh"    "${INSTALL_DIR}"
@@ -196,19 +196,28 @@ function main()
     clean_hadopp && install_hadoop
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Hadoop installation was failed(${RESULT})"
+        echo    "The hadoop installation was failed(${RESULT})"
         return  8
     fi
-    echo    "Hadoop installation was success"
+    echo    "The hadoop installation was success"
 
     #   安装 redis
     clean_redis && install_redis
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Redis installation was failed(${RESULT})"
+        echo    "The redis installation was failed(${RESULT})"
         return  8
     fi
-    echo    "Redis installation was success"
+    echo    "The redis installation was success"
+
+    #   安装 settings
+    clean_settings && install_settings
+    RESULT=$?
+    if [[ ${RESULT} -ne 0 ]]; then
+        echo    "The settings installation was failed(${RESULT})"
+        return  8
+    fi
+    echo    "The settings installation was success"
 
     return 0
 }
