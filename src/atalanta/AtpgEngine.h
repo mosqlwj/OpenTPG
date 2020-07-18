@@ -51,7 +51,7 @@ namespace hiatpg {
     {
     private:
         vector<unordered_map<int, int>> testCubes;
-
+    public:
         char inputMode;
         int iseed;
         char faultMode;
@@ -155,6 +155,7 @@ namespace hiatpg {
     public:
         AtpgEngine();
         int run();
+        void generateCube();
         void setParams();
         int testGen(int levels, int maxBits, int nStem, Gate **stem, int maxBackTrack, int phase, int *nRedundant, int *nOverBackTrack, int *nBackTrack, int *nTest, int *nPacket, int *nBit, double *fanTime);
     };

@@ -71,7 +71,7 @@ namespace hiatpg {
 	const int BITSIZE=32;
 
 #define         EOS     '\0'    /* End of string */
-#define         CR      '\n'    /* carriage return */
+//#define         CR      '\n'    /* carriage return */
 #define         TAB     '\t'    /* tab */
 
 #define         Z               3
