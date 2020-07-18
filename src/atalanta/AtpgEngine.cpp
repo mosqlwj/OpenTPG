@@ -36,6 +36,61 @@
 #include "windows.h"
 #endif
 
+int hiatpg::AtpgEngine::testCubeGen(int levels, int maxBits, int nStem, Gate **stem, int maxBackTrack, int phase,
+                                int *nRedundant, int *nOverBackTrack, int *nBackTrack, int *nTest, int *nPacket,
+                                int *nBit, double *fanTime) {
+    int j, nBack;
+    status faultSelectionMode;
+    int lastFault;
+    int state;
+    int nDetect = 0;
+    int profile[BITSIZE];
+    bool done;
+    Fault *pCurrentFault;
+    Gate *gut;
+    double seconds, minutes, runtime1, runtime2;
+
+    faultSelectionMode = DEFAULTMODE;
+    lastFault = numberOfFaults;
+    allOne = ~(ALL1 << 1);
+    done = false;
+
+    for (int i = 0; i < numberOfFaults; i++) {
+        pCurrentFault = pCurrentFault = faultList[i];
+        gut = pCurrentFault->gate;
+
+        getTime(&minutes, &seconds, &runtime1);
+
+        // test pattern generation using fan
+        state = (phase == false) ?
+                fan(levels, pCurrentFault, maxBackTrack, &nBack) :
+                fan1(levels, pCurrentFault, maxBackTrack, &nBack);
+        (*nBackTrack) += nBack;
+
+        getTime(&minutes, &seconds, &runtime2);
+        (*fanTime) += (runtime2 - runtime1);
+
+        if (state == TEST_FOUND) {    // fault is detected, delete the detected fault from fault list
+            pCurrentFault->detected = PROCESSED;
+            unordered_map<int, int> testcube;
+            cout << i;
+            for (j = 0; j < numberOfPrimaryInputs; j++) {
+                int32_t value = gates[j]->output;
+                if (value != X) {
+//                    cout << "GateId: " << j << endl;
+//                    cout << "Value: " << gates[j]->output << endl;
+                    testcube[j] = value;
+                    cout << " " << j << " " << gates[j]->output;
+                }
+            }
+            cout << endl;
+            testCubes.push_back(move(testcube));
+        }
+    }
+
+    return 0;
+}
+
 int hiatpg::AtpgEngine::testGen(int levels, int maxBits, int nStem, Gate **stem, int maxBackTrack, int phase,
                                 int *nRedundant, int *nOverBackTrack, int *nBackTrack, int *nTest, int *nPacket,
                                 int *nBit, double *fanTime) {
@@ -962,12 +1017,32 @@ namespace hiatpg {
         iseed = Random::seed(iseed);
 
         start = clock();
-        generateTest();
+        int i;
+        int nDetect3 = 0;
+        status state;
+        Fault *f;
+        int nOverBackTrack = 0;
+        int tBackTrack = 0;
+        double fan1Time;
+
+        testVector.num = 0;
+        testVector.inpVars = numberOfPrimaryInputs;
+        testVector.outVars = numberOfPrimaryOutputs;
+        /******************************************************************
+        *                                                                *
+        *    step 3: Deterministic Test Pattern Generation Session       *
+        *            (fan with unique path sensitization                 *
+        *                                                                *
+        ******************************************************************/
+        fantime = 0;
+        mnDetect += testCubeGen(levels, BITSIZE, myNumberOfStems, myStem, maxBackTrack, false, &nRedundant, &nOverBackTrack,
+                            &tBackTrack, &mnTest, &mnPacket, &mnBit, &fantime);
+
         atpgStatus = getResults();
         end = clock();
         atpgStatus.time = (end - start) / (double) CLOCKS_PER_SEC;
 
-        writeResults(atpgStatus);
+//        writeResults(atpgStatus);
     }
 
     int AtpgEngine::run() {

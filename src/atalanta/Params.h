@@ -149,7 +149,7 @@ namespace hiatpg {
 
             } else {
                 faultFile = pureName + ".wflist";
-                cout << "create faultlist mode!" << endl;
+//                cout << "create faultlist mode!" << endl;
             }
 
             setWTestMode(1);
