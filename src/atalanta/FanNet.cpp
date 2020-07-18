@@ -545,7 +545,6 @@ namespace hiatpg {
                     last = MAX(p->fanins[i]->dpi, last);
                     scheduleInput(p, i);
                 }
-
         } else {
             // output line fault
             p->output = v2;
@@ -2136,6 +2135,8 @@ namespace hiatpg {
             case NAND:
                 if (val == ZERO) return (FORWARD);
                 break;
+            default:
+                break;
         }
 
         state = FORWARD;
@@ -2189,6 +2190,8 @@ namespace hiatpg {
             case OR:
             case NAND:
                 if (val == ZERO) return (FORWARD);
+                break;
+            default:
                 break;
         }
 
