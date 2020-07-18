@@ -22,9 +22,8 @@
 #include "FanNet.h"
 #include "ParralelPattern.h"
 #include "Fault.h"
-
-#ifdef WIN32
 #include <string.h>
+#ifdef WIN32
 #include <limits>
 #endif
 
