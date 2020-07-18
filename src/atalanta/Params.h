@@ -143,6 +143,8 @@ namespace hiatpg {
 //                cout << c;
 //            }
 //            cout.flush();
+
+
             } else {
                 faultFile = pureName + ".wflist";
                 cout << "create faultlist mode!" << endl;
