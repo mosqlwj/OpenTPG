@@ -5,7 +5,7 @@
 
 #include <stdio.h>
 #include <vector>
-
+#include "PatternParser.h"
 using namespace hiatpg;
 
 int main(int argc, char** argv)
@@ -23,6 +23,11 @@ int main(int argc, char** argv)
         atpgEngine->run();
     } else {
         cerr << "unsupported work mode" << endl;
+    }
+    if (params->getExecAction() == "rp"){
+        PatternParser* patternEngin = new PatternParser();
+        patternEngin->setParams();
+        patternEngin->run();
     }
 
     return 0;

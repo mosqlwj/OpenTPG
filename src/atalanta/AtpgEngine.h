@@ -51,7 +51,7 @@ namespace hiatpg {
     {
     private:
         vector<unordered_map<int, int>> testCubes;
-
+    public:
         char inputMode;
         int iseed;
         char faultMode;
