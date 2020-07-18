@@ -73,7 +73,8 @@ function do_compile()
 
 
     #   执行构建
-    local module_list="hiatpg atalanta"
+#    local module_list="hiatpg atalanta"
+    local module_list="atalanta"
     for module  in  ${module_list} ; do
         #   构建 hiatpg
         buildmodule="${module}"
