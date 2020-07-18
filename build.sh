@@ -73,14 +73,19 @@ function do_compile()
 
 
     #   执行构建
-#    local module_list="hiatpg atalanta"
+#    local module_list="atalanta hiatpg"
     local module_list="atalanta"
     for module  in  ${module_list} ; do
-        #   构建 hiatpg
+        #   构建 module
         buildmodule="${module}"
-        buildsrc="${PROJECT_ROOT}/src/${buildmodule}"
-        builddir="${PROJECT_ROOT}/cmake-build-${buildmodule}-${buildmode}"
-        mkdir -p "${builddir}" && cd "${builddir}" && cmake ${buildopts} -G "${cmakegens}" "${buildsrc}" && make clean && make
+        buildsrc="${PROJECT_ROOT}"
+        builddir="${PROJECT_ROOT}/cmake-build-${module}-${buildmode}"
+        mkdir -p    "${builddir}"                                   &&  \
+        cd          "${builddir}"                                   &&  \
+        cmake       ${buildopts} -G "${cmakegens}" "${buildsrc}"    &&  \
+        cd          "${buildsrc}"                                   &&  \
+        make        clean                                           &&  \
+        make        "${module}" -j 4
         RESULT=$?
         if [[ ${RESULT} -ne 0 ]]; then
             echo    "Error: Build '${buildmodule}' failed(${RESULT})"

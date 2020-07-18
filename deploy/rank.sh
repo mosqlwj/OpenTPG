@@ -101,7 +101,7 @@ function    execute_rank()
     #   清理下工作目录
     local   rankdir="${outputdir}/${outputname}"
     if [[ -d "${rankdir}" ]]; then
-        rm -rf "${rankdir}"
+#        rm -rf "${rankdir}"
         if [[ -d "${rankdir}" ]]; then
             echo    "Error: Can not found clean the output directory: '${rankdir}'"
             return  5
