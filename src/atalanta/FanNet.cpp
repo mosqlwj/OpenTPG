@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 #include <list>
 #include <fstream>
+#include <cstring>
 
 #include "Error.h"
 
@@ -55,7 +56,7 @@ namespace hiatpg {
 	{
 		int i;
 		int *levelPopulation=new int[maxlevel+2];
-		memset(levelPopulation,0,sizeof(int)*(maxlevel+2));
+		std::memset(levelPopulation,0,sizeof(int)*(maxlevel+2));
 
 		for(i=0;i<numberOfGates;i++) levelPopulation[gates[i]->dpi]++;
 
