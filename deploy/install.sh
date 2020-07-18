@@ -193,7 +193,7 @@ function main()
     fi
 
     #   安装 hadoop
-    clean_hadopp && install_hadoop
+    clean_hadoop && install_hadoop
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "The hadoop installation was failed(${RESULT})"
