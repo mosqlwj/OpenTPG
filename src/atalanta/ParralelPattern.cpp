@@ -324,6 +324,8 @@ namespace hiatpg {
             case XNOR:
                 *val = ~(gate->fanins[0]->output1 ^ gate->fanins[1]->output1);
                 break;
+            default:
+                break;
         }
     }
 
@@ -363,6 +365,9 @@ namespace hiatpg {
             case NOR:
                 for (i = 1; i < gut->ninput; i++)
                     val &= (~gut->fanins[i]->output1);
+                break;
+            default:
+                break;
         }
         g->output1 = g->output;
         return val;
