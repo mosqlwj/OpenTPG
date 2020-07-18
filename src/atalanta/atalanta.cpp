@@ -7,11 +7,11 @@ int main(int argc, char** argv)
     auto params = &Params::getInstance();
     params->parseCheck(argc, argv);
 
-    if (params->getExecAction() == "atpg") {
+    if (params->getExecAction() == "origin") {
         AtpgEngine* atpgEngine =new AtpgEngine();
         atpgEngine->setParams();
         atpgEngine->run();
-    } else if (params->getExecAction() == "cube") {
+    } else if (params->getExecAction() == "atpg") {
         AtpgEngine* atpgEngine =new AtpgEngine();
         atpgEngine->setParams();
         atpgEngine->generateCube();

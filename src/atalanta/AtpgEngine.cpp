@@ -73,14 +73,14 @@ int hiatpg::AtpgEngine::testCubeGen(int levels, int maxBits, int nStem, Gate **s
         if (state == TEST_FOUND) {    // fault is detected, delete the detected fault from fault list
             pCurrentFault->detected = PROCESSED;
             unordered_map<int, int> testcube;
-            cout << i;
+            cout << i << '\t';
             for (j = 0; j < numberOfPrimaryInputs; j++) {
                 int32_t value = gates[j]->output;
                 if (value != X) {
 //                    cout << "GateId: " << j << endl;
 //                    cout << "Value: " << gates[j]->output << endl;
                     testcube[j] = value;
-                    cout << " " << j << " " << gates[j]->output;
+                    cout << j << " " << gates[j]->output << " ";
                 }
             }
             cout << endl;
@@ -1010,8 +1010,9 @@ namespace hiatpg {
 
         // parse bench
         levels = setBenchStream(benchStream);
-        // create fault
+        // read fault from std::cin
         setFaults();
+//        numberOfFaults = readFaultsFsim(&cin,myNumberOfStems,myStem);
         indexFaults();
         customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
         iseed = Random::seed(iseed);
@@ -1025,15 +1026,6 @@ namespace hiatpg {
         int tBackTrack = 0;
         double fan1Time;
 
-        testVector.num = 0;
-        testVector.inpVars = numberOfPrimaryInputs;
-        testVector.outVars = numberOfPrimaryOutputs;
-        /******************************************************************
-        *                                                                *
-        *    step 3: Deterministic Test Pattern Generation Session       *
-        *            (fan with unique path sensitization                 *
-        *                                                                *
-        ******************************************************************/
         fantime = 0;
         mnDetect += testCubeGen(levels, BITSIZE, myNumberOfStems, myStem, maxBackTrack, false, &nRedundant, &nOverBackTrack,
                             &tBackTrack, &mnTest, &mnPacket, &mnBit, &fantime);
@@ -1041,8 +1033,6 @@ namespace hiatpg {
         atpgStatus = getResults();
         end = clock();
         atpgStatus.time = (end - start) / (double) CLOCKS_PER_SEC;
-
-//        writeResults(atpgStatus);
     }
 
     int AtpgEngine::run() {
