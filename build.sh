@@ -72,30 +72,21 @@ function do_compile()
     fi
 
 
-    #   构建 hiatpg
-    buildmodule="hiatpg"
-    buildsrc="${PROJECT_ROOT}/src/${buildmodule}"
-    builddir="${PROJECT_ROOT}/cmake-build-${buildmodule}-${buildmode}"
-    mkdir -p "${builddir}" && cd "${builddir}" && cmake ${buildopts} -G "${cmakegens}" "${buildsrc}" && make clean && make
-    RESULT=$?
-    if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Error: Build '${buildmodule}' failed(${RESULT})"
-        return  3
-    fi
-    echo    "Build '${buildmodule}' success"
-
-
-    #   构建 atalanta
-    buildmodule="atalanta"
-    buildsrc="${PROJECT_ROOT}/src/${buildmodule}"
-    builddir="${PROJECT_ROOT}/cmake-build-${buildmodule}-${buildmode}"
-    mkdir -p "${builddir}" && cd "${builddir}" && cmake ${buildopts} -G "${cmakegens}" "${buildsrc}" && make clean && make
-    RESULT=$?
-    if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Error: Build '${buildmodule}' failed(${RESULT})"
-        return  3
-    fi
-    echo    "Build '${buildmodule}' success"
+    #   执行构建
+    local module_list="hiatpg atalanta"
+    for module  in  ${module_list} ; do
+        #   构建 hiatpg
+        buildmodule="${module}"
+        buildsrc="${PROJECT_ROOT}/src/${buildmodule}"
+        builddir="${PROJECT_ROOT}/cmake-build-${buildmodule}-${buildmode}"
+        mkdir -p "${builddir}" && cd "${builddir}" && cmake ${buildopts} -G "${cmakegens}" "${buildsrc}" && make clean && make
+        RESULT=$?
+        if [[ ${RESULT} -ne 0 ]]; then
+            echo    "Error: Build '${buildmodule}' failed(${RESULT})"
+            return  3
+        fi
+        echo    "Build '${buildmodule}' success"
+    done
 
 
     return  0
