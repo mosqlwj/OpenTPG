@@ -21,13 +21,12 @@ int main(int argc, char** argv)
         AtpgEngine* atpgEngine =new AtpgEngine();
         atpgEngine->setParams();
         atpgEngine->run();
-    } else {
-        cerr << "unsupported work mode" << endl;
-    }
-    if (params->getExecAction() == "rp"){
+    } else if (params->getExecAction() == "rp"){
         PatternParser* patternEngin = new PatternParser();
         patternEngin->setParams();
         patternEngin->run();
+    } else {
+        cerr << "unsupported work mode" << endl;
     }
 
     return 0;
