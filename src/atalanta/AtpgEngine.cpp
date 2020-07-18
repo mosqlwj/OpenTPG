@@ -225,7 +225,8 @@ namespace hiatpg {
     {
         for(int i=0;i<fault;i++) mask[i]=faultList[i]->detected;
 
-        fstream faultFile("c17.wflist", ios::out | ios::trunc);
+        auto params = &Params::getInstance();
+        fstream faultFile(params->getFaultFileName(), ios::out | ios::trunc);
 
         // print all fault status
         for (int i = 0; i < fault; i++) {
