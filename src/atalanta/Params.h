@@ -320,7 +320,7 @@ namespace hiatpg {
         string getFaultFile(void)
         {
             char realp[PATH_MAX] = {0};
-            realpath(faultFile.c_str(), realpath);
+            realpath(faultFile.c_str(), realp);
             return string(realp);
         };
 
