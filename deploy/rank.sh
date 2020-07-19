@@ -151,14 +151,14 @@ function    execute_rank()
 
     #   清理旧的输入和输出目录
     echo    "Clear the input and output directory in DFS..."
-    "${HADOOP}/hdfs" dfs -rm -r -f "/${team}-${scenename}-input"
-    "${HADOOP}/hdfs" dfs -rm -r -f "/${team}-${scenename}-output"
+    "${HADOOP_HOME}/bin/hdfs" dfs -rm -r -f "/${team}-${scenename}-input"
+    "${HADOOP_HOME}/bin/hdfs" dfs -rm -r -f "/${team}-${scenename}-output"
     echo    "Clear the input and output directory in DFS complete"
 
 
     #   创建输入目录
     echo    "Create input directory for dfs..."
-    "${HADOOP}/hdfs" dfs -mkdir "/${team}-${scenename}-input"
+    "${HADOOP_HOME}/bin/hdfs" dfs -mkdir "/${team}-${scenename}-input"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Create input directory of dfs failed(${RESULT}): '/${team}-${scenename}-input'"
@@ -169,7 +169,7 @@ function    execute_rank()
 
     #   将前面生成的faultlist文件放入输入目录
     echo    "Deploy fault-list file on dfs..."
-    "${HADOOP}/hdfs" dfs -put   "${rankdir}/${rankname}.fault"  "/${team}-${scenename}-input"
+    "${HADOOP_HOME}/bin/hdfs" dfs -put   "${rankdir}/${rankname}.fault"  "/${team}-${scenename}-input"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Put the fault list file to dfs failed(${RESULT}): '${rankdir}/${rankname}.fault' -> '/${team}-${scenename}-input'"
@@ -181,7 +181,7 @@ function    execute_rank()
     #   启动hadoop
     echo    "Executing TPG-FLOW..."
     local   streamfile="$HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar"
-    $HADOOP_HOME/bin/hadoop jar "${streamfile}"                                     \
+    "$HADOOP_HOME/bin/hadoop" jar "${streamfile}"                                     \
         -input      "/${team}-${scenename}-input"                                   \
         -output     "/${team}-${scenename}-output"                                  \
         -mapper     "atalanta --exec atpg     --netlist  file:${rankname}.bench}"   \
@@ -199,7 +199,7 @@ function    execute_rank()
 
     #   下载输出结果
     echo    "Download the outputs..."
-    "${HADOOP}/hdfs" dfs -get   "/${team}-${scenename}-output"  "${rankdir}/output"
+    "${HADOOP_HOME}/bin/dfs" dfs -get   "/${team}-${scenename}-output"  "${rankdir}/output"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Download the outputs failed(${RESULT})"
@@ -207,7 +207,9 @@ function    execute_rank()
     fi
     echo    "Download the outputs success"
 
+
     #   分离输出数据
+
 
     #   生成统计报告
 
