@@ -59,7 +59,7 @@ function    start_redis()
 {
     mkdir -p "${REDIS_HOME}/log"
 
-    nohup "${REDIS_HOME}/bin/redis-server" "${REDIS_HOME}/conf/redis.conf"  2>&1 &
+    nohup "${REDIS_HOME}/bin/redis-server" "${REDIS_HOME}/conf/redis.conf" &
 #    nohup "${REDIS_HOME}/bin/redis-server" "${REDIS_HOME}/conf/redis.conf"  2>&1 > "${REDIS_HOME}/log/redis-server.log" < /dev/null &
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
