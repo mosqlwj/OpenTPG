@@ -58,7 +58,7 @@ function    stop_hadoop()
 function    start_redis()
 {
     mkdir -p "${REDIS_HOME}/log"
-    "${REDIS_HOME}/bin/redis-server" "${REDIS_HOME}/conf/redis.conf"  2>&1 > "${REDIS_HOME}/log/redis-server.log" < /dev/null &
+    nohup "${REDIS_HOME}/bin/redis-server" "${REDIS_HOME}/conf/redis.conf"  2>&1 &
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Start redis-server failed(${RESULT})"
@@ -245,16 +245,6 @@ function main()
     fi
     echo    "Start testing environment success"
 
-    #   启动hadoop
-    echo    "Starting hadoop ..."
-    start_hadoop
-    RESULT=$?
-    if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Error: Start hadoop failed(${RESULT})"
-        return  7
-    fi
-    echo    "Start hadoop success"
-
 
     #   启动redis
     echo    "Starting redis ..."
@@ -267,6 +257,16 @@ function main()
     echo    "Start redis success"
 
     return  111
+
+    #   启动hadoop
+    echo    "Starting hadoop ..."
+    start_hadoop
+    RESULT=$?
+    if [[ ${RESULT} -ne 0 ]]; then
+        echo    "Error: Start hadoop failed(${RESULT})"
+        return  7
+    fi
+    echo    "Start hadoop success"
 
 
     #   启动测试
@@ -285,4 +285,5 @@ function main()
 
 
 main    "$@"
+echo    "----------------"
 exit    "$?"
