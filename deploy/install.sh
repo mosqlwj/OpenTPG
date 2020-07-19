@@ -73,7 +73,7 @@ function install_hadoop()
     local hadoop_rawname=${hadoop_package//.tar.gz/}
     mkdir -p    "${INSTALL_DIR}"                                        &&  \
     cd          "${INSTALL_DIR}"                                        &&  \
-    gunzip -c   "${SOFTWARE_DIR}/${hadoop_package}" | tar -xvf -        &&  \
+    gunzip -c   "${SOFTWARE_DIR}/${hadoop_package}" | tar -xf -         &&  \
     mv          "${INSTALL_DIR}/${hadoop_rawname}"   "${HADOOP_HOME}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
@@ -125,7 +125,7 @@ function install_redis()
     local redis_rawname=${redis_package//.tar.gz/}
     mkdir -p    "${INSTALL_DIR}"                                        &&  \
     cd          "${INSTALL_DIR}"                                        &&  \
-    gunzip -c   "${SOFTWARE_DIR}/${redis_package}" | tar -xvf -         &&  \
+    gunzip -c   "${SOFTWARE_DIR}/${redis_package}" | tar -xf -          &&  \
     cd          "${INSTALL_DIR}/${redis_rawname}"                       &&  \
     make                                                                &&  \
     mkdir -p    "${REDIS_HOME}"                                         &&  \
@@ -139,11 +139,11 @@ function install_redis()
 
 
     #   清除构建环境下的所有的东西
-    rm -f       "${INSTALL_DIR}/${redis_rawname}"
+    rm -rf      "${INSTALL_DIR}/${redis_rawname}"
 
 
     #   安装配置和入口配置脚本
-    cp  -rf "${SELFDIR}/tmpl-redis"/*       "${REDIS_HOME}"
+    cp  -rf     "${SELFDIR}/tmpl-redis"/*       "${REDIS_HOME}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Setup configurations of redis failed(${RESULT}): '${SELFDIR}/tmpl-redis' -> '${REDIS_HOME}'"
