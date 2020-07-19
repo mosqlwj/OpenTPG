@@ -1,4 +1,4 @@
-#include "Params.h"
+#include "Params.hpp"
 
 
 #ifdef _WIN32

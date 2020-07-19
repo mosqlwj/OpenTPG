@@ -1,15 +1,16 @@
 #ifndef __ATALANTA_ATPG_H__
 #define __ATALANTA_ATPG_H__
 
-#include <list>
-#include "Fault.h"
-#include "Simulation.h"
-#include "Parameters.h"
-#include "Params.h"
-
 #include <time.h>
+
+#include <list>
+
+#include "Fault.h"
+#include "Parameters.h"
+#include "Params.hpp"
 #include "Random.h"
 #include "ReadableNet.h"
+#include "Simulation.h"
 
 using namespace std;
 
