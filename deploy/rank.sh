@@ -244,8 +244,6 @@ function main()
     fi
     echo    "Start testing environment success"
 
-    return  111
-
     #   启动hadoop
     echo    "Starting hadoop ..."
     start_hadoop
@@ -255,6 +253,8 @@ function main()
         return  7
     fi
     echo    "Start hadoop success"
+
+    return  111
 
 
     #   启动redis
