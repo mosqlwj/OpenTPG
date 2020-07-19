@@ -3,9 +3,9 @@
 //
 
 #include "PatternParser.h"
+#include <iomanip>
 namespace hiatpg{
     void PatternParser::run() {
-        AtpgStatus atpgStatus;
         CustomFaultlist *customFaultlist;
         clock_t start, end;
 
@@ -144,7 +144,8 @@ namespace hiatpg{
             }
             testCubes.push_back(move(cube));
         }
-        cout << "Input Pattern Num:" << testCubes.size() << endl;
+        atpgStatus.patterns = testCubes.size();
+//        cout << "pattern num:" << " " << atpgStatus.patterns << endl;
         return;
     }
 
@@ -176,6 +177,7 @@ namespace hiatpg{
         faultMode = p->getFaultMode();
         if(p->getFaultStream() != NULL) {
             faultStream = p->getFaultStream();
+            faultFilePath = p->getFaultFile();
         } else {
             if(p->getFaultFile().length()) {
                 OpenFile(&faultFile, &faultStream, p->getFaultFile(), ios::in);
@@ -274,4 +276,33 @@ namespace hiatpg{
         }
         return nDetect;
     }
+    void PatternParser::ReadFault()
+    {
+        faultSorceStream.open(faultFilePath, ios::in);
+        if (!faultSorceStream){
+            cerr << "open fault file failed" << endl;
+            return;
+        }
+        string  tempStr;
+        while (getline(faultSorceStream,tempStr)){
+            string sbStr = tempStr.substr(tempStr.rfind(' ') + 1, tempStr.length());
+            if (sbStr == "DS"){
+                atpgStatus.detectedFaults++;
+            }
+            if (sbStr == "RD"){
+                atpgStatus.redundantFaults++;
+            }
+            atpgStatus.faults++;
+        }
+
+    }
+    void PatternParser::PrintLog(hiatpg::Params &p)
+    {
+        cout << "netlist-file" << " " << ":" << " " << p.GetNetListPath() << endl;
+        cout << "fault-file" << " " << ":" << " " << p.getFaultFile() << endl;
+        cout << "pattern-file" << " " << ":" << " " << patternPath << endl;
+        cout << "fault-count"<< " " <<":" << " " << atpgStatus.faults << endl;
+        cout << "pattern-coverage" << " " << ":"<<" " << fixed << std::setprecision(2) << double(atpgStatus.detectedFaults)/double(atpgStatus.faults) * 100 << "%" << endl;
+    }
+
 }

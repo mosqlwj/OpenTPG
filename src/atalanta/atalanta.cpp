@@ -16,10 +16,16 @@ int main(int argc, char** argv)
         atpgEngine->setParams();
         atpgEngine->generateCube();
     } else if (params->getExecAction() == "rp"){
-        PatternParser* patternEngin = new PatternParser();
-        patternEngin->setParams();
-        patternEngin->run();
-    } else {
+        PatternParser* patternEngine = new PatternParser();
+        patternEngine->setParams();
+        patternEngine->run();
+    } else if (params->getExecAction() == "stat"){
+        PatternParser* parserEngine = new PatternParser();
+        parserEngine->setParams();
+        parserEngine->ReadPattern();
+        parserEngine->ReadFault();
+        parserEngine->PrintLog(*params);
+    } else{
         cerr << "unsupported work mode" << endl;
     }
 
