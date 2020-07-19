@@ -63,24 +63,29 @@ function install_hadoop()
     export HADOOP_HOME="${INSTALL_DIR}/hadoop"
 
 
-    #   先清理老的安装环境
-    rm -rf      "${INSTALL_DIR}/hadoop-3.2.1"
-    rm -rf      "${HADOOP_HOME}"
+    #   如果之前已经安装了就不需要再重新安装了
+    if [[ ! -d "${HADOOP_HOME}" ]]; then
+        #   先清理老的安装环境
+        rm -rf      "${INSTALL_DIR}/hadoop-3.2.1"
+        rm -rf      "${HADOOP_HOME}"
 
 
-    #   找到 hadoop 的安装包,并解压安装
-    local hadoop_package=$(basename $(find "${SOFTWARE_DIR}" -name hadoop-3.2.1.tar* | head -n 1))
-    local hadoop_rawname=${hadoop_package//.tar.gz/}
-    mkdir -p    "${INSTALL_DIR}"                                        &&  \
-    cd          "${INSTALL_DIR}"                                        &&  \
-    gunzip -c   "${SOFTWARE_DIR}/${hadoop_package}" | tar -xf -         &&  \
-    mv          "${INSTALL_DIR}/${hadoop_rawname}"   "${HADOOP_HOME}"
-    RESULT=$?
-    if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Install hadoop failed(${RESULT}): '${SOFTWARE_DIR}/${hadoop_package}' -> '${INSTALL_DIR}'"
-        return  1
+        #   找到 hadoop 的安装包,并解压安装
+        local hadoop_package=$(basename $(find "${SOFTWARE_DIR}" -name hadoop-3.2.1.tar* | head -n 1))
+        local hadoop_rawname=${hadoop_package//.tar.gz/}
+        mkdir -p    "${INSTALL_DIR}"                                        &&  \
+        cd          "${INSTALL_DIR}"                                        &&  \
+        gunzip -c   "${SOFTWARE_DIR}/${hadoop_package}" | tar -xf -         &&  \
+        mv          "${INSTALL_DIR}/${hadoop_rawname}"   "${HADOOP_HOME}"
+        RESULT=$?
+        if [[ ${RESULT} -ne 0 ]]; then
+            echo    "Install hadoop failed(${RESULT}): '${SOFTWARE_DIR}/${hadoop_package}' -> '${INSTALL_DIR}'"
+            return  1
+        fi
+        echo    "Uncompress hadoop success: '${SOFTWARE_DIR}/${hadoop_package}' -> '${HADOOP_HOME}'"
+    else
+        echo    "The hadoop is installed there, skip uncompress hadoop package"
     fi
-    echo    "Uncompress hadoop success: '${SOFTWARE_DIR}/${hadoop_package}' -> '${HADOOP_HOME}'"
 
 
     #   安装配置和入口配置脚本
@@ -111,35 +116,36 @@ function clean_redis()
 
 function install_redis()
 {
-    set -x
     export REDIS_HOME="${INSTALL_DIR}/redis"
 
 
-    #   先清理老的安装环境
-    rm -rf      "${INSTALL_DIR}/redis-6.0.5"
-    rm -rf      "${REDIS_HOME}"
+    if [[ ! -d "${REDIS_HOME}" ]]; then
+        #   先清理老的安装环境
+        rm -rf      "${INSTALL_DIR}/redis-6.0.5"
+        rm -rf      "${REDIS_HOME}"
 
+        #   找到 redis 的安装包,并解压安装
+        local redis_package=$(basename $(find "${SOFTWARE_DIR}" -name redis-6.0.5.tar* | head -n 1))
+        local redis_rawname=${redis_package//.tar.gz/}
+        mkdir -p    "${INSTALL_DIR}"                                        &&  \
+        cd          "${INSTALL_DIR}"                                        &&  \
+        gunzip -c   "${SOFTWARE_DIR}/${redis_package}" | tar -xf -          &&  \
+        cd          "${INSTALL_DIR}/${redis_rawname}"                       &&  \
+        make                                                                &&  \
+        mkdir -p    "${REDIS_HOME}"                                         &&  \
+        make        "PREFIX=/${REDIS_HOME}"  install
+        RESULT=$?
+        if [[ ${RESULT} -ne 0 ]]; then
+            echo    "Install redis failed(${RESULT}): '${SOFTWARE_DIR}/${redis_package}' -> '${INSTALL_DIR}'"
+            return  1
+        fi
+        echo    "Uncompress redis success: '${SOFTWARE_DIR}/${redis_package}' -> '${REDIS_HOME}'"
 
-    #   找到 redis 的安装包,并解压安装
-    local redis_package=$(basename $(find "${SOFTWARE_DIR}" -name redis-6.0.5.tar* | head -n 1))
-    local redis_rawname=${redis_package//.tar.gz/}
-    mkdir -p    "${INSTALL_DIR}"                                        &&  \
-    cd          "${INSTALL_DIR}"                                        &&  \
-    gunzip -c   "${SOFTWARE_DIR}/${redis_package}" | tar -xf -          &&  \
-    cd          "${INSTALL_DIR}/${redis_rawname}"                       &&  \
-    make                                                                &&  \
-    mkdir -p    "${REDIS_HOME}"                                         &&  \
-    make        "PREFIX=/${REDIS_HOME}"  install
-    RESULT=$?
-    if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Install redis failed(${RESULT}): '${SOFTWARE_DIR}/${redis_package}' -> '${INSTALL_DIR}'"
-        return  1
+        #   清除构建环境下的所有的东西
+        rm -rf      "${INSTALL_DIR}/${redis_rawname}"
+    else
+        echo    "The redis is installed there, skip uncompress redis package"
     fi
-    echo    "Uncompress redis success: '${SOFTWARE_DIR}/${redis_package}' -> '${REDIS_HOME}'"
-
-
-    #   清除构建环境下的所有的东西
-    rm -rf      "${INSTALL_DIR}/${redis_rawname}"
 
 
     #   安装配置和入口配置脚本
