@@ -1,9 +1,3 @@
-# c432
-# 36 inputs
-# 7 outputs
-# 40 inverters
-# 120 gates ( 4 ANDs + 119 NANDs + 19 NORs + 18 XORs )
-
 INPUT(1)
 INPUT(4)
 INPUT(8)

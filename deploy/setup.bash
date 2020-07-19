@@ -6,7 +6,7 @@ SELFDIR=$(dirname $(realpath "${BASH_SOURCE[0]}"))
 
 export  HADOOP_HOME="${SELFDIR}/hadoop"
 export  REDIS_HOME="${SELFDIR}/redis"
-export  PATH="${PATH}:${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin:${SELFDIR}/redis/bin"
+export  PATH="${PATH}:${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin:${REDIS_HOME}/redis/bin"
 
 
 function config_hadoop()
@@ -31,7 +31,7 @@ function config_hadoop()
 
 function config_redis()
 {
-    echo    "Setting up regis success"
+    echo    "Setting up redis success"
     return  0
 }
 

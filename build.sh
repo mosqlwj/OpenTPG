@@ -83,8 +83,9 @@ function do_compile()
         mkdir -p    "${builddir}"                                   &&  \
         cd          "${builddir}"                                   &&  \
         cmake       ${buildopts} -G "${cmakegens}" "${buildsrc}"    &&  \
-        cd          "${buildsrc}"                                   &&  \
-        cmake       --build "${PROJECT_ROOT}" --target ${buildmodule} -- -j 8
+        make        clean                                           &&  \
+        make        "${module}"  -j  8
+        #cmake       --build "${PROJECT_ROOT}" --target ${buildmodule} -- -j 8
         RESULT=$?
         if [[ ${RESULT} -ne 0 ]]; then
             echo    "Error: Build '${buildmodule}' failed(${RESULT})"
