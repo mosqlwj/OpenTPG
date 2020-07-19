@@ -248,17 +248,16 @@ function main()
     echo    "Start testing environment success"
 
 
-    #   启动redis
-    echo    "Starting redis ..."
-    start_redis
-    RESULT=$?
-    if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Error: Start redis failed(${RESULT})"
-        return  7
-    fi
-    echo    "Start redis success"
+#    #   启动redis
+#    echo    "Starting redis ..."
+#    start_redis
+#    RESULT=$?
+#    if [[ ${RESULT} -ne 0 ]]; then
+#        echo    "Error: Start redis failed(${RESULT})"
+#        return  7
+#    fi
+#    echo    "Start redis success"
 
-    return  111
 
     #   启动hadoop
     echo    "Starting hadoop ..."
