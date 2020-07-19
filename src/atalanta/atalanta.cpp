@@ -16,7 +16,7 @@ int main(int argc, char** argv)
         AtpgEngine* atpgEngine =new AtpgEngine();
         atpgEngine->setParams();
         atpgEngine->generateCube();
-    } else if (action == "rp"){
+    } else if (action == "simulate"){
         PatternParser* patternEngine = new PatternParser();
         patternEngine->setParams();
         patternEngine->run();

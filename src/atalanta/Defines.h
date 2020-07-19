@@ -1,6 +1,9 @@
 #ifndef         __ATALANTA_DEFINES_H__
 #define         __ATALANTA_DEFINES_H__
 
+#include <vector>
+#include <regex>
+
 namespace hiatpg {
 	typedef		int	logic;
 	typedef		unsigned level;
@@ -98,6 +101,15 @@ namespace hiatpg {
 
 	level const parallelToLevel[2][2]=          /* parallel level types to level */
 	{{X,ONE},{ZERO,Z}};
+
+
+    static std::vector<std::string> split(const std::string& in, const std::string& delim) {
+        std::regex re{ delim };
+        return std::vector<std::string> {
+                std::sregex_token_iterator(in.begin(), in.end(), re, -1),
+                std::sregex_token_iterator()
+        };
+    }
 
 }
 #endif //__ATALANTA_DEFINES_H__
