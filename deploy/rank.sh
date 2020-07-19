@@ -133,7 +133,7 @@ function    execute_rank()
 
     #   先再本地生成 faultlist
     local faultfile="${rankdir}/${rankname}.fault"
-    "${SELFDIR}/atlanta"    --exec      "create-fault" \
+    "${SELFDIR}/atalanta"    --exec      "create-fault" \
                             --netlist   "file:${benchfile}"  >  "${faultfile}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
@@ -174,7 +174,7 @@ function    execute_rank()
         -output     "/${team}-${scenename}-output"                                  \
         -mapper     "atalanta --exec atpg     --netlist  file:${rankname}.bench}"   \
         -reducer    "atalanta --exec simulate --netlist  file:${rankname}.bench}"   \
-        -file       "${SELFDIR}/atlanta"                                            \
+        -file       "${SELFDIR}/atalanta"                                           \
         -file       "${rankdir}/${rankname}.bench"                                  \
         -jobconf    mapreduce.job.maps=5
     RESULT=$?
