@@ -78,13 +78,13 @@ function install_hadoop()
     cp  -rf "${SELFDIR}/tmpl-hadoop"/*    "${HADOOP_HOME}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Setup configurations of hadoop failed(${RESULT}): '${SELFDIR}/etc' -> '${INSTALL_DIR}/hadoop/etc'"
+        echo    "Setup configurations of hadoop failed(${RESULT}): '${SELFDIR}/tmpl-hadoop' -> '${HADOOP_HOME}'"
         return  1
     fi
-    echo    "Setup configurations of hadoop success: '${SELFDIR}/etc' -> '${INSTALL_DIR}/hadoop/etc'"
+    echo    "Setup configurations of hadoop success: '${SELFDIR}/tmpl-hadoop' -> '${HADOOP_HOME}'"
 
 
-    echo    "Install hadoop success: '${INSTALL_DIR}/java'"
+    echo    "Install hadoop success: '${HADOOP_HOME}'"
     return  0
 }
 
@@ -117,8 +117,7 @@ function install_redis()
     tar xvfz    "${SOFTWARE_DIR}/${redis_package}"                      &&  \
     cd          "${INSTALL_DIR}/redis-6.0.5"                            &&  \
     make                                                                &&  \
-    make        "PREFIX=/${REDIS_HOME}"  install                        &&  \
-    mkdir -p    ""
+    make        "PREFIX=/${REDIS_HOME}"  install
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Install redis failed(${RESULT}): '${SOFTWARE_DIR}/${redis_package}' -> '${INSTALL_DIR}'"
@@ -132,10 +131,10 @@ function install_redis()
     cp  -rf "${SELFDIR}/tmpl-redis"/*       "${REDIS_HOME}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Setup configurations of redis failed(${RESULT}): '${SELFDIR}/etc' -> '${INSTALL_DIR}/redis/etc'"
+        echo    "Setup configurations of redis failed(${RESULT}): '${SELFDIR}/tmpl-redis' -> '${REDIS_HOME}'"
         return  1
     fi
-    echo    "Setup configurations of redis success: '${SELFDIR}/etc' -> '${INSTALL_DIR}/redis/etc'"
+    echo    "Setup configurations of redis success: '${SELFDIR}/tmpl-redis' -> '${REDIS_HOME}'"
 
 
     echo    "Install redis success: '${REDIS_HOME}'"
