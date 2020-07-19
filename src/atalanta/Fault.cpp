@@ -6,6 +6,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <regex>
 
 #include "Error.h"
 
@@ -558,6 +559,7 @@ namespace hiatpg {
 		}
 	}
 
+
 	int ReadableFaultList::readFaultsFsim(istream *file,int noStem,Gate **stem)
 	{
 		inputf=file;
@@ -587,6 +589,7 @@ namespace hiatpg {
 				}
 				gut=gates[to];
 				line=-1;
+                cout << s << endl;
 			} else if(s[0]=='>') {
 				from=to;
 				if((h=hashTable.findHash(string(&s[1]),0)) ==0)
@@ -600,6 +603,7 @@ namespace hiatpg {
 				gut=gates[to];
 				for(int i=0;i<gut->ninput;i++)
 					if(gut->fanins[i]->index == from) { line=i; break;};
+                cout << string(&s[1]) << endl;
 			} else if(s[0]=='/') {
 				if(s[1]=='1') type=SA1; else type=SA0;
 				if(line>=0)
@@ -611,6 +615,7 @@ namespace hiatpg {
 				f->type= static_cast<FaultType>(type);
 				gut->pFaultList.push_front(f);
 				nfault++;
+                cout << string(&s[0]) << endl;
 			} else {
                 Error::fatalerror(FAULTERROR);
 			}
@@ -651,6 +656,132 @@ namespace hiatpg {
 
 		return -1;
 	}
+
+    static std::vector<std::string> split(const std::string& in, const std::string& delim) {
+        std::regex re{ delim };
+        return std::vector<std::string> {
+            std::sregex_token_iterator(in.begin(), in.end(), re, -1),
+            std::sregex_token_iterator()
+        };
+    }
+
+    int ReadableFaultList::readFaultsFromCin(istream& inStream,int noStem,Gate **stem)
+    {
+        Gate *gut;
+        Fault *f;
+        HashData *h;
+        int from,to,line,type;
+        int nfault,n,nof;
+        nfault=0;
+
+        string faultLine;
+        while (getline(cin, faultLine)) {
+            if (faultLine.empty()) {
+                break;
+            }
+            auto splitRes = split(faultLine, "->| /");
+
+//            for (auto &str : splitRes) {
+//                cout << str << endl;
+//            }
+
+            string strFanin;
+            string strTarget;
+
+            switch (splitRes.size()) {
+                case 3:
+                    strFanin = splitRes[0];
+                    strTarget = splitRes[1];
+                    if ((h = hashTable.findHash(strFanin, 0)) == 0) {
+                        cout << strFanin;
+                        cout << " is not defined" << endl;
+                        Error::fatalerror(FAULTERROR);
+                    }
+                    if ((to = h->pnode->index) < 0) {
+                        Error::fatalerror(FAULTERROR);
+                    }
+                    line = -1;
+
+                    if ((h = hashTable.findHash(strTarget, 0)) == 0) {
+                        cout << strTarget;
+                        cout << " is not defined" << endl;
+                        Error::fatalerror(FAULTERROR);
+                    }
+                    if ((to = h->pnode->index) < 0) {
+                        Error::fatalerror(FAULTERROR);
+                    }
+
+                    type = splitRes[2] == "1" ? SA1 : SA0;
+                    break;
+                case 2:
+                    strTarget = splitRes[1];
+                    if ((h = hashTable.findHash(strTarget, 0)) == 0) {
+                        cout << strTarget;
+                        cout << " is not defined" << endl;
+                        Error::fatalerror(FAULTERROR);
+                    }
+                    if ((to = h->pnode->index) < 0) {
+                        Error::fatalerror(FAULTERROR);
+                    }
+
+                    type = splitRes[1] == "1" ? SA1 : SA0;
+                default:
+                    break;
+            }
+
+            from = to;
+            gut = gates[to];
+            for (int i = 0; i < gut->ninput; i++) {
+                if (gut->fanins[i]->index == from) {
+                    line = i;
+                    break;
+                }
+            }
+
+            if (line >= 0) type = (type == SA1) ? SA1 : SA0;
+            f = new Fault;
+            f->gate = gut;
+            f->line = line;
+            f->type = static_cast<FaultType>(type);
+            gut->pFaultList.push_front(f);
+            nfault++;
+        }
+
+        // create the fault_list and
+        // enumerate faults in each fanout free region
+        faultList=new Fault*[nfault];
+        stack->clear();
+
+        nof=0;
+        for(int i=noStem-1;i>=0;i--)
+        {
+            stack->push(stem[i]);
+            n=1;
+            while(!stack->isEmpty())
+            {
+                gut=stack->pop();
+
+                list<Fault*>::iterator current,final;
+
+                current=gut->pFaultList.begin();
+                final=gut->pFaultList.end();
+
+                while(current!=final)
+                {
+                    faultList[nof++]=*current;
+                    n++;
+                    current++;
+                }
+                for(int j=0;j<gut->ninput;j++)
+                    if(gut->fanins[j]->noutput == 1) stack->push(gut->fanins[j]);
+            }
+            stem[i]->dfault=new Fault*[n];
+        }
+
+        if(nfault==nof) return(nfault);
+
+        return -1;
+    }
 
 #ifdef INCLUDE_HOPE
 	void ReadableFaultList::readFaultsHope(istream *file)

@@ -1013,8 +1013,8 @@ namespace hiatpg {
         // parse bench
         levels = setBenchStream(benchStream);
         // read fault from std::cin
-        setFaults();
-//        numberOfFaults = readFaultsFsim(&cin,myNumberOfStems,myStem);
+//        setFaults();
+        numberOfFaults = readFaultsFromCin(cin,myNumberOfStems,myStem);
         indexFaults();
         customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
         iseed = Random::seed(iseed);
