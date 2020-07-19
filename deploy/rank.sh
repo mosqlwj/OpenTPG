@@ -57,7 +57,7 @@ function    stop_hadoop()
 
 function    start_redis()
 {
-    "${REDIS_HOME}/redis-server" "${REDIS_HOME}/redis.conf"  2>&1  &
+    "${REDIS_HOME}/bin/redis-server" "${REDIS_HOME}/conf/redis.conf"  2>&1  &
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Start redis-server failed(${RESULT})"
