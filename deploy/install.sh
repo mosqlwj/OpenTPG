@@ -111,6 +111,7 @@ function clean_redis()
 
 function install_redis()
 {
+    set -x
     export REDIS_HOME="${INSTALL_DIR}/redis"
 
 
