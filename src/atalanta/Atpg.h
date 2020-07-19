@@ -7,7 +7,7 @@
 
 #include "Fault.h"
 #include "Parameters.h"
-#include "Params.hpp"
+#include "Params.h"
 #include "Random.h"
 #include "ReadableNet.h"
 #include "Simulation.h"
