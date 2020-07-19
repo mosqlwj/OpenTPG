@@ -84,7 +84,7 @@ function do_compile()
         cd          "${builddir}"                                   &&  \
         cmake       ${buildopts} -G "${cmakegens}" "${buildsrc}"    &&  \
         make        clean                                           &&  \
-        make
+        make        "${module}"  -j  8
         #cmake       --build "${PROJECT_ROOT}" --target ${buildmodule} -- -j 8
         RESULT=$?
         if [[ ${RESULT} -ne 0 ]]; then
