@@ -67,7 +67,7 @@ function install_hadoop()
     rm -rf      "${HADOOP_HOME}"
 
     #   找到 hadoop 的安装包,并解压安装
-    local hadoop_package=$(find "${SOFTWARE_DIR}" -name hadoop-3.2.1.tar* | head -n 1 | basename)
+    local hadoop_package=$(cd "${SOFTWARE_DIR}" && find . -name hadoop-3.2.1.tar* | head -n 1)
     local hadoop_rawname=${hadoop_package//.tar.gz/}
     mkdir -p    "${INSTALL_DIR}"                                        &&  \
     cd          "${INSTALL_DIR}"                                        &&  \
@@ -117,7 +117,7 @@ function install_redis()
     fi
 
     #   找到 redis 的安装包,并解压安装
-    local redis_package=$(cd "${SOFTWARE_DIR}" && find -name redis-6.0.5.tar* | head -n 1)
+    local redis_package=$(cd "${SOFTWARE_DIR}" && find . -name redis-6.0.5.tar* | head -n 1)
     local redis_rawname=${redis_package//.tar.gz/}
     mkdir -p    "${INSTALL_DIR}"                                        &&  \
     cd          "${INSTALL_DIR}"                                        &&  \
