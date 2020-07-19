@@ -198,6 +198,9 @@ public:
     }
 
     void ParserTargetPath() {
+        if (target.empty()) {
+            return;
+        }
         DIR *dp;
         struct dirent *dirp;
         //            string path = "../print/";
