@@ -8,13 +8,13 @@ SELFDIR=$(dirname $(realpath "$BASH_SOURCE"))
 function    prepare_env()
 {
     #   先检查下关键的环境配置文件是否存在
-    if [[ -f "${SELFDIR}/settings.h" ]]; then
-        echo    "Error: Can not access the settings.sh at '${SELFDIR}'"
+    if [[ -f "${SELFDIR}/setup.bash" ]]; then
+        echo    "Error: Can not access the setup.bash at '${SELFDIR}'"
         return  1
     fi
 
     #   加载环境配置信息
-    source  "${SELFDIR}/settings.h"
+    source  "${SELFDIR}/setup.bash"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Error: Load the settings failed(${RESULT}): '${SELFDIR}/settings.h'"
@@ -95,7 +95,7 @@ function    execute_rank()
 
     local timestamp=$(date '+%Y%m%d%H%M%S')
     local scenename=$(basename "${inputdir}")
-    local outputname="${team}-${scenename}-${timestamp}"
+    local outputname="${team}-${scenename}"
 
 
     #   清理下工作目录
@@ -229,16 +229,8 @@ function main()
 
 
     #   对输入参数进行强校验: outputdir
-    if [[ -d "${outputdir}" ]]; then
-        if [[ "${outputdir}" == "/" ]]; then
-            return  8
-        fi
-        rm -rf  "${outputdir}"
-        if [[ -d "${outputdir}" ]]; then
-            echo    "Error: Can not remove the output directory"
-            return  6
-        fi
-        echo    "Error: Remove the output directory"
+    if [[ ! -d "${outputdir}" ]]; then
+        mkdir -p    "${outputdir}"
     fi
 
 
@@ -252,6 +244,7 @@ function main()
     fi
     echo    "Start testing environment success"
 
+    return  111
 
     #   启动hadoop
     echo    "Starting hadoop ..."
