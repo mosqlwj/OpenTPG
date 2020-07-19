@@ -657,13 +657,13 @@ namespace hiatpg {
 		return -1;
 	}
 
-    static std::vector<std::string> split(const std::string& in, const std::string& delim) {
-        std::regex re{ delim };
-        return std::vector<std::string> {
-            std::sregex_token_iterator(in.begin(), in.end(), re, -1),
-            std::sregex_token_iterator()
-        };
-    }
+//    static std::vector<std::string> split(const std::string& in, const std::string& delim) {
+//        std::regex re{ delim };
+//        return std::vector<std::string> {
+//            std::sregex_token_iterator(in.begin(), in.end(), re, -1),
+//            std::sregex_token_iterator()
+//        };
+//    }
 
     int ReadableFaultList::readFaultsFromCin(istream& inStream,int noStem,Gate **stem)
     {

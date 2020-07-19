@@ -1,17 +1,21 @@
 #ifndef __ATALANTA_PARAMS_H__
 #define __ATALANTA_PARAMS_H__
 
+#include <dirent.h>
 #include <limits.h>
 #include <stdlib.h>
+#include <sys/types.h>
 
-#include <fstream>
 #include <sstream>
 #include <string>
 
 #include "Defines.h"
 #include "cmdline.h"
+//#include "Fault.cpp"
+#include <fstream>
 
 using namespace std;
+
 
 #ifdef _WIN32
 #ifndef PATH_MAX
@@ -68,7 +72,8 @@ protected:
     string execAction;    //  执行什么动作
     string netlistFile;   //  网表文件地址
     string cacheAddress;  //  网表文件存放在redis时,在redis上的地址
-    string target;        // pattern文件地址
+    string target;        // 目录
+    string patternPath;   // pattern文件
 
     Params(void) {
         // 加入指定类型的输入參数
@@ -130,7 +135,6 @@ public:
         static Params instance;
         return instance;
     }
-
     int showHelp(int argc, char *argv[]) {
         std::printf(
             "Usage:\n"
@@ -193,13 +197,39 @@ public:
         return 0;
     }
 
+    void ParserTargetPath() {
+        DIR *dp;
+        struct dirent *dirp;
+        //            string path = "../print/";
+        if ((dp = opendir(target.c_str())) == NULL) {
+            cerr << "target path wrong" << endl;
+        }
+        while ((dirp = readdir(dp)) != NULL) {
+            if (strcmp(".", dirp->d_name) == 0 || strcmp("..", dirp->d_name) == 0) {
+                continue;
+            }
+            //                cout << dirp->d_name << endl;
+            string dName = string(dirp->d_name);
+            string subStr = dName.substr(dName.find('.') + 1, dName.length());
+            if (subStr.size() == 0) {
+                continue;
+            }
+            if (subStr == "fault") {
+                faultFile = target + string(dirp->d_name);
+                continue;
+            }
+            if (subStr == "pattern") {
+                patternPath = target + string(dirp->d_name);
+            }
+        }
+        closedir(dp);
+    }
 
     void parseCheck(int argc, char *argv[]) {
         if ((argc > 1) && (0 == strcmp(argv[1], "-h")) || (0 == strcmp(argv[1], "--help"))) {
             showHelp(argc, argv);
             return;
         }
-
         options.parse_check(argc, argv);
         execAction = options.get<string>("exec");
         netlistFile = options.get<string>("netlist");
@@ -216,6 +246,7 @@ public:
         setBenchStream(bench.rdbuf());
         setSPatternStream(pat.rdbuf());
         setReportStream(report.rdbuf());
+        ParserTargetPath();
 
         faultFile = options.get<string>("fault");
         if (!faultFile.empty()) {
@@ -258,12 +289,14 @@ public:
     int getRandomLimit(void) { return randomLimit; };
 
     string GetPatternPath() const {
+        //            return patternPath;
         char realp[PATH_MAX];
-        realpath(target.c_str(), realp);
+        realpath(patternPath.c_str(), realp);
         return string(realp);
     }
 
     string GetNetListPath() const {
+        //            return netlistFile;
         char realp[PATH_MAX];
         realpath(netlistFile.c_str(), realp);
         return string(realp);
