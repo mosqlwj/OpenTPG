@@ -63,11 +63,13 @@ function install_hadoop()
     export HADOOP_HOME="${INSTALL_DIR}/hadoop"
 
     #   找到 hadoop 的安装包,并解压安装
-    local hadoop_package=$(cd "${SOFTWARE_DIR}" && ls hadoop-3.2.1.tar* | head -n 1)
+    local hadoop_package=$(find "${SOFTWARE_DIR}" -name hadoop-3.2.1.tar* | head -n 1 | basename)
+    local hadoop_rawname=${hadoop_package//.tar.gz/}
     mkdir -p    "${INSTALL_DIR}"                                        &&  \
     cd          "${INSTALL_DIR}"                                        &&  \
-    tar xvfz    "${SOFTWARE_DIR}/${hadoop_package}"                     &&  \
-    mv          "${INSTALL_DIR}/hadoop-3.2.1"   "${HADOOP_HOME}"
+    gunzip      "${SOFTWARE_DIR}/${hadoop_package}"                     &&  \
+    tar xvf     "${SOFTWARE_DIR}/${hadoop_rawname}.tar"                 &&  \
+    mv          "${INSTALL_DIR}/${hadoop_rawname}"   "${HADOOP_HOME}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Install hadoop failed(${RESULT}): '${SOFTWARE_DIR}/${hadoop_package}' -> '${INSTALL_DIR}'"
@@ -112,10 +114,12 @@ function install_redis()
 
     #   找到 redis 的安装包,并解压安装
     local redis_package=$(cd "${SOFTWARE_DIR}" && find -name redis-6.0.5.tar* | head -n 1)
+    local redis_rawname=${redis_package//.tar.gz/}
     mkdir -p    "${INSTALL_DIR}"                                        &&  \
     cd          "${INSTALL_DIR}"                                        &&  \
-    tar xvfz    "${SOFTWARE_DIR}/${redis_package}"                      &&  \
-    cd          "${INSTALL_DIR}/redis-6.0.5"                            &&  \
+    gunzip      "${SOFTWARE_DIR}/${redis_package}"                      &&  \
+    tar xvf     "${INSTALL_DIR}/${redis_rawname}.tar"                   &&  \
+    cd          "${INSTALL_DIR}/${redis_rawname}"                       &&  \
     make                                                                &&  \
     make        "PREFIX=/${REDIS_HOME}"  install                        &&  \
     mkdir -p    ""
