@@ -62,6 +62,7 @@ function install_hadoop()
 {
     export HADOOP_HOME="${INSTALL_DIR}/hadoop"
 
+
     #   先清理老的安装环境
     rm -rf      "${INSTALL_DIR}/hadoop-3.2.1"
     rm -rf      "${HADOOP_HOME}"
@@ -111,12 +112,11 @@ function clean_redis()
 function install_redis()
 {
     export REDIS_HOME="${INSTALL_DIR}/redis"
-    mkdir -p    "${REDIS_HOME}"
-    RESULT=$?
-    if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Error: Create installation direcory for redis failed(${RESULT})"
-        return  7
-    fi
+
+
+    #   先清理老的安装环境
+    rm -rf      "${INSTALL_DIR}/redis-6.0.5"
+    rm -rf      "${REDIS_HOME}"
 
 
     #   找到 redis 的安装包,并解压安装
@@ -127,6 +127,7 @@ function install_redis()
     gunzip -c   "${SOFTWARE_DIR}/${redis_package}" | tar -xvf -         &&  \
     cd          "${INSTALL_DIR}/${redis_rawname}"                       &&  \
     make                                                                &&  \
+    mkdir -p    "${REDIS_HOME}"                                         &&  \
     make        "PREFIX=/${REDIS_HOME}"  install
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
