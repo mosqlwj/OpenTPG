@@ -10,6 +10,13 @@
 
 using namespace std;
 
+#ifdef _WIN32
+#ifndef PATH_MAX
+#define PATH_MAX    260
+#endif//
+extern const char * realpath(const char *restrict file_name, char *restrict resolved_name);
+#endif
+
 namespace hiatpg {
     class Params {
     private:
@@ -177,26 +184,18 @@ namespace hiatpg {
         //randomLimit
         int getRandomLimit(void) { return randomLimit; };
 
-        string GetPatternPath() {
-#ifdef _WIN32
-//            _fullpath(realp,netlistFile,1024);
-            return patternPath;
-#else
-            string realp
-            realpath(realp, patternPath);
-            return realp;
-#endif
+        string GetPatternPath() const
+        {
+            char realp[PATH_MAX];
+            realpath(patternPath.c_str(), realp);
+            return string(realp);
         }
 
-        string GetNetListPath() {
-#ifdef _WIN32
-//            _fullpath(realp,netlistFile,1024);
-            return netlistFile;
-#else
-            string realp;
-            realpath(realp, netlistFile);
-            return realp;
-#endif
+        string GetNetListPath() const
+        {
+            char realp[PATH_MAX];
+            realpath(netlistFile.c_str(), realp);
+            return string(realp);
         }
         void setRandomLimit(char p_randomLimit) {
             if (p_randomLimit >= 0 && p_randomLimit <= 32) {
