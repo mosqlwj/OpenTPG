@@ -67,12 +67,12 @@ function install_hadoop()
     rm -rf      "${HADOOP_HOME}"
 
     #   找到 hadoop 的安装包,并解压安装
-    local hadoop_package=$(cd "${SOFTWARE_DIR}" && find . -name hadoop-3.2.1.tar* | head -n 1)
+    local hadoop_package=$(basename $(find "${SOFTWARE_DIR}" -name hadoop-3.2.1.tar* | head -n 1))
     local hadoop_rawname=${hadoop_package//.tar.gz/}
     mkdir -p    "${INSTALL_DIR}"                                        &&  \
     cd          "${INSTALL_DIR}"                                        &&  \
-    gunzip      "${SOFTWARE_DIR}/${hadoop_package}"                     &&  \
-    tar xvf     "${INSTALL_DIR}/${hadoop_rawname}.tar"                  &&  \
+    gunzip  -c    "${SOFTWARE_DIR}/${hadoop_package}"                     |   \
+    tar -xvf -                 &&  \
     mv          "${INSTALL_DIR}/${hadoop_rawname}"   "${HADOOP_HOME}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
