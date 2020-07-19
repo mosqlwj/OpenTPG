@@ -102,6 +102,7 @@ function    execute_rank()
 
 
     #   清理下工作目录
+    echo    "Creating the output directory..."
     local   rankdir="${outputdir}/${outputname}"
     if [[ -d "${rankdir}" ]]; then
         rm -rf "${rankdir}"
@@ -111,43 +112,52 @@ function    execute_rank()
         fi
     fi
     mkdir -p    "${rankdir}"
+    echo    "Creating the output directory success: '${rankdir}'"
 
 
     #   找到作为输入的bench文件
+    echo    "Locate the netlist file..."
     local benchfile=$(find "${inputdir}" -name *.bench | head -n 1)
     if [[ "${benchfile}" == "" ]]; then
         echo    "Error: Can not access the bench file at: '${inputdir}'"
         return  6
     fi
     local rankname=$(basename "${benchfile}" | sed 's/.bench//g')
+    echo    "Locate the netlist file success: ${benchfile}"
 
 
     #   将bench文件拷贝过来
+    echo    "Backup the netlist file..."
     cp  -f  "${benchfile}"  "${rankdir}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Backup bench file failed(${RESULT}): '${benchfile}' -> '${rankdir}'"
+        echo    "Backup netlist file failed(${RESULT}): '${benchfile}' -> '${rankdir}'"
         return  5
     fi
+    echo    "Backup the netlist success: '${benchfile}' -> '${rankdir}'"
 
 
     #   先再本地生成 faultlist
+    echo    "Create the fault-list file..."
     local faultfile="${rankdir}/${rankname}.fault"
-    "${SELFDIR}/atalanta"    --exec      "create-fault" \
-                            --netlist   "file:${benchfile}"  >  "${faultfile}"
+    "${SELFDIR}/atalanta"   --exec      "create-fault" --netlist   "file:${benchfile}"  >  "${faultfile}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Create fault-list for bench failed(${RESULT}): '${benchfile}' -> ${rankdir}/c17.fault"
         return  5
     fi
+    echo    "Create the fault-list file success"
 
 
     #   清理旧的输入和输出目录
+    echo    "Clear the input and output directory in DFS..."
     "${HADOOP}/hdfs" dfs -rm -r -f "/${team}-${scenename}-input"
     "${HADOOP}/hdfs" dfs -rm -r -f "/${team}-${scenename}-output"
+    echo    "Clear the input and output directory in DFS complete"
 
 
     #   创建输入目录
+    echo    "Create input directory for dfs..."
     "${HADOOP}/hdfs" dfs -mkdir "/${team}-${scenename}-input"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
@@ -158,16 +168,18 @@ function    execute_rank()
 
 
     #   将前面生成的faultlist文件放入输入目录
+    echo    "Deploy fault-list file on dfs..."
     "${HADOOP}/hdfs" dfs -put   "${rankdir}/${rankname}.fault"  "/${team}-${scenename}-input"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Put the fault list file to dfs failed(${RESULT}): '${rankdir}/${rankname}.fault' -> '/${team}-${scenename}-input'"
         return  5
     fi
-    echo    "Create input directory of dfs success: '/${team}-${scenename}-input'"
+    echo    "Deploy fault-list file on dfs success: '/${team}-${scenename}-input'"
 
 
     #   启动hadoop
+    echo    "Executing TPG-FLOW..."
     local   streamfile="$HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar"
     $HADOOP_HOME/bin/hadoop jar "${streamfile}"                                     \
         -input      "/${team}-${scenename}-input"                                   \
@@ -178,10 +190,28 @@ function    execute_rank()
         -file       "${rankdir}/${rankname}.bench"                                  \
         -jobconf    mapreduce.job.maps=5
     RESULT=$?
+    if [[ ${RESULT} -ne 0 ]]; then
+        echo    "Executing TPG-FLOW failed(${RESULT})"
+        return  5
+    fi
+    echo    "Executing TPG-FLOW success"
 
+
+    #   下载输出结果
+    echo    "Download the outputs..."
     "${HADOOP}/hdfs" dfs -get   "/${team}-${scenename}-output"  "${rankdir}/output"
+    RESULT=$?
+    if [[ ${RESULT} -ne 0 ]]; then
+        echo    "Download the outputs failed(${RESULT})"
+        return  5
+    fi
+    echo    "Download the outputs success"
 
+    #   分离输出数据
 
+    #   生成统计报告
+
+    return  0
 }
 
 
@@ -285,6 +315,6 @@ function main()
 }
 
 
-main    "$@"
 echo    "----------------"
+main    "$@"
 exit    "$?"
