@@ -16,7 +16,7 @@
 #include "Random.h"
 #include "ReadableNet.h"
 
-using namespace std;
+//using namespace std;
 
 namespace hiatpg {
     class CustomFaultlist {
