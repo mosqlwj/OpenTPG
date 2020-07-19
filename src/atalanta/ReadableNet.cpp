@@ -169,7 +169,7 @@ namespace hiatpg {
 			circuit>>c;
 
 			if(c=='#')
-			{	
+			{
 				circuit.ignore(INT32_MAX,'\n');
 				continue;
 			}
@@ -214,7 +214,7 @@ namespace hiatpg {
 
 		Gate *begnet=0;
 		symbol.reserve(200);
-		this->numberOfPrimaryInputs = this->numberOfPrimaryOutputs = 
+		this->numberOfPrimaryInputs = this->numberOfPrimaryOutputs =
 			this->numberOfGates = this->numberOfFlipFlops = 0;
 		gates.clear();
 		testVector.vectors.clear();
@@ -316,7 +316,7 @@ namespace hiatpg {
 					}
 					currentGate->index=numberOfGates++;
 					currentGate->type=static_cast<GateType>(fn);
-					if((currentGate->ninput=nofanin) == 0) 
+					if((currentGate->ninput=nofanin) == 0)
 						currentGate->fanins=0;
 					else
 						currentGate->fanins=new Gate*[currentGate->ninput];
@@ -355,7 +355,7 @@ namespace hiatpg {
 			throw ss.str();
 		}*/
 
-		// Pass 2: Construct the circuit data structure 
+		// Pass 2: Construct the circuit data structure
 
 		//netSize=numberOfGates+numberOfPrimaryOutputs+numberOfFlipFlops+SPAREGATES;
 
@@ -394,7 +394,7 @@ namespace hiatpg {
 		if(this->numberOfGates!=numberOfGates)
 		{
 			fprintf(stderr,"Error in read_circuit\n");
-			return -1; 
+			return -1;
 		}
 
 		// Pass 3: Compute fanout list
@@ -405,15 +405,18 @@ namespace hiatpg {
 			currentGate->pLearn.clear();
 #endif
 			for(int j=0;j<currentGate->ninput;j++) currentGate->fanins[j]->noutput++;
-			switch(currentGate->type)
-			{
-			case PI: 
-				primaryIn.push_back(i);
-				this->numberOfPrimaryInputs++;
-			break;
-			case DFF: flipFlops[this->numberOfFlipFlops++]=i;break;
-			}
-		}
+            switch (currentGate->type) {
+                case PI:
+                    primaryIn.push_back(i);
+                    this->numberOfPrimaryInputs++;
+                    break;
+                case DFF:
+                    flipFlops[this->numberOfFlipFlops++] = i;
+                    break;
+                default:
+                    break;
+            }
+        }
 		for(i=0;i<numberOfPrimaryOutputs;i++) {
 			if(this->numberOfPrimaryOutputs >= primaryOut.size()) {
 				primaryOut.resize(this->numberOfPrimaryOutputs + 1, 0);
@@ -458,7 +461,7 @@ namespace hiatpg {
 			return -1;
 		}
 
-		if(numberOfGates==this->numberOfGates) 
+		if(numberOfGates==this->numberOfGates)
 			return this->numberOfGates;
 		else
 			return -1;
@@ -521,7 +524,7 @@ namespace hiatpg {
 						if(stack1->isEmpty() && stack2->isEmpty()) break; //exit
 		}
 
-		// Compute maxlevel 
+		// Compute maxlevel
 		maxlevel=-1;
 		for(i=0;i<numberOfPrimaryOutputs;i++)
 		{
@@ -530,7 +533,7 @@ namespace hiatpg {
 			{
 				if(currentGate->dpi>maxlevel) {maxlevel=currentGate->dpi; flag=1;}
 			}
-			else 
+			else
 				if(currentGate->dpi>=maxlevel) {maxlevel=currentGate->dpi; flag=2; }
 		}
 
@@ -541,7 +544,7 @@ namespace hiatpg {
 				if(currentGate->fanins[j]->dpi >= maxlevel) { maxlevel=currentGate->fanins[j]->dpi; flag=2; }
 		}
 
-		// Renumber levels of POs and PPO(DFF)s 
+		// Renumber levels of POs and PPO(DFF)s
 		if(flag==1) maxlevel--;
 		POlevel=maxlevel+1;
 		PPOlevel=maxlevel+2;
@@ -557,12 +560,12 @@ namespace hiatpg {
 		int i,newone=0;
 		Gate* cg;
 
-		// re-number gates 
+		// re-number gates
 		for(i=0;i<numberOfGates;i++)
 		{
 			pushGate(gates[i]);
 		}
-		for(i=0;i<maxlevel+2;i++) 
+		for(i=0;i<maxlevel+2;i++)
 		{
 			for(int j=0;j<=eventList[i]->getCount()-1;j++)
 			{
@@ -580,7 +583,7 @@ namespace hiatpg {
 		for(i=0;i<numberOfFlipFlops;i++)				/* flip_flops */
 			flipFlops[i]=gates[flipFlops[i]]->index;
 
-		// sort gates by index 
+		// sort gates by index
 		i=0;
 		while(i<numberOfGates)
 		{
@@ -595,7 +598,7 @@ namespace hiatpg {
 		}
 		return 0;
 	}
-#else 
+#else
 
 	int ReadableNet::levelize(int n,Gate **stack)
 	{
@@ -613,9 +616,9 @@ namespace hiatpg {
 				ele->dpi=-1;
 			}
 
-			first=last=stack;	// empty stack 
+			first=last=stack;	// empty stack
 
-			// Find gates with indegree=0 
+			// Find gates with indegree=0
 			for(i=0; i<numberOfPrimaryInputs; i++)
 			{
 				ele=gates[primaryIn[i]];
@@ -648,7 +651,7 @@ namespace hiatpg {
 						}
 			}
 
-			// check for levelization 
+			// check for levelization
 			if(numberOfGates != n)
 			{
 				fprintf(stderr,"Error in circuit file.\n");
@@ -666,10 +669,10 @@ namespace hiatpg {
 				return -1;
 			}
 
-			for(i=0; i<numberOfPrimaryOutputs; i++)	// primaryout 
+			for(i=0; i<numberOfPrimaryOutputs; i++)	// primaryout
 				primaryOut[i]=gates[primaryOut[i]]->index;
 
-			// sort gates by index 
+			// sort gates by index
 			for(i=0; i<n; )
 			{
 				if(i==gates[i]->index)
@@ -716,7 +719,7 @@ namespace hiatpg {
 			while((last->symbol=hashTable.findHash(name,0)) != 0) name+="_PO";
 
 			if((last->symbol=hashTable.insertHash(name,0)) == 0)
-				Error::fatalerror(HASHERROR);		
+				Error::fatalerror(HASHERROR);
 			else
 				last->symbol->pnode=last;
 
@@ -743,10 +746,10 @@ namespace hiatpg {
 		int i;
 		Gate* gut;
 
-		// add sparegates 
+		// add sparegates
 		for(i=0;i<SIZEOFFUT;i++)
 		{
-			gut=new Gate();	// CONSTANT Gate 
+			gut=new Gate();	// CONSTANT Gate
 			gut->index=numberOfGates+2*i;
 			gut->type=DUMMY;
 			gut->ninput=0;
@@ -763,7 +766,7 @@ namespace hiatpg {
 			}
             gates[gut->index]=gut;
 
-			gut=new Gate();   // 2-input AND, OR, XOR 
+			gut=new Gate();   // 2-input AND, OR, XOR
 			gut->index=numberOfGates+2*i+1;
 			gut->type=DUMMY;
 			gut->ninput=2;
@@ -779,7 +782,7 @@ namespace hiatpg {
             gates[gut->index]=gut;    // There is alredy reserved place to this gate. See above.
 		}
 
-		// add one memory space for output list of POs 
+		// add one memory space for output list of POs
 		for(i=0; i<numberOfPrimaryOutputs; i++)
 		{
 			gut=gates[primaryOut[i]];
@@ -796,7 +799,7 @@ namespace hiatpg {
 #ifdef ISCAS85_NETLIST_MODE
 	bool ReadableNet::circIn(::fstream *circuit)
 	{
-		int i,j;		
+		int i,j;
 		int currentline=0;
 		int lineno,nfout,nfin;
 		int inputs[20];
@@ -837,7 +840,7 @@ namespace hiatpg {
 				circuit->ignore(-1,'\n');
 
 				// if gate type is from, search fanin lines
-				// and skip fanout lines from the gate list 
+				// and skip fanout lines from the gate list
 				if(!strcmp(gtype,"from"))
 				{
 					for(i=currentline-1;i>=0;i--)
@@ -875,7 +878,7 @@ namespace hiatpg {
 						}
 						primaryIn[numberOfPrimaryInputs]=currentline;
 						numberOfPrimaryInputs++;
-					} else 
+					} else
 					{
 						if(!strcmp(gtype,"and")) gates[currentline]->fn=AND;
 						else if(!strcmp(gtype,"nand")) gates[currentline]->fn=NAND;

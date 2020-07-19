@@ -740,6 +740,8 @@ namespace hiatpg {
                             case XNOR:
                                 v1 = (j == 0) ? p[1]->output : p[0]->output;
                                 if (v1 == ONE) val = a_truthtbl1[NOT][val];
+                            default:
+                                break;
                         }
                         p[j]->output = val;
                         gate->changed = true;
@@ -854,6 +856,8 @@ namespace hiatpg {
 #endif
                     i = FORWARD;
                 }
+                break;
+            default:
                 break;
         }
 
@@ -1030,6 +1034,8 @@ namespace hiatpg {
                             case XOR:
                             case XNOR:
                                 aCurrObj->setLine(1, 0);
+                                break;
+                            default:
                                 break;
                         }
                 }
