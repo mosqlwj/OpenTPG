@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+#set -x
 
 SELFDIR=$(dirname $(realpath "${BASH_SOURCE[0]}"))
 
@@ -37,4 +37,3 @@ function config_redis()
 
 
 config_hadoop && config_redis
-exit    $?
