@@ -62,11 +62,15 @@ function install_hadoop()
 {
     export HADOOP_HOME="${INSTALL_DIR}/hadoop"
 
+    #   先清理老的安装环境
+    rm -rf      "${INSTALL_DIR}/hadoop-3.2.1"
+    rm -rf      "${HADOOP_HOME}"
+
     #   找到 hadoop 的安装包,并解压安装
     local hadoop_package=$(cd "${SOFTWARE_DIR}" && ls hadoop-3.2.1.tar* | head -n 1)
     mkdir -p    "${INSTALL_DIR}"                                        &&  \
     cd          "${INSTALL_DIR}"                                        &&  \
-    tar xvfz    "${SOFTWARE_DIR}/${hadoop_package}"                     &&  \
+    tar xvfz     "${SOFTWARE_DIR}/${hadoop_package}"                     &&  \
     mv          "${INSTALL_DIR}/hadoop-3.2.1"   "${HADOOP_HOME}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
@@ -114,7 +118,7 @@ function install_redis()
     local redis_package=$(cd "${SOFTWARE_DIR}" && find -name redis-6.0.5.tar* | head -n 1)
     mkdir -p    "${INSTALL_DIR}"                                        &&  \
     cd          "${INSTALL_DIR}"                                        &&  \
-    tar xvfz    "${SOFTWARE_DIR}/${redis_package}"                      &&  \
+    tar xvfz     "${SOFTWARE_DIR}/${redis_package}"                      &&  \
     cd          "${INSTALL_DIR}/redis-6.0.5"                            &&  \
     make                                                                &&  \
     make        "PREFIX=/${REDIS_HOME}"  install
@@ -125,7 +129,7 @@ function install_redis()
     fi
 
     #   清除构建环境下的所有的东西
-    rm -f       "${REDIS_HOME}/redis-6.0.5"
+    rm -f       "${INSTALL_DIR}/redis-6.0.5"
 
     #   安装配置和入口配置脚本
     cp  -rf "${SELFDIR}/tmpl-redis"/*       "${REDIS_HOME}"
