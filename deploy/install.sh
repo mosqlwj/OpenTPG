@@ -110,8 +110,6 @@ function install_redis()
         return  7
     fi
 
-    mv          "${INSTALL_DIR}/redis-6.0.5"   "${INSTALL_DIR}/redis"   &&  \
-
     #   找到 redis 的安装包,并解压安装
     local redis_package=$(cd "${SOFTWARE_DIR}" && find -name redis-6.0.5.tar* | head -n 1)
     mkdir -p    "${INSTALL_DIR}"                                        &&  \
