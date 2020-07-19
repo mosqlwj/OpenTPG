@@ -319,14 +319,9 @@ namespace hiatpg {
         //faultFile
         string getFaultFile(void)
         {
-#ifdef _WIN32
-            //            _fullpath(realp,netlistFile,1024);
-            return faultFile;
-#else
-            string realp
-            realpath(realp, faultFile);
-            return realp;
-#endif
+            char realp[PATH_MAX] = {0};
+            realpath(faultFile.c_str(), realpath);
+            return string(realp);
         };
 
         void setFaultFile(string p_faultFile) {
