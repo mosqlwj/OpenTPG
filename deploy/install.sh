@@ -253,7 +253,7 @@ function main()
     fi
 
     #   安装 hadoop
-    clean_hadoop && install_hadoop
+    install_hadoop
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "The hadoop installation was failed(${RESULT})"
@@ -262,7 +262,7 @@ function main()
     echo    "The hadoop installation was success"
 
     #   安装 redis
-    clean_redis && install_redis
+    install_redis
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "The redis installation was failed(${RESULT})"
@@ -271,7 +271,7 @@ function main()
     echo    "The redis installation was success"
 
     #   安装 settings
-    clean_settings && install_settings
+    install_settings
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "The settings installation was failed(${RESULT})"
