@@ -8,7 +8,7 @@ SELFDIR=$(dirname $(realpath "$BASH_SOURCE"))
 function    prepare_env()
 {
     #   先检查下关键的环境配置文件是否存在
-    if [[ -f "${SELFDIR}/setup.bash" ]]; then
+    if [[ ! -f "${SELFDIR}/setup.bash" ]]; then
         echo    "Error: Can not access the setup.bash at '${SELFDIR}'"
         return  1
     fi
