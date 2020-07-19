@@ -230,7 +230,10 @@ function main()
 
     #   对输入参数进行强校验: outputdir
     if [[ -d "${outputdir}" ]]; then
-        #rm -rf  "${outputdir}"
+        if [[ "${outputdir}" == "/" ]]; then
+            return  8
+        fi
+        rm -rf  "${outputdir}"
         if [[ -d "${outputdir}" ]]; then
             echo    "Error: Can not remove the output directory"
             return  6
