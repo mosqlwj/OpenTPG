@@ -5,7 +5,10 @@
 #include <sstream>
 #include "Defines.h"
 #include "cmdline.h"
+
+#include <limits.h>
 #include <stdlib.h>
+
 #include <fstream>
 
 using namespace std;
