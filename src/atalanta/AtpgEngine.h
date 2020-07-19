@@ -35,6 +35,16 @@ namespace hiatpg {
     };
 
     struct AtpgStatus {
+        AtpgStatus(): circuitName(""),          // name of the bench file
+                      gates(0),                  // total gates
+                      iv(0),                     // # of inputs
+                      ov(0),                     // # of outputs
+                      iPatterns(0),             // # of test patterns before compaction (or final, if no compaction)
+                      patterns(0),               // # of final test patterns (after compaction)
+                      faults(0),                 // total # of faults
+                      detectedFaults(0),         // # of detected faults
+                      redundantFaults(0),        // # of redundant faults
+                      time(0){}
         string circuitName;          // name of the bench file
         int gates;                  // total gates
         int iv;                     // # of inputs
@@ -51,7 +61,7 @@ namespace hiatpg {
     {
     private:
         vector<unordered_map<int, int>> testCubes;
-    public:
+    protected:
         char inputMode;
         int iseed;
         char faultMode;
@@ -77,6 +87,7 @@ namespace hiatpg {
         streambuf *benchStream;
 
         //string faultFile;
+        string  faultFilePath;
         fstream faultFile;				// just for backward compatibility
         streambuf *faultStream;
 

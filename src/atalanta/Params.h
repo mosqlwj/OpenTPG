@@ -5,6 +5,7 @@
 #include <sstream>
 #include "Defines.h"
 #include "cmdline.h"
+#include <stdlib.h>
 #include <fstream>
 
 using namespace std;
@@ -139,7 +140,7 @@ namespace hiatpg {
             faultFile = options.get<string>("fault");
             if (!faultFile.empty()) {
                 fault.open(faultFile, ios::in);
-                setfaultStream(fault.rdbuf());
+                setfaultStream(fault.rdbuf(), faultFile);
 //            while (!fault.eof()) {
 //                char c = fault.get();
 //                cout << c;
@@ -176,10 +177,27 @@ namespace hiatpg {
         //randomLimit
         int getRandomLimit(void) { return randomLimit; };
 
-        const string& GetPatternPath() {
+        string GetPatternPath() {
+#ifdef _WIN32
+//            _fullpath(realp,netlistFile,1024);
             return patternPath;
+#else
+            string realp
+            realpath(realp, patternPath);
+            return realp;
+#endif
         }
 
+        string GetNetListPath() {
+#ifdef _WIN32
+//            _fullpath(realp,netlistFile,1024);
+            return netlistFile;
+#else
+            string realp;
+            realpath(realp, netlistFile);
+            return realp;
+#endif
+        }
         void setRandomLimit(char p_randomLimit) {
             if (p_randomLimit >= 0 && p_randomLimit <= 32) {
                 randomLimit = p_randomLimit;
@@ -300,7 +318,17 @@ namespace hiatpg {
         };
 
         //faultFile
-        string getFaultFile(void) { return faultFile; };
+        string getFaultFile(void)
+        {
+#ifdef _WIN32
+            //            _fullpath(realp,netlistFile,1024);
+            return faultFile;
+#else
+            string realp
+            realpath(realp, faultFile);
+            return realp;
+#endif
+        };
 
         void setFaultFile(string p_faultFile) {
             faultFile = p_faultFile;
@@ -311,10 +339,10 @@ namespace hiatpg {
         //faultStream
         streambuf *getFaultStream(void) { return faultStream; };
 
-        void setfaultStream(streambuf *p_faultStream) {
+        void setfaultStream(streambuf *p_faultStream, string& faultPath) {
             faultStream = p_faultStream;
             faultMode = 'f';
-            faultFile = "";
+            faultFile = faultPath;
         };
 
         //wFaultFile

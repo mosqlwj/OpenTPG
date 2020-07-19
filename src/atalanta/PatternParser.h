@@ -13,6 +13,8 @@ namespace hiatpg {
         vector<unordered_map<int, char>> testCubes;
         string  patternPath;
         ifstream patternSorceStream;
+        ifstream faultSorceStream;
+        AtpgStatus atpgStatus;
 
     public:
         PatternParser(){};
@@ -20,7 +22,9 @@ namespace hiatpg {
         void setParams();
         void ReadPattern();
         void generateTest();
+        void ReadFault();
         int testGen(int levels, int maxBits, int nStem, Gate **stem, int maxBackTrack, int phase, int *nRedundant, int *nOverBackTrack, int *nBackTrack, int *nTest, int *nPacket, int *nBit, double *fanTime);
+        void PrintLog(Params& p);
     };
 }
 

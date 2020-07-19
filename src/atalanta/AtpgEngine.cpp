@@ -294,7 +294,6 @@ namespace hiatpg {
 
         if (fn != NULL) {
             ostream file(fn);
-
             for (int i = 0; i < fault; i++) file << (char) (mask[i] + '0');
         }
     }
@@ -1151,7 +1150,6 @@ namespace hiatpg {
         learnMode = p->getLearnMode();
         faultMode = p->getFaultMode();
         if (p->getFaultStream() != NULL) {
-            faultStream = p->getFaultStream();
         } else {
 //            if(p->getFaultFile().length()) {
 //                OpenFile(&faultFile, &faultStream, p->getFaultFile(), ios::in);
