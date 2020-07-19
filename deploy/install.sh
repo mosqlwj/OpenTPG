@@ -163,14 +163,42 @@ function clean_settings()
 
 function install_settings()
 {
-    if [[ ! -f "${INSTALL_DIR}/settings.sh" ]]; then
-        cp  -rf "${SELFDIR}/settings.sh"    "${INSTALL_DIR}"
+    #   如果已经存在就不要拷贝了
+    if [[ "${SELFDIR}" == "${INSTALL_DIR}" ]]; then
+        return  0
     fi
-    RESULT=$?
-    if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Setup configurations of hadoop failed(${RESULT}): '${SELFDIR}/etc' -> '${INSTALL_DIR}/hadoop/etc'"
-        return  1
-    fi
+
+    #   按照 INSTALL-ORDER 中的内容拷贝文件到 ${INSTALL_DIR}
+    while read -r line ; do
+        #   去掉首尾空白(利用了shell的副作用)
+        line=$(echo ${line})
+
+        #   跳过空白行
+        if [[ "${srcfile}" == "" ]]; then
+            continue
+        fi
+
+        #   跳过注释行
+        if [[ "${srcfile}" =~ ^#.* ]]; then
+            continue
+        fi
+
+        #   去掉首尾空白(利用了shell的副作用)
+        local filename=$(echo "${line}" | awk '{print $1}')
+        local filemode=$(echo "${line}" | awk '{print $2}')
+
+        #   拷贝原始文件到安装目录的根目录下
+        cp -rf  "${SELFDIR}/${filename}"    "${INSTALL_DIR}"    &&  \
+        chmod   "${filemode}"   "${INSTALL_DIR}/${filename}"
+        RESULT=$?
+        if [[ ${RESULT} -ne 0 ]]; then
+            echo    "Setup configurations failed(${RESULT}):  '${SELFDIR}/${srcfile}' -> '${INSTALL_DIR}'"
+            return  1
+        fi
+    done < "${SELFDIR}/INSTALL-ORDER"
+
+    chmod +x "${INSTALL_DIR}"/*.sh
+    chmod +x "${INSTALL_DIR}"/*.bash
 
     return  0
 }
