@@ -11,6 +11,7 @@
 #include <fstream>
 #include <memory>
 #include <time.h>
+#include <iomanip>
 
 #include "Defines.h"
 #include "Truthtable.h"
@@ -806,18 +807,9 @@ namespace hiatpg {
             file << "test coverage:" << double(ar.detectedFaults)/double(ar.faults) << endl;
             file << "time: " << ar.time << endl;
             file.flush();
-
-            cout << "---report---" << endl;
-            cout << "gates: " << ar.gates << endl;
-            cout << "primary input: " << ar.iv << endl;
-            cout << "primary output: " << ar.ov << endl;
-            cout << "simulate patterns: " << ar.iPatterns << endl;
-            cout << "final patterns: " << ar.patterns << endl;
-            cout << "faults: " << ar.faults << endl;
-            cout << "detect faults: " << ar.detectedFaults << endl;
-            cout << "redundant faults: " << ar.redundantFaults << endl;
-            cout << "test coverage:" << double(ar.detectedFaults)/double(ar.faults) << endl;
-            cout << "time: " << ar.time << endl;
+            cout << "pattern-count" << " " << ":" << " " << ar.patterns << endl;
+            cout << "fault-count"<<" " << ":" << " "<< ar.faults << endl;
+            cout << "pattern-coverage"<< " " << ":" << " " << fixed << std::setprecision(2) << double(ar.detectedFaults)/double(ar.faults) * 100 << "%"<< endl;
             cout << endl;
         }
     }
