@@ -40,7 +40,7 @@ namespace hiatpg{
 
         end = clock();
         atpgStatus.time = (end-start)/(double)CLOCKS_PER_SEC;
-        writeResults(atpgStatus);
+//        writeResults(atpgStatus);
         switch (wTestMode)
         {
             case 0:
@@ -342,7 +342,7 @@ namespace hiatpg{
         {
             int faulIndex = (*cinTestCubesIt).first;
             if (faultList[faulIndex]->detected == DETECTED){
-                cinTestCubes.erase(cinTestCubesIt);
+                cinTestCubesIt  = cinTestCubes.erase(cinTestCubesIt);
                 continue;
             }
             auto cube = (*cinTestCubesIt).second;
@@ -380,27 +380,28 @@ namespace hiatpg{
     void PatternParser::CoutPatternsAndFaults()
     {
         for (int i = 0; i < testPatterns.size(); ++i) {
+            cout <<"pattern:" << i << "\t";
             for (int j = 0; j < numberOfPrimaryInputs; ++j) {
                 cout << testPatterns[i][j];
             }
             cout << endl;
         }
-        for (int i = 0; i < atpgStatus.faults; i++) {
-            auto pCurrentFault = faultList[i];
-            string line;
-            Gate *targetGate = pCurrentFault->gate;
-            Gate *faninGate = nullptr;
-            string strTarget = targetGate->symbol->symbol;
-            string strFanin;
-            int faninIndex = pCurrentFault->line;
-            if (faninIndex != OUTFAULT) {
-                faninGate = pCurrentFault->gate->fanins[faninIndex];
-                strFanin = faninGate->symbol->symbol;
-                cout << i << "\t" << strFanin << "->" << strTarget << " " << pCurrentFault->type<< " " << pCurrentFault->detected << endl;
-            } else {
-                cout << i << "\t" <<strTarget << "->" << strTarget << " " << pCurrentFault->type<< " " << pCurrentFault->detected << endl;
-            }
-        }
+//        for (int i = 0; i < numberOfFaults; i++) {
+//            auto pCurrentFault = faultList[i];
+//            string line;
+//            Gate *targetGate = pCurrentFault->gate;
+//            Gate *faninGate = nullptr;
+//            string strTarget = targetGate->symbol->symbol;
+//            string strFanin;
+//            int faninIndex = pCurrentFault->line;
+//            if (faninIndex != OUTFAULT) {
+//                faninGate = pCurrentFault->gate->fanins[faninIndex];
+//                strFanin = faninGate->symbol->symbol;
+//                cout << i << "\t" << strFanin << "->" << strTarget << " " << pCurrentFault->type<< " " << pCurrentFault->detected << endl;
+//            } else {
+//                cout << i << "\t" <<strTarget << "->" << strTarget << " " << pCurrentFault->type<< " " << pCurrentFault->detected << endl;
+//            }
+//        }
     }
 
     void PatternParser::ReadFault()
