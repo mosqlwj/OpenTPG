@@ -159,12 +159,12 @@ namespace hiatpg{
         compact = p->getCompact();
         maxBackTrack = p->getMaxBackTrack();
         maxBackTrack1 = p->getMaxBackTrack1();
-        if(p->GetPatternPath() != "") {
-            patternPath = p->GetPatternPath();
-        }
-        else {
-            cerr << "error: pattern file path is not exist";
-        }
+//        if(p->GetPatternPath() != "") {
+//            patternPath = p->GetPatternPath();
+//        }
+//        else {
+//            cerr << "error: pattern file path is not exist" << endl;
+//        }
         if(p->getBenchStream() != NULL) {
             benchStream = p->getBenchStream();
         }

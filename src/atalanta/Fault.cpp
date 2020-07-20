@@ -181,7 +181,7 @@ namespace hiatpg {
 		for(i=0;i<numberOfGates;i++)
 		{
             gate=gates[i];
-			/* if the input of the gate has more than one fanouts, 
+			/* if the input of the gate has more than one fanouts,
 			add a s-a-1 for each AND/NAND,
 			a s-a-0 for each OR/NOR and
 			a s-a-0 and s-a-1 for other gates. */
@@ -224,7 +224,7 @@ namespace hiatpg {
 				nfault++;
 				gate->pFaultList.push_back(fault);
 
-				// case of high level gates 
+				// case of high level gates
 				if(gate->fanouts[0]->type > PI)
 				{
                     fault=new Fault;
@@ -361,7 +361,7 @@ namespace hiatpg {
 				        break;
 				}
 			}
-		} else 
+		} else
 		{
 			from=gut->fanins[line];
 			if(from->type == DUMMY || from->type == PO) from=from->fanins[0];
@@ -429,7 +429,7 @@ namespace hiatpg {
 
 		if(isStem(child)) FFRfault(child);
 
-		// Go into children 
+		// Go into children
 		for(int i=0;i<child->ninput;i++)
 		{
 			// preWORK for input lines
@@ -514,7 +514,7 @@ namespace hiatpg {
 			c = inputf->get();
 			if(c == -1)
 			    continue;
-			
+
 			if(isWhitespace(c)) {
 			    if(valid)
 			        break;
@@ -650,7 +650,7 @@ namespace hiatpg {
 					if(gut->fanins[j]->noutput == 1) stack->push(gut->fanins[j]);
 			}
 			stem[i]->dfault=new Fault*[n];
-		}	
+		}
 
 		if(nfault==nof) return(nfault);
 
@@ -837,7 +837,7 @@ namespace hiatpg {
 			} else Error::fatalerror(FAULTERROR);
 		}
 
-		// count faults and copy 
+		// count faults and copy
 		numberOfFaults=hopeFaultList.size();
 
 		faultList=new Fault*[numberOfFaults];
