@@ -714,7 +714,7 @@ namespace hiatpg {
                     type = splitRes[2] == "1" ? SA1 : SA0;
                     break;
                 case 2:
-                    strTarget = splitRes[1];
+                    strTarget = splitRes[0];
                     if ((h = hashTable.findHash(strTarget, 0)) == 0) {
                         cout << strTarget;
                         cout << " is not defined" << endl;
