@@ -103,10 +103,7 @@ namespace hiatpg {
 
 		void readFaults(std::streambuf *fn);
 		int readFaultsFsim(istream *file,int noStem,Gate **stem);
-        int readFaultsFromCin(istream& file,int noStem,Gate **stem);
-#ifdef INCLUDE_HOPE
-		void readFaultsHope(istream *file);
-#endif
-	};
+        int readFaultsFromCin(int noStem, Gate **stem);
+    };
 }
 #endif // __ATALANTA_FAULT_H__

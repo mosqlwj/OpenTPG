@@ -665,14 +665,14 @@ namespace hiatpg {
 //        };
 //    }
 
-    int ReadableFaultList::readFaultsFromCin(istream& inStream,int noStem,Gate **stem)
+    int ReadableFaultList::readFaultsFromCin(int noStem,Gate **stem)
     {
         Gate *gut;
         Fault *f;
         HashData *h;
         int from,to,line,type;
-        int nfault,n,nof;
-        nfault=0;
+        int numOfFault,n,nof;
+        numOfFault =0;
 
         string faultLine;
         while (getline(cin, faultLine)) {
@@ -744,12 +744,12 @@ namespace hiatpg {
             f->line = line;
             f->type = static_cast<FaultType>(type);
             gut->pFaultList.push_front(f);
-            nfault++;
+            numOfFault++;
         }
 
         // create the fault_list and
         // enumerate faults in each fanout free region
-        faultList=new Fault*[nfault];
+        faultList=new Fault*[numOfFault];
         stack->clear();
 
         nof=0;
@@ -778,83 +778,8 @@ namespace hiatpg {
             stem[i]->dfault=new Fault*[n];
         }
 
-        if(nfault==nof) return(nfault);
+        if(numOfFault ==nof) return(numOfFault);
 
         return -1;
     }
-
-#ifdef INCLUDE_HOPE
-	void ReadableFaultList::readFaultsHope(istream *file)
-	{
-		Gate*	gut;
-		Fault*	f;
-		int from,to,line,type;
-		HashData*	h;
-		string s; //char s[MAXSTRING];
-		int i;
-
-		inputf=file;
-
-		//init_fault_list();
-		while(getFaultSymbol(&s)!=EOF)
-		{
-			if(isValid(s[0]))
-			{
-				if((h=hashTable.findHash(s,0))==0)
-				{
-					cout<<"Error in fault file:";
-					cout<<s;
-					cout<<" is not defined\n";
-					Error::fatalerror(FAULTERROR);
-				}
-				if((to=h->pnode->index)<0) Error::fatalerror(FAULTERROR);
-				gut=gates[to];
-				line=OUTFAULT;
-			} else if(s[0]=='>')
-			{
-				from=to;
-				if((h=hashTable.insertHash(string(&s[1]),0))==0)
-				{
-					cout<<"Error in fault file:";
-					cout<<s;
-					cout<<" is not defined\n";
-					Error::fatalerror(FAULTERROR);
-				}
-
-				if((to=h->pnode->index)<0) Error::fatalerror(FAULTERROR);
-				gut=gates[to];
-				for(i=0;i<gut->ninput;i++)
-					if(gut->fanins[i]->index == from) { line=i; break; }
-			} else if(s[0]=='/')
-			{
-				if(s[1]=='1') type=SA1; else type=SA0;
-				f=new Fault;
-				f->gate=gut;
-				f->line=line;
-				f->type=static_cast<FaultType>(type);
-
-				hopeFaultList.push_front(f);
-			} else Error::fatalerror(FAULTERROR);
-		}
-
-		// count faults and copy 
-		numberOfFaults=hopeFaultList.size();
-
-		faultList=new Fault*[numberOfFaults];
-
-		list<Fault*>::iterator current,final;
-
-		current=hopeFaultList.begin();
-		final=hopeFaultList.end();
-
-		i=0;
-		while(current!=final)
-		{
-			faultList[i]=*current;
-			i++;
-			current++;
-		}
-
-	}
-#endif
 }
