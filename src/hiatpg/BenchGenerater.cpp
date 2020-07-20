@@ -124,7 +124,7 @@ bool BenchGenerater::SaveToFile(vector<FlattenGates>& gates)
 {
     std::cout << "Begin to save file." <<std::endl;
     string path = "./" + fileName;
-    ofstream file(path, ios::out);
+    ofstream file(path, std::ios::out);
     if (!file.is_open()) {
         std::cout << "open combine.bench failed\n";
         return false;

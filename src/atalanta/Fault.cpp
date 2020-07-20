@@ -608,10 +608,13 @@ int ReadableFaultList::readFaultsFsim(istream *file, int noStem, Gate **stem) {
 
 int ReadableFaultList::readFaultsFromCin(int noStem, Gate **stem) {
     Gate *gut;
-    Fault *f;
-    HashData *h;
-    int from, to, line, type;
-    int numOfFault, n, nof;
+    Fault *fault;
+    HashData *hashData;
+    int line = OUTFAULT;
+    int fromGateId;
+    int toGateId;
+    int type;
+    int numOfFault, numOfStemDFault, numOfFaultCalcFromStem;
     numOfFault = 0;
 
     string faultLine;
@@ -620,102 +623,89 @@ int ReadableFaultList::readFaultsFromCin(int noStem, Gate **stem) {
             break;
         }
         auto splitRes = split(faultLine, "->| /");
-
-        //            for (auto &str : splitRes) {
-        //                cout << str << endl;
-        //            }
-
         string strFanin;
         string strTarget;
-
+        line = OUTFAULT;
         switch (splitRes.size()) {
             case 3:
                 strFanin = splitRes[0];
                 strTarget = splitRes[1];
-                if ((h = hashTable.findHash(strFanin, 0)) == 0) {
-                    cout << strFanin;
-                    cout << " is not defined" << endl;
+                if ((hashData = hashTable.findHash(strFanin, 0)) == 0) {
+                    cout << strFanin << " is not defined" << endl;
                     Error::fatalerror(FAULTERROR);
                 }
-                if ((to = h->pnode->index) < 0) {
-                    Error::fatalerror(FAULTERROR);
-                }
-                line = -1;
-
-                if ((h = hashTable.findHash(strTarget, 0)) == 0) {
-                    cout << strTarget;
-                    cout << " is not defined" << endl;
-                    Error::fatalerror(FAULTERROR);
-                }
-                if ((to = h->pnode->index) < 0) {
+                if ((fromGateId = hashData->pnode->index) < 0) {
                     Error::fatalerror(FAULTERROR);
                 }
 
+                if ((hashData = hashTable.findHash(strTarget, 0)) == 0) {
+                    cout << strTarget << " is not defined" << endl;
+                    Error::fatalerror(FAULTERROR);
+                }
+                if ((toGateId = hashData->pnode->index) < 0) {
+                    Error::fatalerror(FAULTERROR);
+                }
+
+                gut = gates[toGateId];
+                for (int i = 0; i < gut->ninput; i++) {
+                    if (gut->fanins[i]->index == fromGateId) {
+                        line = i;
+                        break;
+                    }
+                }
                 type = splitRes[2] == "1" ? SA1 : SA0;
                 break;
             case 2:
                 strTarget = splitRes[0];
-                if ((h = hashTable.findHash(strTarget, 0)) == 0) {
-                    cout << strTarget;
-                    cout << " is not defined" << endl;
+                if ((hashData = hashTable.findHash(strTarget, 0)) == 0) {
+                    cout << strTarget << " is not defined" << endl;
                     Error::fatalerror(FAULTERROR);
                 }
-                if ((to = h->pnode->index) < 0) {
+                if ((toGateId = hashData->pnode->index) < 0) {
                     Error::fatalerror(FAULTERROR);
                 }
 
+                gut = gates[toGateId];
                 type = splitRes[1] == "1" ? SA1 : SA0;
             default:
                 break;
         }
 
-        from = to;
-        gut = gates[to];
-        for (int i = 0; i < gut->ninput; i++) {
-            if (gut->fanins[i]->index == from) {
-                line = i;
-                break;
-            }
-        }
-
         if (line >= 0) type = (type == SA1) ? SA1 : SA0;
-        f = new Fault;
-        f->gate = gut;
-        f->line = line;
-        f->type = static_cast<FaultType>(type);
-        gut->pFaultList.push_front(f);
+        fault = new Fault;
+        fault->gate = gut;
+        fault->line = line;
+        fault->type = static_cast<FaultType>(type);
+        gut->pFaultList.push_front(fault);
         numOfFault++;
     }
 
-    // create the fault_list and
-    // enumerate faults in each fanout free region
+    // create the fault_list and enumerate faults in each fanout free region
     faultList = new Fault *[numOfFault];
     stack->clear();
 
-    nof = 0;
+    numOfFaultCalcFromStem = 0;
     for (int i = noStem - 1; i >= 0; i--) {
         stack->push(stem[i]);
-        n = 1;
+        numOfStemDFault = 1;
         while (!stack->isEmpty()) {
             gut = stack->pop();
-
-            list<Fault *>::iterator current, final;
-
-            current = gut->pFaultList.begin();
-            final = gut->pFaultList.end();
-
-            while (current != final) {
-                faultList[nof++] = *current;
-                n++;
-                current++;
+            for (auto current = gut->pFaultList.begin(); current != gut->pFaultList.end(); current++) {
+                faultList[numOfFaultCalcFromStem++] = *current;
+                numOfStemDFault++;
             }
-            for (int j = 0; j < gut->ninput; j++)
-                if (gut->fanins[j]->noutput == 1) stack->push(gut->fanins[j]);
+            for (int j = 0; j < gut->ninput; j++) {
+                if (gut->fanins[j]->noutput == 1) {
+                    stack->push(gut->fanins[j]);
+                }
+            }
         }
-        stem[i]->dfault = new Fault *[n];
+        stem[i]->dfault = new Fault*[numOfStemDFault];
     }
 
-    if (numOfFault == nof) return (numOfFault);
+    if (numOfFault == numOfFaultCalcFromStem) {
+        return numOfFault;
+    }
 
     return -1;
 }
