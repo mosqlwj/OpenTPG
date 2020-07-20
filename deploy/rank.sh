@@ -140,7 +140,7 @@ function    execute_rank()
     #   先再本地生成 faultlist
     echo    "Create the fault-list file..."
     local faultfile="${rankdir}/${rankname}.fault"
-    "${SELFDIR}/atalanta"   --exec      "create-fault" --netlist   "file:${benchfile}"  >  "${faultfile}"
+    "${SELFDIR}/atalanta"   --exec      "create-fault" --netlist   "${benchfile}"  >  "${faultfile}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Create fault-list for bench failed(${RESULT}): '${benchfile}' -> ${rankdir}/c17.fault"
@@ -150,42 +150,52 @@ function    execute_rank()
 
 
     #   清理旧的输入和输出目录
+    local dfsinputdir="/${team}-${scenename}-input"
+    local dfsoutputdir="/${team}-${scenename}-output"
     echo    "Clear the input and output directory in DFS..."
-    "${HADOOP_HOME}/bin/hdfs" dfs -rm -r -f "/${team}-${scenename}-input"
-    "${HADOOP_HOME}/bin/hdfs" dfs -rm -r -f "/${team}-${scenename}-output"
+    "${HADOOP_HOME}/bin/hdfs" dfs -rm -r -f "${dfsinputdir}"
+    RESULT=$?
+    if [[ ${RESULT} -ne 0 ]]; then
+        echo    "Clear input directory failed(${RESULT}): '${dfsinputdir}'"
+    fi
+    "${HADOOP_HOME}/bin/hdfs" dfs -rm -r -f "${dfsoutputdir}"
+    RESULT=$?
+    if [[ ${RESULT} -ne 0 ]]; then
+        echo    "Clear output directory failed(${RESULT}): '${dfsoutputdir}'"
+    fi
     echo    "Clear the input and output directory in DFS complete"
 
 
     #   创建输入目录
     echo    "Create input directory for dfs..."
-    "${HADOOP_HOME}/bin/hdfs" dfs -mkdir "/${team}-${scenename}-input"
+    "${HADOOP_HOME}/bin/hdfs" dfs -mkdir "${dfsinputdir}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Create input directory of dfs failed(${RESULT}): '/${team}-${scenename}-input'"
+        echo    "Create input directory of dfs failed(${RESULT}): '${dfsinputdir}"
         return  5
     fi
-    echo    "Create input directory of dfs success: '/${team}-${scenename}-input'"
+    echo    "Create input directory of dfs success: '${dfsinputdir}'"
 
 
     #   将前面生成的faultlist文件放入输入目录
-    echo    "Deploy fault-list file on dfs..."
-    "${HADOOP_HOME}/bin/hdfs" dfs -put   "${rankdir}/${rankname}.fault"  "/${team}-${scenename}-input"
+    echo    "Deploy fault-list file to dfs..."
+    "${HADOOP_HOME}/bin/hdfs" dfs -put   "${rankdir}/${rankname}.fault"  "${dfsinputdir}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Put the fault list file to dfs failed(${RESULT}): '${rankdir}/${rankname}.fault' -> '/${team}-${scenename}-input'"
+        echo    "Put the fault list file to dfs failed(${RESULT}): '${rankdir}/${rankname}.fault' -> '${dfsinputdir}'"
         return  5
     fi
-    echo    "Deploy fault-list file on dfs success: '/${team}-${scenename}-input'"
+    echo    "Deploy fault-list file to dfs success: '${dfsinputdir}'"
 
 
     #   启动hadoop
     echo    "Executing TPG-FLOW..."
     local   streamfile="$HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar"
-    "$HADOOP_HOME/bin/hadoop" jar "${streamfile}"                                     \
+    "$HADOOP_HOME/bin/hadoop" jar "${streamfile}"                                   \
         -input      "/${team}-${scenename}-input"                                   \
         -output     "/${team}-${scenename}-output"                                  \
-        -mapper     "atalanta --exec atpg     --netlist  file:${rankname}.bench}"   \
-        -reducer    "atalanta --exec simulate --netlist  file:${rankname}.bench}"   \
+        -mapper     "atalanta --exec atpg     --netlist  ${rankname}.bench"         \
+        -reducer    "atalanta --exec simulate --netlist  ${rankname}.bench"         \
         -file       "${SELFDIR}/atalanta"                                           \
         -file       "${rankdir}/${rankname}.bench"                                  \
         -jobconf    mapreduce.job.maps=5
@@ -199,7 +209,7 @@ function    execute_rank()
 
     #   下载输出结果
     echo    "Download the outputs..."
-    "${HADOOP_HOME}/bin/dfs" dfs -get   "/${team}-${scenename}-output"  "${rankdir}/output"
+    "${HADOOP_HOME}/bin/dfs" dfs -get   "${dfsoutputdir}"  "${rankdir}/output"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Download the outputs failed(${RESULT})"
