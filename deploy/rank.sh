@@ -191,11 +191,11 @@ function    execute_rank()
     #   启动hadoop
     echo    "Executing TPG-FLOW..."
     local   streamfile="$HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar"
-    "$HADOOP_HOME/bin/hadoop" jar "${streamfile}"                                     \
+    "$HADOOP_HOME/bin/hadoop" jar "${streamfile}"                                   \
         -input      "/${team}-${scenename}-input"                                   \
         -output     "/${team}-${scenename}-output"                                  \
-        -mapper     "atalanta --exec atpg     --netlist  file:${rankname}.bench}"   \
-        -reducer    "atalanta --exec simulate --netlist  file:${rankname}.bench}"   \
+        -mapper     "atalanta --exec atpg     --netlist  ${rankname}.bench"         \
+        -reducer    "atalanta --exec simulate --netlist  ${rankname}.bench"         \
         -file       "${SELFDIR}/atalanta"                                           \
         -file       "${rankdir}/${rankname}.bench"                                  \
         -jobconf    mapreduce.job.maps=5
