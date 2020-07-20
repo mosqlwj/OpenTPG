@@ -27,6 +27,7 @@ namespace hiatpg {
 
     public:
         CustomFaultlist(int fault,Fault **faultList);
+        void printFaultList();
         void updateFaultList();
         void printList(std::streambuf *fn);
         void writeFaultMask(std::streambuf *fn);
@@ -142,7 +143,6 @@ namespace hiatpg {
         void	writeTestFileOut();
         void	writeMultiTestFile();
         void	writeMultiTestFileMask();
-        void	setFaults();
 
         void	writeResults(AtpgStatus ar);
         AtpgStatus getResults();
@@ -170,6 +170,8 @@ namespace hiatpg {
         void setParams();
         int testCubeGen(int levels, int maxBits, int nStem, Gate **stem, int maxBackTrack, int phase, int *nRedundant, int *nOverBackTrack, int *nBackTrack, int *nTest, int *nPacket, int *nBit, double *fanTime);
         int testGen(int levels, int maxBits, int nStem, Gate **stem, int maxBackTrack, int phase, int *nRedundant, int *nOverBackTrack, int *nBackTrack, int *nTest, int *nPacket, int *nBit, double *fanTime);
+        void setFaults();
+        void createFaultlist();
     };
 }
 

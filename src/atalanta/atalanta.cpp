@@ -27,7 +27,9 @@ int main(int argc, char** argv)
         parserEngine->ReadFault();
         parserEngine->PrintLog(*params);
     } else if (action == "create-fault") {
-
+        AtpgEngine* atpgEngine =new AtpgEngine();
+        atpgEngine->setParams();
+        atpgEngine->createFaultlist();
     } else if (action == "upload-netlist") {
 
     } else{

@@ -257,6 +257,25 @@ namespace hiatpg {
         }
     }
 
+    void CustomFaultlist::printFaultList() {
+        for (int i = 0; i < fault; i++) {
+            auto pCurrentFault = faultList[i];
+            string line;
+            Gate *targetGate = pCurrentFault->gate;
+            Gate *faninGate = nullptr;
+            string strTarget = targetGate->symbol->symbol;
+            string strFanin;
+            int faninIndex = pCurrentFault->line;
+            if (faninIndex != OUTFAULT) {
+                faninGate = pCurrentFault->gate->fanins[faninIndex];
+                strFanin = faninGate->symbol->symbol;
+                cout << strFanin << "->" << strTarget << " /" << pCurrentFault->type << endl;
+            } else {
+                cout << strTarget << " /" << pCurrentFault->type << endl;
+            }
+        }
+    }
+
     void CustomFaultlist::updateFaultList() {
         for (int i = 0; i < fault; i++) mask[i] = faultList[i]->detected;
 
@@ -1012,7 +1031,7 @@ namespace hiatpg {
         // parse bench
         levels = setBenchStream(benchStream);
         // read fault from std::cin
-//        setFaults();
+        setFaults();
         numberOfFaults = readFaultsFromCin(cin,myNumberOfStems,myStem);
         indexFaults();
         customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
@@ -1034,6 +1053,16 @@ namespace hiatpg {
         atpgStatus = getResults();
         end = clock();
         atpgStatus.time = (end - start) / (double) CLOCKS_PER_SEC;
+    }
+
+    void AtpgEngine::createFaultlist() {
+        CustomFaultlist *customFaultlist;
+        levels = setBenchStream(benchStream);
+        // create fault
+        setFaults();
+        indexFaults();
+        customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
+        customFaultlist->printFaultList();
     }
 
     int AtpgEngine::run() {
