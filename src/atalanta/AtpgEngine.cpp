@@ -1031,7 +1031,7 @@ namespace hiatpg {
         // parse bench
         levels = setBenchStream(benchStream);
         // read fault from std::cin
-        setFaults();
+//        setFaults();
         numberOfFaults = readFaultsFromCin(cin,myNumberOfStems,myStem);
         indexFaults();
         customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
