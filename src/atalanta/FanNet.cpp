@@ -740,6 +740,7 @@ namespace hiatpg {
                             case XNOR:
                                 v1 = (j == 0) ? p[1]->output : p[0]->output;
                                 if (v1 == ONE) val = a_truthtbl1[NOT][val];
+                                break;
                             default:
                                 break;
                         }
@@ -856,8 +857,6 @@ namespace hiatpg {
 #endif
                     i = FORWARD;
                 }
-                break;
-            default:
                 break;
         }
 
