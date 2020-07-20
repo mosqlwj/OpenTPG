@@ -203,7 +203,7 @@ function    execute_rank()
     "$HADOOP_HOME/bin/hadoop" jar "${streamfile}"                                   \
         -input      "/${team}-${scenename}-input"                                   \
         -output     "/${team}-${scenename}-output"                                  \
-        -mapper     "atalanta --exec atpg     --netlist  ${rankname}.bench"         \
+        -mapper     "test-app mapper"                                               \
         -reducer    "test-app reducer"                                              \
         -file       "${SELFDIR}/atalanta"                                           \
         -file       "${SELFDIR}/test-app"                                           \
