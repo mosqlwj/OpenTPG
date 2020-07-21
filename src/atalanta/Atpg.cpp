@@ -1359,7 +1359,8 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
         MyFaultlist *faultlist;
 		clock_t start, end;
 
-		levels = setBenchStream(benchStream);
+        auto p = &Params::getInstance();
+		levels = parseNetlist(p->getNetlistFile());
 
 		setFaults();
 		indexFaults();

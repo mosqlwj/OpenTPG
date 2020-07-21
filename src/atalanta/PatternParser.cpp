@@ -9,7 +9,8 @@ namespace hiatpg{
         CustomFaultlist *customFaultlist;
         clock_t start, end;
 
-        levels = setBenchStream(benchStream);
+        auto p = &Params::getInstance();
+        levels = parseNetlist(p->getNetlistFile());
         // create fault
         if (inputMode == "pattern"){
             setFaults();

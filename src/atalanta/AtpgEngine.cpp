@@ -1035,7 +1035,8 @@ namespace hiatpg {
         clock_t start, end;
 
         // parse bench
-        levels = setBenchStream(benchStream);
+        auto p = &Params::getInstance();
+        levels = parseNetlist(p->getNetlistFile());
         // read fault from std::cin
 //        setFaults();
         numberOfFaults = readFaultsFromCin(myNumberOfStems,myStem);
@@ -1063,7 +1064,8 @@ namespace hiatpg {
 
     void AtpgEngine::createFaultlist() {
         CustomFaultlist *customFaultlist;
-        levels = setBenchStream(benchStream);
+        auto p = &Params::getInstance();
+        levels = parseNetlist(p->getNetlistFile());
         // create fault
         setFaults();
         indexFaults();
@@ -1076,7 +1078,8 @@ namespace hiatpg {
         CustomFaultlist *customFaultlist;
         clock_t start, end;
 
-        levels = setBenchStream(benchStream);
+        auto p = &Params::getInstance();
+        levels = parseNetlist(p->getNetlistFile());
 
         // create fault
         setFaults();

@@ -43,7 +43,7 @@ namespace hiatpg {
 		int addPO();
 
 
-		int readCircuit();
+        int readCircuit(const string &netlistFileName);
 
 #ifdef ISCAS85_NETLIST_MODE
 		bool circIn(fstream *circuit);
@@ -52,7 +52,7 @@ namespace hiatpg {
 //		SHARE_EXPORT int readBenchFile(string benchFile);
 		virtual ~ReadableNet() {};
 
-		int setBenchStream(streambuf *buf);
+        int parseNetlist(const string& netlistFileName);
 	};
 }
 #endif // __ATALANTA_READABLENET_H__

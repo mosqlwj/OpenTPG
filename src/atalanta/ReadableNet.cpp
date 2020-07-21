@@ -34,11 +34,10 @@ namespace hiatpg {
 	//////////////////////////////////////////////////////////////////////
 
 	//ReadableNet::ReadableNet():hashTable(HASHSIZE),maxFout(0)
-	int ReadableNet::setBenchStream(streambuf *buf)
-	{
+int ReadableNet::parseNetlist(const string& netlistFileName) {
 		int i, j;
 
-		if(readCircuit()<0) {
+		if(readCircuit(netlistFileName) <0) {
 			Error::fatalerror(CIRCUITERROR);
 		}
 
@@ -187,11 +186,9 @@ namespace hiatpg {
 		return c;
 	}
 
-	int ReadableNet::readCircuit()
-	{
-        auto p = &Params::getInstance();
+    int ReadableNet::readCircuit(const string &netlistFileName) {
         fstream netlistStream;
-        netlistStream.open(p->getNetlistFile(), ios::in);
+        netlistStream.open(netlistFileName, ios::in);
         circuit.rdbuf(netlistStream.rdbuf());
 
 		char c=0;
