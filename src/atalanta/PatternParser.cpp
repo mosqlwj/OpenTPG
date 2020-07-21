@@ -13,14 +13,14 @@ namespace hiatpg{
         levels = parseNetlist(p->getNetlistFile());
         // create fault
         if (inputMode == "pattern"){
-            setFaults();
+            processFaults();
             indexFaults();
             customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
             if(wFaults) customFaultlist->printList(wFaultStream);
         }
         else{
 //            numberOfFaults = readFaultsFromCin(myNumberOfStems,myStem);
-            setFaults();
+processFaults();
             indexFaults();
             customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
         }
