@@ -366,7 +366,6 @@ AtpgEngine::AtpgEngine() {
     udFaultsStream = NULL;
     wFaultStream = NULL;
     maskStream = NULL;
-    reportStream = NULL;
     genResStream = NULL;
 }
 
@@ -782,36 +781,36 @@ AtpgStatus AtpgEngine::getResults() {
 }
 
 void AtpgEngine::writeResults(AtpgStatus ar) {
-    if (reportStream != NULL) {
-        ostream file(reportStream);
-        file.precision(3);
+    auto p = &Params::getInstance();
+    fstream fileStream;
+    fileStream.open(p->getReportFile(), ios::out);
+    fileStream.precision(3);
 
-        file << "gates: " << ar.gates << endl;
-        file << "primary input: " << ar.iv << endl;
-        file << "primary output: " << ar.ov << endl;
-        file << "simulate patterns: " << ar.iPatterns << endl;
-        file << "final patterns: " << ar.patterns << endl;
-        file << "faults: " << ar.faults << endl;
-        file << "detect faults: " << ar.detectedFaults << endl;
-        file << "redundant faults: " << ar.redundantFaults << endl;
-        file << "test coverage:" << double(ar.detectedFaults) / double(ar.faults) << endl;
-        file << "time: " << ar.time << endl;
-        file.flush();
-        cout << "pattern-count"
-             << " "
-             << ":"
-             << " " << ar.patterns << endl;
-        cout << "fault-count"
-             << " "
-             << ":"
-             << " " << ar.faults << endl;
-        cout << "pattern-coverage"
-             << " "
-             << ":"
-             << " " << fixed << std::setprecision(2) << double(ar.detectedFaults) / double(ar.faults) * 100 << "%"
-             << endl;
-        cout << endl;
-    }
+    fileStream << "gates: " << ar.gates << endl;
+    fileStream << "primary input: " << ar.iv << endl;
+    fileStream << "primary output: " << ar.ov << endl;
+    fileStream << "simulate patterns: " << ar.iPatterns << endl;
+    fileStream << "final patterns: " << ar.patterns << endl;
+    fileStream << "faults: " << ar.faults << endl;
+    fileStream << "detect faults: " << ar.detectedFaults << endl;
+    fileStream << "redundant faults: " << ar.redundantFaults << endl;
+    fileStream << "test coverage:" << double(ar.detectedFaults) / double(ar.faults) << endl;
+    fileStream << "time: " << ar.time << endl;
+    fileStream.flush();
+    cout << "pattern-count"
+         << " "
+         << ":"
+         << " " << ar.patterns << endl;
+    cout << "fault-count"
+         << " "
+         << ":"
+         << " " << ar.faults << endl;
+    cout << "pattern-coverage"
+         << " "
+         << ":"
+         << " " << fixed << std::setprecision(2) << double(ar.detectedFaults) / double(ar.faults) * 100 << "%"
+         << endl;
+    cout << endl;
 }
 
 void AtpgEngine::printFinalReport(AtpgStatus ar) {
@@ -1135,10 +1134,6 @@ int AtpgEngine::run() {
         maskFile.close();
         maskStream = NULL;
     };
-    if (reportFile.is_open()) {
-        reportFile.close();
-        reportStream = NULL;
-    };
     if (genResFile.is_open()) {
         genResFile.close();
         genResStream = NULL;
@@ -1187,14 +1182,7 @@ void AtpgEngine::setParams() {
         }
     }
     // maskFile = p->getMaskFile();
-    if (p->getReportStream() != NULL) {
-        reportStream = p->getReportStream();
-    } else {
-        if (p->getReportFile().length()) {
-            OpenFile(&reportFile, &reportStream, p->getReportFile(), ios::out);
-        }
-    }
-    // reportFile = p->getReportFile();
+
     wTestMode = p->getWTestMode();
     lfsrSimMode = p->getLfsrSimMode();
     lfsrPoly = p->getLfsrPoly();

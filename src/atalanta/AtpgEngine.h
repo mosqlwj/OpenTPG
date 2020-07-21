@@ -99,10 +99,6 @@ namespace hiatpg {
         fstream maskFile;					// just for backward compatibility
         streambuf *maskStream;
 
-        //string reportFile;
-        fstream reportFile;
-        streambuf *reportStream;	// just for backward compatibility
-
         string circuitName;
 
         string lfsrPoly;

@@ -63,7 +63,6 @@ protected:
     string lfsrSeed;
     int lfsrNum;
     fstream pat;
-    fstream report;
     fstream fault;
     string execAction;    //  执行什么动作
     string netlistFile;
@@ -243,9 +242,7 @@ public:
         string reportFile = pureName + ".report";
 
         pat.open(patternFile, ios::out);
-        report.open(reportFile, ios::out);
         setSPatternStream(pat.rdbuf());
-        setReportStream(report.rdbuf());
         ParserTargetPath();
 
         faultFile = options.get<string>("fault");
