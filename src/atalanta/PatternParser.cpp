@@ -250,9 +250,9 @@ namespace hiatpg{
             faultStream = p->getFaultStream();
             faultFilePath = p->getFaultFile();
         } else {
-            if(p->getFaultFile().length()) {
-                OpenFile(&faultFile, &faultStream, p->getFaultFile(), ios::in);
-            }
+//            if(p->getFaultFile().length()) {
+//                OpenFile(&faultFile, &faultStream, p->getFaultFile(), ios::in);
+//            }
         }
 //        //faultFile = p->getFaultFile();
 //        if(p->getFaultStream() != NULL) {
