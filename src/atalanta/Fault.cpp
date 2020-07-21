@@ -671,7 +671,6 @@ int ReadableFaultList::readFaultsFromCin(int noStem, Gate **stem) {
                 break;
         }
 
-        if (line >= 0) type = (type == SA1) ? SA1 : SA0;
         fault = new Fault;
         fault->gate = gut;
         fault->line = line;
