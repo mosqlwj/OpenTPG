@@ -16,8 +16,10 @@ namespace hiatpg{
             indexFaults();
             customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
             if(wFaults) customFaultlist->printList(wFaultStream);
-        } else{
-            numberOfFaults = readFaultsFromCin(myNumberOfStems,myStem);
+        }
+        else{
+//            numberOfFaults = readFaultsFromCin(myNumberOfStems,myStem);
+            setFaults();
             indexFaults();
             customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
         }
