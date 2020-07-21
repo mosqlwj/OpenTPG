@@ -22,8 +22,8 @@ int main(int argc, const char* argv[])
     if (NULL != f) {
         fgets(buffer, sizeof(buffer), f);
         fputs(buffer, stdout);
+        fclose(f);
     }
-    fclose(f);
 
     return 0;
 }
