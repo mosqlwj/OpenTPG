@@ -858,6 +858,8 @@ namespace hiatpg {
                     i = FORWARD;
                 }
                 break;
+            default:
+                break;
         }
 
 #ifdef LEARNFLG

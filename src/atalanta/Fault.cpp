@@ -428,68 +428,9 @@ void FaultList::FWDfaults() {
         current++;
     }
 }
-
-int FaultList::restoreHopeFaultList() {
-    Fault *f;
-    int i, n;
-
-    n = 0;
-
-    hopeFaultList.clear();
-
-    for (i = 0; i < numberOfFaults; i++) {
-        f = faultList[i];
-        if (f->detected == DETECTED) {
-            f->detected = UNDETECTED;
-            hopeFaultList.push_back(f);
-            n++;
-        }
-        if (!f->event.empty()) {
-            hopeEventList.insert(hopeEventList.begin(), f->event.begin(), f->event.end());
-            f->event.clear();
-        }
-    }
-    return n;
-}
-
 #endif
 
-char ReadableFaultList::getFaultSymbol(string *s) {
-    char c = 0;
-    int n = 0;
-    status valid = false;
-
-    s->clear();
-    while (!inputf->eof()) {
-        c = inputf->get();
-        if (c == -1) continue;
-
-        if (isWhitespace(c)) {
-            if (valid)
-                break;
-            else
-                continue;
-        }
-        if (isHeadSymbol(c)) {
-            s->append(1, c);
-            continue;
-        }
-        if (isValid(c)) {
-            s->append(1, c);
-            valid = true;
-        } else {
-            Error::fatalerror(FAULTERROR);
-        }
-    };
-    if (inputf->eof()) {
-        c = EOF;
-    }
-    // s[n]=EOS;
-    return c;
-}
-
 void ReadableFaultList::readFaults(const string &faultFileName) {
-    auto p = &Params::getInstance;
     fstream faultStream;
     faultStream.open(faultFileName, ios::in);
     numberOfFaults = readFaultsFromFileStream(faultStream, myNumberOfStems, myStem);

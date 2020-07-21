@@ -85,24 +85,17 @@ namespace hiatpg {
 	class ReadableFaultList:public FaultList
 	{
 	protected:
-		istream *inputf;
-
 		Gate **myStem;
 		int myNumberOfStems;
 
 		bool isWhitespace(char c) {return (c==' ' || c=='\r' || c=='-' || c=='\t' || c=='\n');}
 		bool isHeadSymbol(char c) {return (c=='/' || c=='>');}
-		bool isValid(char c) {return ((c>='0' && c<='9') || (c>='A' && c<='Z') || 
-			(c>='a' && c<='z') || (c=='[' || c==']') || (c=='_'));}
-
-		char getFaultSymbol(string *s);
 
 	public:
 		ReadableFaultList() {
 		};
 
 		void readFaults(const string &faultFileName);
-		int readFaultsFsim(const string &faultFileName,int noStem,Gate **stem);
         int readFaultsFromFileStream(istream &fileStream, int noStem, Gate **stem);
     };
 }
