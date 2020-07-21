@@ -69,7 +69,6 @@ namespace hiatpg{
             customFaultlist->writeUDFaults(udFaultsStream);
 
         //Close opened files
-        if(benchFile.is_open()) { benchFile.close(); benchStream = NULL; };
         if(faultFile.is_open()) { faultFile.close(); faultStream = NULL; };
         if(patternFile.is_open()) { patternFile.close(); patternStream = NULL; };
         if(udFaultsFile.is_open()) { udFaultsFile.close(); udFaultsStream = NULL; };
@@ -237,8 +236,6 @@ namespace hiatpg{
 //        else {
 //            cerr << "error: pattern file path is not exist" << endl;
 //        }
-        fstream benchFileStream(p->getNetlistFile());
-        benchStream = benchFileStream.rdbuf();
 
         learnMode = p->getLearnMode();
         faultMode = p->getFaultMode();

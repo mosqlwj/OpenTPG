@@ -83,10 +83,6 @@ namespace hiatpg {
         fstream patternFile;			// just for backward compatibility
         streambuf *patternStream;
 
-        //string benchFile;
-        fstream benchFile;				// just for backward compatibility
-        streambuf *benchStream;
-
         //string faultFile;
         string  faultFilePath;
         fstream faultFile;				// just for backward compatibility

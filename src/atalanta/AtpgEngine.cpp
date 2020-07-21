@@ -369,7 +369,6 @@ namespace hiatpg {
 
         myCurrFault = NULL;
 
-        benchStream = NULL;
         faultStream = NULL;
         patternStream = NULL;
         udFaultsStream = NULL;
@@ -1127,10 +1126,6 @@ namespace hiatpg {
             customFaultlist->writeUDFaults(udFaultsStream);
 
         //Close opened files
-        if (benchFile.is_open()) {
-            benchFile.close();
-            benchStream = NULL;
-        };
         if (faultFile.is_open()) {
             faultFile.close();
             faultStream = NULL;
