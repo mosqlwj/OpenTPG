@@ -369,7 +369,6 @@ namespace hiatpg {
 
         myCurrFault = NULL;
 
-        faultStream = NULL;
         patternStream = NULL;
         udFaultsStream = NULL;
         wFaultStream = NULL;
@@ -380,7 +379,7 @@ namespace hiatpg {
 
     void AtpgEngine::setFaults() {
         if (faultMode == 'f')
-            readFaults(faultStream);
+            readFaults(faultFile);
         else {
             // FSIM
             numberOfFaults = createFaultList(myNumberOfStems, myStem);
@@ -1038,7 +1037,7 @@ namespace hiatpg {
         levels = parseNetlist(p->getNetlistFile());
         // read fault from std::cin
 //        setFaults();
-        numberOfFaults = readFaultsFromCin(myNumberOfStems,myStem);
+        numberOfFaults = readFaultsFromFileStream(cin, myNumberOfStems, myStem);
         indexFaults();
         customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
         iseed = Random::seed(iseed);
@@ -1126,10 +1125,6 @@ namespace hiatpg {
             customFaultlist->writeUDFaults(udFaultsStream);
 
         //Close opened files
-        if (faultFile.is_open()) {
-            faultFile.close();
-            faultStream = NULL;
-        };
         if (patternFile.is_open()) {
             patternFile.close();
             patternStream = NULL;
@@ -1175,23 +1170,7 @@ namespace hiatpg {
         }
         learnMode = p->getLearnMode();
         faultMode = p->getFaultMode();
-        if (p->getFaultStream() != NULL) {
-            faultStream = p->getFaultStream();
-        } else {
-//            if(p->getFaultFile().length()) {
-//                OpenFile(&faultFile, &faultStream, p->getFaultFile(), ios::in);
-//            }
-        }
-//        //faultFile = p->getFaultFile();
-//        if(p->getFaultStream() != NULL) {
-//            faultStream = p->getFaultStream();
-//        }
-//        else {
-//            if(p->getWFaultFile().length()) {
-//                OpenFile(&wFaultFile, &wFaultStream, p->getWFaultFile(), ios::out);
-//            }
-//        }
-        //wFaultFile = p->getWFaultFile();
+        faultFile = p->getFaultFileName();
         fillMode = p->getFillMode();
         genAllPat = p->getGenAllPat();
         setEachLimit(p->getEachLimit());

@@ -66,6 +66,7 @@ namespace hiatpg {
         char inputMode;
         int iseed;
         char faultMode;
+        string faultFile;
         int maxBackTrack;
         int maxBackTrack1;
         int randomLimit;
@@ -85,8 +86,6 @@ namespace hiatpg {
 
         //string faultFile;
         string  faultFilePath;
-        fstream faultFile;				// just for backward compatibility
-        streambuf *faultStream;
 
         //string wFaultFile;
         fstream wFaultFile;				// just for backward compatibility

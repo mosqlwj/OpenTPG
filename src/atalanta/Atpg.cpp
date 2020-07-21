@@ -318,7 +318,7 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 	void Atalanta::setFaults()
 	{
 		if (faultMode == 'f')
-			readFaults(faultStream);
+			readFaults(faultFileName);
 		else
 		{
 		    // FSIM
@@ -1457,22 +1457,22 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 		}
 		learnMode = p->getLearnMode();
 		faultMode = p->getFaultMode();
-		if(p->getFaultStream() != NULL) {
-			faultStream = p->getFaultStream();
-		}
-		else {
-			if(p->getFaultFile().length()) {
-				OpenFile(&faultFile, &faultStream, p->getFaultFile(), ios::in);
-			}}
-		//faultFile = p->getFaultFile();
-		if(p->getFaultStream() != NULL) {
-			faultStream = p->getFaultStream();
-		}
-		else {
-			if(p->getWFaultFile().length()) {
-				OpenFile(&wFaultFile, &wFaultStream, p->getWFaultFile(), ios::out);
-			}
-		}
+//		if(p->getFaultStream() != NULL) {
+//			faultStream = p->getFaultStream();
+//		}
+//		else {
+//			if(p->getFaultFile().length()) {
+//				OpenFile(&faultFile, &faultStream, p->getFaultFile(), ios::in);
+//			}}
+//		//faultFile = p->getFaultFile();
+//		if(p->getFaultStream() != NULL) {
+//			faultStream = p->getFaultStream();
+//		}
+//		else {
+//			if(p->getWFaultFile().length()) {
+//				OpenFile(&wFaultFile, &wFaultStream, p->getWFaultFile(), ios::out);
+//			}
+//		}
 		//wFaultFile = p->getWFaultFile();
 		fillMode = p->getFillMode();
 		genAllPat = p->getGenAllPat();

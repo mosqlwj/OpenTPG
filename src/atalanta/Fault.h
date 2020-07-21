@@ -101,9 +101,9 @@ namespace hiatpg {
 		ReadableFaultList() {
 		};
 
-		void readFaults(std::streambuf *fn);
-		int readFaultsFsim(istream *file,int noStem,Gate **stem);
-        int readFaultsFromCin(int noStem, Gate **stem);
+		void readFaults(const string &faultFileName);
+		int readFaultsFsim(const string &faultFileName,int noStem,Gate **stem);
+        int readFaultsFromFileStream(istream &fileStream, int noStem, Gate **stem);
     };
 }
 #endif // __ATALANTA_FAULT_H__

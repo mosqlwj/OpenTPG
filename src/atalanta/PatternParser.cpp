@@ -69,7 +69,6 @@ namespace hiatpg{
             customFaultlist->writeUDFaults(udFaultsStream);
 
         //Close opened files
-        if(faultFile.is_open()) { faultFile.close(); faultStream = NULL; };
         if(patternFile.is_open()) { patternFile.close(); patternStream = NULL; };
         if(udFaultsFile.is_open()) { udFaultsFile.close(); udFaultsStream = NULL; };
         if(wFaultFile.is_open()) { wFaultFile.close(); wFaultStream = NULL; };
@@ -239,24 +238,7 @@ namespace hiatpg{
 
         learnMode = p->getLearnMode();
         faultMode = p->getFaultMode();
-        if(p->getFaultStream() != NULL) {
-            faultStream = p->getFaultStream();
-            faultFilePath = p->getFaultFile();
-        } else {
-//            if(p->getFaultFile().length()) {
-//                OpenFile(&faultFile, &faultStream, p->getFaultFile(), ios::in);
-//            }
-        }
-//        //faultFile = p->getFaultFile();
-//        if(p->getFaultStream() != NULL) {
-//            faultStream = p->getFaultStream();
-//        }
-//        else {
-//            if(p->getWFaultFile().length()) {
-//                OpenFile(&wFaultFile, &wFaultStream, p->getWFaultFile(), ios::out);
-//            }
-//        }
-        //wFaultFile = p->getWFaultFile();
+        faultFilePath = p->getFaultFile();
         fillMode = p->getFillMode();
         genAllPat = p->getGenAllPat();
         setEachLimit(p->getEachLimit());

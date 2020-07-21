@@ -39,12 +39,9 @@ protected:
     int maxBackTrack1;
     string sPatternFile;
     streambuf *sPatternStream;
-    string benchFile;
-    streambuf *benchStream;
     char learnMode;
     char faultMode;
     string faultFile;
-    streambuf *faultStream;
     char simMode;
     char fillMode;
     char genAllPat;
@@ -65,7 +62,6 @@ protected:
     string lfsrPoly;
     string lfsrSeed;
     int lfsrNum;
-    fstream bench;
     fstream pat;
     fstream report;
     fstream fault;
@@ -108,12 +104,9 @@ protected:
         maxBackTrack1 = 0;
         sPatternFile = "";
         sPatternStream = NULL;
-        benchFile = "";
-        benchStream = NULL;
         learnMode = 'n';
         faultMode = 'd';
         faultFile = "";
-        faultStream = NULL;
         simMode = 'f';
         fillMode = 'r';
         genAllPat = 'n';
@@ -257,16 +250,9 @@ public:
 
         faultFile = options.get<string>("fault");
         if (!faultFile.empty()) {
-            fault.open(faultFile, ios::in);
-            setfaultStream(fault.rdbuf(), faultFile);
-            //            while (!fault.eof()) {
-            //                char c = fault.get();
-            //                cout << c;
-            //            }
-            //            cout.flush();
+            faultMode = 'f';
         } else {
-            faultFile = pureName + ".wflist";
-            //                cout << "create faultlist mode!" << endl;
+            faultFile = pureName + ".fault";
         }
 
         setWTestMode(1);
@@ -418,16 +404,6 @@ public:
     void setFaultFile(string p_faultFile) {
         faultFile = p_faultFile;
         faultMode = 'f';
-        faultStream = NULL;
-    };
-
-    // faultStream
-    streambuf *getFaultStream(void) { return faultStream; };
-
-    void setfaultStream(streambuf *p_faultStream, string &faultPath) {
-        faultStream = p_faultStream;
-        faultMode = 'f';
-        faultFile = faultPath;
     };
 
     // wFaultFile

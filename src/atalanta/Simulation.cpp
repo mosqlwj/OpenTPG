@@ -27,7 +27,6 @@
 #include "Random.h"
 
 #include "Simulation.h"
-#include "Atpg.h"
 
 namespace hiatpg {
     //////////////////////////////////////////////////////////////////////

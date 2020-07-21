@@ -21,6 +21,7 @@
 #include "ParralelPattern.h"
 #include "Stack.h"
 #include "Truthtable.h"
+#include "Params.h"
 
 namespace hiatpg {
 
@@ -487,126 +488,19 @@ char ReadableFaultList::getFaultSymbol(string *s) {
     return c;
 }
 
-void ReadableFaultList::readFaults(std::streambuf *fn) {
-    if (fn != NULL) {
-        istream fault(fn);
-
-        numberOfFaults = readFaultsFsim(&fault, myNumberOfStems, myStem);
-
-        if (numberOfFaults < 0) {
-            /*cerr<<"Fatal error: error in setting fault list"<<endl;
-            exit(0);*/
-            stringstream ss;
-            ss << "Fatal error: error in setting fault list";
-            throw ss.str();
-        }
+void ReadableFaultList::readFaults(const string &faultFileName) {
+    auto p = &Params::getInstance;
+    fstream faultStream;
+    faultStream.open(faultFileName, ios::in);
+    numberOfFaults = readFaultsFromFileStream(faultStream, myNumberOfStems, myStem);
+    if (numberOfFaults < 0) {
+        stringstream ss;
+        ss << "Fatal error: error in setting fault list";
+        throw ss.str();
     }
 }
 
-
-int ReadableFaultList::readFaultsFsim(istream *file, int noStem, Gate **stem) {
-    inputf = file;
-
-    Gate *gut;
-    Fault *f;
-    HashData *h;
-    int from, to, line, type;
-    string s;  // char s[MAXSTRING];
-    int nfault, n, nof;
-
-    nfault = 0;
-
-    while (getFaultSymbol(&s) != EOF) {
-        if (isValid(s[0])) {
-            if ((h = hashTable.findHash(s, 0)) == 0) {
-                cout << "Error in fault file:";
-                cout << s;
-                cout << " is not defined\n";
-                Error::fatalerror(FAULTERROR);
-            }
-            if ((to = h->pnode->index) < 0) {
-                Error::fatalerror(FAULTERROR);
-            }
-            gut = gates[to];
-            line = -1;
-            cout << s << endl;
-        } else if (s[0] == '>') {
-            from = to;
-            if ((h = hashTable.findHash(string(&s[1]), 0)) == 0) {
-                cout << "Error in fault file:";
-                cout << s;
-                cout << " is not defined\n";
-                Error::fatalerror(FAULTERROR);
-            }
-            if ((to = h->pnode->index) < 0) Error::fatalerror(FAULTERROR);
-            gut = gates[to];
-            for (int i = 0; i < gut->ninput; i++)
-                if (gut->fanins[i]->index == from) {
-                    line = i;
-                    break;
-                };
-            cout << string(&s[1]) << endl;
-        } else if (s[0] == '/') {
-            if (s[1] == '1')
-                type = SA1;
-            else
-                type = SA0;
-            if (line >= 0) type = (type == SA1) ? SA1 : SA0;
-
-            f = new Fault;
-            f->gate = gut;
-            f->line = line;
-            f->type = static_cast<FaultType>(type);
-            gut->pFaultList.push_front(f);
-            nfault++;
-            cout << string(&s[0]) << endl;
-        } else {
-            Error::fatalerror(FAULTERROR);
-        }
-    }
-
-    // create the fault_list and
-    // enumerate faults in each fanout free region
-    faultList = new Fault *[nfault];
-    stack->clear();
-
-    nof = 0;
-    for (int i = noStem - 1; i >= 0; i--) {
-        stack->push(stem[i]);
-        n = 1;
-        while (!stack->isEmpty()) {
-            gut = stack->pop();
-
-            list<Fault *>::iterator current, final;
-
-            current = gut->pFaultList.begin();
-            final = gut->pFaultList.end();
-
-            while (current != final) {
-                faultList[nof++] = *current;
-                n++;
-                current++;
-            }
-            for (int j = 0; j < gut->ninput; j++)
-                if (gut->fanins[j]->noutput == 1) stack->push(gut->fanins[j]);
-        }
-        stem[i]->dfault = new Fault *[n];
-    }
-
-    if (nfault == nof) return (nfault);
-
-    return -1;
-}
-
-//    static std::vector<std::string> split(const std::string& in, const std::string& delim) {
-//        std::regex re{ delim };
-//        return std::vector<std::string> {
-//            std::sregex_token_iterator(in.begin(), in.end(), re, -1),
-//            std::sregex_token_iterator()
-//        };
-//    }
-
-int ReadableFaultList::readFaultsFromCin(int noStem, Gate **stem) {
+int ReadableFaultList::readFaultsFromFileStream(istream &fileStream, int noStem, Gate **stem) {
     Gate *gut;
     Fault *fault;
     HashData *hashData;
@@ -618,7 +512,7 @@ int ReadableFaultList::readFaultsFromCin(int noStem, Gate **stem) {
     numOfFault = 0;
 
     string faultLine;
-    while (getline(cin, faultLine)) {
+    while (getline(fileStream, faultLine)) {
         if (faultLine.empty()) {
             break;
         }

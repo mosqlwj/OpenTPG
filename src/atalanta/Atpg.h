@@ -71,7 +71,7 @@ namespace hiatpg {
 		fstream benchFile;				// just for backward compatibility
 		streambuf *benchStream;
 
-		//string faultFile;
+		string faultFileName;
 		fstream faultFile;				// just for backward compatibility
 		streambuf *faultStream;
 
