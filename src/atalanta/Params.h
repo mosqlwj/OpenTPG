@@ -241,8 +241,9 @@ public:
         string patternFile = pureName + ".pat";
         string reportFile = pureName + ".report";
 
-        pat.open(patternFile, ios::out);
-        setSPatternStream(pat.rdbuf());
+        //lg
+        //pat.open(patternFile, ios::out);
+        //setSPatternStream(pat.rdbuf());
         ParserTargetPath();
 
         faultFile = options.get<string>("fault");
