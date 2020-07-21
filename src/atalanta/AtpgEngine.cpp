@@ -814,6 +814,20 @@ namespace hiatpg {
         }
     }
 
+    void AtpgEngine::printFinalReport(AtpgStatus ar) {
+        cout << "gates: " << ar.gates << endl;
+        cout << "primary input: " << ar.iv << endl;
+        cout << "primary output: " << ar.ov << endl;
+        cout << "simulate patterns: " << ar.iPatterns << endl;
+        cout << "final patterns: " << ar.patterns << endl;
+        cout << "faults: " << ar.faults << endl;
+        cout << "detect faults: " << ar.detectedFaults << endl;
+        cout << "redundant faults: " << ar.redundantFaults << endl;
+        cout << "test coverage:" << double(ar.detectedFaults)/double(ar.faults) << endl;
+        cout << "time: " << ar.time << endl;
+        cout.flush();
+    }
+
     void AtpgEngine::generateTest() {
         int i;
         int nDetect3 = 0;
@@ -1085,7 +1099,7 @@ namespace hiatpg {
 
         end = clock();
         atpgStatus.time = (end - start) / (double) CLOCKS_PER_SEC;
-        writeResults(atpgStatus);
+        printFinalReport(atpgStatus);
         switch (wTestMode) {
             case 0:
                 break;

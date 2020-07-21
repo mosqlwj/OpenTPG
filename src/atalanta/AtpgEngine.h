@@ -144,7 +144,8 @@ namespace hiatpg {
         void	writeMultiTestFile();
         void	writeMultiTestFileMask();
 
-        void	writeResults(AtpgStatus ar);
+        void printFinalReport(AtpgStatus ar);
+        void writeResults(AtpgStatus ar);
         AtpgStatus getResults();
 
         list<Eden> impo;
