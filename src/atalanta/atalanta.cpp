@@ -16,11 +16,11 @@ int main(int argc, char** argv)
         AtpgEngine* atpgEngine =new AtpgEngine();
         atpgEngine->setParams();
         atpgEngine->generateCube();
-    } else if (action == "simulatePattern"){
+    } else if (action == "simulate-pattern"){
         PatternParser* patternEngine = new PatternParser();
         patternEngine->setParams();
         patternEngine->run("pattern");
-    } else if (action == "simulateCube"){
+    } else if (action == "simulate-cube"){
         PatternParser* patternEngine = new PatternParser();
         patternEngine->setParams();
         patternEngine->run("cube");
