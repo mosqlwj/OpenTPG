@@ -13,14 +13,14 @@ namespace hiatpg{
         levels = parseNetlist(p->getNetlistFile());
         // create fault
         if (inputMode == "pattern"){
-            setFaults();
+            processFaults();
             indexFaults();
             customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
             if(wFaults) customFaultlist->printList(wFaultStream);
         }
         else{
 //            numberOfFaults = readFaultsFromCin(myNumberOfStems,myStem);
-            setFaults();
+processFaults();
             indexFaults();
             customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
         }
@@ -73,7 +73,6 @@ namespace hiatpg{
         if(udFaultsFile.is_open()) { udFaultsFile.close(); udFaultsStream = NULL; };
         if(wFaultFile.is_open()) { wFaultFile.close(); wFaultStream = NULL; };
         if(maskFile.is_open()) { maskFile.close(); maskStream = NULL; };
-        if(reportFile.is_open()) { reportFile.close(); reportStream = NULL; };
         if(genResFile.is_open()) { genResFile.close(); genResStream = NULL; };
 
         return ;
@@ -263,15 +262,6 @@ namespace hiatpg{
             }
         }
         //maskFile = p->getMaskFile();
-        if(p->getReportStream() != NULL) {
-            reportStream = p->getReportStream();
-        }
-        else {
-            if(p->getReportFile().length()) {
-                OpenFile(&reportFile, &reportStream, p->getReportFile(), ios::out);
-            }
-        }
-        //reportFile = p->getReportFile();
         wTestMode = p->getWTestMode();
         lfsrSimMode = p->getLfsrSimMode();
         lfsrPoly = p->getLfsrPoly();

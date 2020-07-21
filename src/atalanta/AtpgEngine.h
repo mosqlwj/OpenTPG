@@ -99,10 +99,6 @@ namespace hiatpg {
         fstream maskFile;					// just for backward compatibility
         streambuf *maskStream;
 
-        //string reportFile;
-        fstream reportFile;
-        streambuf *reportStream;	// just for backward compatibility
-
         string circuitName;
 
         string lfsrPoly;
@@ -166,7 +162,7 @@ namespace hiatpg {
         void setParams();
         int testCubeGen(int levels, int maxBits, int nStem, Gate **stem, int maxBackTrack, int phase, int *nRedundant, int *nOverBackTrack, int *nBackTrack, int *nTest, int *nPacket, int *nBit, double *fanTime);
         int testGen(int levels, int maxBits, int nStem, Gate **stem, int maxBackTrack, int phase, int *nRedundant, int *nOverBackTrack, int *nBackTrack, int *nTest, int *nPacket, int *nBit, double *fanTime);
-        void setFaults();
+        void processFaults();
         void createFaultlist();
     };
 }
