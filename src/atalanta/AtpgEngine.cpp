@@ -1175,13 +1175,6 @@ namespace hiatpg {
         } else {
             sPatternFile = p->getSPatternFile();
         }
-        if (p->getBenchStream() != NULL) {
-            benchStream = p->getBenchStream();
-        } else {
-            if (p->getBenchFile().length()) {
-                OpenFile(&benchFile, &benchStream, p->getBenchFile(), ios::in);
-            }
-        }
         learnMode = p->getLearnMode();
         faultMode = p->getFaultMode();
         if (p->getFaultStream() != NULL) {

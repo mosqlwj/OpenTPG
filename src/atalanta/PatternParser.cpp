@@ -236,14 +236,9 @@ namespace hiatpg{
 //        else {
 //            cerr << "error: pattern file path is not exist" << endl;
 //        }
-        if(p->getBenchStream() != NULL) {
-            benchStream = p->getBenchStream();
-        }
-        else {
-            if(p->getBenchFile().length()) {
-                OpenFile(&benchFile, &benchStream, p->getBenchFile(), ios::in);
-            }
-        }
+        fstream benchFileStream(p->getNetlistFile());
+        benchStream = benchFileStream.rdbuf();
+
         learnMode = p->getLearnMode();
         faultMode = p->getFaultMode();
         if(p->getFaultStream() != NULL) {

@@ -70,7 +70,13 @@ protected:
     fstream report;
     fstream fault;
     string execAction;    //  执行什么动作
-    string netlistFile;   //  网表文件地址
+    string netlistFile;
+
+public:
+    const string &getNetlistFile() const { return netlistFile; }
+
+protected:
+    //  网表文件地址
     string cacheAddress;  //  网表文件存放在redis时,在redis上的地址
     string target;        // 目录
     string patternPath;   // pattern文件
@@ -243,10 +249,8 @@ public:
         string patternFile = pureName + ".pat";
         string reportFile = pureName + ".report";
 
-        bench.open(netlistFile, ios::in);
         pat.open(patternFile, ios::out);
         report.open(reportFile, ios::out);
-        setBenchStream(bench.rdbuf());
         setSPatternStream(pat.rdbuf());
         setReportStream(report.rdbuf());
         ParserTargetPath();
@@ -297,7 +301,6 @@ public:
     }
 
     string GetNetListPath() const {
-        //            return netlistFile;
         char realp[PATH_MAX];
         realpath(netlistFile.c_str(), realp);
         return string(realp);
@@ -376,22 +379,6 @@ public:
     void setSPatternStream(streambuf *p_sPatternStream) {
         sPatternStream = p_sPatternStream;
         sPatternFile = "";
-    };
-
-    // benchFile
-    string getBenchFile(void) { return benchFile; };
-
-    void setBenchFile(string p_benchFile) {
-        benchFile = p_benchFile;
-        benchStream = NULL;
-    };
-
-    // benchStream
-    streambuf *getBenchStream(void) { return benchStream; };
-
-    void setBenchStream(streambuf *p_benchStream) {
-        benchStream = p_benchStream;
-        benchFile = "";
     };
 
     // learnMode

@@ -26,6 +26,7 @@
 
 #include "FaultSimulation.h"
 #include "ReadableNet.h"
+#include "Params.h"
 
 namespace hiatpg {
 	//////////////////////////////////////////////////////////////////////
@@ -37,7 +38,6 @@ namespace hiatpg {
 	{
 		int i, j;
 
-		circuit.rdbuf(buf);
 		if(readCircuit()<0) {
 			Error::fatalerror(CIRCUITERROR);
 		}
@@ -189,8 +189,12 @@ namespace hiatpg {
 
 	int ReadableNet::readCircuit()
 	{
-		char c=0;
+        auto p = &Params::getInstance();
+        fstream netlistStream;
+        netlistStream.open(p->getNetlistFile(), ios::in);
+        circuit.rdbuf(netlistStream.rdbuf());
 
+		char c=0;
 		int i, j;
 
 		int numberOfGates=0;
@@ -202,12 +206,11 @@ namespace hiatpg {
 		int nofanin=0;
 		int fn;
 		int netSize;
-
 		int nerrs=0;
 
 		HashData *hashPointer;
-		Gate	 *currentGate;
-		Gate	 *pg;
+		Gate *currentGate;
+		Gate *pg;
 
 		vector<Gate *> poGates; //Gate	 *poGates[MAXPO+100];
 		vector<Gate *> pfanin; //Gate	 *pfanin[MAXFIN+100];
