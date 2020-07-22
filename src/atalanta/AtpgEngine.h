@@ -16,8 +16,6 @@
 #include "ReadableNet.h"
 #include "Simulation.h"
 
-//using namespace std;
-
 namespace hiatpg {
     class CustomFaultlist {
         int fault;
@@ -68,28 +66,8 @@ namespace hiatpg {
         string faultFile;
         int maxBackTrack;
         int maxBackTrack1;
-        int randomLimit;
-        char rptMode;
-
-        int	wFaults;
-        int wTestMode;
-        int uFaultMode;
         int simulationMode;
-
         string  faultFilePath;
-
-        //string wFaultFile;
-        fstream wFaultFile;				// just for backward compatibility
-        streambuf *wFaultStream;
-
-        //string udFaultsFile;
-        fstream udFaultsFile;			// just for backward compatibility
-        streambuf *udFaultsStream;
-
-        //string maskFile;
-        fstream maskFile;					// just for backward compatibility
-        streambuf *maskStream;
-
         string circuitName;
 
         int nRedundant;

@@ -16,7 +16,6 @@ namespace hiatpg{
             processFaults();
             indexFaults();
             customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
-            if(wFaults) customFaultlist->printList(wFaultStream);
         }
         else{
             processFaults();
@@ -41,12 +40,6 @@ namespace hiatpg{
         atpgStatus.time = (end-start)/(double)CLOCKS_PER_SEC;
 //        writeResults(atpgStatus);
         printTestPattern(cout);
-
-        customFaultlist->writeFaultMask(maskStream);
-        if(uFaultMode == 1)
-            customFaultlist->writeABFaults(udFaultsStream);
-        else if (uFaultMode == 2)
-            customFaultlist->writeUDFaults(udFaultsStream);
 
         return;
     }
@@ -193,19 +186,10 @@ namespace hiatpg{
 
     void PatternParser::setParams() {
         auto p = &Params::getInstance();
-
-        randomLimit = p->getRandomLimit();
         maxCompact = p->getMaxCompact();
         compact = p->getCompact();
         maxBackTrack = p->getMaxBackTrack();
         maxBackTrack1 = p->getMaxBackTrack1();
-//        if(p->GetPatternPath() != "") {
-//            patternPath = p->GetPatternPath();
-//        }
-//        else {
-//            cerr << "error: pattern file path is not exist" << endl;
-//        }
-
         learnMode = p->getLearnMode();
         faultMode = p->getFaultMode();
         faultFilePath = p->getFaultFile();
@@ -214,7 +198,6 @@ namespace hiatpg{
         setEachLimit(p->getEachLimit());
         noFaultSim = p->getNoFaultSim();
         simulationMode = p->getSimulationMode();
-        wTestMode = p->getWTestMode();
     }
 
     void PatternParser::ReadCinPattern(istream& inStream)

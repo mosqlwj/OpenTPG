@@ -336,12 +336,6 @@ AtpgEngine::AtpgEngine() {
     faultMode = 'd';
     maxBackTrack = 10;
     maxBackTrack1 = 0;
-    randomLimit = 16;
-    rptMode = 'n';
-
-    wFaults = 0;
-    wTestMode = 0;
-    uFaultMode = 0;
     simulationMode = 0;
 
     nTest2 = 0;
@@ -948,9 +942,6 @@ int AtpgEngine::run() {
     indexFaults();
     customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
 
-    // if read from file, print fault.
-    if (wFaults) customFaultlist->printList(wFaultStream);
-
     start = clock();
 
     // reset gates status and init simulation
@@ -971,7 +962,6 @@ int AtpgEngine::run() {
 void AtpgEngine::setParams() {
     auto p = &Params::getInstance();
 
-    randomLimit = p->getRandomLimit();
     maxCompact = p->getMaxCompact();
     compact = p->getCompact();
     maxBackTrack = p->getMaxBackTrack();
@@ -984,7 +974,6 @@ void AtpgEngine::setParams() {
     setEachLimit(p->getEachLimit());
     noFaultSim = p->getNoFaultSim();
     simulationMode = p->getSimulationMode();
-    wTestMode = p->getWTestMode();
 }
 
 }  // namespace hiatpg
