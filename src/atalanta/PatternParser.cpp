@@ -44,23 +44,7 @@ processFaults();
         end = clock();
         atpgStatus.time = (end-start)/(double)CLOCKS_PER_SEC;
 //        writeResults(atpgStatus);
-        switch (wTestMode)
-        {
-            case 0:
-                break;
-            case 1:
-                writeTestFile();
-                break;
-            case 2:
-                writeTestFileOut();
-                break;
-            case 3:
-                writeMultiTestFile();
-                break;
-            case 4:
-                writeMultiTestFileMask();
-                break;
-        }
+        printTestPattern(cout);
 
         customFaultlist->writeFaultMask(maskStream);
         if(uFaultMode == 1)
@@ -69,13 +53,12 @@ processFaults();
             customFaultlist->writeUDFaults(udFaultsStream);
 
         //Close opened files
-        if(patternFile.is_open()) { patternFile.close(); patternStream = NULL; };
-        if(udFaultsFile.is_open()) { udFaultsFile.close(); udFaultsStream = NULL; };
-        if(wFaultFile.is_open()) { wFaultFile.close(); wFaultStream = NULL; };
-        if(maskFile.is_open()) { maskFile.close(); maskStream = NULL; };
-        if(genResFile.is_open()) { genResFile.close(); genResStream = NULL; };
+        if(udFaultsFile.is_open()) { udFaultsFile.close(); udFaultsStream = NULL; }
+        if(wFaultFile.is_open()) { wFaultFile.close(); wFaultStream = NULL; }
+        if(maskFile.is_open()) { maskFile.close(); maskStream = NULL; }
+        if(genResFile.is_open()) { genResFile.close(); genResStream = NULL; }
 
-        return ;
+        return;
     }
 
     void PatternParser::CubeGenerateTest()
@@ -262,10 +245,6 @@ processFaults();
         }
         //maskFile = p->getMaskFile();
         wTestMode = p->getWTestMode();
-        lfsrSimMode = p->getLfsrSimMode();
-        lfsrPoly = p->getLfsrPoly();
-        lfsrSeed = p->getLfsrSeed();
-        lfsrNum = p->getLfsrNum();
     }
 
     void PatternParser::ReadCinPattern(istream& inStream)

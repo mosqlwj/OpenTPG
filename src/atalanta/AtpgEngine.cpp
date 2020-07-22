@@ -344,7 +344,6 @@ AtpgEngine::AtpgEngine() {
     wTestMode = 0;
     uFaultMode = 0;
     simulationMode = 0;
-    lfsrSimMode = 0;
 
     nTest2 = 0;
     nTest3 = 0;
@@ -361,8 +360,6 @@ AtpgEngine::AtpgEngine() {
     lid = 0;
 
     myCurrFault = NULL;
-
-    patternStream = NULL;
     udFaultsStream = NULL;
     wFaultStream = NULL;
     maskStream = NULL;
@@ -664,7 +661,6 @@ void AtpgEngine::initFS() {
     nRedundant = checkRedundantFaults();
     pInitSimulation(levels);
 
-    maxDetect = numberOfFaults;
     testVectors.clear();
     testVectors1.clear();
     testStore.clear();
@@ -677,29 +673,24 @@ void AtpgEngine::initFS() {
     allOne = ALL1;
 }
 
-void AtpgEngine::readTestFile() {
+void AtpgEngine::readTestFile(const string &patternFileName) {
     string s;
 
-    if (patternStream != NULL) {
-        istream f(patternStream);
-        testVector.num = 0;
-        testVector.inpVars = numberOfPrimaryInputs;
-        testVector.outVars = numberOfPrimaryOutputs;
+    fstream patternStream;
+    patternStream.open(patternFileName, ios::in);
+    testVector.num = 0;
+    testVector.inpVars = numberOfPrimaryInputs;
+    testVector.outVars = numberOfPrimaryOutputs;
 
-        while (f.peek() > 0) {
-            // f.getline(s, MAXPI);
-            // f.get(s, MAXPI);
-            f >> s;
-            myCurrFault = 0;
-            if (s.length() != numberOfPrimaryInputs) {
-                /*cerr<<"Fatal error: Incorrect number of test vector inputs"<<endl;
-                exit(0);*/
-                stringstream ss;
-                ss << "Fatal error: Incorrect number of test vector inputs";
-                throw ss.str();
-            }
-            addTestVector(&s, NULL, -1);
+    while (patternStream.peek() > 0) {
+        patternStream >> s;
+        myCurrFault = 0;
+        if (s.length() != numberOfPrimaryInputs) {
+            stringstream ss;
+            ss << "Fatal error: Incorrect number of test vector inputs";
+            throw ss.str();
         }
+        addTestVector(&s, NULL, -1);
     }
 }
 
@@ -916,7 +907,7 @@ void AtpgEngine::generateTest() {
     }
 }
 
-void AtpgEngine::printTestVector(string label) {
+void AtpgEngine::printTestVector(const string &label) {
     cout << label << endl;
     list<TestVector *>::iterator current, final;
 
@@ -930,95 +921,9 @@ void AtpgEngine::printTestVector(string label) {
     cout << "end of pattern!" << endl;
 }
 
-void AtpgEngine::writeTestFile() {
-    //    Writes a test file. Only test vectors (pat format).
-    //    For -D n does not distinguish between vectors for the same fault - do not use here!
-
-    list<TestVector *>::iterator current, final;
-
-    if (patternStream != NULL) {
-        ostream file(patternStream);
-        file.clear();
-
-        current = testVector.vectors.begin();
-        final = testVector.vectors.end();
-
-        //            cout << "---test pattern---" << endl;
-        while (current != final) {
-            file << (*current)->ivct << endl;
-            //                cout << (*current)->ivct << endl;
-            current++;
-        }
-    }
-}
-
-void AtpgEngine::writeTestFileOut() {
-    //    Writes a test file. Only test vectors (pat format).
-    //    For -D n does not distinguish between vectors for the same fault - do not use here!
-
-
-    list<TestVector *>::iterator current, final;
-
-    if (patternStream != NULL) {
-        ostream file(patternStream);
-        file.clear();
-
-        current = testVector.vectors.begin();
-        final = testVector.vectors.end();
-
-        while (current != final) {
-            file << (*current)->ivct << " " << (*current)->ovct << endl;
-            current++;
-        }
-    }
-}
-
-void AtpgEngine::writeMultiTestFile() {
-    //  Writes a test file with outputs. Numbers the vectors for one fault (for -D)
-
-
-    list<TestVector *>::iterator current, final;
-
-    if (patternStream != NULL) {
-        ostream file(patternStream);
-        file.clear();
-
-        current = testVector.vectors.begin();
-        final = testVector.vectors.end();
-
-        while (current != final) {
-            file << (*current)->no << ": " << (*current)->ivct << " " << (*current)->ovct << endl;
-            current++;
-        }
-    }
-}
-
-void AtpgEngine::writeMultiTestFileMask() {
-    //  Writes a test file with outputs. Numbers the vectors for one fault (for -D)
-
-
-    list<TestVector *>::iterator current, final;
-    TestVector *temp;
-
-    if (patternStream != NULL) {
-        ostream file(patternStream);
-        file.clear();
-
-        current = testVector.vectors.begin();
-        final = testVector.vectors.end();
-
-        while (current != final) {
-            temp = *current;
-
-            file << temp->no << ": " << temp->ivct << " " << temp->ovct << " ";
-
-            if (temp->mask)
-                for (int i = 0; i < numberOfFaults; i++) file << temp->mask[i] + '0';
-
-            file << endl;
-
-            current++;
-        }
+void AtpgEngine::printTestPattern(ostream &patternStream) {
+    for (auto current = testVector.vectors.begin(); current != testVector.vectors.end(); current++) {
+        patternStream << (*current)->ivct << endl;
     }
 }
 
@@ -1094,22 +999,7 @@ int AtpgEngine::run() {
     end = clock();
     atpgStatus.time = (end - start) / (double)CLOCKS_PER_SEC;
     printFinalReport(atpgStatus);
-    switch (wTestMode) {
-        case 0:
-            break;
-        case 1:
-            writeTestFile();
-            break;
-        case 2:
-            writeTestFileOut();
-            break;
-        case 3:
-            writeMultiTestFile();
-            break;
-        case 4:
-            writeMultiTestFileMask();
-            break;
-    }
+    printTestPattern(cout);
 
     customFaultlist->writeFaultMask(maskStream);
     if (uFaultMode == 1)
@@ -1117,11 +1007,6 @@ int AtpgEngine::run() {
     else if (uFaultMode == 2)
         customFaultlist->writeUDFaults(udFaultsStream);
 
-    // Close opened files
-    if (patternFile.is_open()) {
-        patternFile.close();
-        patternStream = NULL;
-    };
     if (udFaultsFile.is_open()) {
         udFaultsFile.close();
         udFaultsStream = NULL;
@@ -1151,11 +1036,6 @@ void AtpgEngine::setParams() {
     compact = p->getCompact();
     maxBackTrack = p->getMaxBackTrack();
     maxBackTrack1 = p->getMaxBackTrack1();
-    if (p->getSPatternStream() != NULL) {
-        patternStream = p->getSPatternStream();
-    } else {
-        sPatternFile = p->getSPatternFile();
-    }
     learnMode = p->getLearnMode();
     faultMode = p->getFaultMode();
     faultFile = p->getFaultFileName();
@@ -1183,10 +1063,6 @@ void AtpgEngine::setParams() {
     // maskFile = p->getMaskFile();
 
     wTestMode = p->getWTestMode();
-    lfsrSimMode = p->getLfsrSimMode();
-    lfsrPoly = p->getLfsrPoly();
-    lfsrSeed = p->getLfsrSeed();
-    lfsrNum = p->getLfsrNum();
 }
 
 void AtpgEngine::OpenFile(fstream *file, streambuf **buf, string filename, ios_base::open_mode mode) {

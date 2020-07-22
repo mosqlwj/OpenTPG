@@ -80,11 +80,6 @@ namespace hiatpg {
         fstream genResFile;
         streambuf *genResStream;
 
-        string sPatternFile;				// it must be here cause this file is I/O and it is opened after parameters have been processed
-        fstream patternFile;			// just for backward compatibility
-        streambuf *patternStream;
-
-        //string faultFile;
         string  faultFilePath;
 
         //string wFaultFile;
@@ -101,12 +96,6 @@ namespace hiatpg {
 
         string circuitName;
 
-        string lfsrPoly;
-        string lfsrSeed;
-        int lfsrNum;
-        int lfsrSimMode;
-
-        int maxDetect;
         int nRedundant;
         int mnTest;
         int mnPacket;
@@ -117,23 +106,10 @@ namespace hiatpg {
 
         double fantime;
 
-//		TestVectors tv;
-
-        //fstream circuit;
-
-        //Simulation simulation;
-
-        void	help();
         void	indexFaults() {for(int i=0;i<numberOfFaults;i++) faultList[i]->index=i;};
         void	initFS();
-        int		optionSet(int argc,char **argv);
-        int		readOption(char option,char **array,int i,int n);
-        void printTestVector(string label);
-        void	readTestFile();
-        void	writeTestFile();
-        void	writeTestFileOut();
-        void	writeMultiTestFile();
-        void	writeMultiTestFileMask();
+        void readTestFile(const string &patternFileName);
+        void printTestPattern(ostream &patternStream);
 
         void printFinalReport(AtpgStatus ar);
         void writeResults(AtpgStatus ar);
@@ -151,6 +127,7 @@ namespace hiatpg {
         int  simulateVector(string vct);
         void storeLearn(Gate *gut,level val);
         void generateTest();
+        void printTestVector(const string &label);
 
         string octToBin(string *c);
         void OpenFile(fstream *file, streambuf **buf, string filename, ios_base::open_mode);
