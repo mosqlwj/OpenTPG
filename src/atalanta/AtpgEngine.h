@@ -27,10 +27,6 @@ namespace hiatpg {
         CustomFaultlist(int fault,Fault **faultList);
         void printFaultList();
         void updateFaultList();
-        void printList(std::streambuf *fn);
-        void writeFaultMask(std::streambuf *fn);
-        void writeABFaults(std::streambuf *fn);
-        void writeUDFaults(std::streambuf *fn);
     };
 
     struct AtpgStatus {
@@ -101,7 +97,6 @@ namespace hiatpg {
         int  simulateVector(string vct);
         void storeLearn(Gate *gut,level val);
         void generateTest();
-        void printTestVector(const string &label);
 
         string octToBin(string *c);
 

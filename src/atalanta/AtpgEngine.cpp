@@ -246,13 +246,6 @@ CustomFaultlist::CustomFaultlist(int fault, Fault **faultList) : fault(fault), f
     }
 }
 
-void CustomFaultlist::printList(std::streambuf *fn) {
-    if (fn != NULL) {
-        ostream f(fn);
-        for (int i = 0; i < fault; i++) f << names[i] << endl;
-    }
-}
-
 void CustomFaultlist::printFaultList() {
     for (int i = 0; i < fault; i++) {
         auto pCurrentFault = faultList[i];
@@ -297,38 +290,6 @@ void CustomFaultlist::updateFaultList() {
     }
 
     faultFile.close();
-}
-
-void CustomFaultlist::writeFaultMask(std::streambuf *fn) {
-    //  Writes the faltlist mask, according the order in fault
-    //  0 = not detected
-    //  1 = detected
-    //  3 = redundant
-    //  4 = aborted
-
-
-    if (fn != NULL) {
-        ostream file(fn);
-        for (int i = 0; i < fault; i++) file << (char)(mask[i] + '0');
-    }
-}
-
-void CustomFaultlist::writeABFaults(std::streambuf *fn) {
-    if (fn != NULL) {
-        ostream file(fn);
-
-        for (int i = 0; i < fault; i++)
-            if (mask[i] == 4) file << names[i] << endl;
-    }
-}
-
-void CustomFaultlist::writeUDFaults(std::streambuf *fn) {
-    if (fn != NULL) {
-        ostream file(fn);
-
-        for (int i = 0; i < fault; i++)
-            if (mask[i] != 1) file << names[i] << endl;
-    }
 }
 
 AtpgEngine::AtpgEngine() {
