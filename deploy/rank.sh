@@ -284,7 +284,7 @@ function main()
 
 
     #   对输入参数进行强校验: inputdir
-    if [[ ! -d "${inputdir}" ]]; then
+    if [[ ! -e "${inputdir}" ]]; then
         echo    "Error: Can not access the input dir of current scene: '${inputdir}'"
         return  5
     fi
