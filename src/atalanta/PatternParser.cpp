@@ -33,13 +33,13 @@ processFaults();
         // reset gates status and init simulation
         initFS();
 
-        if (inputMode == "pattern"){
+        if (inputMode == "pattern") {
             PatternGenerateTest();
         } else {
             CubeGenerateTest();
         }
         atpgStatus = getResults();
-        customFaultlist->updateFaultList();
+//        customFaultlist->updateFaultList();
 
         end = clock();
         atpgStatus.time = (end-start)/(double)CLOCKS_PER_SEC;
