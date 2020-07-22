@@ -77,9 +77,6 @@ namespace hiatpg {
         int uFaultMode;
         int simulationMode;
 
-        fstream genResFile;
-        streambuf *genResStream;
-
         string  faultFilePath;
 
         //string wFaultFile;

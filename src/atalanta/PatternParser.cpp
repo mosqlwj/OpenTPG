@@ -52,12 +52,6 @@ processFaults();
         else if (uFaultMode == 2)
             customFaultlist->writeUDFaults(udFaultsStream);
 
-        //Close opened files
-        if(udFaultsFile.is_open()) { udFaultsFile.close(); udFaultsStream = NULL; }
-        if(wFaultFile.is_open()) { wFaultFile.close(); wFaultStream = NULL; }
-        if(maskFile.is_open()) { maskFile.close(); maskStream = NULL; }
-        if(genResFile.is_open()) { genResFile.close(); genResStream = NULL; }
-
         return;
     }
 

@@ -360,10 +360,6 @@ AtpgEngine::AtpgEngine() {
     lid = 0;
 
     myCurrFault = NULL;
-    udFaultsStream = NULL;
-    wFaultStream = NULL;
-    maskStream = NULL;
-    genResStream = NULL;
 }
 
 void AtpgEngine::processFaults() {
@@ -1006,23 +1002,6 @@ int AtpgEngine::run() {
         customFaultlist->writeABFaults(udFaultsStream);
     else if (uFaultMode == 2)
         customFaultlist->writeUDFaults(udFaultsStream);
-
-    if (udFaultsFile.is_open()) {
-        udFaultsFile.close();
-        udFaultsStream = NULL;
-    };
-    if (wFaultFile.is_open()) {
-        wFaultFile.close();
-        wFaultStream = NULL;
-    };
-    if (maskFile.is_open()) {
-        maskFile.close();
-        maskStream = NULL;
-    };
-    if (genResFile.is_open()) {
-        genResFile.close();
-        genResStream = NULL;
-    };
 
     return 0;
 }
