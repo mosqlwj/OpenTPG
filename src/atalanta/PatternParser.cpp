@@ -19,14 +19,10 @@ namespace hiatpg{
             if(wFaults) customFaultlist->printList(wFaultStream);
         }
         else{
-//            numberOfFaults = readFaultsFromCin(myNumberOfStems,myStem);
-processFaults();
+            processFaults();
             indexFaults();
             customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
         }
-        // if read from file, print fault.
-
-        iseed=Random::seed(iseed);
 
         start = clock();
 
@@ -199,7 +195,6 @@ processFaults();
         auto p = &Params::getInstance();
 
         randomLimit = p->getRandomLimit();
-        iseed = p->getIseed();
         maxCompact = p->getMaxCompact();
         compact = p->getCompact();
         maxBackTrack = p->getMaxBackTrack();

@@ -64,7 +64,6 @@ namespace hiatpg {
         vector<unordered_map<int, int>> testCubes;
     protected:
         char inputMode;
-        int iseed;
         char faultMode;
         string faultFile;
         int maxBackTrack;

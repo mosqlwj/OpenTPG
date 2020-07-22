@@ -333,7 +333,6 @@ void CustomFaultlist::writeUDFaults(std::streambuf *fn) {
 
 AtpgEngine::AtpgEngine() {
     inputMode = 'd';
-    iseed = 0;
     faultMode = 'd';
     maxBackTrack = 10;
     maxBackTrack1 = 0;
@@ -906,7 +905,6 @@ void AtpgEngine::generateCube() {
     numberOfFaults = readFaultsFromFileStream(cin, myNumberOfStems, myStem);
     indexFaults();
     customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
-    iseed = Random::seed(iseed);
 
     start = clock();
     int i;
@@ -953,8 +951,6 @@ int AtpgEngine::run() {
     // if read from file, print fault.
     if (wFaults) customFaultlist->printList(wFaultStream);
 
-    iseed = Random::seed(iseed);
-
     start = clock();
 
     // reset gates status and init simulation
@@ -969,12 +965,6 @@ int AtpgEngine::run() {
     printFinalReport(atpgStatus);
     printTestPattern(cout);
 
-    customFaultlist->writeFaultMask(maskStream);
-    if (uFaultMode == 1)
-        customFaultlist->writeABFaults(udFaultsStream);
-    else if (uFaultMode == 2)
-        customFaultlist->writeUDFaults(udFaultsStream);
-
     return 0;
 }
 
@@ -982,7 +972,6 @@ void AtpgEngine::setParams() {
     auto p = &Params::getInstance();
 
     randomLimit = p->getRandomLimit();
-    iseed = p->getIseed();
     maxCompact = p->getMaxCompact();
     compact = p->getCompact();
     maxBackTrack = p->getMaxBackTrack();
