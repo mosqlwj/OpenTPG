@@ -1145,7 +1145,6 @@ int AtpgEngine::run() {
 void AtpgEngine::setParams() {
     auto p = &Params::getInstance();
 
-    cctMode = p->getCctMode();
     randomLimit = p->getRandomLimit();
     iseed = p->getIseed();
     maxCompact = p->getMaxCompact();

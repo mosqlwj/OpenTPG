@@ -30,7 +30,6 @@ private:
     cmdline::parser options;
 
 protected:
-    char cctMode;
     int randomLimit;
     unsigned int iseed;
     int maxCompact;
@@ -93,7 +92,6 @@ protected:
         options.add<string>("cache", 'c', "The url where the netlist saved in redi", false, "");
         options.add<string>("fault", 'f', "fault file name", false, "");
         options.add<string>("target", 't', "The directory of statistics input files", false, "");
-        cctMode = ISCAS89;
         randomLimit = 16;
         iseed = 0;
         maxCompact = 2;
@@ -247,25 +245,11 @@ public:
         }
 
         setWTestMode(1);
-        setCctMode('9');
         setIseed(23);
     }
 
     const string &getExecAction() { return execAction; }
     const string &getFaultFileName() { return faultFile; }
-
-    // cctMode
-    char getCctMode(void) { return cctMode; }
-
-    void setCctMode(char p_cctMode) {
-        if (p_cctMode == ISCAS89 || p_cctMode == ISCAS85) {
-            cctMode = p_cctMode;
-        } else {
-            stringstream ss;
-            ss << "Wrong value. Value must be " << ISCAS85 << " or " << ISCAS89 << ".";
-            throw ss.str();
-        }
-    };
 
     // randomLimit
     int getRandomLimit(void) { return randomLimit; };
