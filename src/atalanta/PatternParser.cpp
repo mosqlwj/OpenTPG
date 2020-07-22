@@ -224,26 +224,7 @@ processFaults();
         genAllPat = p->getGenAllPat();
         setEachLimit(p->getEachLimit());
         noFaultSim = p->getNoFaultSim();
-        uFaultMode = p->getUFaultMode();
-        if(p->getUdFaultsStream() != NULL) {
-            udFaultsStream = p->getUdFaultsStream();
-        }
-        else {
-            if(p->getUdFaultsFile().length()) {
-                OpenFile(&udFaultsFile, &udFaultsStream, p->getUdFaultsFile(), ios::out);
-            }
-        }
-        //udFaultsFile = p->getUdFaultsFile();
         simulationMode = p->getSimulationMode();
-        if(p->getMaskStream() != NULL) {
-            maskStream = p->getMaskStream();
-        }
-        else {
-            if(p->getMaskFile().length()) {
-                OpenFile(&maskFile, &maskStream, p->getMaskFile(), ios::out);
-            }
-        }
-        //maskFile = p->getMaskFile();
         wTestMode = p->getWTestMode();
     }
 

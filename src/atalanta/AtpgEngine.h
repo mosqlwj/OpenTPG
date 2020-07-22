@@ -130,7 +130,6 @@ namespace hiatpg {
         void printTestVector(const string &label);
 
         string octToBin(string *c);
-        void OpenFile(fstream *file, streambuf **buf, string filename, ios_base::open_mode);
 
     public:
         AtpgEngine();
