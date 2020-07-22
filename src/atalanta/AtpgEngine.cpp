@@ -880,41 +880,13 @@ void AtpgEngine::generateTest() {
             compact = 'r';
         }
 
-        // get test pattern
-        //            int k= mnPacket + 1;
-        //            while(--k>=0) {
-        //                for(int j=0;j<numberOfPrimaryInputs;j++)
-        //                    gates[j]->output1=gates[j]->output=testVectors[k][j];
-        //            }
-        //            for(i=mnBit-1;i>=0;i--) {
-        //                getTestVector(i);
-        //            }
-        //            printTestVector("after atpg");
-
         nTest3 = compactTest(levels, myNumberOfStems, myStem, &shuf, &nDetect3, mnPacket, mnBit, BITSIZE);
-        //            printTestVector("after atpg");
         if (nDetect3 != mnDetect) {
-            /*cout<<"Error in test compaction: m_ndetect="<<mnDetect<<", ndetect3="<<nDetect3<<endl;
-            exit(0);*/
             stringstream ss;
             ss << "Error in test compaction: m_ndetect=" << mnDetect << ", ndetect3=" << nDetect3;
             throw ss.str();
         }
     }
-}
-
-void AtpgEngine::printTestVector(const string &label) {
-    cout << label << endl;
-    list<TestVector *>::iterator current, final;
-
-    current = testVector.vectors.begin();
-    final = testVector.vectors.end();
-
-    while (current != final) {
-        cout << (*current)->ivct << endl;
-        current++;
-    }
-    cout << "end of pattern!" << endl;
 }
 
 void AtpgEngine::printTestPattern(ostream &patternStream) {
