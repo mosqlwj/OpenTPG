@@ -117,9 +117,16 @@ function    execute_rank()
 
     #   找到作为输入的bench文件
     echo    "Locate the netlist file..."
-    local benchfile=$(find "${inputdir}" -name *.bench | head -n 1)
-    if [[ "${benchfile}" == "" ]]; then
-        echo    "Error: Can not access the bench file at: '${inputdir}'"
+    local benchfile=${inputdir}
+    if [[ -d "${inputdir}" ]]; then
+        benchfile=$(find "${inputdir}" -name *.bench | head -n 1)
+        if [[ "${benchfile}" == "" ]]; then
+            echo    "Error: Can not access the bench file at: '${benchfile}'"
+            return  6
+        fi
+    fi
+    if [[ ! -f "${benchfile}" ]]; then
+        echo    "Error: Can not access the bench file at: '${benchfile}'"
         return  6
     fi
     local rankname=$(basename "${benchfile}" | sed 's/.bench//g')
