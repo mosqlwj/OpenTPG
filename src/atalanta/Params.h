@@ -30,7 +30,6 @@ private:
     cmdline::parser options;
 
 protected:
-    char cctMode;
     int randomLimit;
     unsigned int iseed;
     int maxCompact;
@@ -55,8 +54,6 @@ protected:
     int simulationMode;
     string maskFile;
     streambuf *maskStream;
-    string reportFile;
-    streambuf *reportStream;
     int wTestMode;
     int lfsrSimMode;
     string lfsrPoly;
@@ -66,6 +63,7 @@ protected:
     fstream fault;
     string execAction;    //  执行什么动作
     string netlistFile;
+    string reportFile;
 
 public:
     const string &getNetlistFile() const { return netlistFile; }
@@ -94,7 +92,6 @@ protected:
         options.add<string>("cache", 'c', "The url where the netlist saved in redi", false, "");
         options.add<string>("fault", 'f', "fault file name", false, "");
         options.add<string>("target", 't', "The directory of statistics input files", false, "");
-        cctMode = ISCAS89;
         randomLimit = 16;
         iseed = 0;
         maxCompact = 2;
@@ -119,8 +116,6 @@ protected:
         simulationMode = 0;
         maskFile = "";
         maskStream = NULL;
-        reportFile = "";
-        reportStream = NULL;
         wTestMode = 0;
         lfsrSimMode = 0;
         lfsrPoly = "";
@@ -239,11 +234,7 @@ public:
 
         string pureName = netlistFile.substr(0, netlistFile.rfind(".bench"));
         string patternFile = pureName + ".pat";
-        string reportFile = pureName + ".report";
-
-        //lg
-        //pat.open(patternFile, ios::out);
-        //setSPatternStream(pat.rdbuf());
+        reportFile = pureName + ".report";
         ParserTargetPath();
 
         faultFile = options.get<string>("fault");
@@ -254,25 +245,11 @@ public:
         }
 
         setWTestMode(1);
-        setCctMode('9');
         setIseed(23);
     }
 
     const string &getExecAction() { return execAction; }
     const string &getFaultFileName() { return faultFile; }
-
-    // cctMode
-    char getCctMode(void) { return cctMode; }
-
-    void setCctMode(char p_cctMode) {
-        if (p_cctMode == ISCAS89 || p_cctMode == ISCAS85) {
-            cctMode = p_cctMode;
-        } else {
-            stringstream ss;
-            ss << "Wrong value. Value must be " << ISCAS85 << " or " << ISCAS89 << ".";
-            throw ss.str();
-        }
-    };
 
     // randomLimit
     int getRandomLimit(void) { return randomLimit; };
@@ -540,19 +517,6 @@ public:
 
     // reportFile
     string getReportFile(void) { return reportFile; };
-
-    void setReportFile(string p_reportFile) {
-        reportFile = p_reportFile;
-        reportStream = NULL;
-    };
-
-    // reportStream
-    streambuf *getReportStream(void) { return reportStream; };
-
-    void setReportStream(streambuf *p_reportStream) {
-        reportStream = p_reportStream;
-        reportFile = "";
-    };
 
     // wTestMode
     int getWTestMode(void) { return wTestMode; };

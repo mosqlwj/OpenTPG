@@ -9,7 +9,7 @@
 #include "Global.h"
 #include "Defines.h"
 
-#define INCLUDE_HOPE
+//#define INCLUDE_HOPE
 
 using namespace std;
 

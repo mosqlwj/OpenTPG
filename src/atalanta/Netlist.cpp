@@ -1,25 +1,16 @@
 // Netlist.cpp: implementation of the Netlist class.
 //
 //////////////////////////////////////////////////////////////////////
-#include <string>
 #include <list>
 #include <iostream>
-#include <fstream>
 #include <sstream>
-
 #include "Defines.h"
-#include "Truthtable.h"
-#include "Parameters.h"
-#include "Error.h"
-
-#include "Hash.h"
 #include "Gate.h"
 #include "Stack.h"
 #include "Netlist.h"
-#include "Atpg.h"
+#include "AtpgEngine.h"
 #include "Globals.h"
 #include <string.h>
-//#include "fault.h"
 
 namespace hiatpg {
 	//////////////////////////////////////////////////////////////////////
@@ -33,8 +24,6 @@ namespace hiatpg {
 			stringstream ss;
 			ss <<"Error: #pi="<<numberOfPrimaryInputs<<", #po="<<numberOfPrimaryOutputs<<", #gate="<<numberOfGates;
 			throw ss.str();
-			//cerr<<"Error: #pi="<<numberOfPrimaryInputs<<", #po="<<numberOfPrimaryOutputs<<", #gate="<<numberOfGates<<endl;
-			//Error::fatalerror(CIRCUITERROR);
 		}
 		
 		if(numberOfFlipFlops > 0)
@@ -42,9 +31,6 @@ namespace hiatpg {
 			stringstream ss;
 			ss  << "Error: "<<numberOfFlipFlops<<" flip-flop exist in the circuit";
 			throw ss.str();
-			throw ss.str();
-			/*cerr << "Error: "<<numberOfFlipFlops<<" flip-flop exist in the circuit."<<endl;
-			Error::fatalerror(CIRCUITERROR);*/
 		}
 	}
 	

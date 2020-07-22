@@ -16,66 +16,32 @@ namespace hiatpg{
             processFaults();
             indexFaults();
             customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
-            if(wFaults) customFaultlist->printList(wFaultStream);
         }
         else{
-//            numberOfFaults = readFaultsFromCin(myNumberOfStems,myStem);
-processFaults();
+            processFaults();
             indexFaults();
             customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
         }
-        // if read from file, print fault.
-
-        iseed=Random::seed(iseed);
 
         start = clock();
 
         // reset gates status and init simulation
         initFS();
 
-        if (inputMode == "pattern"){
+        if (inputMode == "pattern") {
             PatternGenerateTest();
         } else {
             CubeGenerateTest();
         }
         atpgStatus = getResults();
-        customFaultlist->updateFaultList();
+//        customFaultlist->updateFaultList();
 
         end = clock();
         atpgStatus.time = (end-start)/(double)CLOCKS_PER_SEC;
 //        writeResults(atpgStatus);
-        switch (wTestMode)
-        {
-            case 0:
-                break;
-            case 1:
-                writeTestFile();
-                break;
-            case 2:
-                writeTestFileOut();
-                break;
-            case 3:
-                writeMultiTestFile();
-                break;
-            case 4:
-                writeMultiTestFileMask();
-                break;
-        }
+        printTestPattern(cout);
 
-        customFaultlist->writeFaultMask(maskStream);
-        if(uFaultMode == 1)
-            customFaultlist->writeABFaults(udFaultsStream);
-        else if (uFaultMode == 2)
-            customFaultlist->writeUDFaults(udFaultsStream);
-
-        //Close opened files
-        if(patternFile.is_open()) { patternFile.close(); patternStream = NULL; };
-        if(udFaultsFile.is_open()) { udFaultsFile.close(); udFaultsStream = NULL; };
-        if(wFaultFile.is_open()) { wFaultFile.close(); wFaultStream = NULL; };
-        if(maskFile.is_open()) { maskFile.close(); maskStream = NULL; };
-        if(genResFile.is_open()) { genResFile.close(); genResStream = NULL; };
-
-        return ;
+        return;
     }
 
     void PatternParser::CubeGenerateTest()
@@ -220,21 +186,10 @@ processFaults();
 
     void PatternParser::setParams() {
         auto p = &Params::getInstance();
-
-        cctMode = p->getCctMode();
-        randomLimit = p->getRandomLimit();
-        iseed = p->getIseed();
         maxCompact = p->getMaxCompact();
         compact = p->getCompact();
         maxBackTrack = p->getMaxBackTrack();
         maxBackTrack1 = p->getMaxBackTrack1();
-//        if(p->GetPatternPath() != "") {
-//            patternPath = p->GetPatternPath();
-//        }
-//        else {
-//            cerr << "error: pattern file path is not exist" << endl;
-//        }
-
         learnMode = p->getLearnMode();
         faultMode = p->getFaultMode();
         faultFilePath = p->getFaultFile();
@@ -242,31 +197,7 @@ processFaults();
         genAllPat = p->getGenAllPat();
         setEachLimit(p->getEachLimit());
         noFaultSim = p->getNoFaultSim();
-        uFaultMode = p->getUFaultMode();
-        if(p->getUdFaultsStream() != NULL) {
-            udFaultsStream = p->getUdFaultsStream();
-        }
-        else {
-            if(p->getUdFaultsFile().length()) {
-                OpenFile(&udFaultsFile, &udFaultsStream, p->getUdFaultsFile(), ios::out);
-            }
-        }
-        //udFaultsFile = p->getUdFaultsFile();
         simulationMode = p->getSimulationMode();
-        if(p->getMaskStream() != NULL) {
-            maskStream = p->getMaskStream();
-        }
-        else {
-            if(p->getMaskFile().length()) {
-                OpenFile(&maskFile, &maskStream, p->getMaskFile(), ios::out);
-            }
-        }
-        //maskFile = p->getMaskFile();
-        wTestMode = p->getWTestMode();
-        lfsrSimMode = p->getLfsrSimMode();
-        lfsrPoly = p->getLfsrPoly();
-        lfsrSeed = p->getLfsrSeed();
-        lfsrNum = p->getLfsrNum();
     }
 
     void PatternParser::ReadCinPattern(istream& inStream)

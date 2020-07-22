@@ -16,8 +16,6 @@
 #include "ReadableNet.h"
 #include "Simulation.h"
 
-//using namespace std;
-
 namespace hiatpg {
     class CustomFaultlist {
         int fault;
@@ -29,10 +27,6 @@ namespace hiatpg {
         CustomFaultlist(int fault,Fault **faultList);
         void printFaultList();
         void updateFaultList();
-        void printList(std::streambuf *fn);
-        void writeFaultMask(std::streambuf *fn);
-        void writeABFaults(std::streambuf *fn);
-        void writeUDFaults(std::streambuf *fn);
     };
 
     struct AtpgStatus {
@@ -64,49 +58,14 @@ namespace hiatpg {
         vector<unordered_map<int, int>> testCubes;
     protected:
         char inputMode;
-        int iseed;
         char faultMode;
         string faultFile;
         int maxBackTrack;
         int maxBackTrack1;
-        int randomLimit;
-        char rptMode;
-
-        int	wFaults;
-        int wTestMode;
-        int uFaultMode;
         int simulationMode;
-
-        fstream genResFile;
-        streambuf *genResStream;
-
-        string sPatternFile;				// it must be here cause this file is I/O and it is opened after parameters have been processed
-        fstream patternFile;			// just for backward compatibility
-        streambuf *patternStream;
-
-        //string faultFile;
         string  faultFilePath;
-
-        //string wFaultFile;
-        fstream wFaultFile;				// just for backward compatibility
-        streambuf *wFaultStream;
-
-        //string udFaultsFile;
-        fstream udFaultsFile;			// just for backward compatibility
-        streambuf *udFaultsStream;
-
-        //string maskFile;
-        fstream maskFile;					// just for backward compatibility
-        streambuf *maskStream;
-
         string circuitName;
 
-        string lfsrPoly;
-        string lfsrSeed;
-        int lfsrNum;
-        int lfsrSimMode;
-
-        int maxDetect;
         int nRedundant;
         int mnTest;
         int mnPacket;
@@ -117,23 +76,10 @@ namespace hiatpg {
 
         double fantime;
 
-//		TestVectors tv;
-
-        //fstream circuit;
-
-        //Simulation simulation;
-
-        void	help();
         void	indexFaults() {for(int i=0;i<numberOfFaults;i++) faultList[i]->index=i;};
         void	initFS();
-        int		optionSet(int argc,char **argv);
-        int		readOption(char option,char **array,int i,int n);
-        void printTestVector(string label);
-        void	readTestFile();
-        void	writeTestFile();
-        void	writeTestFileOut();
-        void	writeMultiTestFile();
-        void	writeMultiTestFileMask();
+        void readTestFile(const string &patternFileName);
+        void printTestPattern(ostream &patternStream);
 
         void printFinalReport(AtpgStatus ar);
         void writeResults(AtpgStatus ar);
@@ -153,7 +99,6 @@ namespace hiatpg {
         void generateTest();
 
         string octToBin(string *c);
-        void OpenFile(fstream *file, streambuf **buf, string filename, ios_base::open_mode);
 
     public:
         AtpgEngine();
