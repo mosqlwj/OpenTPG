@@ -219,7 +219,7 @@ function    execute_rank()
 
     #   下载输出结果
     echo    "Download the outputs..."
-    "${HADOOP_HOME}/bin/dfs" dfs -get   "${dfsoutputdir}"  "${rankdir}/output"
+    "${HADOOP_HOME}/bin/hdfs" dfs -get   "${dfsoutputdir}"  "${rankdir}/output"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Download the outputs failed(${RESULT})"
