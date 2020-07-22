@@ -1498,15 +1498,6 @@ MyFaultlist::MyFaultlist(int fault,Fault **faultList):fault(fault),faultList(fau
 			}
 		}
 		//maskFile = p->getMaskFile();
-		if(p->getReportStream() != NULL) {
-			reportStream = p->getReportStream();
-		}
-		else {
-			if(p->getReportFile().length()) {
-				OpenFile(&reportFile, &reportStream, p->getReportFile(), ios::out);
-			}
-		}
-		//reportFile = p->getReportFile();
 		wTestMode = p->getWTestMode();
 		lfsrSimMode = p->getLfsrSimMode();
 		lfsrPoly = p->getLfsrPoly();

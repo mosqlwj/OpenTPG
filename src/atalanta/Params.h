@@ -55,8 +55,6 @@ protected:
     int simulationMode;
     string maskFile;
     streambuf *maskStream;
-    string reportFile;
-    streambuf *reportStream;
     int wTestMode;
     int lfsrSimMode;
     string lfsrPoly;
@@ -66,6 +64,7 @@ protected:
     fstream fault;
     string execAction;    //  执行什么动作
     string netlistFile;
+    string reportFile;
 
 public:
     const string &getNetlistFile() const { return netlistFile; }
@@ -119,8 +118,6 @@ protected:
         simulationMode = 0;
         maskFile = "";
         maskStream = NULL;
-        reportFile = "";
-        reportStream = NULL;
         wTestMode = 0;
         lfsrSimMode = 0;
         lfsrPoly = "";
@@ -239,11 +236,7 @@ public:
 
         string pureName = netlistFile.substr(0, netlistFile.rfind(".bench"));
         string patternFile = pureName + ".pat";
-        string reportFile = pureName + ".report";
-
-        //lg
-        //pat.open(patternFile, ios::out);
-        //setSPatternStream(pat.rdbuf());
+        reportFile = pureName + ".report";
         ParserTargetPath();
 
         faultFile = options.get<string>("fault");
@@ -540,19 +533,6 @@ public:
 
     // reportFile
     string getReportFile(void) { return reportFile; };
-
-    void setReportFile(string p_reportFile) {
-        reportFile = p_reportFile;
-        reportStream = NULL;
-    };
-
-    // reportStream
-    streambuf *getReportStream(void) { return reportStream; };
-
-    void setReportStream(streambuf *p_reportStream) {
-        reportStream = p_reportStream;
-        reportFile = "";
-    };
 
     // wTestMode
     int getWTestMode(void) { return wTestMode; };
