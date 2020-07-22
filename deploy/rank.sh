@@ -196,7 +196,8 @@ function    execute_rank()
         -output     "/${team}-${scenename}-output"                                  \
         -mapper     "atalanta --exec atpg          --netlist  ${rankname}.bench"    \
         -reducer    "atalanta --exec simulate-cube --netlist  ${rankname}.bench"    \
-        -files       "${SELFDIR}/atalanta,${rankdir}/${rankname}.bench"
+        -file       "${SELFDIR}/atalanta"                                           \
+        -file       "${rankdir}/${rankname}.bench"
 
 
 #    "$HADOOP_HOME/bin/hadoop" jar "${streamfile}"                                   \
