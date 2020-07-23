@@ -23,7 +23,25 @@
 | Windows+vs2019  | OK   |  --  |  --  |   OK        |  -- |
 | macos+clang     | OK   |  OK  |  OK  |   OK        |  Fail(hadoop不支持mac) |
 
-## 安装步骤
+## 开发环境安装
+
+首先,执行编译:
+
+```
+sh build.sh release
+```
+
+然后,到项目的 deploy 目录下执行下面的命令:
+
+```
+sh install.sh <SOFTWARE-DIR> ./
+```
+
+其中, `<SOFTWARE-DIR>` 是所有`外部依赖`的软件包的存放的目录.
+
+这样可以直接将整个环境部署到 deploy 目录下, 后续当我们在做测试的时候也不需要重新编译和打包
+
+## 独立环境安装
 
 1. 编译
 
@@ -46,4 +64,15 @@ sh build.sh package <TEAMNAME>
 
 3. 部署
 
-部署前,请准备好下面依赖的软件包.
+依次执行下面的命令安装进入 `hiatpg-<TEAMNAME>-<OS>-<TIMESTAMP>` 目录, 执行下面的命令安装
+
+```
+tar xvfz <YOUR-PACKAGE>.tar.gz
+cd <YOUR-PACKAGE>
+sh install.sh <SOFTWARE-DIR> <INSTALL-DIR>
+```
+
+其中, `<YOUR-PACKAGE>` 请替换成您生成的安装包的名字, `<SOFTWARE-DIR>` 是所有`外部依赖`的软件包的存放的目录; `<INSTALL-DIR>` 指具体安装到什么位置.
+
+
+
