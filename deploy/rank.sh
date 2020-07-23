@@ -354,7 +354,7 @@ function main()
         echo    "Error: Testing failed(${RESULT})"
         return  7
     fi
-    echo    "Error: Testing completed"
+    echo    "Testing completed"
 
 
     return  0

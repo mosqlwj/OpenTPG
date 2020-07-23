@@ -95,6 +95,15 @@ function do_compile()
     done
 
 
+    #   自动部署部署到deploy
+    cp  -rf     "${PROJECT_ROOT}/bin"/*     "${PROJECT_ROOT}/deploy/"
+    RESULT=$?
+    if [[ ${RESULT} -ne 0 ]]; then
+        echo    "Error: Auto deploy build files to compile env failed(${RESULT}): '${PROJECT_ROOT}/bin/*' -> '${PROJECT_ROOT}/deploy'"
+        return  3
+    fi
+    echo    "Auto deploy build files to compile env success: '${PROJECT_ROOT}/bin/*' -> '${PROJECT_ROOT}/deploy'"
+
     return  0
 }
 
@@ -185,7 +194,7 @@ function do_package
 
     rm -rf "${PROJECT_ROOT}/.tmp-package"
 
-    echo    "Error: Create package success: '${PROJECT_ROOT}/${pkgname}.tar.gz'"
+    echo    "Create package success: '${PROJECT_ROOT}/${pkgname}.tar.gz'"
     return  0
 }
 
