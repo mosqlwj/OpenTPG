@@ -194,10 +194,16 @@ function    execute_rank()
     fi
     echo    "Deploy fault-list file to dfs success: '${dfsinputdir}'"
 
+    #执行程序
+    endtime=`date +'%Y-%m-%d %H:%M:%S'`
+    start_seconds=$(date --date="$starttime" +%s);
+    end_seconds=$(date --date="$endtime" +%s);
+    echo "本次运行时间： "$((end_seconds-start_seconds))"s"
 
     #   启动hadoop
     echo    "Executing TPG-FLOW..."
     local   streamfile="$HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar"
+    local   starttime=$(date +'%s')
     "$HADOOP_HOME/bin/hadoop" jar "${streamfile}"                                   \
         -input      "/${team}-${scenename}-input"                                   \
         -output     "/${team}-${scenename}-output"                                  \
@@ -205,6 +211,9 @@ function    execute_rank()
         -reducer    "atalanta --exec simulate-cube --netlist  ${rankname}.bench"    \
         -file       "${SELFDIR}/atalanta"                                           \
         -file       "${rankdir}/${rankname}.bench"
+    RESULT=$?
+    local   endtime=$(date +'%s')
+    local   execintv=$((endtime - starttime))
 
 
 #    "$HADOOP_HOME/bin/hadoop" jar "${streamfile}"                                   \
@@ -216,12 +225,12 @@ function    execute_rank()
 #        -file       "${SELFDIR}/test-app"                                           \
 #        -file       "${rankdir}/${rankname}.bench"                                  \
 #        -jobconf    mapreduce.job.maps=5
-    RESULT=$?
+#    RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Executing TPG-FLOW failed(${RESULT})"
         return  5
     fi
-    echo    "Executing TPG-FLOW success"
+    echo    "Executing TPG-FLOW success: escape=${execintv}s"
 
 
     #   下载输出结果
@@ -239,6 +248,14 @@ function    execute_rank()
 
 
     #   生成统计报告
+    local   reportfile="${rankdir}/${rankname}.report"
+    echo    "timestamp      :   ${timestamp}"       >>  "${reportfile}"
+    echo    "team           :   ${team}"            >>  "${reportfile}"
+    echo    "case           :   ${benchfile}"       >>  "${reportfile}"
+    echo    "outputdir      :   ${rankdir}/output"  >>  "${reportfile}"
+    echo    "pattern-count  :   ???"                >>  "${reportfile}"
+    echo    "coverage       :   ???"                >>  "${reportfile}"
+    echo    "cost-time      :   ${execintv} s"      >>  "${reportfile}"
 
     return  0
 }

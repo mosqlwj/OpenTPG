@@ -23,15 +23,26 @@
 | Windows+vs2019  | OK   |  --  |  --  |   OK        |  -- |
 | macos+clang     | OK   |  OK  |  OK  |   OK        |  Fail(hadoop不支持mac) |
 
-## 开发环境安装
+## 构建
 
-首先,执行编译:
+opentpg项目提供了一键编译脚本, 构建方式为
 
 ```
-sh build.sh release
+sh build.sh [compile] [debug|release]
 ```
+ 
+如果是构建 debug 版本, 最简单的方式为 `sh build.sh`; 如果是构建 release 版本, 最简单的方式是: `sh build.sh release`;
 
-然后,到项目的 deploy 目录下执行下面的命令:
+
+## 部署
+
+opentpg 支持两种部署方式, 编译环境集成部署,独立环境部署. 相对而言开发环境集成部署比较简单, 比较适合在开发人员自测使用.
+
+### 开发环境集成部署
+
+开发环境集成部署 是指开发环境和测试环境是同一套环境, 这种方式主要是方便开发人员的开发调测,避免在安装部署上浪费太多时间. 如果您计划参与项目开发, 推荐采用这种方式.
+
+开发环境部署方法, 到项目的 deploy 目录下执行下面的命令:
 
 ```
 sh install.sh <SOFTWARE-DIR> ./
