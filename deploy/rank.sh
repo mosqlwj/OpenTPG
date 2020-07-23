@@ -89,32 +89,12 @@ function    stop_redis()
 #   $1  team
 #   $2  inputdir
 #   $3  outputdir
-#   $4  rankmode
 function    execute_rank()
 {
     local team="$1"
     local inputdir="$2"
     local outputdir="$3"
-    local rankmode="$4"
-
-
     local timestamp=$(date '+%Y%m%d%H%M%S')
-    local scenename=$(basename "${inputdir}")
-    local outputname="${team}@${scenename}"
-
-
-    #   清理下工作目录
-    echo    "Creating the output directory..."
-    local   rankdir="${outputdir}/${outputname}"
-    if [[ -d "${rankdir}" ]]; then
-        rm -rf "${rankdir}"
-        if [[ -d "${rankdir}" ]]; then
-            echo    "Error: Can not the exist output directory: '${rankdir}'"
-            return  5
-        fi
-    fi
-    mkdir -p    "${rankdir}"
-    echo    "Creating the output directory success: '${rankdir}'"
 
 
     #   找到作为输入的bench文件
@@ -133,6 +113,20 @@ function    execute_rank()
     fi
     local rankname=$(basename "${benchfile}" | sed 's/.bench//g')
     echo    "Locate the netlist file success: ${benchfile}"
+
+
+    #   清理下工作目录
+    echo    "Creating the output directory..."
+    local   rankdir="${outputdir}/${team}@${rankname}@{RANK_MODE}"
+    if [[ -d "${rankdir}" ]]; then
+        rm -rf "${rankdir}"
+        if [[ -d "${rankdir}" ]]; then
+            echo    "Error: Can not the exist output directory: '${rankdir}'"
+            return  5
+        fi
+    fi
+    mkdir -p    "${rankdir}"
+    echo    "Creating the output directory success: '${rankdir}'"
 
 
     #   将核心文件拷贝过来
@@ -160,20 +154,20 @@ function    execute_rank()
     #   先再本地生成 faultlist
     echo    "Create the fault-list file..."
     local faultfile="${rankdir}/${rankname}.fault"
-    "${SELFDIR}/atalanta"   --exec      "create-fault" --netlist   "${benchfile}"  >  "${faultfile}"
+    "${SELFDIR}/atalanta"   --exec      "create-fault" --netlist   "${rankdir}/${rankname}.bench"  >  "${faultfile}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Create fault-list for bench failed(${RESULT}): '${benchfile}' -> ${rankdir}/c17.fault"
+        echo    "Create fault-list for bench failed(${RESULT}): '${rankdir}/${rankname}.bench' -> '${faultfile}'"
         return  5
     fi
-    echo    "Create the fault-list file success"
+    echo    "Create the fault-list file success: '${rankdir}/${rankname}.bench' -> '${faultfile}'"
 
 
     #   使用指定的模式来执行 TPG 流程
-    rank_${rankmode} "${team}" "${rankdir}" "${rankname}"
+    rank_${RANK_MODE} "${team}" "${rankdir}" "${rankname}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Error: Execute TPG flow by '${rankmode}'"
+        echo    "Error: Execute TPG flow by '${RANK_MODE}'"
     fi
 
 
@@ -182,7 +176,7 @@ function    execute_rank()
     local   costtime=$(cat "${rankdir}/${rankname}.cost")
     echo    "timestamp      :   ${timestamp}"           >>  "${reportfile}"
     echo    "team           :   ${team}"                >>  "${reportfile}"
-    echo    "mode           :   ${rankmode}"            >>  "${reportfile}"
+    echo    "mode           :   ${RANK_MODE}"           >>  "${reportfile}"
     echo    "bench-file     :   ${benchfile}"           >>  "${reportfile}"
     echo    "pattern-file   :   ${rankname}.pattern"    >>  "${reportfile}"
     echo    "--"                                        >>  "${reportfile}"
