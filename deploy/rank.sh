@@ -86,14 +86,16 @@ function    stop_redis()
 
 
 
-#   $1 team
-#   $2 inputdir
-#   $3 outputdir
+#   $1  team
+#   $2  inputdir
+#   $3  outputdir
+#   $4  rankmode
 function    execute_rank()
 {
     local team="$1"
     local inputdir="$2"
     local outputdir="$3"
+    local rankmode="$4"
 
 
     local timestamp=$(date '+%Y%m%d%H%M%S')
@@ -133,6 +135,17 @@ function    execute_rank()
     echo    "Locate the netlist file success: ${benchfile}"
 
 
+    #   将核心文件拷贝过来
+    echo    "Backup the execute file..."
+    cp  -f  "${SELFDIR}/atalabta"  "${rankdir}"
+    RESULT=$?
+    if [[ ${RESULT} -ne 0 ]]; then
+        echo    "Backup the execute file failed(${RESULT}): '${SELFDIR}/atalabta' -> '${rankdir}'"
+        return  5
+    fi
+    echo    "Backup the execute file success: '${SELFDIR}/atalabta' -> '${rankdir}'"
+
+
     #   将bench文件拷贝过来
     echo    "Backup the netlist file..."
     cp  -f  "${benchfile}"  "${rankdir}"
@@ -156,9 +169,45 @@ function    execute_rank()
     echo    "Create the fault-list file success"
 
 
+    #   使用指定的模式来执行 TPG 流程
+    rank_${rankmode} "${team}" "${rankdir}" "${rankname}"
+    RESULT=$?
+    if [[ ${RESULT} -ne 0 ]]; then
+        echo    "Error: Execute TPG flow by '${rankmode}'"
+    fi
+
+
+    #   生成统计报告
+    local   reportfile="${rankdir}/${rankname}.report"
+    local   costtime=$(cat "${rankdir}/${rankname}.cost")
+    echo    "timestamp      :   ${timestamp}"           >>  "${reportfile}"
+    echo    "team           :   ${team}"                >>  "${reportfile}"
+    echo    "mode           :   ${rankmode}"            >>  "${reportfile}"
+    echo    "bench-file     :   ${benchfile}"           >>  "${reportfile}"
+    echo    "pattern-file   :   ${rankname}.pattern"    >>  "${reportfile}"
+    echo    "--"                                        >>  "${reportfile}"
+    echo    "pattern-count  :   ???"                    >>  "${reportfile}"
+    echo    "coverage       :   ???"                    >>  "${reportfile}"
+    echo    "cost-time      :   ${costtime} s"          >>  "${reportfile}"
+
+
+    return  0
+}
+
+
+#   $1  team
+#   $2  rankdir
+#   $3  rankname
+function rank_hadoop()
+{
+    local team="$1"
+    local rankdir="$2"
+    local rankname="$3"
+
+
     #   清理旧的输入和输出目录
-    local dfsinputdir="/${team}-${scenename}-input"
-    local dfsoutputdir="/${team}-${scenename}-output"
+    local dfsinputdir="/${team}-${rankname}-input"
+    local dfsoutputdir="/${team}-${rankname}-output"
     echo    "Clear the input and output directory in DFS..."
     "${HADOOP_HOME}/bin/hdfs" dfs -rm -r -f "${dfsinputdir}"
     RESULT=$?
@@ -194,38 +243,19 @@ function    execute_rank()
     fi
     echo    "Deploy fault-list file to dfs success: '${dfsinputdir}'"
 
-    #执行程序
-    endtime=`date +'%Y-%m-%d %H:%M:%S'`
-    start_seconds=$(date --date="$starttime" +%s);
-    end_seconds=$(date --date="$endtime" +%s);
-    echo "本次运行时间： "$((end_seconds-start_seconds))"s"
-
-    #   启动hadoop
+    #   执行 TPG 流程
     echo    "Executing TPG-FLOW..."
     local   streamfile="$HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar"
     local   starttime=$(date +'%s')
     "$HADOOP_HOME/bin/hadoop" jar "${streamfile}"                                   \
-        -input      "/${team}-${scenename}-input"                                   \
-        -output     "/${team}-${scenename}-output"                                  \
+        -input      "/${team}-${rankname}-input"                                   \
+        -output     "/${team}-${rankname}-output"                                  \
         -mapper     "atalanta --exec atpg          --netlist  ${rankname}.bench"    \
         -reducer    "atalanta --exec simulate-cube --netlist  ${rankname}.bench"    \
         -file       "${SELFDIR}/atalanta"                                           \
         -file       "${rankdir}/${rankname}.bench"
     RESULT=$?
     local   endtime=$(date +'%s')
-    local   execintv=$((endtime - starttime))
-
-
-#    "$HADOOP_HOME/bin/hadoop" jar "${streamfile}"                                   \
-#        -input      "/${team}-${scenename}-input"                                   \
-#        -output     "/${team}-${scenename}-output"                                  \
-#        -mapper     "test-app mapper"                                               \
-#        -reducer    "test-app reducer"                                              \
-#        -file       "${SELFDIR}/atalanta"                                           \
-#        -file       "${SELFDIR}/test-app"                                           \
-#        -file       "${rankdir}/${rankname}.bench"                                  \
-#        -jobconf    mapreduce.job.maps=5
-#    RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Executing TPG-FLOW failed(${RESULT})"
         return  5
@@ -243,21 +273,38 @@ function    execute_rank()
     fi
     echo    "Download the outputs success"
 
-
-    #   分离输出数据
-
-
-    #   生成统计报告
-    local   reportfile="${rankdir}/${rankname}.report"
-    echo    "timestamp      :   ${timestamp}"       >>  "${reportfile}"
-    echo    "team           :   ${team}"            >>  "${reportfile}"
-    echo    "case           :   ${benchfile}"       >>  "${reportfile}"
-    echo    "outputdir      :   ${rankdir}/output"  >>  "${reportfile}"
-    echo    "pattern-count  :   ???"                >>  "${reportfile}"
-    echo    "coverage       :   ???"                >>  "${reportfile}"
-    echo    "cost-time      :   ${execintv} s"      >>  "${reportfile}"
+    #   合并pattern文件
+    local   execintv=$((endtime - starttime))
+    cat     "${rankdir}/output/part-00000"      >       "${rankdir}/${rankname}.pattern"
+    echo    "${execintv}"                       >       "${rankdir}/${rankname}.cost"
 
     return  0
+}
+
+
+
+#   $1  team
+#   $2  scenename
+#   $3  rankdir
+#   $4  rankname
+function rank_local()
+{
+    local team="$1"
+    local rankdir="$2"
+    local rankname="$3"
+
+    local   benchfile="${rankdir}/${rankname}.bench"
+    local   starttime=$(date +'%s')
+    cat     "${rankdir}/${rankname}.fault"                                  | \
+    "${SELFDIR}/atalanta" --exec atpg           --netlist "${benchfile}"    | \
+    "${SELFDIR}/atalanta" --exec simulate-cube  --netlist "${benchfile}"    >   "${rankdir}/${rankname}.pattern"
+    local   endtime=$(date +'%s')
+
+    #   生成时间统计信息
+    local   execintv=$((endtime - starttime))
+    echo    "${execintv}"  > "${rankdir}/${rankname}.cost"
+
+    return  0;
 }
 
 
@@ -291,6 +338,16 @@ function main()
     local team="$1"
     local inputdir=$(realpath "$2")
     local outputdir=$(realpath "$3")
+
+
+    if [[ "${RANK_MODE}" == "" ]]; then
+        export RANK_MODE="hadoop"
+    fi
+
+    if [[ "${RANK_MODE}" != "local" ]] && [[ "${RANK_MODE}" != "hadoop" ]]; then
+        echo    "Error: Unsupported value of the '\${RANK_MODE}' : '${RANK_MODE}'"
+        return  10
+    fi
 
 
     #   对输入参数进行强校验: team
@@ -348,7 +405,7 @@ function main()
 
     #   启动测试
     echo    "Testing ..."
-    execute_rank    "${team}"   "${inputdir}"   "${outputdir}"
+    execute_rank    "${team}"   "${inputdir}"   "${outputdir}"  "${RANK_MODE}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Error: Testing failed(${RESULT})"
