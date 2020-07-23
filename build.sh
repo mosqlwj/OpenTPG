@@ -220,7 +220,7 @@ function main()
         return      "$?"
     fi
 
-    echo  "Error: Unsupported action '${action}', type 'help' for help"
+    echo  "Unsupported action '${action}', type 'help' for help"
     return  $?
 }
 
