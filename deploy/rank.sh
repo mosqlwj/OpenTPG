@@ -137,13 +137,13 @@ function    execute_rank()
 
     #   将核心文件拷贝过来
     echo    "Backup the execute file..."
-    cp  -f  "${SELFDIR}/atalabta"  "${rankdir}"
+    cp  -f  "${SELFDIR}/atalanta"  "${rankdir}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Backup the execute file failed(${RESULT}): '${SELFDIR}/atalabta' -> '${rankdir}'"
+        echo    "Backup the execute file failed(${RESULT}): '${SELFDIR}/atalanta' -> '${rankdir}'"
         return  5
     fi
-    echo    "Backup the execute file success: '${SELFDIR}/atalabta' -> '${rankdir}'"
+    echo    "Backup the execute file success: '${SELFDIR}/atalanta' -> '${rankdir}'"
 
 
     #   将bench文件拷贝过来
@@ -248,8 +248,8 @@ function rank_hadoop()
     local   streamfile="$HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar"
     local   starttime=$(date +'%s')
     "$HADOOP_HOME/bin/hadoop" jar "${streamfile}"                                   \
-        -input      "/${team}-${rankname}-input"                                   \
-        -output     "/${team}-${rankname}-output"                                  \
+        -input      "/${team}-${rankname}-input"                                    \
+        -output     "/${team}-${rankname}-output"                                   \
         -mapper     "atalanta --exec atpg          --netlist  ${rankname}.bench"    \
         -reducer    "atalanta --exec simulate-cube --netlist  ${rankname}.bench"    \
         -file       "${SELFDIR}/atalanta"                                           \
