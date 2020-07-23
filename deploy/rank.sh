@@ -117,7 +117,7 @@ function    execute_rank()
 
     #   清理下工作目录
     echo    "Creating the output directory..."
-    local   rankdir="${outputdir}/${team}@${rankname}@{RANK_MODE}"
+    local   rankdir="${outputdir}/${team}@${rankname}@${RANK_MODE}"
     if [[ -d "${rankdir}" ]]; then
         rm -rf "${rankdir}"
         if [[ -d "${rankdir}" ]]; then
