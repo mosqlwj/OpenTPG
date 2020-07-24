@@ -21,15 +21,33 @@
 | 环境                  | 编译 | 打包 | 部署 | 本地TPG流程 | 基于Hadoop的TPG流程 |
 |---                    |---   |---   |---   |---          |---                  |
 | Linux+gcc             | OK   | OK   | OK   | OK          | OK |
+
+<!--
 | Windows+VS2019        | OK   | --   | --   | OK          | -- |
 | macos+clang           | OK   | OK   | OK   | OK          | Fail(hadoop不支持mac) |
+-->
+
+* shell 环境
+
+我们所有的脚本都需要在 bash 环境下执行. 您可以通过下面的命令检查当前的shell环境:
+
+```bash
+echo $SHEL
+```
+
+如果您当前的 shell 并不是 bash, 那么直接输入下面的指令即可切换到 bash:
+
+```bash
+bash
+```
+
 
 ## 构建
 ----------------------
 
 opentpg项目提供了一键编译脚本, 构建方式为
 
-```
+```bash
 sh build.sh [compile] [debug|release]
 ```
  
@@ -53,7 +71,7 @@ opentpg 支持两种部署方式: 编译环境集成部署和独立环境部署.
 
 开发环境部署时, 到项目的 deploy 目录下, 执行下面的命令:
 
-```
+```bash
 sh install.sh <SOFTWARE-DIR> .
 ```
 
@@ -61,6 +79,13 @@ sh install.sh <SOFTWARE-DIR> .
 
   - `<SOFTWARE-DIR>` 是所有 `外部依赖` 的软件包的存放的目录.
   - 第二个参数指的是部署到当前目录下,当然这里也就是depoy所在的目录.
+
+
+执行完毕之后, 还需要在安装目录下通过下面的指令加载配置:
+
+```bash
+source setup.bash
+```
 
 开发环境部署完毕后, 后续修改了代码或者脚本, 编译完毕之后, 都是可以直接使用的, 不需要重新执行部署操作.
 
@@ -72,7 +97,7 @@ sh install.sh <SOFTWARE-DIR> .
 
 打包操作也可以直接由 build.sh 来做:
 
-```
+```bash
 sh build.sh package <TEAMNAME>
 ```
 
@@ -87,7 +112,7 @@ sh build.sh package <TEAMNAME>
 
 然后, 依次执行下面的命令执行安装:
 
-```
+```bash
 tar xvfz <YOUR-PACKAGE>.tar.gz
 cd <YOUR-PACKAGE>
 sh install.sh <SOFTWARE-DIR> <INSTALL-DIR>
@@ -99,17 +124,33 @@ sh install.sh <SOFTWARE-DIR> <INSTALL-DIR>
   - `<SOFTWARE-DIR>` 是所有`外部依赖`的软件包的存放的目录; 
   - `<INSTALL-DIR>`  指具体安装到什么位置;
 
-## 小测验
+
+## 来个小测验
 ----------------------
 
 进入安装目录,依次执行下面的指令以检验是否整个安装过程已经成功:
 
-```shell script
+```bash
 source setup.bash
 sh rank.sh myteam ./samples/c17.bench ./
 cat ./myteam@c17@hadoop/c17.pattern
 ```
 
+如果执行成功, 可以看到输出的pattern列表:
 
+```text
+pattern:0	11011
+pattern:1	10110
+pattern:2	00110
+pattern:3	11011
+pattern:4	00000
+pattern:5	10010
+pattern:6	01100
+pattern:7	00011
+```
+
+这里 rank.sh 是我们的测试驱动脚本, 用于自动帮助我们完成一轮测试全流程. 
+
+关于 rank.sh 脚本的更详细的说明参见 [快速入门](doc/QUICKSTART.md)
 
 
