@@ -666,43 +666,6 @@ int AtpgEngine::simulateVector(string vct) {
     return simulateHope(&mnPacket, &mnBit);
 }
 
-string AtpgEngine::octToBin(string *c) {
-    if (numberOfPrimaryInputs / 3 + (numberOfPrimaryInputs % 3 ? 1 : 0) != c->length()) {
-        stringstream ss;
-        throw "Can't use it.";
-    }
-
-    string num;
-
-    unsigned int i, p, n, lead;
-
-    num.clear();
-    num.append(numberOfPrimaryInputs, 'x');
-    p = 0;
-    lead = 1;
-    for (i = 0; i < c->length() && p < numberOfPrimaryInputs; i++) {
-        n = (*c)[i] - '0';
-        if (n > 3) {
-            num[p++] = '1';
-            lead = 0;
-            n -= 4;
-        } else if (lead == 0)
-            num[p++] = '0';
-        if (n > 1) {
-            num[p++] = '1';
-            lead = 0;
-            n -= 2;
-        } else if (lead == 0)
-            num[p++] = '0';
-        if (n > 0) {
-            num[p++] = '1';
-            lead = 0;
-        } else if (lead == 0)
-            num[p++] = '0';
-    }
-    return num;
-}
-
 AtpgStatus AtpgEngine::getResults() {
     AtpgStatus ar;
 

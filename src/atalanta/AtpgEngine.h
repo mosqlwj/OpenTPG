@@ -108,8 +108,6 @@ protected:
     void storeLearn(Gate *gut, level val);
     void generateTest();
 
-    string octToBin(string *c);
-
 public:
     AtpgEngine();
     int run();
