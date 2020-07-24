@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-SELFDIR=$(dirname $(realpath "$0"))
+SELFDIR=$(dirname $(realpath "$BASH_SOURCE"))
 
 
 PROJECT_ROOT="${SELFDIR}"
