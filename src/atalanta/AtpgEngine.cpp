@@ -641,31 +641,6 @@ void AtpgEngine::readTestFile(const string &patternFileName) {
     }
 }
 
-int AtpgEngine::simulateVector(string vct) {
-    int i;
-
-    inVal.clear();
-    inVal.resize(numberOfPrimaryInputs);
-    for (i = 0; i < numberOfPrimaryInputs; i++) switch (vct[i]) {
-            case '0':
-                inVal[i] = ZERO;
-                break;
-            case '1':
-                inVal[i] = ONE;
-                break;
-            case 'x':
-            case 'X':
-            case '-':
-            case '2':
-                inVal[i] = X;
-                break;
-            default:
-                inVal[i] = X;
-                break;
-        }
-    return simulateHope(&mnPacket, &mnBit);
-}
-
 AtpgStatus AtpgEngine::getResults() {
     AtpgStatus ar;
 

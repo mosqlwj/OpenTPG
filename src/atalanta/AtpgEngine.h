@@ -104,7 +104,6 @@ protected:
     status leval(Gate *gate);
     void learn(int maxDpi);
     void learnNode(int maxDpi, int node, level val);
-    int simulateVector(string vct);
     void storeLearn(Gate *gut, level val);
     void generateTest();
 
