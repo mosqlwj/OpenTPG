@@ -95,6 +95,15 @@ function do_compile()
     done
 
 
+    #   自动部署部署到deploy
+    cp  -rf     "${PROJECT_ROOT}/bin"/*     "${PROJECT_ROOT}/deploy/"
+    RESULT=$?
+    if [[ ${RESULT} -ne 0 ]]; then
+        echo    "Error: Auto deploy build files to compile env failed(${RESULT}): '${PROJECT_ROOT}/bin/*' -> '${PROJECT_ROOT}/deploy'"
+        return  3
+    fi
+    echo    "Auto deploy build files to compile env success: '${PROJECT_ROOT}/bin/*' -> '${PROJECT_ROOT}/deploy'"
+
     return  0
 }
 
@@ -171,11 +180,17 @@ function do_package
     echo        "BUILD_ARCH :   '${buildarch}'"         >>  "${pkgdir}/.properties" &&  \
     echo        "BUILD_ID   :   '${buildcommitid}'"     >>  "${pkgdir}/.properties" &&  \
     echo        "BUILD_GCC  :   '${buildgccversion}'"   >>  "${pkgdir}/.properties" &&  \
-    cp -rf      "${PROJECT_ROOT}/deploy"/*      "${pkgdir}"     &&  \
-    cp -rf      "${PROJECT_ROOT}/bin"           "${pkgdir}"     &&  \
-    cd          "${PROJECT_ROOT}/.tmp-package"                  &&  \
-    tar cvf     "${pkgname}.tar"        "${installname}"        &&  \
-    gzip        "${pkgname}.tar"                                &&  \
+    cp -rf      "${PROJECT_ROOT}/deploy"/tmpl-hadoop   "${pkgdir}"  &&  \
+    cp -rf      "${PROJECT_ROOT}/deploy"/tmpl-redis    "${pkgdir}"  &&  \
+    cp -rf      "${PROJECT_ROOT}/deploy"/tmpl-sample   "${pkgdir}"  &&  \
+    cp -rf      "${PROJECT_ROOT}/deploy"/install.sh    "${pkgdir}"  &&  \
+    cp -rf      "${PROJECT_ROOT}/deploy"/rank.sh       "${pkgdir}"  &&  \
+    cp -rf      "${PROJECT_ROOT}/deploy"/setup.bash    "${pkgdir}"  &&  \
+    cp -rf      "${PROJECT_ROOT}/deploy"/INSTALL-ORDER "${pkgdir}"  &&  \
+    cp -rf      "${PROJECT_ROOT}/bin"                  "${pkgdir}"  &&  \
+    cd          "${PROJECT_ROOT}/.tmp-package"                      &&  \
+    tar cvf     "${pkgname}.tar"        "${installname}"            &&  \
+    gzip        "${pkgname}.tar"                                    &&  \
     mv          "${pkgname}.tar.gz"     "${PROJECT_ROOT}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
@@ -185,7 +200,7 @@ function do_package
 
     rm -rf "${PROJECT_ROOT}/.tmp-package"
 
-    echo    "Error: Create package success: '${PROJECT_ROOT}/${pkgname}.tar.gz'"
+    echo    "Create package success: '${PROJECT_ROOT}/${pkgname}.tar.gz'"
     return  0
 }
 
