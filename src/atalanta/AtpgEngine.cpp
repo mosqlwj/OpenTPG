@@ -902,6 +902,7 @@ int AtpgEngine::run() {
     processFaults();
     indexFaults();
     customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
+    end = clock();
     atpgStatus.time = (end - start) / (double)CLOCKS_PER_SEC;
     cerr << "parsing: " << atpgStatus.time << " s" << endl;
 
