@@ -6,7 +6,14 @@
 #define __ATALANTA_FAULT_H__
 
 #include <list>
+
+#include "FanNet.h"
+#include "Globals.h"
+#include "Hash.h"
+#include "Netlist.h"
+#include "Parameters.h"
 #include "ParralelPattern.h"
+#include "Stack.h"
 //#include <fstream>
 
 using namespace std;
@@ -80,7 +87,7 @@ namespace hiatpg {
 		int restoreDetectedFaultList();
 		int checkRedundantFaults();
 		int createFaultList(int noStem, Gate **stem);
-	};
+    };
 
 	class ReadableFaultList:public FaultList
 	{

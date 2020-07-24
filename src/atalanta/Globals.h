@@ -5,9 +5,10 @@
 #ifndef __ATALANTA_GLOBALS_H__
 #define __ATALANTA_GLOBALS_H__
 
-#ifdef _ALG_DEBUG
-#include <fstream>
-#endif
+#include <list>
+#include "Defines.h"
+
+using namespace std;
 
 #define INCLUDE_HOPE
 

@@ -6,6 +6,11 @@
 #define __ATALANTA_PARRALELPATTERN_H__
 
 #include "FanNet.h"
+#include "Globals.h"
+#include "Hash.h"
+#include "Netlist.h"
+#include "Parameters.h"
+#include "Stack.h"
 
 namespace hiatpg {
 	class ParralelPattern:public FanNet
@@ -42,7 +47,6 @@ namespace hiatpg {
 		void	updateAll1();
 
 		virtual ~ParralelPattern() { };
-
-	};
+    };
 }
 #endif // __ATALANTA_PARRALELPATTERN_H__
