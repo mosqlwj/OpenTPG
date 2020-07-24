@@ -5,6 +5,15 @@
 #ifndef __ATALANTA_FAULTSIMULATION_H__
 #define __ATALANTA_FAULTSIMULATION_H__
 
+#include <list>
+
+#include "FanNet.h"
+#include "Globals.h"
+#include "Hash.h"
+#include "Netlist.h"
+#include "Parameters.h"
+#include "ParralelPattern.h"
+#include "Stack.h"
 namespace hiatpg {
 #define copyLevel(dest,source) dest[0]=source[0]; dest[1]=source[1]
 #define cmpLevel(v1,v2) ((v1[0]!=v2[0]) || (v1[1]!=v2[1]))
@@ -101,7 +110,6 @@ namespace hiatpg {
 		int simulation();
 
 		virtual ~FaultSimulation() { };
-
-	};
+    };
 }
 #endif // __ATALANTA_FAULTSIMULATION_H__

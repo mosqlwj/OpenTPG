@@ -293,11 +293,9 @@ void CustomFaultlist::updateFaultList() {
 }
 
 AtpgEngine::AtpgEngine() {
-    inputMode = 'd';
     faultMode = 'd';
     maxBackTrack = 10;
     maxBackTrack1 = 0;
-    simulationMode = 0;
 
     nTest2 = 0;
     nTest3 = 0;
@@ -600,7 +598,6 @@ void AtpgEngine::initFS() {
     FanNet::setDominator(levels);
     setUniquePath(levels);
 
-    // print_test_topic(test,nopi,nopo,name1);
     if (learnMode == 'y') learn(levels);
 
     for (i = 0; i < numberOfFaults; i++) {
@@ -621,89 +618,6 @@ void AtpgEngine::initFS() {
     testStore1.setSecondSize(numberOfPrimaryInputs);
 
     allOne = ALL1;
-}
-
-void AtpgEngine::readTestFile(const string &patternFileName) {
-    string s;
-
-    fstream patternStream;
-    patternStream.open(patternFileName, ios::in);
-    testVector.num = 0;
-    testVector.inpVars = numberOfPrimaryInputs;
-    testVector.outVars = numberOfPrimaryOutputs;
-
-    while (patternStream.peek() > 0) {
-        patternStream >> s;
-        myCurrFault = 0;
-        if (s.length() != numberOfPrimaryInputs) {
-            stringstream ss;
-            ss << "Fatal error: Incorrect number of test vector inputs";
-            throw ss.str();
-        }
-        addTestVector(&s, NULL, -1);
-    }
-}
-
-int AtpgEngine::simulateVector(string vct) {
-    int i;
-
-    inVal.clear();
-    inVal.resize(numberOfPrimaryInputs);
-    for (i = 0; i < numberOfPrimaryInputs; i++) switch (vct[i]) {
-            case '0':
-                inVal[i] = ZERO;
-                break;
-            case '1':
-                inVal[i] = ONE;
-                break;
-            case 'x':
-            case 'X':
-            case '-':
-            case '2':
-                inVal[i] = X;
-                break;
-            default:
-                inVal[i] = X;
-                break;
-        }
-    return simulateHope(&mnPacket, &mnBit);
-}
-
-string AtpgEngine::octToBin(string *c) {
-    if (numberOfPrimaryInputs / 3 + (numberOfPrimaryInputs % 3 ? 1 : 0) != c->length()) {
-        stringstream ss;
-        throw "Can't use it.";
-    }
-
-    string num;
-
-    unsigned int i, p, n, lead;
-
-    num.clear();
-    num.append(numberOfPrimaryInputs, 'x');
-    p = 0;
-    lead = 1;
-    for (i = 0; i < c->length() && p < numberOfPrimaryInputs; i++) {
-        n = (*c)[i] - '0';
-        if (n > 3) {
-            num[p++] = '1';
-            lead = 0;
-            n -= 4;
-        } else if (lead == 0)
-            num[p++] = '0';
-        if (n > 1) {
-            num[p++] = '1';
-            lead = 0;
-            n -= 2;
-        } else if (lead == 0)
-            num[p++] = '0';
-        if (n > 0) {
-            num[p++] = '1';
-            lead = 0;
-        } else if (lead == 0)
-            num[p++] = '0';
-    }
-    return num;
 }
 
 AtpgStatus AtpgEngine::getResults() {
@@ -855,17 +769,17 @@ void AtpgEngine::generateCube() {
     clock_t start, end;
 
     // parse bench
+    start = clock();
     auto p = &Params::getInstance();
     levels = parseNetlist(p->getNetlistFile());
     numberOfFaults = readFaultsFromFileStream(cin, myNumberOfStems, myStem);
     indexFaults();
     customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
+    end = clock();
+    atpgStatus.time = (end - start) / (double)CLOCKS_PER_SEC;
+    cerr << "parsing: " << atpgStatus.time << " s" << endl;
 
     start = clock();
-    int i;
-    int nDetect3 = 0;
-    status state;
-    Fault *f;
     int nOverBackTrack = 0;
     int tBackTrack = 0;
     double fan1Time;
@@ -877,6 +791,7 @@ void AtpgEngine::generateCube() {
     atpgStatus = getResults();
     end = clock();
     atpgStatus.time = (end - start) / (double)CLOCKS_PER_SEC;
+    cerr << "atpg: " << atpgStatus.time << " s" << endl;
 }
 
 void AtpgEngine::createFaultlist() {
@@ -895,16 +810,17 @@ int AtpgEngine::run() {
     CustomFaultlist *customFaultlist;
     clock_t start, end;
 
+    start = clock();
     auto p = &Params::getInstance();
     levels = parseNetlist(p->getNetlistFile());
-
-    // create fault
     processFaults();
     indexFaults();
     customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
+    end = clock();
+    atpgStatus.time = (end - start) / (double)CLOCKS_PER_SEC;
+    cerr << "parsing: " << atpgStatus.time << " s" << endl;
 
     start = clock();
-
     // reset gates status and init simulation
     initFS();
 
@@ -915,7 +831,7 @@ int AtpgEngine::run() {
     end = clock();
     atpgStatus.time = (end - start) / (double)CLOCKS_PER_SEC;
     printFinalReport(atpgStatus);
-    printTestPattern(cout);
+//    printTestPattern(cout);
 
     return 0;
 }
@@ -931,10 +847,8 @@ void AtpgEngine::setParams() {
     faultMode = p->getFaultMode();
     faultFile = p->getFaultFileName();
     fillMode = p->getFillMode();
-    genAllPat = p->getGenAllPat();
     setEachLimit(p->getEachLimit());
     noFaultSim = p->getNoFaultSim();
-    simulationMode = p->getSimulationMode();
 }
 
 }  // namespace hiatpg

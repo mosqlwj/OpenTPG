@@ -33,10 +33,17 @@ namespace hiatpg {
     // Construction/Destruction
     //////////////////////////////////////////////////////////////////////
 
-    /*Simulation::Simulation()
+    void Simulation::printIO(int nth_bit, int start)
     {
+        string *iv,*ov;
 
-    }*/
+        iv = printInputs(nth_bit );
+        ov = printOutputs(nth_bit );
+        addTestVector( iv, ov, 1 );
+
+        delete iv;
+        delete ov;
+    }
 
     void Simulation::setBit(unsigned *word, int nth) {*word |= BITMASK[nth];}
     void Simulation::resetBit(unsigned *word,int nth) {*word &= ~BITMASK[nth];}

@@ -1,16 +1,20 @@
 // Netlist.cpp: implementation of the Netlist class.
 //
 //////////////////////////////////////////////////////////////////////
-#include <list>
-#include <iostream>
-#include <sstream>
-#include "Defines.h"
-#include "Gate.h"
-#include "Stack.h"
 #include "Netlist.h"
-#include "AtpgEngine.h"
-#include "Globals.h"
+
 #include <string.h>
+
+#include <iostream>
+#include <list>
+#include <sstream>
+
+#include "AtpgEngine.h"
+#include "Defines.h"
+#include "FanNet.h"
+#include "Gate.h"
+#include "Globals.h"
+#include "Stack.h"
 
 namespace hiatpg {
 	//////////////////////////////////////////////////////////////////////
@@ -136,20 +140,8 @@ namespace hiatpg {
         delete iv;
         delete ov;
     }
-	
-	void Netlist::printIO(int nth_bit, int start)
-	{
-		string *iv,*ov;
-		
-		iv = printInputs(nth_bit );
-		ov = printOutputs(nth_bit );
-		addTestVector( iv, ov, 1 );
-		
-		delete iv;
-		delete ov;
-	}
-	
-	void Netlist::setTestAbility()
+
+    void Netlist::setTestAbility()
 	{
 		int i,j,depth;
 		

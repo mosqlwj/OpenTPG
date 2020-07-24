@@ -1,28 +1,28 @@
 // FanNet.cpp: implementation of the FanNet class.
 //
 //////////////////////////////////////////////////////////////////////
-#include <list>
-#include <fstream>
-
-#include "Error.h"
-
-#include "Defines.h"
-#include "Truthtable.h"
-#include "Parameters.h"
-
-#include "Hash.h"
-
-#include "Gate.h"
-#include "Stack.h"
-#include "Netlist.h"
-
-#include <memory>
-#include "Globals.h"
-
 #include "FanNet.h"
-#include "ParralelPattern.h"
-#include "Fault.h"
+
 #include <string.h>
+
+#include <fstream>
+#include <iostream>
+#include <list>
+#include <memory>
+#include <sstream>
+
+#include "AtpgEngine.h"
+#include "Defines.h"
+#include "Error.h"
+#include "Fault.h"
+#include "Gate.h"
+#include "Globals.h"
+#include "Hash.h"
+#include "Netlist.h"
+#include "Parameters.h"
+#include "ParralelPattern.h"
+#include "Stack.h"
+#include "Truthtable.h"
 
 #ifdef WIN32
 #include <limits>

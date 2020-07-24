@@ -194,10 +194,8 @@ namespace hiatpg{
         faultMode = p->getFaultMode();
         faultFilePath = p->getFaultFile();
         fillMode = p->getFillMode();
-        genAllPat = p->getGenAllPat();
         setEachLimit(p->getEachLimit());
         noFaultSim = p->getNoFaultSim();
-        simulationMode = p->getSimulationMode();
     }
 
     void PatternParser::ReadCinPattern(istream& inStream)

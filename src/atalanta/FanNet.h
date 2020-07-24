@@ -5,7 +5,11 @@
 #ifndef __ATALANTA_FANNET_H__
 #define __ATALANTA_FANNET_H__
 
+#include "Globals.h"
+#include "Hash.h"
 #include "Netlist.h"
+#include "Parameters.h"
+#include "Stack.h"
 
 
 namespace hiatpg {
@@ -120,7 +124,6 @@ namespace hiatpg {
 		status fan1(int maxdpi,Fault* cf,int maxbacktrack, int *nbacktrack);
 
 		virtual ~FanNet() { };
-
-	};
+    };
 }
 #endif // __ATALANTA_FANNET_H__
