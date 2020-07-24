@@ -38,6 +38,9 @@ function    start_hadoop()
         return  3
     fi
 
+    #   实测发现 dfs 首次启动时,其初始化稍慢; 这里采用简单的办法, 直接等待5秒钟以规避启动异常
+    sleep   5
+
     echo    "Start up hadoop-dfs success"
     return  0;
 }
@@ -151,7 +154,7 @@ function    execute_rank()
     echo    "Backup the netlist success: '${benchfile}' -> '${rankdir}'"
 
 
-    #   先再本地生成 faultlist
+    #   先在本地生成 faultlist
     echo    "Create the fault-list file..."
     local faultfile="${rankdir}/${rankname}.fault"
     "${SELFDIR}/atalanta"   --exec      "create-fault" --netlist   "${rankdir}/${rankname}.bench"  >  "${faultfile}"
@@ -385,6 +388,7 @@ function main()
     echo    "Start testing environment success"
 
 
+#    if [[ "${RANK_MODE}" == "hadoop" ]]; then
 #    #   启动redis
 #    echo    "Starting redis ..."
 #    start_redis
@@ -394,17 +398,20 @@ function main()
 #        return  7
 #    fi
 #    echo    "Start redis success"
+#    fi
 
 
     #   启动hadoop
-    echo    "Starting hadoop ..."
-    start_hadoop
-    RESULT=$?
-    if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Error: Start hadoop failed(${RESULT})"
-        return  7
+    if [[ "${RANK_MODE}" == "hadoop" ]]; then
+        echo    "Starting hadoop ..."
+        start_hadoop
+        RESULT=$?
+        if [[ ${RESULT} -ne 0 ]]; then
+            echo    "Error: Start hadoop failed(${RESULT})"
+            return  7
+        fi
+        echo    "Start hadoop success"
     fi
-    echo    "Start hadoop success"
 
 
     #   启动测试
