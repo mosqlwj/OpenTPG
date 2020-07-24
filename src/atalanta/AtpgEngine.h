@@ -57,12 +57,10 @@ namespace hiatpg {
     private:
         vector<unordered_map<int, int>> testCubes;
     protected:
-        char inputMode;
         char faultMode;
         string faultFile;
         int maxBackTrack;
         int maxBackTrack1;
-        int simulationMode;
         string  faultFilePath;
         string circuitName;
 

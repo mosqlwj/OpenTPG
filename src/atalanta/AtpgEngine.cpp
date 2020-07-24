@@ -293,11 +293,9 @@ void CustomFaultlist::updateFaultList() {
 }
 
 AtpgEngine::AtpgEngine() {
-    inputMode = 'd';
     faultMode = 'd';
     maxBackTrack = 10;
     maxBackTrack1 = 0;
-    simulationMode = 0;
 
     nTest2 = 0;
     nTest3 = 0;
@@ -933,10 +931,8 @@ void AtpgEngine::setParams() {
     faultMode = p->getFaultMode();
     faultFile = p->getFaultFileName();
     fillMode = p->getFillMode();
-    genAllPat = p->getGenAllPat();
     setEachLimit(p->getEachLimit());
     noFaultSim = p->getNoFaultSim();
-    simulationMode = p->getSimulationMode();
 }
 
 }  // namespace hiatpg
