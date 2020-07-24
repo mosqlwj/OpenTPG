@@ -59,7 +59,7 @@ sh install.sh <SOFTWARE-DIR> .
 
 其中:
 
-  - `<SOFTWARE-DIR>` 是所有`外部依赖`的软件包的存放的目录.
+  - `<SOFTWARE-DIR>` 是所有 `外部依赖` 的软件包的存放的目录.
   - 第二个参数指的是部署到当前目录下,当然这里也就是depoy所在的目录.
 
 开发环境部署完毕后, 后续修改了代码或者脚本, 编译完毕之后, 都是可以直接使用的, 不需要重新执行部署操作.
@@ -79,12 +79,11 @@ sh build.sh package <TEAMNAME>
 其中:
 
   - `<TEAMNAME>` 为本团队的名称,命名规则需要满足正则表达式: `[A-Za-z][A-Za-z0-9]*`.
-
   - 生成的软件包的名字为 `hiatpg-<TEAMNAME>-<OS>-<TIMESTAMP>.tar.gz`, 比如: `hiatpg-MyTeam-Linux-200723081617.tar.gz`
 
 * 部署
 
-首先,需要将前面打包步骤生成的二进制包通过sftp,scp等工具或者其他的任意你喜欢的方式拷贝到部署环境.
+首先, 需要将前面打包步骤生成的二进制包通过sftp,scp等工具或者其他的任意你喜欢的方式拷贝到部署环境.
 
 然后, 依次执行下面的命令执行安装:
 
@@ -98,9 +97,19 @@ sh install.sh <SOFTWARE-DIR> <INSTALL-DIR>
  
   - `<YOUR-PACKAGE>` 请替换成您生成的安装包的名字;
   - `<SOFTWARE-DIR>` 是所有`外部依赖`的软件包的存放的目录; 
-  - `<INSTALL-DIR>` 指具体安装到什么位置;
+  - `<INSTALL-DIR>`  指具体安装到什么位置;
 
 ## 小测验
 ----------------------
+
+进入安装目录,依次执行下面的指令以检验是否整个安装过程已经成功:
+
+```shell script
+source setup.bash
+sh rank.sh myteam ./samples/c17.bench ./
+cat ./myteam@c17@hadoop/c17.pattern
+```
+
+
 
 

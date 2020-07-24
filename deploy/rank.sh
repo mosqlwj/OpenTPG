@@ -306,7 +306,14 @@ function rank_local()
 function    show_help()
 {
     echo    "Usage:"
-    echo    "   rank.sh <TEAM> <INOUT-SCENE-DIR> [<OUTPUT-DIR>]"
+    echo    "   rank.sh <TEAM> <INPUT-NETLIST-FILE> [<OUTPUT-DIR>]"
+    echo    ""
+    echo    "Options:"
+    echo    "   <TEAM>                  The name of your team."
+    echo    "   <INPUT-NETLIST-FILE>    The netlist file."
+    echo    "   <OUTPUT-DIR>            Where to write the output files."
+
+    return  0
 }
 
 
@@ -331,7 +338,10 @@ function main()
     #    读取参数
     local team="$1"
     local inputdir=$(realpath "$2")
-    local outputdir=$(realpath "$3")
+    local outputdir="$3"
+    if [[ "${outputdir}" == "" ]]; then
+        outputdir=$(realpath ".")
+    fi
 
 
     if [[ "${RANK_MODE}" == "" ]]; then
@@ -399,7 +409,7 @@ function main()
 
     #   启动测试
     echo    "Testing ..."
-    execute_rank    "${team}"   "${inputdir}"   "${outputdir}"  "${RANK_MODE}"
+    execute_rank    "${team}"   "${inputdir}"   "${outputdir}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Error: Testing failed(${RESULT})"
