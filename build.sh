@@ -180,11 +180,17 @@ function do_package
     echo        "BUILD_ARCH :   '${buildarch}'"         >>  "${pkgdir}/.properties" &&  \
     echo        "BUILD_ID   :   '${buildcommitid}'"     >>  "${pkgdir}/.properties" &&  \
     echo        "BUILD_GCC  :   '${buildgccversion}'"   >>  "${pkgdir}/.properties" &&  \
-    cp -rf      "${PROJECT_ROOT}/deploy"/*      "${pkgdir}"     &&  \
-    cp -rf      "${PROJECT_ROOT}/bin"           "${pkgdir}"     &&  \
-    cd          "${PROJECT_ROOT}/.tmp-package"                  &&  \
-    tar cvf     "${pkgname}.tar"        "${installname}"        &&  \
-    gzip        "${pkgname}.tar"                                &&  \
+    cp -rf      "${PROJECT_ROOT}/deploy"/tmpl-hadoop   "${pkgdir}"  &&  \
+    cp -rf      "${PROJECT_ROOT}/deploy"/tmpl-redis    "${pkgdir}"  &&  \
+    cp -rf      "${PROJECT_ROOT}/deploy"/tmpl-sample   "${pkgdir}"  &&  \
+    cp -rf      "${PROJECT_ROOT}/deploy"/install.sh    "${pkgdir}"  &&  \
+    cp -rf      "${PROJECT_ROOT}/deploy"/rank.sh       "${pkgdir}"  &&  \
+    cp -rf      "${PROJECT_ROOT}/deploy"/setup.bash    "${pkgdir}"  &&  \
+    cp -rf      "${PROJECT_ROOT}/deploy"/INSTALL-ORDER "${pkgdir}"  &&  \
+    cp -rf      "${PROJECT_ROOT}/bin"                  "${pkgdir}"  &&  \
+    cd          "${PROJECT_ROOT}/.tmp-package"                      &&  \
+    tar cvf     "${pkgname}.tar"        "${installname}"            &&  \
+    gzip        "${pkgname}.tar"                                    &&  \
     mv          "${pkgname}.tar.gz"     "${PROJECT_ROOT}"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then

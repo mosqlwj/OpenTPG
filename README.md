@@ -11,16 +11,11 @@
 
 #### 安装教程
 
-1.  安装环境
-2.  xxxx
-3.  xxxx
+参见: [安装说明](doc/INSTALL.md)
 
 #### 使用说明
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
-4.  xxxx
+参见: [快速入门](doc/QUICKSTART.md)
 
 #### 参与贡献
 
