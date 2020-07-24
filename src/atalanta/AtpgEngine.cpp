@@ -598,7 +598,6 @@ void AtpgEngine::initFS() {
     FanNet::setDominator(levels);
     setUniquePath(levels);
 
-    // print_test_topic(test,nopi,nopo,name1);
     if (learnMode == 'y') learn(levels);
 
     for (i = 0; i < numberOfFaults; i++) {
