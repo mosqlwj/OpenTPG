@@ -620,27 +620,6 @@ void AtpgEngine::initFS() {
     allOne = ALL1;
 }
 
-void AtpgEngine::readTestFile(const string &patternFileName) {
-    string s;
-
-    fstream patternStream;
-    patternStream.open(patternFileName, ios::in);
-    testVector.num = 0;
-    testVector.inpVars = numberOfPrimaryInputs;
-    testVector.outVars = numberOfPrimaryOutputs;
-
-    while (patternStream.peek() > 0) {
-        patternStream >> s;
-        myCurrFault = 0;
-        if (s.length() != numberOfPrimaryInputs) {
-            stringstream ss;
-            ss << "Fatal error: Incorrect number of test vector inputs";
-            throw ss.str();
-        }
-        addTestVector(&s, NULL, -1);
-    }
-}
-
 AtpgStatus AtpgEngine::getResults() {
     AtpgStatus ar;
 

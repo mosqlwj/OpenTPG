@@ -88,7 +88,6 @@ protected:
         for (int i = 0; i < numberOfFaults; i++) faultList[i]->index = i;
     };
     void initFS();
-    void readTestFile(const string &patternFileName);
     void printTestPattern(ostream &patternStream);
 
     void printFinalReport(AtpgStatus ar);
