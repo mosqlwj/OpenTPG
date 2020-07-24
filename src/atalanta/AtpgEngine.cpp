@@ -855,17 +855,17 @@ void AtpgEngine::generateCube() {
     clock_t start, end;
 
     // parse bench
+    start = clock();
     auto p = &Params::getInstance();
     levels = parseNetlist(p->getNetlistFile());
     numberOfFaults = readFaultsFromFileStream(cin, myNumberOfStems, myStem);
     indexFaults();
     customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
+    end = clock();
+    atpgStatus.time = (end - start) / (double)CLOCKS_PER_SEC;
+    cerr << "parsing: " << atpgStatus.time << " s" << endl;
 
     start = clock();
-    int i;
-    int nDetect3 = 0;
-    status state;
-    Fault *f;
     int nOverBackTrack = 0;
     int tBackTrack = 0;
     double fan1Time;
@@ -877,6 +877,7 @@ void AtpgEngine::generateCube() {
     atpgStatus = getResults();
     end = clock();
     atpgStatus.time = (end - start) / (double)CLOCKS_PER_SEC;
+    cerr << "atpg: " << atpgStatus.time << " s" << endl;
 }
 
 void AtpgEngine::createFaultlist() {
@@ -895,16 +896,16 @@ int AtpgEngine::run() {
     CustomFaultlist *customFaultlist;
     clock_t start, end;
 
+    start = clock();
     auto p = &Params::getInstance();
     levels = parseNetlist(p->getNetlistFile());
-
-    // create fault
     processFaults();
     indexFaults();
     customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
+    atpgStatus.time = (end - start) / (double)CLOCKS_PER_SEC;
+    cerr << "parsing: " << atpgStatus.time << " s" << endl;
 
     start = clock();
-
     // reset gates status and init simulation
     initFS();
 
@@ -915,7 +916,7 @@ int AtpgEngine::run() {
     end = clock();
     atpgStatus.time = (end - start) / (double)CLOCKS_PER_SEC;
     printFinalReport(atpgStatus);
-    printTestPattern(cout);
+//    printTestPattern(cout);
 
     return 0;
 }
