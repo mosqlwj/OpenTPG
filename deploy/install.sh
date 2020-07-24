@@ -214,19 +214,17 @@ function    install_samples()
 {
     #   如果sample目录已经存在了,先清除数据
     if [[ -d  "${INSTALL_DIR}/samples" ]]; then
-        rm -f "${INSTALL_DIR}/samples"
+        echo    "The samples is installed there, skip this step"
+    else
+        #   安装配置和入口配置脚本
+        cp  -rf     "${SELFDIR}/tmpl-samples"    "${INSTALL_DIR}/samples"
+        RESULT=$?
+        if [[ ${RESULT} -ne 0 ]]; then
+            echo    "Setup samples failed(${RESULT}): '${SELFDIR}/tmpl-samples' -> '${INSTALL_DIR}/samples'"
+            return  1
+        fi
+        echo    "Setup samples success: '${SELFDIR}/tmpl-samples' -> '${INSTALL_DIR}/samples'"
     fi
-
-
-    #   安装配置和入口配置脚本
-    cp  -rf     "${SELFDIR}/tmpl-samples"    "${INSTALL_DIR}/samples"
-    RESULT=$?
-    if [[ ${RESULT} -ne 0 ]]; then
-        echo    "Setup samples failed(${RESULT}): '${SELFDIR}/tmpl-samples' -> '${INSTALL_DIR}/samples'"
-        return  1
-    fi
-    echo    "Setup samples success: '${SELFDIR}/tmpl-samples' -> '${INSTALL_DIR}/samples'"
-
 
     echo    "Install samples success: '${REDIS_HOME}'"
 }
