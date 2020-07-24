@@ -209,6 +209,29 @@ function install_settings()
     return  0
 }
 
+
+function    install_samples()
+{
+    #   如果sample目录已经存在了,先清除数据
+    if [[ -d  "${INSTALL_DIR}/samples" ]]; then
+        rm -f "${INSTALL_DIR}/samples"
+    fi
+
+
+    #   安装配置和入口配置脚本
+    cp  -rf     "${SELFDIR}/tmpl-samples"    "${INSTALL_DIR}/samples"
+    RESULT=$?
+    if [[ ${RESULT} -ne 0 ]]; then
+        echo    "Setup samples failed(${RESULT}): '${SELFDIR}/tmpl-samples' -> '${INSTALL_DIR}/samples'"
+        return  1
+    fi
+    echo    "Setup samples success: '${SELFDIR}/tmpl-samples' -> '${INSTALL_DIR}/samples'"
+
+
+    echo    "Install samples success: '${REDIS_HOME}'"
+}
+
+
 #   $1  software-dir
 #   $2  install-dir
 function main()
@@ -269,6 +292,15 @@ function main()
         return  8
     fi
     echo    "The redis installation was success"
+
+    #   安装sample
+    install_sanple
+    RESULT=$?
+    if [[ ${RESULT} -ne 0 ]]; then
+        echo    "The sample installation was failed(${RESULT})"
+        return  8
+    fi
+    echo    "The sample installation was success"
 
     #   安装 settings
     install_settings
