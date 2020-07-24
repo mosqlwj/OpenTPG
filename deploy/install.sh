@@ -293,14 +293,14 @@ function main()
     fi
     echo    "The redis installation was success"
 
-    #   安装sample
-    install_sanple
+    #   安装samples
+    install_samples
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
-        echo    "The sample installation was failed(${RESULT})"
+        echo    "The samples installation was failed(${RESULT})"
         return  8
     fi
-    echo    "The sample installation was success"
+    echo    "The samples installation was success"
 
     #   安装 settings
     install_settings
