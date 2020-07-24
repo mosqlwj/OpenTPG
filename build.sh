@@ -182,7 +182,7 @@ function do_package
     echo        "BUILD_GCC  :   '${buildgccversion}'"   >>  "${pkgdir}/.properties" &&  \
     cp -rf      "${PROJECT_ROOT}/deploy"/tmpl-hadoop   "${pkgdir}"  &&  \
     cp -rf      "${PROJECT_ROOT}/deploy"/tmpl-redis    "${pkgdir}"  &&  \
-    cp -rf      "${PROJECT_ROOT}/deploy"/tmpl-sample   "${pkgdir}"  &&  \
+    cp -rf      "${PROJECT_ROOT}/deploy"/tmpl-samples  "${pkgdir}"  &&  \
     cp -rf      "${PROJECT_ROOT}/deploy"/install.sh    "${pkgdir}"  &&  \
     cp -rf      "${PROJECT_ROOT}/deploy"/rank.sh       "${pkgdir}"  &&  \
     cp -rf      "${PROJECT_ROOT}/deploy"/setup.bash    "${pkgdir}"  &&  \
