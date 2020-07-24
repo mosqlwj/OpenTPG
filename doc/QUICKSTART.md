@@ -61,6 +61,7 @@ drwxr-xr-x. 2 liugang liugang   4096 Jul 24 23:29 output
 
 - `atalanta` 是 rank.sh 脚本帮助我们备份的目标程序
 - `xxx.bench` 是 rank.sh 脚本帮助我们备份的网表(netlist)文件
+- `xxx.cost` 是脚本统计的关键任务的执行耗时
 - `xxx.fault` 是脚本根据网表文件自动生成的 faultlist 文件
 - `xxx.pattern` 是脚本最终产生的pattern文件
 - `xxx.report` 是最终的统计报告
