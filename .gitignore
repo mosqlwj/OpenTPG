@@ -72,4 +72,12 @@ tmp/
 
 test1/
 hadoop/
-redis-*/
+redis-*/*.flist
+*.patttern
+*.pat
+*.report
+*.fault
+*.result
+*.jar
+push
+untitled
