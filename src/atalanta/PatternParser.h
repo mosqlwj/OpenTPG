@@ -6,6 +6,7 @@
 #define ATLANTA_PATTERNPARSER_H
 
 #include "AtpgEngine.h"
+#include <set>
 
 namespace hiatpg {
     class PatternParser : public AtpgEngine
@@ -13,7 +14,7 @@ namespace hiatpg {
     private:
         vector<unordered_map<int, char>> testCubes;
         map<int, unordered_map<int, char>>  cinTestCubes;
-        vector<vector<int>>       testPatterns;
+        set<string>       testPatterns;
         string  patternPath;
         ifstream patternSorceStream;
         ifstream faultSorceStream;

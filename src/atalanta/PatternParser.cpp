@@ -38,7 +38,7 @@ namespace hiatpg{
 
         end = clock();
         atpgStatus.time = (end-start)/(double)CLOCKS_PER_SEC;
-//        writeResults(atpgStatus);
+        writeResults(atpgStatus);
         printTestPattern(cout);
 
         return;
@@ -68,43 +68,10 @@ namespace hiatpg{
         fantime=0;
         ReadCinPattern(cin);
         mnDetect+= CinTestGen(levels,BITSIZE,myNumberOfStems,myStem,maxBackTrack,false,&nRedundant,&nOverBackTrack,&tBackTrack,&mnTest,&mnPacket,&mnBit,&fantime);
-//        nTest2=mnTest;
-
-        /********************************************************************
-        *                                                                  *
-        *       step 5: Test compaction session                            *
-        *               32-bit reverse fault simulation                    *
-        *               + shuffling compaction   	                       *
-        *                                                                  *
-        ********************************************************************/
-//        if(mnTest==0)
-//        {
-//            nTest3=0;
-//            nDetect3=0;
-//        } else if(compact=='n')
-//        {
-//            nTest3=mnTest;
-//            nDetect3=mnDetect;
-//        } else
-//        {
-//            if(maxCompact==0) {
-//                compact='r';
-//            }
-//
-//            nTest3= compactTest(levels,myNumberOfStems,myStem,&shuf,&nDetect3,mnPacket,mnBit,BITSIZE);
-////            printTestVector("after atpg");
-//            if(nDetect3 != mnDetect)
-//            {
-//                /*cout<<"Error in test compaction: m_ndetect="<<mnDetect<<", ndetect3="<<nDetect3<<endl;
-//                exit(0);*/
-//                stringstream ss;
-//                ss << "Error in test compaction: m_ndetect="<<mnDetect<<", ndetect3="<<nDetect3;
-//                throw ss.str();
-//            }
-//        }
         nTest3 = testPatterns.size();
         CoutPatternsAndFaults();
     }
+
     void PatternParser::PatternGenerateTest()
     {
         int i;
@@ -252,16 +219,16 @@ namespace hiatpg{
                 }
             }
             fillPatterns(fillMode,*nPacket,*nBit);
-            vector<int>    pattern(numberOfPrimaryInputs);
+            string tempStr;
             for(j=0;j<numberOfPrimaryInputs;j++)
             {
                 gates[j]->changed=false;
                 gates[j]->freach=false;
                 gates[j]->cobserve=ALL0;
                 gates[j]->output=gates[j]->output1;
-                pattern[j] = gates[j]->output & 1;
+                tempStr += std::to_string(gates[j]->output & 1);
             }
-            testPatterns.push_back(move(pattern));
+            testPatterns.insert(move(tempStr));
 
             if(++(*nBit)==maxBits) {*nBit=0; (*nPacket)++;}
             stack->clear();
@@ -276,13 +243,24 @@ namespace hiatpg{
 
     void PatternParser::CoutPatternsAndFaults()
     {
-        for (int i = 0; i < testPatterns.size(); ++i) {
-            cout <<"pattern:" << i << "\t";
-            for (int j = 0; j < numberOfPrimaryInputs; ++j) {
-                cout << testPatterns[i][j];
+        auto  it = testPatterns.begin();
+        int patternNum = 0;
+        while (it != testPatterns.end()){
+            cout << "pattern:" << patternNum << "\t";
+            for (int i = 0; i < numberOfPrimaryInputs; ++i){
+                cout << (*it)[i];
             }
             cout << endl;
+            patternNum++;
+            it++;
         }
+//        for (int i = 0; i < testPatterns.size(); ++i) {
+//            cout <<"pattern:" << i << "\t";
+//            for (int j = 0; j < numberOfPrimaryInputs; ++j) {
+//                cout << testPatterns[i][j];
+//            }
+//            cout << endl;
+//        }
 //        for (int i = 0; i < numberOfFaults; i++) {
 //            auto pCurrentFault = faultList[i];
 //            string line;
