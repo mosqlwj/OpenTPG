@@ -79,7 +79,6 @@ namespace hiatpg {
 		}
 
 		void setTestAbility();
-		void myDPrintIO(int no);
 
 		void allocateDynamicBuffers();
 		void allocateStacks();
