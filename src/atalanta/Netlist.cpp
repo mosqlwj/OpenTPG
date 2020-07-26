@@ -129,18 +129,6 @@ namespace hiatpg {
 			return s;
 	}
 
-	void Netlist::getTestVector(int nBit)
-    {
-        string *iv,*ov;
-
-        iv = printInputs(nBit);
-        ov = printOutputs(nBit);
-        addTestVector(iv, ov, 1);
-
-        delete iv;
-        delete ov;
-    }
-
     void Netlist::setTestAbility()
 	{
 		int i,j,depth;
