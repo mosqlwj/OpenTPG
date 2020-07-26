@@ -193,6 +193,7 @@ namespace hiatpg{
         learnMode = p->getLearnMode();
         faultMode = p->getFaultMode();
         faultFilePath = p->getFaultFile();
+        patternPath = p->GetPatternPath();
         fillMode = p->getFillMode();
         setEachLimit(p->getEachLimit());
         noFaultSim = p->getNoFaultSim();
@@ -208,7 +209,7 @@ namespace hiatpg{
             unordered_map<int, char>  tempCube;
             vector<std::string> patternVec = split(patternLine," ");
             for (int i = 1; i < patternVec.size() - 1; i +=2){
-                tempCube[atof(patternVec[i].c_str())] =  patternLine[i+1];
+                tempCube[atof(patternVec[i].c_str())] = *(patternVec[i+1].data());
             }
             cinTestCubes[atof(patternVec[0].c_str())] = move(tempCube);
         }
