@@ -124,6 +124,8 @@ namespace hiatpg {
 		status fan1(int maxdpi,Fault* cf,int maxbacktrack, int *nbacktrack);
 
 		virtual ~FanNet() { };
+
+        void myDPrintIO(int no);
     };
 }
 #endif // __ATALANTA_FANNET_H__

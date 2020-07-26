@@ -180,28 +180,6 @@ namespace hiatpg {
 		}
 	}
 	
-	void Netlist::myDPrintIO(int no)
-	{
-		int i;
-		
-		string iv;
-		string ov;
-		
-		iv.resize(numberOfPrimaryInputs);
-		ov.resize(numberOfPrimaryOutputs);
-		
-		
-		
-		for(i=0; i<numberOfPrimaryInputs; i++)
-			iv[i] = dLevelToString[gates[primaryIn[i]]->output][0];
-		iv[i] = 0;
-		for(i=0; i<numberOfPrimaryOutputs; i++)
-			ov[i] = dLevelToString[gates[primaryOut[i]]->output][0];
-		ov[i] = 0;
-		addTestVector( &iv, &ov, no );
-		
-	}
-	
 	void Netlist::allocateDynamicBuffers()
 	{
 		freeGates=new Stack(numberOfGates);
