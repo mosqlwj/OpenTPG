@@ -99,6 +99,7 @@ namespace hiatpg {
 		}
 
 		void scheduleGate(Gate* gut);
+        void addTestVector(string *ivct,string *ovct,int no);
 
 	public:
 		FanNet():unjustified(1000),initObj(1000),currObj(1000),fanObj(1000),finalObj(1000),

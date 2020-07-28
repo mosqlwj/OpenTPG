@@ -45,7 +45,6 @@ namespace hiatpg {
 		char initialMode;
 
 		Fault *myCurrFault;
-		void addTestVector(string *ivct,string *ovct,int no);
 		level logiclevel(level V0,level V1,int n);
 
 		string *printInputs(int nth_bit );
@@ -56,7 +55,7 @@ namespace hiatpg {
 		{
 			numberOfGates=numberOfFlipFlops=numberOfPrimaryInputs=numberOfPrimaryOutputs=0;
 			PPOlevel=POlevel=0;
-			flipFlops=NULL;
+			flipFlops = nullptr;
 			primaryOut.clear();//primaryOut=0;
 			headlines.clear();  //headlines=0;
 			primaryIn.clear(); //primaryIn = 0;
