@@ -174,7 +174,7 @@ namespace hiatpg{
                 break;
             }
             unordered_map<int, char>  tempCube;
-            vector<std::string> patternVec = split(patternLine," |\t");
+            vector<std::string> patternVec = spliPattern(patternLine," ");
             for (int i = 1; i < patternVec.size() - 1; i +=2) {
                 tempCube[atof(patternVec[i].c_str())] = *(patternVec[i+1].data());
             }
@@ -213,7 +213,7 @@ namespace hiatpg{
             for (int i = 0; i < numberOfPrimaryInputs; i++){
                 auto inputIt = cube.find(i);
                 if (inputIt != cube.end()){
-                    gates[i]->output = static_cast<int>(atof(&((*cinTestCubesIt).second)[i]));
+                    gates[i]->output = static_cast<int> (cube[i] - '0');
                 } else {
                     gates[i]->output = X;
                 }
