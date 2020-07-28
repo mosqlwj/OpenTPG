@@ -35,12 +35,9 @@ namespace hiatpg {
 		Stack *dynamicStack;
 		Stack *stack;
 		Stack *stack1,*stack2;
-
 		int nsStack,ndStack;
 
 		Hash hashTable;
-
-		Fault *myCurrFault;
 
 	public:
 		Netlist(): hashTable(HASHSIZE), stack(0)

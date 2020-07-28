@@ -59,7 +59,6 @@ namespace hiatpg {
 	{
 	protected:
 		Fault **faultList;
-
 		int numberOfFaults;
 
 #ifdef INCLUDE_HOPE

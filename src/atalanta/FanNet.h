@@ -46,6 +46,7 @@ namespace hiatpg {
 		Stack** eventList;
         struct TestVectors testVector;
         char initialMode;
+        Fault *myCurrFault;
 
 		void scheduleOutput(Gate *gate) {
 			for(int i=0;i<gate->noutput;i++) pushEvent(gate->fanouts[i]);
