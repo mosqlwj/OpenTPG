@@ -93,6 +93,9 @@ namespace hiatpg {
 		int tGenSim(int levels,int nStem,Gate **stem,int nTest,int *profile);
 
         virtual ~Simulation(){};
+        level logiclevel(level V0,level V1,int n);
+        string *printInputs(int nth_bit );
+        string *printOutputs(int nth_bit);
 	};
 
 }

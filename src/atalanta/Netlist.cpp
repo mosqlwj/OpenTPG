@@ -38,40 +38,10 @@ namespace hiatpg {
 		}
 	}
 	
-	level Netlist::logiclevel(level V0, level V1, int n)
-	{
-		V0=((V0 & BITMASK[n]) == ALL0) ? ZERO : ONE;
-		V1=((V1 & BITMASK[n]) == ALL0) ? ZERO : ONE;
-		return(parallelToLevel[V0][V1]);
-	}
-	
 	void Netlist::allocateStacks()
 	{
 		stack1=new Stack(numberOfGates+numberOfPrimaryOutputs);
 		stack2=new Stack(numberOfGates+numberOfPrimaryOutputs);
-	}
-	
-	string* Netlist::printInputs(int nth_bit)
-	{
-		string *s=new string;
-		s->resize(numberOfPrimaryInputs, '0');
-		
-		for(int j=0;j<numberOfPrimaryInputs;j++)
-			if(checkBit(gates[j]->output1, nth_bit))
-				(*s)[j] = '1'; 
-			
-			return s;
-	}
-	
-	string* Netlist::printOutputs(int nth_bit)
-	{
-		string * s=new string;
-		s->resize(numberOfPrimaryOutputs, '0');
-		
-		for(int j=0;j<numberOfPrimaryOutputs;j++)
-			if(checkBit(gates[primaryOut[j]]->output1, nth_bit))
-				(*s)[j] = '1';
-			return s;
 	}
 
     void Netlist::setTestAbility()

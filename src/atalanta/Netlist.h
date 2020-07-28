@@ -44,10 +44,6 @@ namespace hiatpg {
 		char initialMode;
 
 		Fault *myCurrFault;
-		level logiclevel(level V0,level V1,int n);
-
-		string *printInputs(int nth_bit );
-		string *printOutputs(int nth_bit);
 
 	public:
 		Netlist(): hashTable(HASHSIZE), stack(0)

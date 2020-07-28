@@ -599,4 +599,34 @@ namespace hiatpg {
     {
 
     }*/
+
+    level Simulation::logiclevel(level V0, level V1, int n)
+    {
+        V0=((V0 & BITMASK[n]) == ALL0) ? ZERO : ONE;
+        V1=((V1 & BITMASK[n]) == ALL0) ? ZERO : ONE;
+        return(parallelToLevel[V0][V1]);
+    }
+
+    string* Simulation::printInputs(int nth_bit)
+    {
+        string *s=new string;
+        s->resize(numberOfPrimaryInputs, '0');
+
+        for(int j=0;j<numberOfPrimaryInputs;j++)
+            if(checkBit(gates[j]->output1, nth_bit))
+                (*s)[j] = '1';
+
+        return s;
+    }
+
+    string* Simulation::printOutputs(int nth_bit)
+    {
+        string * s=new string;
+        s->resize(numberOfPrimaryOutputs, '0');
+
+        for(int j=0;j<numberOfPrimaryOutputs;j++)
+            if(checkBit(gates[primaryOut[j]]->output1, nth_bit))
+                (*s)[j] = '1';
+        return s;
+    }
 }
