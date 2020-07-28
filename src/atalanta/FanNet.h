@@ -44,6 +44,7 @@ namespace hiatpg {
 		char genAllPat;
 
 		Stack** eventList;
+        struct TestVectors testVector;
 
 		void scheduleOutput(Gate *gate) {
 			for(int i=0;i<gate->noutput;i++) pushEvent(gate->fanouts[i]);
