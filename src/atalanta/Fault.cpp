@@ -510,7 +510,7 @@ int ReadableFaultList::readFaultsFromFileStream(istream &fileStream, int noStem,
         fault->gate = gut;
         fault->line = line;
         fault->type = static_cast<FaultType>(type);
-        gut->pFaultList.push_front(fault);
+        gut->pFaultList.push_back(fault);
         numOfFault++;
     }
 

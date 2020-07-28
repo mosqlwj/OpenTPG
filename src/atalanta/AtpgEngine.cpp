@@ -69,6 +69,16 @@ int hiatpg::AtpgEngine::testCubeGen(int levels, int maxBits, int nStem, Gate **s
         (*fanTime) += (runtime2 - runtime1);
 
         if (state == TEST_FOUND) {  // fault is detected, delete the detected fault from fault list
+//            string strTarget = pCurrentFault->gate->symbol->symbol;
+//            int faninIndex = pCurrentFault->line;
+//            if (faninIndex != OUTFAULT) {
+//                auto faninGate = pCurrentFault->gate->fanins[faninIndex];
+//                string strFanin = faninGate->symbol->symbol;
+//                cout << strFanin << "->" << strTarget << " /" << pCurrentFault->type << endl;
+//            } else {
+//                cout << strTarget << " /" << pCurrentFault->type << endl;
+//            }
+
             pCurrentFault->detected = PROCESSED;
             unordered_map<int, int> testcube;
             cout << i << '\t';
