@@ -72,5 +72,7 @@ namespace hiatpg {
 #define isWhiteSpace(c) (c==' ' || c=='\n'|| c=='\t')
 #define isDelimiter(c) (c=='=' || c==',' || c=='(' || c==')')
 
+    static bool checkBit(level word, int n) { return (word & (1<<n)) != 0; }
+
 }
 #endif // __ATALANTA_GLOBALS_H__

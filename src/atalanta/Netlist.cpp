@@ -51,31 +51,6 @@ namespace hiatpg {
 		stack2=new Stack(numberOfGates+numberOfPrimaryOutputs);
 	}
 	
-#ifdef INCLUDE_HOPE
-	void Netlist::printIOValues(vector<int> iarray, vector<int> oarray)
-	{
-		int j;
-		Gate *gut;
-		string iv,ov;
-		
-		iv.reserve(numberOfPrimaryInputs+1);
-		ov.reserve(numberOfPrimaryOutputs+1);
-		
-		for(j = 0; j < numberOfPrimaryInputs; j++)
-		{
-			gut=gates[iarray[j]];
-			iv[j] = levelToString[logiclevel(gut->GV[0],gut->GV[1],0)][0];
-		}
-		iv[j] = 0;
-		for(j = 0; j < numberOfPrimaryOutputs; j++) {
-			gut=gates[oarray[j]];
-			ov[j] = levelToString[logiclevel(gut->GV[0],gut->GV[1],0)][0];
-		}
-		ov[j] = 0;
-		addTestVector( &iv, &ov, 1 );
-	}
-#endif
-	
 	void Netlist::addTestVector(string *ivct, string *ovct, int no)
 	{
 		TestVectorType *testv;

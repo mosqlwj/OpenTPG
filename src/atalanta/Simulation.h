@@ -75,6 +75,9 @@ namespace hiatpg {
         void	fillPatternsFsim(char mode,int nPacket,int nBit);
 		void	fillPatternsHope(char mode,int nPacket,int nBit);
         void printIO(int nth_bit, int start);
+#ifdef INCLUDE_HOPE
+        void printIOValues( vector<int> iarray, vector<int> oarray);
+#endif
 
 	public:
 		Simulation(): testVectors(0), testVectors1(0), testStore(0), testStore1(0) {
