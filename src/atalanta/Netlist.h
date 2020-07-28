@@ -18,7 +18,6 @@ namespace hiatpg {
 		unsigned int numberOfFlipFlops;
 		unsigned int numberOfPrimaryInputs;
 		unsigned int numberOfPrimaryOutputs;
-
 		int PPOlevel;
 		int POlevel;
 
@@ -39,9 +38,7 @@ namespace hiatpg {
 
 		int nsStack,ndStack;
 
-		Hash	hashTable;
-
-		char initialMode;
+		Hash hashTable;
 
 		Fault *myCurrFault;
 
@@ -58,7 +55,6 @@ namespace hiatpg {
 			faultyGates=evalGates=activeStems=0;
 			dynamicStack=stack=stack1=stack2=0;
 			nsStack=ndStack=0;
-			initialMode='x';
 		}
 
 		void setTestAbility();

@@ -45,6 +45,7 @@ namespace hiatpg {
 
 		Stack** eventList;
         struct TestVectors testVector;
+        char initialMode;
 
 		void scheduleOutput(Gate *gate) {
 			for(int i=0;i<gate->noutput;i++) pushEvent(gate->fanouts[i]);
@@ -106,6 +107,7 @@ namespace hiatpg {
 		FanNet():unjustified(1000),initObj(1000),currObj(1000),fanObj(1000),finalObj(1000),
 			dFrontier(1000),dyID(INFINITE), noFaultSim('n'), learnMode('n'), genAllPat('n') {
 			unjustified.push(0);
+            initialMode='x';
 		};
 
 		void allocateEventList();
