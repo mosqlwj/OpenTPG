@@ -22,7 +22,6 @@ namespace hiatpg {
 
 		int PPOlevel;
 		int POlevel;
-		int lastGate;
 
 		vector<int> primaryIn;
 		vector<int> headlines;
@@ -56,7 +55,7 @@ namespace hiatpg {
 		Netlist(): hashTable(HASHSIZE), stack(0)
 		{
 			numberOfGates=numberOfFlipFlops=numberOfPrimaryInputs=numberOfPrimaryOutputs=0;
-			PPOlevel=POlevel=lastGate=0;
+			PPOlevel=POlevel=0;
 			flipFlops=NULL;
 			primaryOut.clear();//primaryOut=0;
 			headlines.clear();  //headlines=0;

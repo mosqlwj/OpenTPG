@@ -55,8 +55,6 @@ int ReadableNet::parseNetlist(const string& netlistFileName) {
 			levelize();
 			addSpareGate();
 
-			lastGate=numberOfGates-1;
-
 			i=setFFR();
 			j=setDominator();
 #else
