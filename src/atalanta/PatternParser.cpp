@@ -174,7 +174,7 @@ namespace hiatpg{
                 break;
             }
             unordered_map<int, char>  tempCube;
-            vector<std::string> patternVec = spliPattern(patternLine," ");
+            vector<std::string> patternVec = split(patternLine," |\t");
             for (int i = 1; i < patternVec.size() - 1; i +=2) {
                 tempCube[atof(patternVec[i].c_str())] = *(patternVec[i+1].data());
             }
