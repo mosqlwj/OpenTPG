@@ -259,7 +259,7 @@ AtpgEngine::AtpgEngine() {
     myCurrFault = NULL;
 }
 
-void AtpgEngine::processFaults() {
+void AtpgEngine::produceFaults() {
     if (faultMode == 'f')
         readFaults(faultFile);
     else {
@@ -269,6 +269,10 @@ void AtpgEngine::processFaults() {
             ss << "Fatal error: error in setting fault list";
             throw ss.str();
         }
+    }
+
+    for (int i = 0; i < numberOfFaults; i++) {
+        faultList[i]->index = i;
     }
 }
 
@@ -717,7 +721,6 @@ void AtpgEngine::generateCube() {
     auto p = &Params::getInstance();
     levels = parseNetlist(p->getNetlistFile());
     numberOfFaults = readFaultsFromFileStream(cin, myNumberOfStems, myStem);
-    indexFaults();
     end = clock();
     atpgStatus.time = (end - start) / (double)CLOCKS_PER_SEC;
     cerr << "parsing: " << atpgStatus.time << " s" << endl;
@@ -737,24 +740,22 @@ void AtpgEngine::generateCube() {
     cerr << "atpg: " << atpgStatus.time << " s" << endl;
 }
 
-void AtpgEngine::createFaultlist() {
+void AtpgEngine::createFault() {
     auto p = &Params::getInstance();
     levels = parseNetlist(p->getNetlistFile());
     // create fault
-    processFaults();
-    indexFaults();
+    produceFaults();
     printFaultList();
 }
 
-int AtpgEngine::run() {
+int AtpgEngine::generatePattern() {
     AtpgStatus atpgStatus;
     clock_t start, end;
 
     start = clock();
     auto p = &Params::getInstance();
     levels = parseNetlist(p->getNetlistFile());
-    processFaults();
-    indexFaults();
+    produceFaults();
     end = clock();
     atpgStatus.time = (end - start) / (double)CLOCKS_PER_SEC;
     cerr << "parsing: " << atpgStatus.time << " s" << endl;
@@ -769,7 +770,7 @@ int AtpgEngine::run() {
     end = clock();
     atpgStatus.time = (end - start) / (double)CLOCKS_PER_SEC;
     printFinalReport(atpgStatus);
-//    printTestPattern(cout);
+    printTestPattern(cout);
 
     return 0;
 }

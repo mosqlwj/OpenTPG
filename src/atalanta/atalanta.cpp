@@ -11,20 +11,20 @@ int main(int argc, char** argv)
     if (action == "origin") {
         AtpgEngine* atpgEngine =new AtpgEngine();
         atpgEngine->setParams();
-        atpgEngine->run();
+        atpgEngine->generatePattern();
     } else if (action == "atpg") {
         AtpgEngine* atpgEngine =new AtpgEngine();
         atpgEngine->setParams();
         atpgEngine->generateCube();
-    } else if (action == "simulate-pattern"){
+    } else if (action == "simulate-pattern") {
         PatternParser* patternEngine = new PatternParser();
         patternEngine->setParams();
         patternEngine->run("pattern");
-    } else if (action == "simulate-cube"){
+    } else if (action == "simulate-cube") {
         PatternParser* patternEngine = new PatternParser();
         patternEngine->setParams();
         patternEngine->run("cube");
-    } else if (action == "stat"){
+    } else if (action == "stat") {
         PatternParser* parserEngine = new PatternParser();
         parserEngine->setParams();
         parserEngine->ReadPattern();
@@ -33,7 +33,7 @@ int main(int argc, char** argv)
     } else if (action == "create-fault") {
         AtpgEngine* atpgEngine =new AtpgEngine();
         atpgEngine->setParams();
-        atpgEngine->createFaultlist();
+        atpgEngine->createFault();
     } else if (action == "upload-netlist") {
 
     } else{

@@ -11,14 +11,7 @@ namespace hiatpg{
         auto p = &Params::getInstance();
         levels = parseNetlist(p->getNetlistFile());
         // create fault
-        if (inputMode == "pattern"){
-            processFaults();
-            indexFaults();
-        }
-        else{
-            processFaults();
-            indexFaults();
-        }
+        produceFaults();
 
         start = clock();
 
