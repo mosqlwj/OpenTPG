@@ -267,6 +267,26 @@ int FaultList::createFaultList(int noStem, Gate **stem) {
         return -1;
 }
 
+void FaultList::printFaultList()
+{
+    for (int i = 0; i < numberOfFaults; i++) {
+        auto pCurrentFault = faultList[i];
+        string line;
+        Gate *targetGate = pCurrentFault->gate;
+        Gate *faninGate = nullptr;
+        string strTarget = targetGate->symbol->symbol;
+        string strFanin;
+        int faninIndex = pCurrentFault->line;
+        if (faninIndex != OUTFAULT) {
+            faninGate = pCurrentFault->gate->fanins[faninIndex];
+            strFanin = faninGate->symbol->symbol;
+            cout << strFanin << "->" << strTarget << " /" << pCurrentFault->type << endl;
+        } else {
+            cout << strTarget << " /" << pCurrentFault->type << endl;
+        }
+    }
+}
+
 #ifdef INCLUDE_HOPE
 
 void FaultList::setParity(Gate *gut, int par) { gut->changed = inverseParity[parityOfGate[gut->type]][par]; }

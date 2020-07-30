@@ -17,17 +17,6 @@
 #include "Simulation.h"
 
 namespace hiatpg {
-class CustomFaultlist {
-    int fault;
-    char *mask;
-    string *names;
-    Fault **faultList;
-
-public:
-    CustomFaultlist(int fault, Fault **faultList);
-    void printFaultList();
-    void updateFaultList();
-};
 
 struct AtpgStatus {
     AtpgStatus()

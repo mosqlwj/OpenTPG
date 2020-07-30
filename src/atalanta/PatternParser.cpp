@@ -6,7 +6,6 @@
 #include <iomanip>
 namespace hiatpg{
     void PatternParser::run(string inputMode) {
-        CustomFaultlist *customFaultlist;
         clock_t start, end;
 
         auto p = &Params::getInstance();
@@ -15,12 +14,10 @@ namespace hiatpg{
         if (inputMode == "pattern"){
             processFaults();
             indexFaults();
-            customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
         }
         else{
             processFaults();
             indexFaults();
-            customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
         }
 
         start = clock();
