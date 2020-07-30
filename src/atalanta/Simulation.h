@@ -52,9 +52,7 @@ namespace hiatpg {
 		int maxCompact;
 		char fillMode;
 		TestVectorsData testVectors;//level testVectors[MAXTEST/10][MAXPI+1];
-		TestVectorsData testVectors1;//level testVectors1[MAXTEST/10][MAXPI+1];
 		TestVectorsData testStore;//level testStore[MAXTEST/10][MAXPI+1];
-		TestVectorsData testStore1;//level testStore1[MAXTEST/10][MAXPI+1];
 
 		void setBit(unsigned *word,int nth);
 		void resetBit(unsigned *word,int nth);
@@ -65,7 +63,7 @@ namespace hiatpg {
         void printIO(int nth_bit, int start);
 
 	public:
-		Simulation(): testVectors(0), testVectors1(0), testStore(0), testStore1(0) {
+		Simulation(): testVectors(0), testStore(0) {
 			compact = 's';
 			maxCompact = 2;
 			fillMode = 'r';

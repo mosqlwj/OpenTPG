@@ -71,8 +71,7 @@ namespace hiatpg {
                             gates[j]->output1=ALL0;
                             break;
                         default:
-                            resetBit(&testVectors1[nPacket][j],nBit);
-                            gates[j]->output1=ALL1;
+                            break;
                     }
                 break;
             case 'r':

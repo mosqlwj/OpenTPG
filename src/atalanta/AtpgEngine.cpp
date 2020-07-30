@@ -558,13 +558,9 @@ void AtpgEngine::initFS() {
     pInitSimulation(levels);
 
     testVectors.clear();
-    testVectors1.clear();
     testStore.clear();
-    testStore1.clear();
     testVectors.setSecondSize(numberOfPrimaryInputs);
-    testVectors1.setSecondSize(numberOfPrimaryInputs);
     testStore.setSecondSize(numberOfPrimaryInputs);
-    testStore1.setSecondSize(numberOfPrimaryInputs);
 
     allOne = ALL1;
 }
