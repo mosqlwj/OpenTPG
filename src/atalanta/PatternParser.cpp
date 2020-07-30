@@ -351,5 +351,87 @@ namespace hiatpg{
         cout << "fault-count"<< " " <<":" << " " << atpgStatus.faults << endl;
         cout << "pattern-coverage" << " " << ":"<<" " << fixed << std::setprecision(2) << double(atpgStatus.detectedFaults)/double(atpgStatus.faults) * 100 << "%" << endl;
     }
+    int PatternParser::MergeTestGen(int levels,int maxBits,int nStem,hiatpg::Gate**stem,int maxBackTrack, int phase,int*nRedundant,int*nOverBackTrack,int*nBackTrack,int*nTest, int*nPacket,int*nBit,double*fanTime)
+    {
+        int j,nBack;
+        status faultSelectionMode;
+        int lastFault;
+        int state;
+        int nDetect=0;
+        int profile[BITSIZE];
+        bool done;
+        Fault*pCurrentFault;
+        Gate*gut;
+        double seconds,minutes,runtime1,runtime2;
+
+        faultSelectionMode=DEFAULTMODE;
+        lastFault=numberOfFaults;
+        allOne=~(ALL1<<1);
+        done=false;
+
+        auto mergecubeIt=mergedCubes.begin();
+        while(mergecubeIt!=mergedCubes.end())
+        {
+            auto cube=*mergecubeIt;
+            for(int i=0;i<numberOfPrimaryInputs;i++){
+                auto inputIt=cube.find(i);
+                if(inputIt!=cube.end()){
+                    gates[i]->output=static_cast<int>(cube[i]-'0');
+                }else{
+                    gates[i]->output=X;
+                }
+            }
+            fillPatterns(fillMode,*nPacket,*nBit);
+            string tempStr;
+            for(j=0;j<numberOfPrimaryInputs;j++)
+            {
+                gates[j]->changed=false;
+                gates[j]->freach=false;
+                gates[j]->cobserve=ALL0;
+                gates[j]->output=gates[j]->output1;
+                tempStr+=std::to_string(gates[j]->output&1);
+            }
+            testPatterns.insert(move(tempStr));
+
+            if(++(*nBit)==maxBits){*nBit=0;(*nPacket)++;}
+            stack->clear();
+
+            //faultsimulation
+            profile[0]=fault0Simulation(levels,1,profile);
+            nDetect+=profile[0];
+            ++mergecubeIt;
+        }
+        return nDetect;
+    }
+    void PatternParser::MergeCubes()
+    {
+        auto baseCubeIt=cinTestCubes.begin();
+        while(baseCubeIt!=cinTestCubes.end()){
+            unordered_map<int,char>tempCube=(*baseCubeIt).second;
+            auto secondCubeIt=baseCubeIt++;
+            while(secondCubeIt!=cinTestCubes.end()){
+                if(InsertCubes(tempCube,(*secondCubeIt).second)){
+                    secondCubeIt=cinTestCubes.erase(secondCubeIt);
+                    continue;
+                }
+                secondCubeIt++;
+            }
+            mergedCubes.push_back(move(tempCube));
+            baseCubeIt=cinTestCubes.erase(baseCubeIt);
+        }
+    }
+    bool PatternParser::InsertCubes(unordered_map<int,char>&base,unordered_map<int,char>&cube)
+    {
+        auto cubeIt=cube.begin();
+        while(cubeIt!=cube.end()){
+        int index=(*cubeIt).first;
+        if(base.find(index)!=base.end()&&base[index]!=cube[index]){
+            return false;
+        }
+            base[index]=cube[index];
+            cubeIt++;
+        }
+        return true;
+    }
 
 }
