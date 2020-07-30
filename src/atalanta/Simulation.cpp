@@ -21,11 +21,6 @@
 #include "ParralelPattern.h"
 #include "Fault.h"
 #include "Globals.h"
-
-#include "FaultSimulation.h"
-#include "ReadableNet.h"
-#include "Random.h"
-
 #include "Simulation.h"
 
 namespace hiatpg {
@@ -45,169 +40,8 @@ namespace hiatpg {
         delete ov;
     }
 
-#ifdef INCLUDE_HOPE
-    void Simulation::printIOValues(vector<int> iarray, vector<int> oarray)
-    {
-        int j;
-        Gate *gut;
-        string iv,ov;
-
-        iv.reserve(numberOfPrimaryInputs+1);
-        ov.reserve(numberOfPrimaryOutputs+1);
-
-        for(j = 0; j < numberOfPrimaryInputs; j++)
-        {
-            gut=gates[iarray[j]];
-            iv[j] = levelToString[logiclevel(gut->GV[0],gut->GV[1],0)][0];
-        }
-        iv[j] = 0;
-        for(j = 0; j < numberOfPrimaryOutputs; j++) {
-            gut=gates[oarray[j]];
-            ov[j] = levelToString[logiclevel(gut->GV[0],gut->GV[1],0)][0];
-        }
-        ov[j] = 0;
-        addTestVector( &iv, &ov, 1 );
-    }
-#endif
-
     void Simulation::setBit(unsigned *word, int nth) {*word |= BITMASK[nth];}
     void Simulation::resetBit(unsigned *word,int nth) {*word &= ~BITMASK[nth];}
-    void Simulation::setb0(unsigned *word0, unsigned *word1, int nth) { *word0 |= BITMASK[nth]; *word1 &= (~BITMASK[nth]); }
-    void Simulation::setb1(unsigned *word0, unsigned *word1, int nth) { *word0 &= (~BITMASK[nth]); *word1 |= BITMASK[nth]; }
-    void Simulation::setbx(unsigned *word0, unsigned *word1, int nth) { *word0 &= (~BITMASK[nth]); *word1 &= (~BITMASK[nth]); }
-
-    int Simulation::randomFsim(int levels,int nStem,Gate **stem,level *lfsr,int limit,int maxBit,int maxDetect,int *nTest,int *nPacket,int *nBit)
-    {
-        int iteration=0;
-        int i,j;
-        int profile[BITSIZE];
-        int nDetect=0;
-        level value;
-
-        while(iteration<limit)
-        {
-            Random::getPRandompattern(numberOfPrimaryInputs,lfsr);
-
-
-
-            for(i=0;i<numberOfPrimaryInputs;i++) {
-                gates[i]->output1= gates[i]->output=lfsr[i];
-            }
-            pFaultFreeSimulation();
-            for(i=0;i<maxBit;i++) profile[i]=0;
-            if(fault1Simulation(levels,nStem,stem,maxBit,profile)>0)
-            {
-                iteration=0;
-                for(i=maxBit-1;i>=0;i--)
-                    if(profile[i]>0)
-                    {
-                        (*nTest)++;
-                        nDetect+=profile[i];
-                        for(j=0;j<numberOfPrimaryInputs;j++) {
-                            if((gates[j]->output1 & BITMASK[i]) != ALL0) {
-                                setBit(&testVectors[*nPacket][j],*nBit);
-                            }
-                            else
-                                resetBit(&testVectors[*nPacket][j],*nBit);
-                        }
-
-                        if(++(*nBit)==maxBit) {
-                            *nBit=0;
-                            (*nPacket)++;
-                        }
-                        if(compact=='n') printIO(i,*nTest);
-                    }
-                if(nDetect>=maxDetect) break;
-            }
-            else iteration++;
-
-            for(i=0;i<=nsStack;i++) (*dynamicStack)[i]->cobserve=ALL0;
-            if(updateFlag)
-            {
-                updateAll1();
-                updateFlag=false;
-            }
-            else for(i=ndStack;i>nsStack;i--) (*dynamicStack)[i]->freach=0;
-            ndStack=nsStack;
-        }
-
-        return nDetect;
-    }
-
-    int Simulation::randomHope(level *lfsr,int limit,int maxBit,int maxDetect,int *nTest,int *nPacket,int *nBit)
-    {
-        int iteration=0;
-        int i,j,n,n1;
-        int nDetect=0;
-        int ranTest=0;
-
-        while(iteration<limit)
-        {
-            Random::getPRandompattern(numberOfPrimaryInputs,lfsr);
-            for(n=0, i=maxBit-1; i>=0; i--)
-            {
-                for(j=0;j<numberOfPrimaryInputs;j++) {
-                    inVal[j]=((lfsr[j]&BITMASK[i])==ALL0)?ZERO:ONE;
-                }
-                goodSim(++ranTest);
-                if((n1=simulation())>0)
-                {
-                    n+=n1;
-                    (*nTest)++;
-                    nDetect+=n1;
-                    for(j=0;j<numberOfPrimaryInputs;j++)
-                        if(inVal[j]==ONE)
-                        {
-                            setBit(&testVectors[*nPacket][j],*nBit);
-                            resetBit(&testVectors1[*nPacket][j],*nBit);
-                        } else
-                        {
-                            resetBit(&testVectors[*nPacket][j],*nBit);
-                            setBit(&testVectors1[*nPacket][j],*nBit);
-                        }
-                    if(++(*nBit)==maxBit) {*nBit=0; (*nPacket)++;}
-                    if(compact=='n') printIOValues(primaryIn,primaryOut);
-
-                    if(nDetect>=maxDetect) break;
-                }
-            }
-            iteration=(n>0) ? 0 : iteration+1;
-            if(nDetect>=maxDetect) break;
-        }
-
-        return nDetect;
-    }
-
-    int Simulation::randomSim(int levels,int nStem,Gate **stem,level *lfsr,int limit,int maxBit,int maxDetect,int *nTest,int *nPacket,int *nBit)
-    {
-        return randomFsim(levels,nStem,stem,lfsr,limit,maxBit,maxDetect,nTest,nPacket,nBit);
-    }
-
-    int Simulation::simulateHope(int *nPacket,int *nBit)
-    {
-        int ranTest=0;
-        int j,n1;
-
-        goodSim(++ranTest);
-        n1=simulation();
-
-        for(j=0;j<numberOfPrimaryInputs;j++)                // ????
-            if(inVal[j]==ONE)
-            {
-                setBit(&testVectors[*nPacket][j],*nBit);
-                resetBit(&testVectors1[*nPacket][j],*nBit);
-            } else
-            {
-                resetBit(&testVectors[*nPacket][j],*nBit);
-                setBit(&testVectors1[*nPacket][j],*nBit);
-            }
-        return n1;
-    }
-
-    int Simulation::tGenSim(int levels,int nStem,Gate **stem,int nTest,int *profile)
-    {
-        return fault0Simulation(levels,1,profile);
-    }
 
     void Simulation::fillPatternsFsim(char mode,int nPacket,int nBit)
     {
@@ -261,82 +95,6 @@ namespace hiatpg {
                             else
                                 resetBit(&testVectors[nPacket][j],nBit);
                             gates[j]->output1=ran;
-                    }
-        }
-    }
-
-    void Simulation::fillPatternsHope(char mode,int nPacket,int nBit)
-    {
-        int j;
-
-        switch(mode)
-        {
-            case '0':
-                for(j=0;j<numberOfPrimaryInputs;j++)
-                    switch(gates[j]->output)
-                    {
-                        case ONE:
-                            setb1(&testVectors[nPacket][j], &testVectors1[nPacket][j],nBit);
-                            inVal[j]=ONE;
-                            break;
-                        default:
-                            setb0(&testVectors[nPacket][j], &testVectors1[nPacket][j],nBit);
-                            inVal[j]=ZERO;
-                            break;
-                    }
-                break;
-            case '1':
-                for(j=0;j<numberOfPrimaryInputs;j++)
-                    switch(gates[j]->output)
-                    {
-                        case ZERO:
-                            setb0(&testVectors[nPacket][j], &testVectors1[nPacket][j],nBit);
-                            inVal[j]=ZERO;
-                            break;
-                        default:
-                            setb1(&testVectors[nPacket][j], &testVectors1[nPacket][j],nBit);
-                            inVal[j]=ONE;
-                            break;
-                    }
-                break;
-            case 'r':
-                for(j=0;j<numberOfPrimaryInputs;j++)
-                    switch(gates[j]->output)
-                    {
-                        case ZERO:
-                            setb0(&testVectors[nPacket][j], &testVectors1[nPacket][j],nBit);
-                            inVal[j]=ZERO;
-                            break;
-                        case ONE:
-                            setb1(&testVectors[nPacket][j], &testVectors1[nPacket][j],nBit);
-                            inVal[j]=ONE;
-                            break;
-                        default:
-                            if((inVal[j]=(int)rand()&01) != 0)
-                            {
-                                setb1(&testVectors[nPacket][j], &testVectors1[nPacket][j],nBit);
-                            } else
-                            {
-                                setb0(&testVectors[nPacket][j], &testVectors1[nPacket][j],nBit);
-                            }
-                    }
-                break;
-            case 'x':
-                for(j=0;j<numberOfPrimaryInputs;j++)
-                    switch(gates[j]->output)
-                    {
-                        case ZERO:
-                            setb0(&testVectors[nPacket][j], &testVectors1[nPacket][j],nBit);
-                            inVal[j]=ZERO;
-                            break;
-                        case ONE:
-                            setb1(&testVectors[nPacket][j], &testVectors1[nPacket][j],nBit);
-                            inVal[j]=ONE;
-                            break;
-                        default:
-                            inVal[j]=X;
-                            setbx(&testVectors[nPacket][j], &testVectors1[nPacket][j],nBit);
-                            break;
                     }
         }
     }
@@ -593,18 +351,6 @@ namespace hiatpg {
             return(shuffleFsim(levels,nStem,stem,nShuf,nDet,nPacket,nBit,maxBits));
         else
             return(reverseFsim(levels,nStem,stem,nDet,nPacket,nBit,maxBits));
-    }
-
-    /*Simulation::~Simulation()
-    {
-
-    }*/
-
-    level Simulation::logiclevel(level V0, level V1, int n)
-    {
-        V0=((V0 & BITMASK[n]) == ALL0) ? ZERO : ONE;
-        V1=((V1 & BITMASK[n]) == ALL0) ? ZERO : ONE;
-        return(parallelToLevel[V0][V1]);
     }
 
     string* Simulation::printInputs(int nth_bit)

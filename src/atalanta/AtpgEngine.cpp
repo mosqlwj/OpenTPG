@@ -85,8 +85,6 @@ int hiatpg::AtpgEngine::testCubeGen(int levels, int maxBits, int nStem, Gate **s
             for (j = 0; j < numberOfPrimaryInputs; j++) {
                 int32_t value = gates[j]->output;
                 if (value != X) {
-                    //                    cout << "GateId: " << j << endl;
-                    //                    cout << "Value: " << gates[j]->output << endl;
                     testcube[j] = value;
                     cout << j << " " << gates[j]->output << " ";
                 }
@@ -147,7 +145,6 @@ int hiatpg::AtpgEngine::testGen(int levels, int maxBits, int nStem, Gate **stem,
                         break;
                     }
                 if (pCurrentFault == 0) done = true;
-                ;
         }
 
         // printf("%d\n", pCurrentFault->index);
