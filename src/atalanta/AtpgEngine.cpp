@@ -766,7 +766,7 @@ int AtpgEngine::generatePattern() {
     end = clock();
     atpgStatus.time = (end - start) / (double)CLOCKS_PER_SEC;
     printFinalReport(atpgStatus);
-    printTestPattern(cout);
+//    printTestPattern(cout);
 
     return 0;
 }
