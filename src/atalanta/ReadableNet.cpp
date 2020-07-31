@@ -44,44 +44,23 @@ int ReadableNet::parseNetlist(const string& netlistFileName) {
 		checkParameters();
 		addPO();
 
-		if(cctMode==ISCAS89)
-		{
-			stack=new Stack(numberOfGates+10);
+        stack=new Stack(numberOfGates+10);
 
-#ifdef INCLUDE_HOPE
-			allocateStacks();
-			maxlevel=computeLevel();
-			allocateEventList();
-			levelize();
-			addSpareGate();
+        allocateStacks();
+        maxlevel=computeLevel();
+        allocateEventList();
+        levelize();
+        addSpareGate();
 
-			i=setFFR();
-			j=setDominator();
-#else
-			if(levelize(numberOfGates,&(*stack)[0]) <0)
-			{
-				/*cerr<<"Fatal error: Invalid circuit file."<<endl;
-				exit(0);*/
-				stringstream ss;
-				ss <<"Fatal error: Invalid circuit file.";
-				throw ss.str();
-			}
-#endif
+        i=setFFR();
+        j=setDominator();
 
-			if(numberOfFlipFlops > 0)
-			{
-				/*cerr<<"Error: Invalid type DFF is defined."<<endl;
-				exit(0);*/
-				stringstream ss;
-				ss<<"Error: Invalid type DFF is defined.";
-				throw ss.str();
-			}
-		}
-		else
-		{
-			delete stack;
-			stack=0;
-		}
+        if(numberOfFlipFlops > 0)
+        {
+            stringstream ss;
+            ss << "Error: Invalid type DFF is defined.";
+            throw ss.str();
+        }
 
 		setCctParameters();
 
