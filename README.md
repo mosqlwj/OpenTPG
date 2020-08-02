@@ -25,6 +25,10 @@ OpenTPG 项目的目标是构建开源的 TPG 工具集。当前还处于项目�
 2. Hadoop 是大数据技术的基础性工具，掌握 Hadoop 同时也将让您大数据技术纳入自己的基本技能集
 3. 基础的 Linux 开发技能，C++开发能力，现代化的工程管理方式等等
 
+关于 ICISC 竞赛相关的信息，参见：
+
+[doc/race-icisc-2020.md](doc/race-icisc-2020.md)
+
 <a name="summary-introduction"></a>
 ## 软件介绍
 
