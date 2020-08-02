@@ -4,6 +4,7 @@
 - [竞赛](#summary-race)
 - [软件介绍](#summary-introduction)
 - [软件架构](#summary-architecture)
+- [参与贡献](#summary-join)
 
 [安装说明](#install)
 - [基本要求](#install-required)
@@ -39,7 +40,7 @@ OpenTPG 项目的目标是构建开源的 TPG 工具集。当前还处于项目�
 ## 软件架构
 
 
-<a name="summary-architecture"></a>
+<a name="summary-join"></a>
 ## 参与贡献
 
 我们非常欢迎，您通过下面的方式参与贡献：
