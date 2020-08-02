@@ -1,6 +1,7 @@
 # 目录
 
 [概述](#summary)
+- [竞赛](#summary-race）
 - [软件介绍](#summary-introduction)
 - [软件架构](#summary-architecture)
 
@@ -24,6 +25,9 @@ OpenTPG 项目的目标是构建开源的 TPG 工具集。当前还处于项目�
 1. 您将掌握芯片领域非常关键的 TPG 流程的基本原理和 ATPG 相关关键算法的基本实现思路
 2. Hadoop 是大数据技术的基础性工具，掌握 Hadoop 同时也将让您大数据技术纳入自己的基本技能集
 3. 基础的 Linux 开发技能，C++语言开发技能，现代C++工程管理工具 CMake、git 等等
+
+<a name="summary-race"></a>
+## 竞赛
 
 关于 ICISC 竞赛相关的信息，参见：[doc/race-icisc-2020.md](doc/race-icisc-2020.md)
 
