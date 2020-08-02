@@ -34,17 +34,17 @@
 |---                    |---   |---   |---   |---          |---                  |
 | Linux+gcc             | OK   | OK   | OK   | OK          | OK |
 
-{*
-| Windows+VS2019        | OK   | --   | --   | OK          | -- |
-| macos+clang           | OK   | OK   | OK   | OK          | Fail(hadoop不支持mac) |
-*}
+
+{* | Windows+VS2019        | OK   | --   | --   | OK          | -- | *}
+{* | macos+clang           | OK   | OK   | OK   | OK          | Fail(hadoop不支持mac) | *}
+
 
 * shell 环境
 
 我们所有的脚本都需要在 bash 环境下执行. 您可以通过下面的命令检查当前的shell环境:
 
 ```bash
-echo $SHEL
+echo $SHELL
 ```
 
 如果您当前的 shell 并不是 bash, 那么直接输入下面的指令即可切换到 bash:
