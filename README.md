@@ -18,6 +18,12 @@
 <a name="summary"></a>
 # 概述
 
+OpenTPG 项目的目标是构建开源的 TPG 工具集。当前还处于项目的非常早期阶段，当前，短期目标为满足 ICISC 竞赛出题诉求。欢迎有志于 TPG 领域的同学参与本项目。
+通过参加本项目你将学会下面几项技能：
+
+1. 您将掌握芯片领域非常关键的 TPG 流程的基本原理和 ATPG 相关关键算法的基本实现思路
+2. Hadoop 是大数据技术的基础性工具，掌握 Hadoop 同时也将让您大数据技术纳入自己的基本技能集
+3. 基础的 Linux 开发技能，C++开发能力，现代化的工程管理方式等等
 
 <a name="summary-introduction"></a>
 ## 软件介绍
@@ -39,9 +45,9 @@
 
 | 需求项 | 版本         | 下载地址 |
 |---     |---           |---       |
-| Java   | 1.8(8u251)   | [OpenJDK发行版](https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html)  |
-| hadoop | 3.2.1        | [Acache发行版](https://hadoop.apache.org/releases.html) |
-| redis  | 6.0.5        | [Redis下载地址](https://redis.io/download) |
+| Java   | 1.8(8u251)   | [OpenJDK发行版：https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html](https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html)  |
+| hadoop | 3.2.1        | [Acache发行版：https://hadoop.apache.org/releases.html](https://hadoop.apache.org/releases.html) |
+| redis  | 6.0.5        | [Redis下载地址：https://redis.io/download](https://redis.io/download) |
 
 需要注意: 目前我们没有做很深入的交叉配套验证,如无必要,建议直接使用对应版本号的第三方软件.
 
