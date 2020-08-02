@@ -1,0 +1,34 @@
+#include "SimEntry.h"
+
+#include "SimFault.h"
+#include "SimGood.h"
+
+SimEntry::SimEntry() : mask(0) {
+    goodSimulator = new SimGood(netlistParser);
+    faultSimulator = new SimFault(goodSimulator->GetGoodMechine(), netlistParser, faultList);
+}
+
+SimEntry::~SimEntry() {
+    if (nullptr != goodSimulator) {
+        delete goodSimulator;
+        goodSimulator = nullptr;
+    }
+
+    if (nullptr != faultSimulator) {
+        delete faultSimulator;
+        faultSimulator = nullptr;
+    }
+}
+
+SimEntry::HandleTestCube(unordered_map<GateId, Value> testCube) {
+    if (testCube.size() > 64) {
+        cout << "test cube size error" << endl;
+        return;
+    }
+
+    mask = UINT64_MAX >> (PARALLCUBESIZEMAX - testCube.size());
+
+    goodSimulator->Prepare(testCube);
+    goodSimulator->DoSim(mask);
+    faultSimulator->DoSim(mask);
+}

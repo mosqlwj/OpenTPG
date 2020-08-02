@@ -1,0 +1,12 @@
+D:\NewProject\opentpg\src\atalanta\cmake-build-debug\atalanta.exe -e atpg -n c76271.bench
+create faultlist mode!
+---report---
+gates: 71568
+primary input: 4592
+primary output: 112
+simulate patterns: 15170
+final patterns: 11762
+faults: 176288
+detect faults: 168569
+redundant faults: 896
+time: 2466.26
