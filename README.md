@@ -1,17 +1,36 @@
-[TOC]
+# 目录
 
-# OpenTPG
+[概述](#summary)
+- [软件介绍](#summary-introduction)
+- [软件架构](#summary-architecture)
 
-## 介绍
+[安装说明](#install)
+- [基本要求](#install-required)
+- [构建](#install-build)
+- [部署](#install-deploy)
+  - [部署注备工作](#install-deploy-ready)
+  - [部署方式一：开发环境集成部署](#install-deploy-way01)
+  - [部署方式二：独立环境部署](#install-deploy-way02)
+- [小测验](#install-test)
+[快速入门](#quickstart)
+
+<a name="summary"></a>
+# 概述
 
 
+<a name="summary-introduction"></a>
+## 软件介绍
 
+
+<a name="summary-architecture"></a>
 ## 软件架构
 
 
 
+<a name="install"></a>
 # 安装说明
 
+<a name="install-required"></a>
 ## 基本要求
 ----------------------
 
@@ -53,7 +72,7 @@ echo $SHELL
 bash
 ```
 
-
+<a name="install-build"></a>
 ## 构建
 ----------------------
 
@@ -67,17 +86,20 @@ sh build.sh [compile] [debug|release]
 - 如果是构建 release 版本, 最简单的方式是: `sh build.sh release`
 
 
+<a name="install-deploy"></a>
 ## 部署
 ----------------------
 
 opentpg 支持两种部署方式: 编译环境集成部署和独立环境部署. 相对而言, 开发环境集成部署更加简便, 比较适合在开发人员自测时采用.而独立环境部署,增加了额外的步骤和操作,但很适合开发环境和部署环境分离的场景.
 
+<a name="install-deploy-ready"></a>
 #### 部署注备工作
 
 您需要提前准备好所有需要的依赖包, 这些包需要放在同一个目录下, 参见前面的'外部依赖'小节.
 
 
-#### 部署方式一:开发环境集成部署
+<a name="install-deploy-way01"></a>
+#### 部署方式一：开发环境集成部署
 
 开发环境集成部署 是指开发环境和测试环境是同一套环境, 这种方式主要是方便开发人员的开发调测,避免在安装部署上浪费太多时间. 如果您计划参与项目开发, 推荐采用这种方式.
 
@@ -101,7 +123,8 @@ source setup.bash
 
 开发环境部署完毕后, 后续修改了代码或者脚本, 编译完毕之后, 都是可以直接使用的, 不需要重新执行部署操作.
 
-#### 部署方式二:独立环境部署
+<a name="install-deploy-way02"></a>
+#### 部署方式二：独立环境部署
 
 独立环境部署时,需要单独生成一个安装包,然后利用该安装包在目标环境上安装.
 
@@ -132,15 +155,16 @@ sh install.sh <SOFTWARE-DIR> <INSTALL-DIR>
 
 其中:
  
-  - `<YOUR-PACKAGE>` 请替换成您生成的安装包的名字;
-  - `<SOFTWARE-DIR>` 是所有`外部依赖`的软件包的存放的目录; 
-  - `<INSTALL-DIR>`  指具体安装到什么位置;
+  - `<YOUR-PACKAGE>` 请替换成您生成的安装包的名字
+  - `<SOFTWARE-DIR>` 是所有`外部依赖`的软件包的存放的目录
+  - `<INSTALL-DIR>`  指具体安装到什么位置
 
 
-## 来个小测验
+<a name="install-test"></a>
+## 小测验
 ----------------------
 
-进入安装目录,依次执行下面的指令以检验是否整个安装过程已经成功:
+进入安装目录，依次执行下面的指令以检验是否整个安装过程已经成功：
 
 ```bash
 source setup.bash
@@ -165,6 +189,7 @@ pattern:7	00011
 
 
 
+<a name="quickstart"></a>
 # 快速入门
 
 当安装完毕之后, 可以在安装目录下找到 rank.sh 脚本. 这个脚本可以帮助我们一键完成一轮测试.
