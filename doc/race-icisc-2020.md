@@ -1,0 +1,50 @@
+
+# ICISC 竞赛
+
+
+<a name="race-interface"></a>
+## 系统接口
+
+目前我们定义了下面几个部分接口，这些接口会被判题器调用，各参赛对于请确保不要更改，修改系统接口必将将影响对您的作品的评分。如果您认为确实有必要，请通过 issue 沟通。
+
+<a name="race-interface-app"></a>
+### 应用的命令行接口
+
+这里的应用指的是 atanlanta 程序。其关键接口如下：
+
+- `atalanta --exec create-fault   --netlist <URI>` 根据网表（netlist）生成 fault 列表
+- `atalanta --exec upload-netlist --netlist <FILE> --cache <URI>` 将 fault 列表上传到缓存服务器（redis）
+- `atalanta --exec atpg           --netlist <URI>` 从 stdin 读取 fault 列表，并执行 ATPG，生成的 cube 输出到 stdout
+- `atalanta --exec simulate       --netlist <URI>` 从 stdin 读取 cube 列表，并执行仿真，生成的 pattern 输出到 stdout
+- `atalanta --exec stat           --target <DIR>` 执行统计，统计信息输出到 \<DIR\> 目录
+
+
+<a name="race-interface-install"></a>
+### 关键脚本命令行接口
+
+- `install.sh <SOFTWARE-DIR> <INSTALL-DIR>` 安装脚本命令行接口
+- `rank.sh <TEAM> <INPUT-NETLIST-FILE> [<OUTPUT-DIR>]` 测试脚本接口
+- `build.sh  [compile] [build|release]` 编译
+- `build.sh  package   [<NAME>]` 打包
+
+具体每个参数的含义，可以通过该脚本的 -h 选项查看，比如：
+```bash
+./install.sh -h
+```
+
+
+
+<a name="race-case"></a>
+## Case
+
+竞赛的 case 最终会放到项目的 [race](race) 目录下。竞赛开始之后，并不会立即提供用于评分的 Case。我们会在正式进入竞赛评分环节之前，会提前 1 到 2 周发布最终的评分 Case。
+然而，我们仍然在项目的 [bench](bench) 目录下提供了大量的不同规模和复杂度的 Case。所以，您只需要充分对现有的 Case 进行充分的测试和调优即可，而不必对最终的评分 Case 太过期待或者依赖。
+
+<a name="race-rating"></a>
+## 评分
+
+评分细则，已经公布在 icisc 官网 [赛题五：基于分布式计算框架的自动测试向量生成算法：http://eda.icisc.cn/download/index?type=2](http://eda.icisc.cn/download/index?type=2)
+
+
+
+
