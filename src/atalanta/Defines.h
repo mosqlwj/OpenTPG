@@ -110,7 +110,6 @@ namespace hiatpg {
                 std::sregex_token_iterator()
         };
     }
-
 }
 #endif //__ATALANTA_DEFINES_H__
 

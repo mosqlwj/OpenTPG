@@ -2211,21 +2211,12 @@ namespace hiatpg {
                     case PASS:
                         break;
                     case FAIL:
-#ifdef DEBUGLEARN
-                                                                                                                                                printf("Learned: conflict at node=%d old=%s new=%s from node=%d val=%s\n",
-						tg->index, level2str[tg->output], level2str[tmp->tval],
-						gut->index, level2str[val]);
-#endif
                         return (CONFLICT);
                     case PASS1:
                         tg->output = i->tval;
                         stack->push(tg);
                         pushEvent(tg);
                         scheduleOutput(tg);
-#ifdef DEBUGLEARN
-                                                                                                                                                printf("Learned: node=%d val=%s from node=%d val=%s\n",
-						tg->index, level2str[tg->output], gut->index, level2str[val]);
-#endif
                         state = BACKWARD;
                         break;
                 }
@@ -2233,10 +2224,53 @@ namespace hiatpg {
 
         return (state);
     }
-    //#endif
 
-    /*FanNet::~FanNet()
-	{
+    void FanNet::myDPrintIO(int no)
+    {
+        int i;
 
-	}*/
+        string iv;
+        string ov;
+
+        iv.resize(numberOfPrimaryInputs);
+        ov.resize(numberOfPrimaryOutputs);
+
+        for(i=0; i<numberOfPrimaryInputs; i++)
+            iv[i] = dLevelToString[gates[primaryIn[i]]->output][0];
+        iv[i] = 0;
+        for(i=0; i<numberOfPrimaryOutputs; i++)
+            ov[i] = dLevelToString[gates[primaryOut[i]]->output][0];
+        ov[i] = 0;
+        addTestVector( &iv, &ov, no );
+    }
+
+    void FanNet::addTestVector(string *ivct, string *ovct, int no)
+    {
+        TestVectorType *testv;
+        testv = (TestVectorType *)malloc(sizeof(TestVectorType));
+        testv->ivct = (char *)malloc(testVector.inpVars + 1 );
+        testv->mask = strdup("");
+        strcpy(testv->ivct, ivct->c_str());
+        if ( ovct != NULL ) {
+            testv->ovct = (char *)malloc(testVector.outVars + 1 );
+            strcpy(testv->ovct, ovct->c_str());
+        } else testv->ovct = NULL;
+        if ( myCurrFault != NULL ) {
+            if(myCurrFault->line >= 0)
+                testv->fltLineHash = myCurrFault->gate->fanins[myCurrFault->line]->symbol->key;
+            else testv->fltLineHash = -1;
+            testv->fltHash = myCurrFault->gate->symbol->key;
+            testv->type = myCurrFault->type % 2;
+            testv->index = myCurrFault->index;
+        } else {
+            testv->fltLineHash = -1;
+            testv->fltHash = -1;
+            testv->type = -1;
+            testv->index = -1;
+        }
+
+        testv->no = no;
+        testVector.vectors.push_front(testv);
+        testVector.num++;
+    }
 }

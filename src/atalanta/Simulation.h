@@ -6,8 +6,6 @@
 #define __ATALANTA_SIMULATION_H__
 
 #include "ReadableNet.h"
-//#define TestVectorsData vector< vector<level> >
-
 
 namespace hiatpg {
 	
@@ -54,30 +52,18 @@ namespace hiatpg {
 		int maxCompact;
 		char fillMode;
 		TestVectorsData testVectors;//level testVectors[MAXTEST/10][MAXPI+1];
-		TestVectorsData testVectors1;//level testVectors1[MAXTEST/10][MAXPI+1];
 		TestVectorsData testStore;//level testStore[MAXTEST/10][MAXPI+1];
-		TestVectorsData testStore1;//level testStore1[MAXTEST/10][MAXPI+1];
 
 		void setBit(unsigned *word,int nth);
 		void resetBit(unsigned *word,int nth);
-		void setb0(unsigned *word0, unsigned *word1, int nth) ;
-		void setb1(unsigned *word0, unsigned *word1, int nth) ;
-		void setbx(unsigned *word0, unsigned *word1, int nth) ;
-
-		int		randomFsim(int levels,int nStem,Gate **stem,level *lfsr,int limit,int maxBit,int maxDetect,int *nTest,int *nPacket,int *nBit);
-		int		randomHope(level *lfsr,int limit,int maxBit,int maxDetect,int *nTest,int *nPacket,int *nBit);
 		void	randomTestFsim(TestVectorsData *testSt, TestVectorsData *testVect,int pack,int noBit);
-		void	randomTestHope(TestVectorsData *testSt0, TestVectorsData *testSt1, TestVectorsData *testVect0, TestVectorsData *testVect1, int pack, int noBit);
 		int		reverseFsim(int levels,int nStem,Gate **stem,int *nDet,int nPacket,int nBit,int maxBits);
-		int		reverseHope(int *nDet,int nPacket,int nBit,int maxBits);
 		int		shuffleFsim(int levels,int nStem,Gate **stem,int *nShuf,int *nDet,int nPacket,int nBit,int maxBits);
-
         void	fillPatternsFsim(char mode,int nPacket,int nBit);
-		void	fillPatternsHope(char mode,int nPacket,int nBit);
         void printIO(int nth_bit, int start);
 
 	public:
-		Simulation(): testVectors(0), testVectors1(0), testStore(0), testStore1(0) {
+		Simulation(): testVectors(0), testStore(0) {
 			compact = 's';
 			maxCompact = 2;
 			fillMode = 'r';
@@ -85,11 +71,10 @@ namespace hiatpg {
 
 		int compactTest(int levels,int nStem,Gate **stem,int *nShuf,int *nDet,int nPacket,int nBit,int maxBits);
 		void fillPatterns(int mode,int nPacket,int nBit);
-		int randomSim(int levels,int nStem,Gate **stem,level *lfsr,int limit,int maxBit,int maxDetect,int *nTest,int *nPacket,int *nBit);
-		int simulateHope(int *nPacket,int *nBit);
-		int tGenSim(int levels,int nStem,Gate **stem,int nTest,int *profile);
 
         virtual ~Simulation(){};
+        string *printInputs(int nth_bit );
+        string *printOutputs(int nth_bit);
 	};
 
 }

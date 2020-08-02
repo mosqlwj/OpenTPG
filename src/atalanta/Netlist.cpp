@@ -38,108 +38,11 @@ namespace hiatpg {
 		}
 	}
 	
-	level Netlist::logiclevel(level V0, level V1, int n)
-	{
-		V0=((V0 & BITMASK[n]) == ALL0) ? ZERO : ONE;
-		V1=((V1 & BITMASK[n]) == ALL0) ? ZERO : ONE;
-		return(parallelToLevel[V0][V1]);
-	}
-	
 	void Netlist::allocateStacks()
 	{
 		stack1=new Stack(numberOfGates+numberOfPrimaryOutputs);
 		stack2=new Stack(numberOfGates+numberOfPrimaryOutputs);
 	}
-	
-#ifdef INCLUDE_HOPE
-	void Netlist::printIOValues(vector<int> iarray, vector<int> oarray)
-	{
-		int j;
-		Gate *gut;
-		string iv,ov;
-		
-		iv.reserve(numberOfPrimaryInputs+1);
-		ov.reserve(numberOfPrimaryOutputs+1);
-		
-		for(j = 0; j < numberOfPrimaryInputs; j++)
-		{
-			gut=gates[iarray[j]];
-			iv[j] = levelToString[logiclevel(gut->GV[0],gut->GV[1],0)][0];
-		}
-		iv[j] = 0;
-		for(j = 0; j < numberOfPrimaryOutputs; j++) {
-			gut=gates[oarray[j]];
-			ov[j] = levelToString[logiclevel(gut->GV[0],gut->GV[1],0)][0];
-		}
-		ov[j] = 0;
-		addTestVector( &iv, &ov, 1 );
-	}
-#endif
-	
-	void Netlist::addTestVector(string *ivct, string *ovct, int no)
-	{
-		TestVectorType *testv;
-		testv = (TestVectorType *)malloc(sizeof(TestVectorType));
-		testv->ivct = (char *)malloc(testVector.inpVars + 1 );
-		testv->mask = strdup("");
-		strcpy(testv->ivct, ivct->c_str());
-		if ( ovct != NULL ) {
-			testv->ovct = (char *)malloc(testVector.outVars + 1 );
-			strcpy(testv->ovct, ovct->c_str());
-		} else testv->ovct = NULL;
-		if ( myCurrFault != NULL ) {
-			if(myCurrFault->line >= 0)
-				testv->fltLineHash = myCurrFault->gate->fanins[myCurrFault->line]->symbol->key;
-			else testv->fltLineHash = -1;
-			testv->fltHash = myCurrFault->gate->symbol->key;
-			testv->type = myCurrFault->type % 2;
-			testv->index = myCurrFault->index;
-		} else {
-			testv->fltLineHash = -1;
-			testv->fltHash = -1;
-			testv->type = -1;
-			testv->index = -1;
-		}
-		
-		testv->no = no;
-		testVector.vectors.push_front(testv);
-		testVector.num++;
-	}
-	
-	string* Netlist::printInputs(int nth_bit)
-	{
-		string *s=new string;
-		s->resize(numberOfPrimaryInputs, '0');
-		
-		for(int j=0;j<numberOfPrimaryInputs;j++)
-			if(checkBit(gates[j]->output1, nth_bit))
-				(*s)[j] = '1'; 
-			
-			return s;
-	}
-	
-	string* Netlist::printOutputs(int nth_bit)
-	{
-		string * s=new string;
-		s->resize(numberOfPrimaryOutputs, '0');
-		
-		for(int j=0;j<numberOfPrimaryOutputs;j++)
-			if(checkBit(gates[primaryOut[j]]->output1, nth_bit))
-				(*s)[j] = '1';
-			return s;
-	}
-
-	void Netlist::getTestVector(int nBit)
-    {
-        string *iv,*ov;
-
-        iv = printInputs(nBit);
-        ov = printOutputs(nBit);
-        addTestVector(iv, ov, 1);
-
-        delete iv;
-        delete ov;
-    }
 
     void Netlist::setTestAbility()
 	{
@@ -178,28 +81,6 @@ namespace hiatpg {
                 gates[i]->dpo= depth + 1;
 			}
 		}
-	}
-	
-	void Netlist::myDPrintIO(int no)
-	{
-		int i;
-		
-		string iv;
-		string ov;
-		
-		iv.resize(numberOfPrimaryInputs);
-		ov.resize(numberOfPrimaryOutputs);
-		
-		
-		
-		for(i=0; i<numberOfPrimaryInputs; i++)
-			iv[i] = dLevelToString[gates[primaryIn[i]]->output][0];
-		iv[i] = 0;
-		for(i=0; i<numberOfPrimaryOutputs; i++)
-			ov[i] = dLevelToString[gates[primaryOut[i]]->output][0];
-		ov[i] = 0;
-		addTestVector( &iv, &ov, no );
-		
 	}
 	
 	void Netlist::allocateDynamicBuffers()

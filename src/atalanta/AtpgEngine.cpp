@@ -69,14 +69,22 @@ int hiatpg::AtpgEngine::testCubeGen(int levels, int maxBits, int nStem, Gate **s
         (*fanTime) += (runtime2 - runtime1);
 
         if (state == TEST_FOUND) {  // fault is detected, delete the detected fault from fault list
+//            string strTarget = pCurrentFault->gate->symbol->symbol;
+//            int faninIndex = pCurrentFault->line;
+//            if (faninIndex != OUTFAULT) {
+//                auto faninGate = pCurrentFault->gate->fanins[faninIndex];
+//                string strFanin = faninGate->symbol->symbol;
+//                cout << strFanin << "->" << strTarget << " /" << pCurrentFault->type << endl;
+//            } else {
+//                cout << strTarget << " /" << pCurrentFault->type << endl;
+//            }
+
             pCurrentFault->detected = PROCESSED;
             unordered_map<int, int> testcube;
             cout << i << '\t';
             for (j = 0; j < numberOfPrimaryInputs; j++) {
                 int32_t value = gates[j]->output;
                 if (value != X) {
-                    //                    cout << "GateId: " << j << endl;
-                    //                    cout << "Value: " << gates[j]->output << endl;
                     testcube[j] = value;
                     cout << j << " " << gates[j]->output << " ";
                 }
@@ -137,7 +145,6 @@ int hiatpg::AtpgEngine::testGen(int levels, int maxBits, int nStem, Gate **stem,
                         break;
                     }
                 if (pCurrentFault == 0) done = true;
-                ;
         }
 
         // printf("%d\n", pCurrentFault->index);
@@ -230,68 +237,6 @@ int hiatpg::AtpgEngine::testGen(int levels, int maxBits, int nStem, Gate **stem,
 
 using namespace hiatpg;
 
-namespace hiatpg {
-CustomFaultlist::CustomFaultlist(int fault, Fault **faultList) : fault(fault), faultList(faultList) {
-    mask = new char[fault];
-    memset(mask, 0, fault);
-    names = new string[fault];
-
-    for (int i = 0; i < fault; i++) {
-        if (faultList[i]->line >= 0) {
-            names[i] = faultList[i]->gate->fanins[faultList[i]->line]->symbol->symbol;
-            names[i] += "->";
-        }
-        names[i] += faultList[i]->gate->symbol->symbol;
-        names[i] += fault2str[faultList[i]->type];
-    }
-}
-
-void CustomFaultlist::printFaultList() {
-    for (int i = 0; i < fault; i++) {
-        auto pCurrentFault = faultList[i];
-        string line;
-        Gate *targetGate = pCurrentFault->gate;
-        Gate *faninGate = nullptr;
-        string strTarget = targetGate->symbol->symbol;
-        string strFanin;
-        int faninIndex = pCurrentFault->line;
-        if (faninIndex != OUTFAULT) {
-            faninGate = pCurrentFault->gate->fanins[faninIndex];
-            strFanin = faninGate->symbol->symbol;
-            cout << strFanin << "->" << strTarget << " /" << pCurrentFault->type << endl;
-        } else {
-            cout << strTarget << " /" << pCurrentFault->type << endl;
-        }
-    }
-}
-
-void CustomFaultlist::updateFaultList() {
-    for (int i = 0; i < fault; i++) mask[i] = faultList[i]->detected;
-
-    auto params = &Params::getInstance();
-    fstream faultFile(params->getFaultFileName(), ios::out | ios::trunc);
-
-    // print all fault status
-    for (int i = 0; i < fault; i++) {
-        auto pCurrentFault = faultList[i];
-        string line;
-        Gate *targetGate = pCurrentFault->gate;
-        Gate *faninGate = nullptr;
-        string strTarget = targetGate->symbol->symbol;
-        string strFanin;
-        int faninIndex = pCurrentFault->line;
-        if (faninIndex != OUTFAULT) {
-            faninGate = pCurrentFault->gate->fanins[faninIndex];
-            strFanin = faninGate->symbol->symbol;
-            faultFile << strFanin << "->" << strTarget << " /" << pCurrentFault->type << endl;
-        } else {
-            faultFile << strTarget << " /" << pCurrentFault->type << endl;
-        }
-    }
-
-    faultFile.close();
-}
-
 AtpgEngine::AtpgEngine() {
     faultMode = 'd';
     maxBackTrack = 10;
@@ -314,7 +259,7 @@ AtpgEngine::AtpgEngine() {
     myCurrFault = NULL;
 }
 
-void AtpgEngine::processFaults() {
+void AtpgEngine::produceFaults() {
     if (faultMode == 'f')
         readFaults(faultFile);
     else {
@@ -324,6 +269,10 @@ void AtpgEngine::processFaults() {
             ss << "Fatal error: error in setting fault list";
             throw ss.str();
         }
+    }
+
+    for (int i = 0; i < numberOfFaults; i++) {
+        faultList[i]->index = i;
     }
 }
 
@@ -609,13 +558,9 @@ void AtpgEngine::initFS() {
     pInitSimulation(levels);
 
     testVectors.clear();
-    testVectors1.clear();
     testStore.clear();
-    testStore1.clear();
     testVectors.setSecondSize(numberOfPrimaryInputs);
-    testVectors1.setSecondSize(numberOfPrimaryInputs);
     testStore.setSecondSize(numberOfPrimaryInputs);
-    testStore1.setSecondSize(numberOfPrimaryInputs);
 
     allOne = ALL1;
 }
@@ -765,7 +710,6 @@ void AtpgEngine::printTestPattern(ostream &patternStream) {
 
 void AtpgEngine::generateCube() {
     AtpgStatus atpgStatus;
-    CustomFaultlist *customFaultlist;
     clock_t start, end;
 
     // parse bench
@@ -773,8 +717,6 @@ void AtpgEngine::generateCube() {
     auto p = &Params::getInstance();
     levels = parseNetlist(p->getNetlistFile());
     numberOfFaults = readFaultsFromFileStream(cin, myNumberOfStems, myStem);
-    indexFaults();
-    customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
     end = clock();
     atpgStatus.time = (end - start) / (double)CLOCKS_PER_SEC;
     cerr << "parsing: " << atpgStatus.time << " s" << endl;
@@ -794,28 +736,22 @@ void AtpgEngine::generateCube() {
     cerr << "atpg: " << atpgStatus.time << " s" << endl;
 }
 
-void AtpgEngine::createFaultlist() {
-    CustomFaultlist *customFaultlist;
+void AtpgEngine::createFault() {
     auto p = &Params::getInstance();
     levels = parseNetlist(p->getNetlistFile());
     // create fault
-    processFaults();
-    indexFaults();
-    customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
-    customFaultlist->printFaultList();
+    produceFaults();
+    printFaultList();
 }
 
-int AtpgEngine::run() {
+int AtpgEngine::generatePattern() {
     AtpgStatus atpgStatus;
-    CustomFaultlist *customFaultlist;
     clock_t start, end;
 
     start = clock();
     auto p = &Params::getInstance();
     levels = parseNetlist(p->getNetlistFile());
-    processFaults();
-    indexFaults();
-    customFaultlist = new CustomFaultlist(numberOfFaults, faultList);
+    produceFaults();
     end = clock();
     atpgStatus.time = (end - start) / (double)CLOCKS_PER_SEC;
     cerr << "parsing: " << atpgStatus.time << " s" << endl;
@@ -826,7 +762,6 @@ int AtpgEngine::run() {
 
     generateTest();
     atpgStatus = getResults();
-    customFaultlist->updateFaultList();
 
     end = clock();
     atpgStatus.time = (end - start) / (double)CLOCKS_PER_SEC;
@@ -850,5 +785,3 @@ void AtpgEngine::setParams() {
     setEachLimit(p->getEachLimit());
     noFaultSim = p->getNoFaultSim();
 }
-
-}  // namespace hiatpg

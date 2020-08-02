@@ -59,7 +59,6 @@ namespace hiatpg {
 	{
 	protected:
 		Fault **faultList;
-
 		int numberOfFaults;
 
 #ifdef INCLUDE_HOPE
@@ -87,6 +86,7 @@ namespace hiatpg {
 		int restoreDetectedFaultList();
 		int checkRedundantFaults();
 		int createFaultList(int noStem, Gate **stem);
+        void printFaultList();
     };
 
 	class ReadableFaultList:public FaultList

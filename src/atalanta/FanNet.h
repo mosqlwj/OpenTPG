@@ -44,6 +44,9 @@ namespace hiatpg {
 		char genAllPat;
 
 		Stack** eventList;
+        struct TestVectors testVector;
+        char initialMode;
+        Fault *myCurrFault;
 
 		void scheduleOutput(Gate *gate) {
 			for(int i=0;i<gate->noutput;i++) pushEvent(gate->fanouts[i]);
@@ -99,11 +102,13 @@ namespace hiatpg {
 		}
 
 		void scheduleGate(Gate* gut);
+        void addTestVector(string *ivct,string *ovct,int no);
 
 	public:
 		FanNet():unjustified(1000),initObj(1000),currObj(1000),fanObj(1000),finalObj(1000),
 			dFrontier(1000),dyID(INFINITE), noFaultSim('n'), learnMode('n'), genAllPat('n') {
 			unjustified.push(0);
+            initialMode='x';
 		};
 
 		void allocateEventList();
@@ -124,6 +129,8 @@ namespace hiatpg {
 		status fan1(int maxdpi,Fault* cf,int maxbacktrack, int *nbacktrack);
 
 		virtual ~FanNet() { };
+
+        void myDPrintIO(int no);
     };
 }
 #endif // __ATALANTA_FANNET_H__

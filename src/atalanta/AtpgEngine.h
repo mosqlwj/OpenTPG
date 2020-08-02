@@ -17,17 +17,6 @@
 #include "Simulation.h"
 
 namespace hiatpg {
-class CustomFaultlist {
-    int fault;
-    char *mask;
-    string *names;
-    Fault **faultList;
-
-public:
-    CustomFaultlist(int fault, Fault **faultList);
-    void printFaultList();
-    void updateFaultList();
-};
 
 struct AtpgStatus {
     AtpgStatus()
@@ -84,9 +73,6 @@ protected:
 
     double fantime;
 
-    void indexFaults() {
-        for (int i = 0; i < numberOfFaults; i++) faultList[i]->index = i;
-    };
     void initFS();
     void printTestPattern(ostream &patternStream);
 
@@ -108,15 +94,15 @@ protected:
 
 public:
     AtpgEngine();
-    int run();
+    int generatePattern();
     void generateCube();
     void setParams();
     int testCubeGen(int levels, int maxBits, int nStem, Gate **stem, int maxBackTrack, int phase, int *nRedundant,
                     int *nOverBackTrack, int *nBackTrack, int *nTest, int *nPacket, int *nBit, double *fanTime);
     int testGen(int levels, int maxBits, int nStem, Gate **stem, int maxBackTrack, int phase, int *nRedundant,
                 int *nOverBackTrack, int *nBackTrack, int *nTest, int *nPacket, int *nBit, double *fanTime);
-    void processFaults();
-    void createFaultlist();
+    void produceFaults();
+    void createFault();
 };
 }  // namespace hiatpg
 

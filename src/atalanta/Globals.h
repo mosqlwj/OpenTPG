@@ -35,42 +35,14 @@ namespace hiatpg {
 		list<TestVector*> vectors;
 	};
 
-	class Globals  
-	{
-	public:
-		//static level inVal[MAXPI];
-		//static Fault *myCurrFault;
-
-		//static int maxlevel;
-
-		//static int maxCompact;
-
-		//static char cctMode;
-		//static char compact;
-		//static char noFaultSim;
-		//static char simMode;
-		//static char fillMode;
-		//static char learnMode;
-
-		//static char genAllPat;
-
-		//static int allOne;
-
-		//static struct TestVectors tv;
-#ifdef _ALG_DEBUG
-		static int count;
-#endif
-	private:
-		Globals();
-
-	};
-
 	const char* const fn_to_string[MAXGTYPE+3]=         /* gate function to string */
 	{"AND","NAND","OR","NOR","INPUT","XOR","XNOR","DFF","DUMMY","BUFFER","NOT",
 	"","","","","","","","","","PO",};
 
-#define isWhiteSpace(c) (c==' ' || c=='\n'|| c=='\t')
-#define isDelimiter(c) (c=='=' || c==',' || c=='(' || c==')')
+    #define isWhiteSpace(c) (c==' ' || c=='\n'|| c=='\t')
+    #define isDelimiter(c) (c=='=' || c==',' || c=='(' || c==')')
+
+    static bool checkBit(level word, int n) { return (word & (1<<n)) != 0; }
 
 }
 #endif // __ATALANTA_GLOBALS_H__

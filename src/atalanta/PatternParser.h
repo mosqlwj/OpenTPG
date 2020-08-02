@@ -6,6 +6,7 @@
 #define ATLANTA_PATTERNPARSER_H
 
 #include "AtpgEngine.h"
+#include <set>
 
 namespace hiatpg {
     class PatternParser : public AtpgEngine
@@ -13,11 +14,12 @@ namespace hiatpg {
     private:
         vector<unordered_map<int, char>> testCubes;
         map<int, unordered_map<int, char>>  cinTestCubes;
-        vector<vector<int>>       testPatterns;
+        set<string>       testPatterns;
         string  patternPath;
         ifstream patternSorceStream;
         ifstream faultSorceStream;
         AtpgStatus atpgStatus;
+        vector<unordered_map<int,char>>mergedCubes;
 
     public:
         PatternParser(){};
@@ -32,6 +34,10 @@ namespace hiatpg {
         int CinTestGen(int levels, int maxBits, int nStem, Gate **stem, int maxBackTrack, int phase, int *nRedundant, int *nOverBackTrack, int *nBackTrack, int *nTest, int *nPacket, int *nBit, double *fanTime);
         int PatterntestGen(int levels, int maxBits, int nStem, Gate **stem, int maxBackTrack, int phase, int *nRedundant, int *nOverBackTrack, int *nBackTrack, int *nTest, int *nPacket, int *nBit, double *fanTime);
         void PrintLog(Params& p);
+        int MergeTestGen(int levels, int maxBits, int nStem, Gate **stem, int maxBackTrack, int phase, int *nRedundant, int *nOverBackTrack, int *nBackTrack, int *nTest, int *nPacket, int *nBit, double *fanTime);
+        void MergeCubes();
+        bool InsertCubes(unordered_map<int,char>&base,unordered_map<int,char>&cube);
+
     };
 }
 
