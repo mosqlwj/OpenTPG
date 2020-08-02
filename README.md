@@ -12,6 +12,7 @@
   - [部署方式一：开发环境集成部署](#install-deploy-way01)
   - [部署方式二：独立环境部署](#install-deploy-way02)
 - [小测验](#install-test)
+
 [快速入门](#quickstart)
 
 <a name="summary"></a>
