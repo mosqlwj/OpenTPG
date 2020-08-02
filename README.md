@@ -63,8 +63,8 @@ opentpg项目提供了一键编译脚本, 构建方式为
 sh build.sh [compile] [debug|release]
 ```
  
-- 如果是构建 debug 版本, 最简单的方式为 `sh build.sh`; 
-- 如果是构建 release 版本, 最简单的方式是: `sh build.sh release`;
+- 如果是构建 debug 版本, 最简单的方式为 `sh build.sh`
+- 如果是构建 release 版本, 最简单的方式是: `sh build.sh release`
 
 
 ## 部署
