@@ -1,7 +1,7 @@
 # 目录
 
 [概述](#summary)
-- [竞赛](#summary-race）
+- [竞赛](#summary-race)
 - [软件介绍](#summary-introduction)
 - [软件架构](#summary-architecture)
 
