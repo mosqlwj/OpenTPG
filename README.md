@@ -34,10 +34,10 @@
 |---                    |---   |---   |---   |---          |---                  |
 | Linux+gcc             | OK   | OK   | OK   | OK          | OK |
 
-
+<!--
 {* | Windows+VS2019        | OK   | --   | --   | OK          | -- | *}
 {* | macos+clang           | OK   | OK   | OK   | OK          | Fail(hadoop不支持mac) | *}
-
+-->
 
 * shell 环境
 
