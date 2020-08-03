@@ -1,0 +1,566 @@
+// Fault.cpp: implementation of the Fault class.
+//
+//////////////////////////////////////////////////////////////////////
+#include "Fault.h"
+
+#include <fstream>
+#include <iostream>
+#include <list>
+#include <regex>
+#include <sstream>
+#include <string>
+
+#include "Defines.h"
+#include "Error.h"
+#include "FanNet.h"
+#include "Gate.h"
+#include "Globals.h"
+#include "Hash.h"
+#include "Netlist.h"
+#include "Parameters.h"
+#include "ParralelPattern.h"
+#include "Stack.h"
+#include "Truthtable.h"
+#include "Params.h"
+
+namespace hiatpg {
+
+//////////////////////////////////////////////////////////////////////
+// Construction/Destruction
+//////////////////////////////////////////////////////////////////////
+
+Fault::Fault() {}
+
+void Fault::printFault(fstream *fp, bool mode, char cctMode) {
+    Gate *gut;
+
+#ifdef ISCAS85_NETLIST_MODE
+    if (cctMode == ISCAS89) {
+        if (line >= 0) {
+            gut = gate->inlis[line];
+            *fp << gut->symbol->symbol.c_str() << "->";
+        }
+
+        *fp << gate->symbol->symbol.c_str();
+        *fp << fault2str[type];
+    } else {
+        if (line < 0)
+            *fp << "Output line s-a-" << type;
+        else
+            *fp << "Input line " << (line + 1) << "s-a-" << type;
+        *fp << "of gate " << gate->gid;
+    }
+#else
+    if (line >= 0) {
+        gut = gate->fanins[line];
+        *fp << gut->symbol->symbol.c_str() << "->";
+    }
+    *fp << gate->symbol->symbol.c_str();
+    *fp << " ";
+    *fp << fault2str[type];
+#endif
+    if (mode) switch (detected) {
+            case DETECTED:
+                *fp << " detected";
+                break;
+            case UNDETECTED:
+                *fp << " undetected";
+                break;
+            case PROCESSED:
+                *fp << " aborted";
+                break;
+            case REDUNDANT:
+                *fp << " redundant";
+        }
+    *fp << endl;
+}
+
+Fault::~Fault() {}
+
+//	addFault
+//	Add a fault to the linked list of each gate.
+
+void Fault::addFault() { gate->pFaultList.push_back(this); }
+
+//	restore_detected_fault_list
+//	Restores the fault list for test compaction.
+//	Does not restore redundant faults.
+
+int FaultList::restoreDetectedFaultList() {
+    Fault *f;
+    int n = 0;
+
+    for (int i = 0; i < numberOfFaults; i++) {
+        f = faultList[i];
+        if (f->detected == DETECTED) {
+            f->detected = UNDETECTED;
+            f->addFault();
+            n++;
+        }
+    }
+
+    return n;
+}
+
+int FaultList::checkRedundantFaults() {
+    Gate *gut;
+    Fault *f;
+
+    int n = 0, j;
+
+    for (int i = 0; i < numberOfGates; i++)
+        if (gates[i]->noutput > 1) {
+            gut = gates[i];
+            for (j = 0; j < gut->noutput; j++) gut->fanouts[j]->changed++;
+            for (j = 0; j < gut->noutput; j++) {
+                if (gut->fanouts[j]->changed > 1) {
+                    list<Fault *>::iterator current, final;
+
+                    current = gut->fanouts[j]->pFaultList.begin();
+                    final = gut->fanouts[j]->pFaultList.end();
+
+                    while (current != final) {
+                        f = *current;
+                        if (f->line >= 0) {
+                            if (f->gate->fanins[f->line] == gut) {
+                                f->detected = REDUNDANT;
+                                current = f->gate->pFaultList.erase(current);
+                                // current--;
+                                n++;
+                            } else
+                                current++;
+                        } else
+                            current++;
+                    }
+                }
+                gut->fanouts[j]->changed = 0;
+            }
+        }
+    return n;
+}
+
+int FaultList::createFaultList(int noStem, Gate **stem) {
+    Gate *gate;
+    Fault *fault;
+
+    Fault *current;
+    Fault *curr;
+    FaultType faultType;
+    int nfault, n, nof, i;
+    int *test, size;
+
+    test = new int;
+    size = sizeof(Fault);
+    nfault = 0;
+    curr = new Fault;
+    current = new Fault;
+
+    // create fault for each gate.
+    for (i = 0; i < numberOfGates; i++) {
+        gate = gates[i];
+        /* if the input of the gate has more than one fanouts,
+        add a s-a-1 for each AND/NAND,
+        a s-a-0 for each OR/NOR and
+        a s-a-0 and s-a-1 for other gates. */
+        if (gate->ninput > 1) {
+            faultType = (gate->type == AND || gate->type == NAND) ? SA1 : SA0;
+            for (int j = 0; j < gate->ninput; j++) {
+                if (gate->fanins[j]->noutput > 1) {
+                    fault = new Fault;
+                    fault->gate = gate;
+                    fault->type = faultType;
+                    fault->line = j;
+                    nfault++;
+                    gate->pFaultList.push_back(fault);
+
+                    /* case of high level gates */
+                    if (gate->type > PI) {
+                        fault = new Fault();
+                        fault->gate = gate;
+                        fault->type = (faultType == SA1) ? SA0 : SA1;
+                        fault->line = j;
+                        nfault++;
+
+                        gate->pFaultList.push_back(fault);
+                    }
+                }
+            }
+        }
+        if ((gate->noutput == 1) && (gate->fanouts[0]->ninput > 1 || gate->fanouts[0]->type == PO)) {
+            faultType = (gate->fanouts[0]->type == OR || gate->fanouts[0]->type == NOR) ? SA0 : SA1;
+            fault = new Fault;
+            fault->gate = gate;
+            fault->type = faultType;
+            fault->line = OUTFAULT;
+            nfault++;
+            gate->pFaultList.push_back(fault);
+
+            // case of high level gates
+            if (gate->fanouts[0]->type > PI) {
+                fault = new Fault;
+                fault->gate = gate;
+                fault->type = (faultType == SA1) ? SA0 : SA1;
+                fault->line = OUTFAULT;
+                nfault++;
+                gate->pFaultList.push_back(fault);
+            }
+        } else if (gate->noutput > 1) {
+            fault = new Fault();
+            fault->gate = gate;
+            fault->type = SA1;
+            fault->line = OUTFAULT;
+            nfault++;
+            gate->pFaultList.push_back(fault);
+
+            fault = new Fault();
+            fault->gate = gate;
+            fault->type = SA0;
+            fault->line = OUTFAULT;
+            nfault++;
+            gate->pFaultList.push_back(fault);
+        } else if (gate->type == PO && gate->fanins[0]->noutput > 1) {
+            fault = new Fault();
+            fault->gate = gate;
+            fault->type = SA1;
+            fault->line = 0;
+            nfault++;
+            gate->pFaultList.push_back(fault);
+
+            fault = new Fault();
+            fault->gate = gate;
+            fault->type = SA0;
+            fault->line = 0;
+            nfault++;
+            gate->pFaultList.push_back(fault);
+        }
+    }
+
+    // create the fault_list and
+    // enumerate faults in each fanout free region
+    faultList = new Fault *[nfault];
+    stack->clear();
+
+    nof = 0;
+    for (i = noStem - 1; i >= 0; i--) {
+        stack->push(stem[i]);
+        n = 1;
+        while (!stack->isEmpty()) {
+            gate = stack->pop();
+            list<Fault *>::iterator current, final;
+            current = gate->pFaultList.begin();
+            final = gate->pFaultList.end();
+
+            while (current != final) {
+                faultList[nof++] = *current;
+                current++;
+                n++;
+            }
+            for (int j = 0; j < gate->ninput; j++)
+                if (gate->fanins[j]->noutput == 1) stack->push(gate->fanins[j]);
+        }
+        stem[i]->dfault = new Fault *[n];
+    }
+
+    if (nfault == nof)
+        return nfault;
+    else
+        return -1;
+}
+
+void FaultList::printFaultList()
+{
+    for (int i = 0; i < numberOfFaults; i++) {
+        auto pCurrentFault = faultList[i];
+        string line;
+        Gate *targetGate = pCurrentFault->gate;
+        Gate *faninGate = nullptr;
+        string strTarget = targetGate->symbol->symbol;
+        string strFanin;
+        int faninIndex = pCurrentFault->line;
+        if (faninIndex != OUTFAULT) {
+            faninGate = pCurrentFault->gate->fanins[faninIndex];
+            strFanin = faninGate->symbol->symbol;
+            cout << strFanin << "->" << strTarget << " /" << pCurrentFault->type << endl;
+        } else {
+            cout << strTarget << " /" << pCurrentFault->type << endl;
+        }
+    }
+}
+
+#ifdef INCLUDE_HOPE
+
+void FaultList::setParity(Gate *gut, int par) { gut->changed = inverseParity[parityOfGate[gut->type]][par]; }
+void FaultList::mark(Gate *gut) { gut->changed += 2; }
+bool FaultList::isStem(Gate *gut) { return ((gut->noutput != 1) || (gut->fanouts[0]->type == DFF)); }
+bool FaultList::isNotMarked(Gate *gut) { return gut->changed < 2; }
+
+void FaultList::insertFault(Gate *gut, int line, FaultType type) {
+    int parity;
+    Fault *f;
+
+    parity = (gut->changed >= 2) ? gut->changed - 2 : gut->changed;
+    if (line < 0) parity = inverseParity[parityOfGate[gut->type]][parity];
+
+    f = new Fault();
+    f->gate = gut;
+    f->line = line;
+    f->type = type;
+    f->npot = 0;
+
+    numberOfFaults++;
+
+    if ((parity == 0 && type == SA0) || (parity == 1 && type == SA1))
+        evenList->push_back(f);
+    else
+        oddList->push_back(f);
+}
+
+void FaultList::defaultLineFault(Gate *gut, int line) {
+    Gate *from, *to;
+
+    if (line < 0) {
+        // output line fault
+        if (gut->type == DUMMY || gut->type == PO) return;
+        if (gut->noutput != 1) {
+            insertFault(gut, OUTFAULT, SA0);
+            insertFault(gut, OUTFAULT, SA1);
+        } else {
+            to = gut->fanouts[0];
+            if (to->type == DUMMY) to = to->fanouts[0];
+            switch (to->type) {
+                case AND:
+                case NAND:
+                    if (to->ninput > 1) insertFault(gut, OUTFAULT, SA1);
+                    break;
+                case OR:
+                case NOR:
+                    if (to->ninput > 1) insertFault(gut, OUTFAULT, SA0);
+                    break;
+                case XOR:
+                case XNOR:
+                case DFF:
+                case PO:
+                    insertFault(gut, OUTFAULT, SA0);
+                    insertFault(gut, OUTFAULT, SA1);
+                    break;
+                default:
+                    break;
+            }
+        }
+    } else {
+        from = gut->fanins[line];
+        if (from->type == DUMMY || from->type == PO) from = from->fanins[0];
+        if (from->noutput > 1) switch (gut->type) {
+                case AND:
+                case NAND:
+                    if (gut->ninput > 1) insertFault(gut, line, SA1);
+                    break;
+                case OR:
+                case NOR:
+                    if (gut->ninput > 1) insertFault(gut, line, SA0);
+                    break;
+                case XOR:
+                case XNOR:
+                case DFF:
+                case PO:
+                    insertFault(gut, line, SA0);
+                    insertFault(gut, line, SA1);
+                    break;
+                default:
+                    break;
+            }
+    }
+}
+
+void FaultList::FFRfault(Gate *gut) {
+    Gate *temp;
+    oddList = new list<Fault *>;
+    evenList = new list<Fault *>;
+
+    stack1->clear();
+    stack1->push(gut);
+
+    while (!stack1->isEmpty()) {
+        gut = stack1->pop();
+        defaultLineFault(gut, OUTFAULT);
+        for (int ix = 0; ix < gut->ninput; ix++) {
+            temp = gut->fanins[ix];
+            if (isStem(temp))
+                defaultLineFault(gut, ix);
+            else
+                stack1->push(temp);
+        }
+    }
+
+    if (evenList->size() > 0) {
+        hopeFaultList.insert(hopeFaultList.end(), evenList->begin(), evenList->end());
+    }
+    if (oddList->size() > 0) {
+        hopeFaultList.insert(hopeFaultList.end(), oddList->begin(), oddList->end());
+    }
+
+    delete oddList;
+    delete evenList;
+}
+
+void FaultList::DFSpo(Gate *parent, Gate *child) {
+    // preWORK
+    setParity(child, (parent == 0 ? 0 : parent->changed - 2));
+    mark(child);
+
+    if (isStem(child)) FFRfault(child);
+
+    // Go into children
+    for (int i = 0; i < child->ninput; i++) {
+        // preWORK for input lines
+        if (isNotMarked(child->fanins[i])) DFSpo(child, child->fanins[i]);
+    }
+}
+
+void FaultList::FWDfaults() {
+    Gate *gut;
+    int i;
+
+    for (i = 0; i < numberOfGates; i++) gates[i]->changed = 0;
+
+    //   init_fault_list();
+
+    // Primary Outputs
+    for (i = 0; i < numberOfPrimaryOutputs; i++) {
+        gut = gates[primaryOut[i]];
+        DFSpo(0, gut);
+    }
+
+    // count faults and copy
+    numberOfFaults = hopeFaultList.size();
+
+    faultList = new Fault *[numberOfFaults];
+
+    list<Fault *>::iterator current, final;
+
+    current = hopeFaultList.begin();
+    final = hopeFaultList.end();
+
+    i = 0;
+    while (current != final) {
+        faultList[i] = *current;
+        i++;
+        current++;
+    }
+}
+#endif
+
+void ReadableFaultList::readFaults(const string &faultFileName) {
+    fstream faultStream;
+    faultStream.open(faultFileName, ios::in);
+    numberOfFaults = readFaultsFromFileStream(faultStream, myNumberOfStems, myStem);
+    if (numberOfFaults < 0) {
+        stringstream ss;
+        ss << "Fatal error: error in setting fault list";
+        throw ss.str();
+    }
+}
+
+int ReadableFaultList::readFaultsFromFileStream(istream &fileStream, int noStem, Gate **stem) {
+    Gate *gut;
+    Fault *fault;
+    HashData *hashData;
+    int line = OUTFAULT;
+    int fromGateId;
+    int toGateId;
+    int type;
+    int numOfFault, numOfStemDFault, numOfFaultCalcFromStem;
+    numOfFault = 0;
+
+    string faultLine;
+    while (getline(fileStream, faultLine)) {
+        if (faultLine.empty()) {
+            break;
+        }
+        auto splitRes = split(faultLine, "->| /");
+        string strFanin;
+        string strTarget;
+        line = OUTFAULT;
+        switch (splitRes.size()) {
+            case 3:
+                strFanin = splitRes[0];
+                strTarget = splitRes[1];
+                if ((hashData = hashTable.findHash(strFanin, 0)) == 0) {
+                    cout << strFanin << " is not defined" << endl;
+                    Error::fatalerror(FAULTERROR);
+                }
+                if ((fromGateId = hashData->pnode->index) < 0) {
+                    Error::fatalerror(FAULTERROR);
+                }
+
+                if ((hashData = hashTable.findHash(strTarget, 0)) == 0) {
+                    cout << strTarget << " is not defined" << endl;
+                    Error::fatalerror(FAULTERROR);
+                }
+                if ((toGateId = hashData->pnode->index) < 0) {
+                    Error::fatalerror(FAULTERROR);
+                }
+
+                gut = gates[toGateId];
+                for (int i = 0; i < gut->ninput; i++) {
+                    if (gut->fanins[i]->index == fromGateId) {
+                        line = i;
+                        break;
+                    }
+                }
+                type = splitRes[2] == "1" ? SA1 : SA0;
+                break;
+            case 2:
+                strTarget = splitRes[0];
+                if ((hashData = hashTable.findHash(strTarget, 0)) == 0) {
+                    cout << strTarget << " is not defined" << endl;
+                    Error::fatalerror(FAULTERROR);
+                }
+                if ((toGateId = hashData->pnode->index) < 0) {
+                    Error::fatalerror(FAULTERROR);
+                }
+
+                gut = gates[toGateId];
+                type = splitRes[1] == "1" ? SA1 : SA0;
+            default:
+                break;
+        }
+
+        fault = new Fault;
+        fault->gate = gut;
+        fault->line = line;
+        fault->type = static_cast<FaultType>(type);
+        gut->pFaultList.push_back(fault);
+        numOfFault++;
+    }
+
+    // create the fault_list and enumerate faults in each fanout free region
+    faultList = new Fault *[numOfFault];
+    stack->clear();
+
+    numOfFaultCalcFromStem = 0;
+    for (int i = noStem - 1; i >= 0; i--) {
+        stack->push(stem[i]);
+        numOfStemDFault = 1;
+        while (!stack->isEmpty()) {
+            gut = stack->pop();
+            for (auto current = gut->pFaultList.begin(); current != gut->pFaultList.end(); current++) {
+                faultList[numOfFaultCalcFromStem++] = *current;
+                numOfStemDFault++;
+            }
+            for (int j = 0; j < gut->ninput; j++) {
+                if (gut->fanins[j]->noutput == 1) {
+                    stack->push(gut->fanins[j]);
+                }
+            }
+        }
+        stem[i]->dfault = new Fault*[numOfStemDFault];
+    }
+
+    if (numOfFault == numOfFaultCalcFromStem) {
+        return numOfFault;
+    }
+
+    return -1;
+}
+}  // namespace hiatpg
