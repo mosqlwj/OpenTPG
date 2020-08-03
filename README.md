@@ -168,7 +168,7 @@ sh build.sh package <TEAMNAME>
 其中：
 
   - `<TEAMNAME>` 为本团队的名称，命名规则需要满足正则表达式：`[A-Za-z][A-Za-z0-9]*`.
-  - 生成的软件包的名字为 `hiatpg-<TEAMNAME>-<OS>-<TIMESTAMP>.tar.gz`，比如：`hiatpg-MyTeam-Linux-200723081617.tar.gz`
+  - 生成的软件包的名字为 `opentpg-<TEAMNAME>-<OS>-<TIMESTAMP>.tar.gz`，比如：`opentpg-MyTeam-Linux-200723081617.tar.gz`
 
 * 部署
 

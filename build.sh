@@ -73,7 +73,6 @@ function do_compile()
 
 
     #   执行构建
-#    local module_list="atalanta hiatpg"
     local module_list="atalanta"
     for module  in  ${module_list} ; do
         #   构建 module
@@ -169,11 +168,11 @@ function do_package
     local buildtime=$(date +'%y%m%d%H%M%S')
     local buildcommitid=$(git rev-parse HEAD)
     local buildgccversion=$(gcc --version)
-    local installname="hiatpg-${buildteam}"
+    local installname="opentpg-${buildteam}"
     local pkgname="${installname}-${buildos}-${buildtime}"
     local pkgdir="${PROJECT_ROOT}/.tmp-package/${installname}"
     rm -rf      "${PROJECT_ROOT}/.tmp-package"
-    rm -rf      "${PROJECT_ROOT}"/hiatpg-"${buildteam}"-"${buildos}"-*
+    rm -rf      "${PROJECT_ROOT}"/opentpg-"${buildteam}"-"${buildos}"-*
     mkdir -p    "${pkgdir}"                                                         &&  \
     echo        "BUILD_TEAM :   '${buildteam}'"         >>  "${pkgdir}/.properties" &&  \
     echo        "BUILD_TIME :   '${buildtime}'"         >>  "${pkgdir}/.properties" &&  \
