@@ -50,12 +50,6 @@ OpenTPG 项目的目标是构建开源的 TPG 工具集。当前还处于项目�
 - 通过发起 Pull Request 直接给项目贡献代码
 - 参与 issue 或者 Pull Request 的评审或者评论
 
-我们反对以下行为：
-
-- 无意义的灌水
-- 过于偏激的言论
-- 不健康的言论
-
 <a name="install"></a>
 # 安装说明
 
