@@ -12,11 +12,11 @@
 
 这里的应用指的是 atanlanta 程序。其关键接口如下：
 
-- `atalanta --exec create-fault   --netlist <URI>` 根据网表（netlist）生成 fault 列表
-- `atalanta --exec upload-netlist --netlist <FILE> --cache <URI>` 将 fault 列表上传到缓存服务器（redis）
-- `atalanta --exec atpg           --netlist <URI>` 从 stdin 读取 fault 列表，并执行 ATPG，生成的 cube 输出到 stdout
-- `atalanta --exec simulate       --netlist <URI>` 从 stdin 读取 cube 列表，并执行仿真，生成的 pattern 输出到 stdout
-- `atalanta --exec stat           --target <DIR>` 执行统计，统计信息输出到 \<DIR\> 目录
+- `atalanta --exec create-fault     --netlist <URI>` 根据网表（netlist）生成 fault 列表
+- `atalanta --exec upload-netlist   --netlist <FILE> --cache <URI>` 将 fault 列表上传到缓存服务器（redis）
+- `atalanta --exec atpg             --netlist <URI>` 从 stdin 读取 fault 列表，并执行 ATPG，生成的 cube 输出到 stdout
+- `atalanta --exec simulate-cube    --netlist <URI>` 从 stdin 读取 cube 列表，并执行仿真，生成的 pattern 输出到 stdout
+- `atalanta --exec stat             --target <DIR>` 执行统计，统计信息输出到 \<DIR\> 目录
 
 
 <a name="race-interface-install"></a>
