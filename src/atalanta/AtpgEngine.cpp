@@ -81,7 +81,7 @@ int hiatpg::AtpgEngine::testCubeGen(int levels, int maxBits, int nStem, Gate **s
 
             pCurrentFault->detected = PROCESSED;
             unordered_map<int, int> testcube;
-            cout << i << '\t';
+            cout << pCurrentFault->index << '\t';
             for (j = 0; j < numberOfPrimaryInputs; j++) {
                 int32_t value = gates[j]->output;
                 if (value != X) {

@@ -280,9 +280,9 @@ void FaultList::printFaultList()
         if (faninIndex != OUTFAULT) {
             faninGate = pCurrentFault->gate->fanins[faninIndex];
             strFanin = faninGate->symbol->symbol;
-            cout << strFanin << "->" << strTarget << " /" << pCurrentFault->type << endl;
+            cout << pCurrentFault->index << '\t' << strFanin << "->" << strTarget << " /" << pCurrentFault->type << endl;
         } else {
-            cout << strTarget << " /" << pCurrentFault->type << endl;
+            cout << pCurrentFault->index << '\t' << strTarget << " /" << pCurrentFault->type << endl;
         }
     }
 }
@@ -477,14 +477,14 @@ int ReadableFaultList::readFaultsFromFileStream(istream &fileStream, int noStem,
         if (faultLine.empty()) {
             break;
         }
-        auto splitRes = split(faultLine, "->| /");
+        auto splitRes = split(faultLine, "\t|->| /");
         string strFanin;
         string strTarget;
         line = OUTFAULT;
         switch (splitRes.size()) {
-            case 3:
-                strFanin = splitRes[0];
-                strTarget = splitRes[1];
+            case 4:
+                strFanin = splitRes[1];
+                strTarget = splitRes[2];
                 if ((hashData = hashTable.findHash(strFanin, 0)) == 0) {
                     cout << strFanin << " is not defined" << endl;
                     Error::fatalerror(FAULTERROR);
@@ -508,10 +508,10 @@ int ReadableFaultList::readFaultsFromFileStream(istream &fileStream, int noStem,
                         break;
                     }
                 }
-                type = splitRes[2] == "1" ? SA1 : SA0;
+                type = splitRes[3] == "1" ? SA1 : SA0;
                 break;
-            case 2:
-                strTarget = splitRes[0];
+            case 3:
+                strTarget = splitRes[1];
                 if ((hashData = hashTable.findHash(strTarget, 0)) == 0) {
                     cout << strTarget << " is not defined" << endl;
                     Error::fatalerror(FAULTERROR);
@@ -521,7 +521,7 @@ int ReadableFaultList::readFaultsFromFileStream(istream &fileStream, int noStem,
                 }
 
                 gut = gates[toGateId];
-                type = splitRes[1] == "1" ? SA1 : SA0;
+                type = splitRes[2] == "1" ? SA1 : SA0;
             default:
                 break;
         }
@@ -530,6 +530,7 @@ int ReadableFaultList::readFaultsFromFileStream(istream &fileStream, int noStem,
         fault->gate = gut;
         fault->line = line;
         fault->type = static_cast<FaultType>(type);
+        fault->index = stoi(splitRes[0]);
         gut->pFaultList.push_back(fault);
         numOfFault++;
     }
