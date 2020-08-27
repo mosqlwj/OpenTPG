@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
 
-SELFDIR=$(dirname $(realpath "$BASH_SOURCE"))
-
+#SELFDIR=$(dirname $(realpath "$BASH_SOURCE"))
+SELFDIR=$(cd $(dirname "$BASH_SOURCE");pwd)
+if [[ ${SELFDIR} == "" ]]; then
+    echo "Internal error: can not locate the script dir"
+    exit 1
+fi
 
 #   准备环境
 function    prepare_env()

@@ -11,8 +11,12 @@ export SOFTWARE_DIR=""
 export INSTALL_DIR=""
 
 
-SELFDIR=$(dirname $(realpath "${BASH_SOURCE[0]}"))
-
+#SELFDIR=$(dirname $(realpath "${BASH_SOURCE[0]}"))
+SELFDIR=$(cd $(dirname "$BASH_SOURCE");pwd)
+if [[ ${SELFDIR} == "" ]]; then
+    echo "Internal error: can not locate the script dir"
+    exit 1
+fi
 
 function show_help()
 {

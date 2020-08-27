@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
 
-SELFDIR=$(dirname $(realpath "$BASH_SOURCE"))
+#SELFDIR=$(dirname $(realpath "$BASH_SOURCE"))
+SELFDIR=$(cd $(dirname "$BASH_SOURCE");pwd)
+if [[ ${SELFDIR} == "" ]]; then
+    echo "Internal error: can not locate the script dir"
+    exit 1
+fi
 
 
 PROJECT_ROOT="${SELFDIR}"
