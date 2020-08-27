@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 #set -x
 
-SELFDIR=$(dirname $(realpath "${BASH_SOURCE[0]}"))
-
+#SELFDIR=$(dirname $(realpath "${BASH_SOURCE[0]}"))
+SELFDIR=$(cd $(dirname "$BASH_SOURCE");pwd)
+if [[ ${SELFDIR} == "" ]]; then
+    echo "Internal error: can not locate the script dir"
+    exit 1
+fi
 
 export  HADOOP_HOME="${SELFDIR}/hadoop"
 export  REDIS_HOME="${SELFDIR}/redis"
