@@ -69,7 +69,13 @@ OpenTPG 项目的目标是构建开源的 TPG 工具集。当前还处于项目�
 | hadoop | 3.2.1        | [Acache发行版：https://hadoop.apache.org/releases.html](https://hadoop.apache.org/releases.html) |
 | redis  | 6.0.5        | [Redis下载地址：https://redis.io/download](https://redis.io/download) |
 
-需要注意：目前我们没有做很深入的交叉配套验证，如无必要，建议直接使用对应版本号的第三方软件.
+目前我们没有做很深入的交叉配套验证，如无必要，建议直接使用对应版本号的第三方软件.
+
+注意：如果您的操作系统是 **Ununtu**，那么可能会遇到下列问题：
+
+1. 因为防火墙拦截了hadoop的端口导致访问失败，此时可以关闭防火墙或者针对性地放通 hadoop 所需要的端口；
+2. Ununtu 的 sh 并不是 bash，您可能需要使用 bash 来启动脚本；
+
 
 * 支持的操作系统
 
