@@ -287,7 +287,7 @@ function rank_local()
     local rankname="$3"
 
     local   starttime=$(date +'%s')
-    "${SELFDIR}/atalanta-hadoop.sh" "${team}" "${rankdir}" "${rankname}"
+    "${SELFDIR}/atalanta-local.sh" "${team}" "${rankdir}" "${rankname}"
     RESULT=$?
     local   endtime=$(date +'%s')
 
