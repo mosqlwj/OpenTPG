@@ -12,7 +12,7 @@ function main()
     local   rankdir="$2"
     local   rankname="$2"
 
-    local   streamfile="${HADOOP_HOME}/share/hadoop/tools/lib"/hadoop-streaming-3.*.jar
+    local   streamfile="${HADOOP_HOME}/share/hadoop/tools/lib"/hadoop-streaming-3.3.0.jar
     "${HADOOP_HOME}/bin/hadoop" jar "${streamfile}"                                 \
         -D          "mapreduce.job.maps=5"                                          \
         -files      "${SELFDIR}/atalanta,${rankdir}/${rankname}.bench"              \
