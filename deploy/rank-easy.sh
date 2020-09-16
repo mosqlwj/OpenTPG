@@ -276,22 +276,19 @@ function rank_hadoop()
 }
 
 
-
+##################################################################
 #   $1  team
-#   $2  scenename
-#   $3  rankdir
-#   $4  rankname
+#   $2  rankdir
+#   $3  rankname
 function rank_local()
 {
     local team="$1"
     local rankdir="$2"
     local rankname="$3"
 
-    local   benchfile="${rankdir}/${rankname}.bench"
     local   starttime=$(date +'%s')
-    cat     "${rankdir}/${rankname}.fault"                                  | \
-    "${SELFDIR}/atalanta" --exec atpg           --netlist "${benchfile}"    | \
-    "${SELFDIR}/atalanta" --exec simulate-cube  --netlist "${benchfile}"    >   "${rankdir}/${rankname}.pattern"
+    "${SELFDIR}/atalanta-hadoop.sh" "${team}" "${rankdir}" "${rankname}"
+    RESULT=$?
     local   endtime=$(date +'%s')
 
     #   生成时间统计信息
@@ -386,6 +383,7 @@ function    main()
 }
 
 
+##################################################################
 main    "$@"
 exit    "$?"
 
