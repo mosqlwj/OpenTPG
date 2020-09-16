@@ -49,7 +49,7 @@ function main()
         -input      "/${team}-${rankname}-input"                                    \
         -output     "/${team}-${rankname}-output"                                   \
         -mapper     "atalanta --exec atpg          --netlist  ${rankname}.bench"    \
-        -reducer    "atalanta --exec simulate-cube --netlist  ${rankname}.bench"    \
+        -reducer    "atalanta --exec simulate-cube --netlist  ${rankname}.bench"
     RESULT=$?
     return  ${RESULT}
 }
