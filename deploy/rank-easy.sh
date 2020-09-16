@@ -90,7 +90,7 @@ function    prepare_env()
 {
     #   修改可执行权限
     chmod +x    "${SELFDIR}/atalanta"
-    chmod +x    "${SELFDIR}/atalanta-runner.sh"
+    chmod +x    "${SELFDIR}/atalanta-hadoop.sh"
 
     return  0
 }
@@ -247,7 +247,7 @@ function rank_hadoop()
     echo    "Executing TPG-FLOW..."
     local   streamfile="$HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.2.1.jar"
     local   starttime=$(date +'%s')
-    "${SELFDIR}/atalanta-runner.sh" "${team}" "${rankdir}" "${rankname}"
+    "${SELFDIR}/atalanta-hadoop.sh" "${team}" "${rankdir}" "${rankname}"
     RESULT=$?
     local   endtime=$(date +'%s')
     if [[ ${RESULT} -ne 0 ]]; then
