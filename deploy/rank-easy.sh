@@ -55,11 +55,11 @@ function    check_env()
         return  2
     fi
 
-    #   检查 redis 环境变量
-    if [[ "${REDIS_HOME}" == "" ]] || [[ ! -d "${REDIS_HOME}" ]]; then
-        error   "Error: \${REDIS_HOME} is missing or not accessable"
-        return  3
-    fi
+#    #   检查 redis 环境变量
+#    if [[ "${REDIS_HOME}" == "" ]] || [[ ! -d "${REDIS_HOME}" ]]; then
+#        error   "Error: \${REDIS_HOME} is missing or not accessable"
+#        return  3
+#    fi
 
     #   检查 java 是否可以执行
     java -version
