@@ -83,13 +83,13 @@ protected:
         // 第五个參数：參数的默认值（可选，当第四个參数为false时该參数有效）
         options.add<string>("exec", 'e',
                             "The function need to be execute, currently we support "
-                            "'create-fault' 'upload-netlist' 'atpg' 'simulate' 'stat'",
+                            "'create-fault' 'atpg' 'simulate-cube' 'stat' 'origin'",
                             true, "");
         options.add<string>("netlist", 'n',
                             "The netlist file name, support local file and redis address, "
                             "such as 'file:~/c17.bench' and 'tcp://192.168.1.101:2345/NetList'",
                             false, "");
-        options.add<string>("cache", 'c', "The url where the netlist saved in redi", false, "");
+        options.add<string>("cache", 'c', "The url where the netlist saved in redis", false, "");
         options.add<string>("fault", 'f', "fault file name", false, "");
         options.add<string>("target", 't', "The directory of statistics input files", false, "");
         randomLimit = 16;
