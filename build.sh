@@ -29,7 +29,6 @@ function do_help()
     echo  "   build.sh  [compile] [build|release]"
     echo  "   build.sh  package   [<NAME>]"
     echo  "   build.sh  format"
-    echo  "   build.sh  install"
 
     return  0
 }
@@ -170,39 +169,35 @@ function do_package
         return  5
     fi
 
+    #   生成包信息，并打包
     local buildtime=$(date +'%y%m%d%H%M%S')
     local buildcommitid=$(git rev-parse HEAD)
     local buildgccversion=$(gcc --version)
     local installname="opentpg-${buildteam}"
     local pkgname="${installname}-${buildos}-${buildtime}"
-    local pkgdir="${PROJECT_ROOT}/.tmp-package/${installname}"
-    rm -rf      "${PROJECT_ROOT}/.tmp-package"
     rm -rf      "${PROJECT_ROOT}"/opentpg-"${buildteam}"-"${buildos}"-*
-    mkdir -p    "${pkgdir}"                                                         &&  \
-    echo        "BUILD_TEAM :   '${buildteam}'"         >>  "${pkgdir}/.properties" &&  \
-    echo        "BUILD_TIME :   '${buildtime}'"         >>  "${pkgdir}/.properties" &&  \
-    echo        "BUILD_ARCH :   '${buildarch}'"         >>  "${pkgdir}/.properties" &&  \
-    echo        "BUILD_ID   :   '${buildcommitid}'"     >>  "${pkgdir}/.properties" &&  \
-    echo        "BUILD_GCC  :   '${buildgccversion}'"   >>  "${pkgdir}/.properties" &&  \
-    cp -rf      "${PROJECT_ROOT}/deploy"/tmpl-hadoop   "${pkgdir}"  &&  \
-    cp -rf      "${PROJECT_ROOT}/deploy"/tmpl-redis    "${pkgdir}"  &&  \
-    cp -rf      "${PROJECT_ROOT}/deploy"/tmpl-samples  "${pkgdir}"  &&  \
-    cp -rf      "${PROJECT_ROOT}/deploy"/install.sh    "${pkgdir}"  &&  \
-    cp -rf      "${PROJECT_ROOT}/deploy"/rank.sh       "${pkgdir}"  &&  \
-    cp -rf      "${PROJECT_ROOT}/deploy"/setup.bash    "${pkgdir}"  &&  \
-    cp -rf      "${PROJECT_ROOT}/deploy"/INSTALL-ORDER "${pkgdir}"  &&  \
-    cp -rf      "${PROJECT_ROOT}/bin"                  "${pkgdir}"  &&  \
-    cd          "${PROJECT_ROOT}/.tmp-package"                      &&  \
-    tar cvf     "${pkgname}.tar"        "${installname}"            &&  \
-    gzip        "${pkgname}.tar"                                    &&  \
-    mv          "${pkgname}.tar.gz"     "${PROJECT_ROOT}"
+    rm -rf      "${PROJECT_ROOT}/.properties"
+    echo        "BUILD_TEAM :   '${buildteam}'"         >>  "${PROJECT_ROOT}/.properties" &&  \
+    echo        "BUILD_TIME :   '${buildtime}'"         >>  "${PROJECT_ROOT}/.properties" &&  \
+    echo        "BUILD_ARCH :   '${buildarch}'"         >>  "${PROJECT_ROOT}/.properties" &&  \
+    echo        "BUILD_ID   :   '${buildcommitid}'"     >>  "${PROJECT_ROOT}/.properties" &&  \
+    echo        "BUILD_GCC  :   '${buildgccversion}'"   >>  "${PROJECT_ROOT}/.properties" &&  \
+    tar cvf     "${pkgname}.tar"        \
+        deploy                          \
+        src                             \
+        CMakeLists.txt                  \
+        LICENSE                         \
+        PROJECT                         \
+        *.sh                        &&  \
+    gzip        "${pkgname}.tar"
     RESULT=$?
     if [[ ${RESULT} -ne 0 ]]; then
         echo    "Error: Create package failed(${RESULT}): '${PROJECT_ROOT}/.tmp-package'"
         return  6
     fi
 
-    rm -rf "${PROJECT_ROOT}/.tmp-package"
+    #   删除临时文件
+    rm -rf      "${PROJECT_ROOT}/.properties"
 
     echo    "Create package success: '${PROJECT_ROOT}/${pkgname}.tar.gz'"
     return  0

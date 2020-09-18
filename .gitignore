@@ -81,3 +81,6 @@ redis-*/*.flist
 *.jar
 push
 untitled
+
+.properties
+
