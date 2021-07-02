@@ -1,9 +1,10 @@
-#include <iostream>
 #include "Netlist.h"
+#include "Params.h"
 
-int main() {
+int main(int argc, char** argv) {
+    auto params = Params::getInstance();
+    params->parseCheck(argc, argv);
     Netlist* netlist = new Netlist();
-    std::string netlistPath = "../bench/s27.bench";
-    netlist->Parse(netlistPath);
+    netlist->Parse(params->getNetlistFile());
     return 0;
 }

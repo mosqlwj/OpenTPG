@@ -4,7 +4,9 @@ project(HiParser)
 set(CMAKE_CXX_STANDARD 14)
 
 set(Boost_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/thirdparty/boost/linux/include)
+set(Cmdline_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/thirdparty/cmdline/linux/include)
 include_directories(${Boost_INCLUDE_DIRS})
 message("${Boost_INCLUDE_DIRS}")
+include_directories(${Cmdline_INCLUDE_DIRS})
 
-add_executable(HiParser main.cpp Netlist.cpp Netlist.h StringUtils.cpp StringUtils.h Gate.cpp Gate.h Util.cpp Util.h)
+add_executable(HiParser main.cpp Netlist.cpp Netlist.h StringUtils.cpp StringUtils.h Gate.cpp Gate.h Util.cpp Util.h Params.cpp Params.h)
