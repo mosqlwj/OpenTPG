@@ -3,35 +3,29 @@
 #include "Netlist.h"
 #include <iostream>
 
-class TestCube
-{
-private:
-    std::vector<std::vector<char>> logicValue;
+class TestCube {
+ private:
+  std::vector<std::vector<char>> logicValue;
 
-public:
-    TestCube(Netlist *netList, int32_t cycleNum)
-    {
-        logicValue.resize(3, std::vector<char>(100, 'x'));
-    }
-    ~TestCube()
-    {
-    }
+ public:
+  TestCube(Netlist *netList, int32_t cycleNum) {
+    logicValue.resize(3, std::vector<char>(100, 'x'));
+  }
 
-    void UpdateTestCubeValue(int cycle, int index, char val)
-    {
-        logicValue[cycle][index] = val;
-        return;
-    }
+  ~TestCube() {}
 
-    const std::vector<std::vector<char>> &GetLogicValue() const
-    {
-        return logicValue;
-    }
+  int Init(int32_t faultId, int32_t size, int16_t cycleNum) { return 0; }
 
-    int GetCycleSize() const
-    {
-        return logicValue.size();
-    }
+  void UpdateTestCubeValue(int cycle, int index, char val) {
+    logicValue[cycle][index] = val;
+    return;
+  }
+
+  const std::vector<std::vector<char>> &GetLogicValue() const {
+    return logicValue;
+  }
+
+  int GetCycleSize() const { return logicValue.size(); }
 };
 
 #endif

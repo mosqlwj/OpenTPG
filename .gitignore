@@ -33,3 +33,7 @@
 
 .idea
 cmake*/
+*.user
+*cmake_install.cmake
+build/
+*.old

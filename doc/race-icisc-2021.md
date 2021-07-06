@@ -7,20 +7,9 @@
 
 
 <a name="race-interface"></a>
-## 系统接口
+## 系统接口定义
 
-目前我们定义了下面几个部分接口，这些接口会被判题器调用，各参赛对于请确保不要更改，修改系统接口必将将影响对您的作品的评分。如果您认为确实有必要，请通过 issue 沟通。
-
-<a name="race-interface-app"></a>
-### 应用的命令行接口
-
-这里的应用指的是 atanlanta 程序。其关键接口如下：
-
-- `atalanta --exec create-fault     --netlist <URI>` 根据网表（netlist）生成 fault 列表
-- `atalanta --exec upload-netlist   --netlist <FILE> --cache <URI>` 将 fault 列表上传到缓存服务器（redis）
-- `atalanta --exec atpg             --netlist <URI>` 从 stdin 读取 fault 列表，并执行 ATPG，生成的 cube 输出到 stdout
-- `atalanta --exec simulate-cube    --netlist <URI>` 从 stdin 读取 cube 列表，并执行仿真，生成的 pattern 输出到 stdout
-- `atalanta --exec stat             --target <DIR>` 执行统计，统计信息输出到 \<DIR\> 目录
+HiAtpg 主要功能是读入网表及其配置，然后输出 TestCube。
 
 
 <a name="race-interface-install"></a>
@@ -109,3 +98,9 @@
 # 附：往届 ICISC 竞赛
 
 - [2020 届 ICISC 竞赛](https://gitee.com/openeda/OpenTPG/blob/race-icisc-2020/doc/race-icisc-2020.md)
+
+
+
+TestCube.h cube的接口
+CubeOutput.h 打印cube
+

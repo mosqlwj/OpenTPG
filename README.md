@@ -1,10 +1,7 @@
 # 目录
 
 [概述](#summary)
-<!--
-- [软件介绍](#summary-introduction)
-- [软件架构](#summary-architecture)
--->
+
 - [竞赛](#summary-race)
 - [参与贡献](#summary-join)
 
@@ -19,17 +16,7 @@
 <a name="summary"></a>
 # 概述
 
-OpenTPG 项目的目标是构建开源的 TPG 工具集。主要工具为：
-
-* HiAtpg：XXXX
-
-<!--
-<a name="summary-introduction"></a>
-## 软件介绍
-
-<a name="summary-architecture"></a>
-## 软件架构
--->
+OpenTPG 项目的目标是构建开源的 TPG 工具集。
 
 <a name="summary-race"></a>
 ## 竞赛
@@ -89,5 +76,20 @@ make
 <a name="quickstart"></a>
 # 快速入门
 
-TODO
+编译完成之后会生成一个名字为 HiAtpg 的命令行工具。该工具命令行接口如下：
+
+| 参数定义 | 是否必选 | 参数含义 |
+|---      |---      |---      |
+| `-n <NETLIST-FILE>`   | Yes | 指定网表文件 |
+| `-c <CONFIG-FILE>`    | Yes | 执行网表配置文件 |
+| `-f <FAULTLIST-FILE>` | No  | 指定输出 FaultList 文件 | 
+| `-g <GATE-FILE>`      | No  | 指定输出 Gate 信息文件 | 
+
+## 一键流程
+
+```shell
+./HiAtpg -n bench/s17.bench  -c bench/s17.cfg   
+```
+
+
 
