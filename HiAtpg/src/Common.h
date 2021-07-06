@@ -25,4 +25,9 @@ enum GateType {
     UNKNOWN,
 };
 
+enum FaultType {
+    STUCK_AT_0,
+    STUCK_AT_1
+};
+
 #endif

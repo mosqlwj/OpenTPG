@@ -9,6 +9,9 @@
 #include <boost/algorithm/string.hpp>
 #include "Util.h"
 
+static std::vector<std::string> normalGatePinName = {"Z", "I1", "I2", "I3", "I4"};
+static std::vector<std::string> dffGatePinName = {"Q", "D", "CK"};
+
 void Netlist::Parse(const std::string &fileName) {
     std::string line;
     const std::string commentHead = "#";
@@ -98,5 +101,43 @@ void Netlist::Parse(const std::string &fileName) {
         gates[gateId]->id = gateId;
     }
 
-    std::cout << "Parse OK" << std::endl;
+    std::cout << "Parse OK. Start to create faultlist." << std::endl;
+
+    CreateFaultlist();
+
+
+}
+
+void Netlist::CreateFaultlist() {
+    for (auto gate : gates) {
+        switch (gate->type) {
+            case PI:
+                if (gate->outputs.size() > 1) {
+                    faultlist.push_back(new Fault(STUCK_AT_0, gate, 0, gate->name));
+                    faultlist.push_back(new Fault(STUCK_AT_1, gate, 0, gate->name));
+                }
+                break;
+            case PO:
+                break;
+            case DFF:
+                CreateFaultByGate(gate, dffGatePinName);
+                break;
+            default:
+                CreateFaultByGate(gate, normalGatePinName);
+                break;
+        }
+    }
+
+    for (int32_t i = 0; i < faultlist.size(); i++) {
+        faultlist[i]->id = i;
+        std::cout << faultlist[i]->pinName << std::endl;
+    }
+}
+
+void Netlist::CreateFaultByGate(const Gate *gate, const std::vector<std::string> &pinName) {
+    int32_t pinSize = gate->inputs.size() + 1;
+    for (int32_t i = 0; i < pinSize; i++) {
+        faultlist.push_back(new Fault(STUCK_AT_0, gate, i, gate->name + "/" + pinName[i]));
+        faultlist.push_back(new Fault(STUCK_AT_1, gate, i, gate->name + "/" + pinName[i]));
+    }
 }
