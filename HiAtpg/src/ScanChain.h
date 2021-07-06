@@ -13,6 +13,7 @@ class ScanChain {
 public:
     ScanChain(std::string chainName, Gate* si, Gate* so);
     void Trace(const std::unordered_map<std::string, Gate*>& gateNameMap);
+    std::list<Gate*>& GetChainGates() { return chainGates; }
 
 private:
     Gate* si;

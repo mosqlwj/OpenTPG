@@ -303,6 +303,14 @@ void Netlist::ReOrderDff() {
         return (gate1->name < gate2->name);
     });
 
+    GateId scanDffGateId = dffBegin;
+    for (auto& scanChain : scanChains) {
+        for (auto& gate : scanChain->GetChainGates()) {
+            gates[scanDffGateId] = gate;
+            scanDffGateId++;
+        }
+    }
+
     for (GateId gateId = dffBegin; gateId < dffEnd; gateId++) {
         gates[gateId]->id = gateId;
 //        std::cout << gates[gateId]->name << std::endl;
