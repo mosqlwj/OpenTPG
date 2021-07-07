@@ -98,47 +98,5 @@ make install
 <a name="quickstart"></a>
 # 快速入门
 
-当安装完毕之后，可以在安装目录下找到 rank.sh 脚本。 这个脚本可以帮助我们一键完成一轮测试。
-
-rank.sh 脚本的命令行选项选项如下：
-
-```bash
-rank.sh <TEAM> <INPUT-NETLIST-FILE> [<OUTPUT-DIR>]
-```
-
-其中：
-
-- `<TEAM>` 团队的名称，该名称必须匹配正则表达式 `[A-Za-z][A-Za-z]`
-- `<INPUT-NETLIST-FILE>` 需要执行 TPG-Flow 的网表文件名(含路径)，我们统一约定网表文件需要以 .bench 后缀命名
-- `[<OUTPUT-DIR>]` 指名 TPG-Flow 所产生的文件应该输出到哪里. 这是个本地的目录. 如果不指定，默认为当前工作目录
-
-如果 rank.sh 执行成功，脚本会返回 0，否则返回非 0。下面是一个简单的示例：
-
-```bash
-sh rank.sh team1 ./samples/c17.bench
-```
-
-执行完毕之后，可以在当前工作目录下看到 `team1@c17@hadoop` 的目录。 下面为该目录下的信息：
-
-```text
-$ ls -l
-total 512
--rwxrwxr-x. 1 liugang liugang 498616 Jul 24 23:29 atalanta
--rw-rw-r--. 1 liugang liugang    236 Jul 24 23:29 c17.bench
--rw-rw-r--. 1 liugang liugang      2 Jul 24 23:29 c17.cost
--rw-rw-r--. 1 liugang liugang    148 Jul 24 23:29 c17.fault
--rw-rw-r--. 1 liugang liugang    128 Jul 24 23:29 c17.pattern
--rw-rw-r--. 1 liugang liugang    272 Jul 24 23:29 c17.report
-drwxr-xr-x. 2 liugang liugang   4096 Jul 24 23:29 output
-```
-
-其中：
-
-- `atalanta` 是 rank.sh 脚本帮助我们备份的目标程序
-- `xxx.bench` 是 rank.sh 脚本帮助我们备份的网表（netlist）文件
-- `xxx.cost` 是脚本统计的关键任务的执行耗时
-- `xxx.fault` 是脚本根据网表文件自动生成的 faultlist 文件
-- `xxx.pattern` 是脚本最终产生的 pattern 文件
-- `xxx.report` 是最终的统计报告
-- `output` 这是个目录，是 hadoop 的原始输出文件
+TODO
 
