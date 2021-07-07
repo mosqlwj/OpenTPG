@@ -59,15 +59,20 @@ OpenTPG 项目的目标是构建开源的 TPG 工具集。主要工具为：
 |---      |---              |
 | boost   | TODO            |
 | cmdline | 3.2.1           |
-| gcc     | 10+ 以上, C++17  |
-| cmake   | 3.15 以上       |
 
+* 构建工具链
+
+ - gcc 10+ 及以上, C++17 
+ - cmake 3.15 及以上
 
 * 支持的操作系统
 
-  - Linux 4.9/amd64
-  - Linux 4.9/ARM64
+  - Linux 4.9 及以上
 
+* 支持硬件环境
+
+  - amd64
+  - ARM64
 
 <a name="install-build"></a>
 ## 构建
