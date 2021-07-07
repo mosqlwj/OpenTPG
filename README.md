@@ -19,7 +19,9 @@
 <a name="summary"></a>
 # 概述
 
-OpenTPG 项目的目标是构建开源的 TPG 工具集。当前还处于项目的非常早期阶段。
+OpenTPG 项目的目标是构建开源的 TPG 工具集。主要工具为：
+
+* HiAtpg：XXXX
 
 <!--
 <a name="summary-introduction"></a>
@@ -53,33 +55,18 @@ OpenTPG 项目的目标是构建开源的 TPG 工具集。当前还处于项目�
 
 * 外部依赖
 
-| 需求项 | 版本         | 下载地址 |
-|---     |---           |---       |
-| Java   | 1.8(8u251)   | [OpenJDK发行版：https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html](https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html)  |
-| hadoop | 3.2.1        | [Acache发行版：https://hadoop.apache.org/releases.html](https://hadoop.apache.org/releases.html) |
-| redis  | 6.0.5        | [Redis下载地址：https://redis.io/download](https://redis.io/download) |
-
-目前我们没有做很深入的交叉配套验证，如无必要，建议直接使用对应版本号的第三方软件.
-
-注意：如果您的操作系统是 **Ununtu**，那么可能会遇到下列问题：
-
-1. 因为防火墙拦截了hadoop的端口导致访问失败，此时可以关闭防火墙或者针对性地放通 hadoop 所需要的端口；
-2. Ununtu 的 sh 并不是 bash，您可能需要使用 bash 来启动脚本；
+| 需求项  | 版本             |
+|---      |---              |
+| boost   | TODO            |
+| cmdline | 3.2.1           |
+| gcc     | 10+ 以上, C++17  |
+| cmake   | 3.15 以上       |
 
 
 * 支持的操作系统
 
-目前团队人数和设备都有限，我们主要的验证环境是 Linux，但团队其他成员使用自身设备也做了一些不完整验证.
-如果您想做完整功能测试，请尽量采用 Linux 系统进行测试. 如果您已经验证过某些功能可用，那么通过 issue 请告诉我们：
-
-| 环境                  | 编译 | 打包 | 部署 | 本地TPG流程 | 基于Hadoop的TPG流程 |
-|---                    |---   |---   |---   |---          |---                  |
-| Linux+gcc             | OK   | OK   | OK   | OK          | OK |
-
-<!--
-{* | Windows+VS2019        | OK   | --   | --   | OK          | -- | *}
-{* | macos+clang           | OK   | OK   | OK   | OK          | Fail(hadoop不支持mac) | *}
--->
+  - Linux 4.9 + amd64
+  - Linux 4.9 + ARM64
 
 * shell 环境
 
@@ -99,117 +86,13 @@ bash
 ## 构建
 ----------------------
 
-OpenTPG 项目提供了一键编译脚本，构建方式为
-
 ```bash
-sh build.sh [compile] [debug|release]
+mkdir build
+cd build
+cmake ../
+make 
+make install
 ```
- 
-- 如果是构建 debug 版本，最简单的方式为：`sh build.sh`
-- 如果是构建 release 版本，最简单的方式是：`sh build.sh release`
-
-
-<a name="install-deploy"></a>
-## 部署
-----------------------
-
-OpenTPG 支持两种部署方式："编译环境集成部署"和"独立环境部署"。相对而言，开发环境集成部署更加简便，比较适合在开发人员自测时采用。而独立环境部署，增加了额外的步骤和操作，但很适合开发环境和部署环境分离的场景。
-
-<a name="install-deploy-ready"></a>
-#### 部署注备工作
-
-您需要提前准备好所有需要的依赖包，这些包需要放在同一个目录下，参见前面的'外部依赖'小节。
-
-
-<a name="install-deploy-way01"></a>
-#### 部署方式一：开发环境集成部署
-
-"开发环境集成部署"是指开发环境和测试环境是同一套环境，这种方式主要是方便开发人员的开发调测，避免在安装部署上浪费太多时间. 如果您计划参与项目开发，推荐采用这种方式。
-
-开发环境部署时，到项目的 deploy 目录下，执行下面的命令：
-
-```bash
-sh install.sh <SOFTWARE-DIR> ./
-```
-
-其中：
-
-  - `<SOFTWARE-DIR>` 是所有 `外部依赖` 的软件包的存放的目录
-  - 第二个参数指的是部署到当前目录下，当然这里也就是depoy所在的目录
-
-
-执行完毕之后，还需要在安装目录下通过下面的指令加载配置：
-
-```bash
-source setup.bash
-```
-
-开发环境部署完毕后，后续修改了代码或者脚本，编译完毕之后，都是可以直接使用的，不需要重新执行部署操作。
-
-<a name="install-deploy-way02"></a>
-#### 部署方式二：独立环境部署
-
-独立环境部署时，需要单独生成一个安装包，然后利用该安装包在目标环境上安装。
-
-* 打包
-
-打包操作也可以直接由 build.sh 来做：
-
-```bash
-sh build.sh package <TEAMNAME>
-```
-
-其中：
-
-  - `<TEAMNAME>` 为本团队的名称，命名规则需要满足正则表达式：`[A-Za-z][A-Za-z0-9]*`.
-  - 生成的软件包的名字为 `opentpg-<TEAMNAME>-<OS>-<TIMESTAMP>.tar.gz`，比如：`opentpg-MyTeam-Linux-200723081617.tar.gz`
-
-* 部署
-
-首先，需要将前面打包步骤生成的二进制包通过 sftp、scp 等工具或者其他的任意你喜欢的方式拷贝到部署环境.
-
-然后，依次执行下面的命令执行安装：
-
-```bash
-tar xvfz <YOUR-PACKAGE>.tar.gz
-cd <YOUR-PACKAGE>
-sh install.sh <SOFTWARE-DIR> <INSTALL-DIR>
-```
-
-其中：
- 
-  - `<YOUR-PACKAGE>` 请替换成您生成的安装包的名字
-  - `<SOFTWARE-DIR>` 是所有`外部依赖`的软件包的存放的目录
-  - `<INSTALL-DIR>`  指具体安装到什么位置
-
-
-<a name="install-test"></a>
-## 小测验
-----------------------
-
-进入安装目录，依次执行下面的指令以检验是否整个安装过程已经成功：
-
-```bash
-source setup.bash
-sh rank.sh myteam ./samples/c17.bench ./
-cat ./myteam@c17@hadoop/c17.pattern
-```
-
-如果执行成功，可以看到输出的pattern列表：
-
-```text
-pattern:0	11011
-pattern:1	10110
-pattern:2	00110
-pattern:3	11011
-pattern:4	00000
-pattern:5	10010
-pattern:6	01100
-pattern:7	00011
-```
-
-这里 rank.sh 是我们的测试驱动脚本，用于自动帮助我们完成一轮测试全流程。
-
 
 
 <a name="quickstart"></a>
