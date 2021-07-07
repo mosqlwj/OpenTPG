@@ -65,22 +65,9 @@ OpenTPG 项目的目标是构建开源的 TPG 工具集。主要工具为：
 
 * 支持的操作系统
 
-  - Linux 4.9 + amd64
-  - Linux 4.9 + ARM64
+  - Linux 4.9/amd64
+  - Linux 4.9/ARM64
 
-* shell 环境
-
-我们所有的脚本都需要在 bash 环境下执行. 您可以通过下面的命令检查当前的shell环境：
-
-```bash
-echo $SHELL
-```
-
-如果您当前的 shell 并不是 bash，那么直接输入下面的指令即可切换到 bash：
-
-```bash
-bash
-```
 
 <a name="install-build"></a>
 ## 构建
@@ -91,7 +78,6 @@ mkdir build
 cd build
 cmake ../
 make 
-make install
 ```
 
 
