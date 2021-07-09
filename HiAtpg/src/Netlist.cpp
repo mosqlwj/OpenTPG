@@ -42,8 +42,8 @@ void Netlist::Parse(const std::string &fileName) {
         }
 
         // eg: OUTPUT(U1)
-        if (outputHead ==res[0]) {
-            Gate* gate = new Gate(res[1], Util::GetGateTypeFromString(res[0]));
+        if (outputHead == res[0]) {
+            Gate* gate = new Gate(res[1] + "_PO", Util::GetGateTypeFromString(res[0]));
             gates.push_back(gate);
             name2Gate[res[1]] = gate;
             numOfPO++;
@@ -97,6 +97,15 @@ void Netlist::Parse(const std::string &fileName) {
         return (gate1->type < gate2->type);
     });
 
+    // process PO gate
+    for (auto& gate : gates) {
+        if (gate->type != PO) {
+            continue;
+        }
+        std::string targetGate = boost::replace_last_copy(gate->name, "_PO", "");
+        gate->inputs.push_back(name2Gate[targetGate]);
+    }
+
     for (int32_t gateId = 0; gateId < gates.size(); gateId++) {
         gates[gateId]->id = gateId;
     }
@@ -104,33 +113,47 @@ void Netlist::Parse(const std::string &fileName) {
     std::cout << "Parse OK. Start to create faultlist." << std::endl;
 
     CreateFaultlist();
-
-
 }
 
 void Netlist::CreateFaultlist() {
+    FaultType faultType;
     for (auto gate : gates) {
-        switch (gate->type) {
-            case PI:
-                if (gate->outputs.size() > 1) {
-                    faultlist.push_back(new Fault(STUCK_AT_0, gate, 0, gate->name));
-                    faultlist.push_back(new Fault(STUCK_AT_1, gate, 0, gate->name));
+        if (gate->inputs.size() > 1) {  // add s-a-1 for AND/NAND, add s-a-0 for OR/NOR, add both for other gate.
+            faultType = (gate->type == AND || gate->type == NAND) ? STUCK_AT_1 : STUCK_AT_0;
+            for (int inputIdx = 0; inputIdx < gate->inputs.size(); inputIdx++) {
+                if (gate->inputs[inputIdx]->outputs.size() > 1) {
+                    faultlist.push_back(new Fault(faultType, gate, inputIdx + 1, GetFaultName(gate, inputIdx + 1)));
+                    if (gate->type > PI) {
+                        faultlist.push_back(new Fault(faultType == STUCK_AT_0 ? STUCK_AT_1 : STUCK_AT_0, gate, inputIdx + 1, GetFaultName(gate, inputIdx + 1)));
+                    }
                 }
-                break;
-            case PO:
-                break;
-            case DFF:
-                CreateFaultByGate(gate, dffGatePinName);
-                break;
-            default:
-                CreateFaultByGate(gate, normalGatePinName);
-                break;
+            }
+        }
+        if (gate->outputs.size() == 1 && (gate->outputs[0]->inputs.size() > 1 || gate->outputs[0]->type == PO)) {
+            faultType = (gate->outputs[0]->type == OR || gate->outputs[0]->type == NOR) ? STUCK_AT_0 : STUCK_AT_1;
+            faultlist.push_back(new Fault(faultType, gate, 0, GetFaultName(gate, 0)));
+            if (gate->type > PI) {
+                faultlist.push_back(new Fault(faultType == STUCK_AT_0 ? STUCK_AT_1 : STUCK_AT_0, gate, 0, GetFaultName(gate, 0)));
+            }
+        } else if (gate->outputs.size() > 1) {
+            faultlist.push_back(new Fault(STUCK_AT_1, gate, 0, GetFaultName(gate, 0)));
+            faultlist.push_back(new Fault(STUCK_AT_0, gate, 0, GetFaultName(gate, 0)));
+        } else if (gate->type == PO && gate->inputs[0]->outputs.size() > 1) {
+            faultlist.push_back(new Fault(STUCK_AT_1, gate, 0, GetFaultName(gate, 0)));
+            faultlist.push_back(new Fault(STUCK_AT_0, gate, 0, GetFaultName(gate, 0)));
         }
     }
 
     for (int32_t i = 0; i < faultlist.size(); i++) {
         faultlist[i]->id = i;
-        std::cout << faultlist[i]->pinName << std::endl;
+//        std::cout << faultlist[i]->type << " UC.UNK " << faultlist[i]->pinName << std::endl;
+
+        // atalanta format
+        if (faultlist[i]->pin == 0) {
+            std::cout << i << "\t" << faultlist[i]->gate->name << " /" << faultlist[i]->type << std::endl;
+        } else {
+            std::cout << i << "\t" << faultlist[i]->gate->inputs[faultlist[i]->pin - 1]->name << "->" << faultlist[i]->gate->name << " /" << faultlist[i]->type << std::endl;
+        }
     }
 }
 
@@ -140,4 +163,24 @@ void Netlist::CreateFaultByGate(const Gate *gate, const std::vector<std::string>
         faultlist.push_back(new Fault(STUCK_AT_0, gate, i, gate->name + "/" + pinName[i]));
         faultlist.push_back(new Fault(STUCK_AT_1, gate, i, gate->name + "/" + pinName[i]));
     }
+}
+
+void Netlist::CollapseFault() {
+
+}
+
+std::string Netlist::GetFaultName(Gate *gate, int32_t pinIdx) {
+    std::string faultName = gate->name;
+    switch (gate->type) {
+        case DFF:
+            faultName += ("/" + dffGatePinName[pinIdx]);
+        case PI:
+        case PO:
+            break;
+        default:
+            faultName += ("/" + normalGatePinName[pinIdx]);
+            break;
+    }
+
+    return faultName;
 }
