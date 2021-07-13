@@ -10,13 +10,13 @@
 typedef int32_t GateId;
 
 enum GateType {
-    PI,
-    DFF,
-    PO,
     AND,
     NAND,
     OR,
     NOR,
+    PI,
+    DFF,
+    PO,
     XOR,
     XNOR,
     INV,
