@@ -6,7 +6,7 @@
 
 Params* Params::instance = nullptr;
 
-Params *Params::getInstance() {
+Params *Params::GetInstance() {
     if (instance == nullptr) {
         instance = new Params();
     }

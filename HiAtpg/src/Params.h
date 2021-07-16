@@ -7,11 +7,13 @@ class Params {
 private:
     Params();
     std::string netlistFile;
+    std::string faultlistFile;
     static Params* instance;
 
 public:
-    static Params* getInstance();
-    const std::string &getNetlistFile() const { return netlistFile; }
+    static Params* GetInstance();
+    const std::string& GetNetlistFile() const { return netlistFile; }
+    const std::string& GetFaultlistFile() const { return faultlistFile; }
 
     void parseCheck(int argc, char *argv[]) {
         cmdline::parser options;
@@ -25,8 +27,14 @@ public:
                                  'n',
                                  "The netlist file name such as ./c17.bench",
                                  true);
+        options.add<std::string>("create-fault",
+                                 'c',
+                                 "Create fault list file such as ./c17.fault",
+                                 false,
+                                 "");
         options.parse_check(argc, argv);
         netlistFile = options.get<std::string>("netlist");
+        faultlistFile = options.get<std::string>("create-fault");
     }
 };
 #endif

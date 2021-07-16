@@ -8,6 +8,7 @@
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 #include "Util.h"
+#include "Params.h"
 
 void Netlist::Parse(const std::string &fileName) {
     std::string line;
@@ -109,8 +110,6 @@ void Netlist::Parse(const std::string &fileName) {
         gates[gateId]->id = gateId;
     }
 
-    std::cout << "Parse OK. Start to create faultlist." << std::endl;
-
     CreateFaultlist();
 }
 
@@ -143,15 +142,28 @@ void Netlist::CreateFaultlist() {
         }
     }
 
+    SaveFaultlist();
+}
+
+void Netlist::SaveFaultlist() {
+    std::string faultlistFile = Params::GetInstance()->GetFaultlistFile();
+    if (faultlistFile.empty()) {
+        return;
+    }
+
+    std::ofstream faultlistFileName(faultlistFile);
+
     for (int32_t i = 0; i < faultlist.size(); i++) {
         faultlist[i]->id = i;
-//        std::cout << faultlist[i]->type << " UC.UNK " << faultlist[i]->pinName << std::endl;
+        faultlistFileName << faultlist[i]->type << " UC.UNK " << faultlist[i]->pinName << std::endl;
 
-        // atalanta format
-        if (faultlist[i]->pin == 0) {
-            std::cout << i << "\t" << faultlist[i]->gate->name << " /" << faultlist[i]->type << std::endl;
-        } else {
-            std::cout << i << "\t" << faultlist[i]->gate->inputs[faultlist[i]->pin - 1]->name << "->" << faultlist[i]->gate->name << " /" << faultlist[i]->type << std::endl;
-        }
+        // atalanta format for debug
+//        if (faultlist[i]->pin == 0) {
+//            std::cout << i << "\t" << faultlist[i]->gate->name << " /" << faultlist[i]->type << std::endl;
+//        } else {
+//            std::cout << i << "\t" << faultlist[i]->gate->inputs[faultlist[i]->pin - 1]->name << "->" << faultlist[i]->gate->name << " /" << faultlist[i]->type << std::endl;
+//        }
     }
+
+    std::cout << "Save faultlist as " << faultlistFile << std::endl;
 }

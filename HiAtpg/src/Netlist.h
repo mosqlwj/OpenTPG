@@ -15,6 +15,7 @@ class Netlist {
 public:
     void Parse(const std::string& name);
     void CreateFaultlist();
+    void SaveFaultlist();
 private:
     std::vector<Gate*> gates;
     std::vector<Fault*> faultlist;

@@ -2,9 +2,9 @@
 #include "Params.h"
 
 int main(int argc, char** argv) {
-    auto params = Params::getInstance();
+    auto params = Params::GetInstance();
     params->parseCheck(argc, argv);
     Netlist* netlist = new Netlist();
-    netlist->Parse(params->getNetlistFile());
+    netlist->Parse(params->GetNetlistFile());
     return 0;
 }
