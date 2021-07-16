@@ -11,6 +11,8 @@
 class Util {
 public:
     static GateType GetGateTypeFromString(const std::string& name);
+    static std::vector<std::string> split(const std::string& input, const std::string& delim);
+    static void trim(std::string& str);
 };
 
 
