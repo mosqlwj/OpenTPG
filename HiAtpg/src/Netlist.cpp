@@ -91,8 +91,6 @@ void Netlist::Parse(const std::string &fileName) {
         }
     }
 
-    SortGates();
-
     // process PO gate
     for (auto& gate : gates) {
         if (gate->type != PO) {
@@ -108,6 +106,9 @@ void Netlist::Parse(const std::string &fileName) {
         gates[gateId]->id = gateId;
     }
 
+    SortGates();
+    CheckFloating();
+
     CreateFaultlist();
 }
 
@@ -121,9 +122,9 @@ void Netlist::SortGates()
         return (gate1->name.compare(gate2->name) < 0);
     });
 
-//    for (auto gate : gates) {
-//        std::cout << gate->name << std::endl;
-//    }
+    for (auto gate : gates) {
+        std::cout << gate->name << std::endl;
+    }
 }
 
 void Netlist::CreateFaultlist() {
@@ -179,4 +180,12 @@ void Netlist::SaveFaultlist() {
     }
 
     std::cout << "Save faultlist as " << faultlistFile << std::endl;
+}
+
+void Netlist::CheckFloating() {
+    for (auto gate : gates) {
+        if (gate->outputs.size() == 0 && gate->type != PO) {
+            std::cerr << "floating gate: " << gate->name << std::endl;
+        }
+    }
 }

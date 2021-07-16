@@ -14,8 +14,7 @@
 class Netlist {
 public:
     void Parse(const std::string& name);
-    void CreateFaultlist();
-    void SaveFaultlist();
+
 private:
     std::vector<Gate*> gates;
     std::vector<Fault*> faultlist;
@@ -24,7 +23,11 @@ private:
     int32_t numOfGates;
     std::unordered_map<std::string, Gate*> name2Gate;
 
+private:
+    void CreateFaultlist();
+    void SaveFaultlist();
     void SortGates();
+    void CheckFloating();
 };
 
 
