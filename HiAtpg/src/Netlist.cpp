@@ -91,9 +91,7 @@ void Netlist::Parse(const std::string &fileName) {
         }
     }
 
-//    std::sort(gates.begin(), gates.end(), [&](Gate* gate1, Gate* gate2) {
-//        return (gate1->type < gate2->type);
-//    });
+    SortGates();
 
     // process PO gate
     for (auto& gate : gates) {
@@ -113,24 +111,39 @@ void Netlist::Parse(const std::string &fileName) {
     CreateFaultlist();
 }
 
+void Netlist::SortGates()
+{
+    std::sort(gates.begin(), gates.end(), [&](Gate* gate1, Gate* gate2) {
+        if (gate1->type < gate2->type) {
+            return true;
+        }
+
+        return (gate1->name.compare(gate2->name) < 0);
+    });
+
+//    for (auto gate : gates) {
+//        std::cout << gate->name << std::endl;
+//    }
+}
+
 void Netlist::CreateFaultlist() {
     FaultType faultType;
     for (auto gate : gates) {
         if (gate->inputs.size() > 1) {  // add s-a-1 for AND/NAND, add s-a-0 for OR/NOR, add both for other gate.
-            faultType = (gate->type == AND || gate->type == NAND) ? STUCK_AT_1 : STUCK_AT_0;
+            faultType = (gate->type & (AND | NAND)) ? STUCK_AT_1 : STUCK_AT_0;
             for (int inputIdx = 0; inputIdx < gate->inputs.size(); inputIdx++) {
                 if (gate->inputs[inputIdx]->outputs.size() > 1) {
                     faultlist.push_back(new Fault(faultType, gate, inputIdx + 1));
-                    if (gate->type > PI) {
+                    if (!(gate->type & (AND | NAND | OR | NOR))) {
                         faultlist.push_back(new Fault(faultType == STUCK_AT_0 ? STUCK_AT_1 : STUCK_AT_0, gate, inputIdx + 1));
                     }
                 }
             }
         }
         if (gate->outputs.size() == 1 && (gate->outputs[0]->inputs.size() > 1 || gate->outputs[0]->type == PO)) {
-            faultType = (gate->outputs[0]->type == OR || gate->outputs[0]->type == NOR) ? STUCK_AT_0 : STUCK_AT_1;
+            faultType = (gate->outputs[0]->type & (OR | NOR)) ? STUCK_AT_0 : STUCK_AT_1;
             faultlist.push_back(new Fault(faultType, gate, 0));
-            if (gate->outputs[0]->type > PI) {
+            if (!(gate->type & (AND | NAND | OR | NOR))) {
                 faultlist.push_back(new Fault(faultType == STUCK_AT_0 ? STUCK_AT_1 : STUCK_AT_0, gate, 0));
             }
         } else if (gate->outputs.size() > 1) {
@@ -158,11 +171,11 @@ void Netlist::SaveFaultlist() {
         faultlistFileName << faultlist[i]->type << " UC.UNK " << faultlist[i]->pinName << std::endl;
 
         // atalanta format for debug
-//        if (faultlist[i]->pin == 0) {
-//            std::cout << i << "\t" << faultlist[i]->gate->name << " /" << faultlist[i]->type << std::endl;
-//        } else {
-//            std::cout << i << "\t" << faultlist[i]->gate->inputs[faultlist[i]->pin - 1]->name << "->" << faultlist[i]->gate->name << " /" << faultlist[i]->type << std::endl;
-//        }
+        if (faultlist[i]->pin == 0) {
+            std::cout << i << "\t" << faultlist[i]->gate->name << " /" << faultlist[i]->type << std::endl;
+        } else {
+            std::cout << i << "\t" << faultlist[i]->gate->inputs[faultlist[i]->pin - 1]->name << "->" << faultlist[i]->gate->name << " /" << faultlist[i]->type << std::endl;
+        }
     }
 
     std::cout << "Save faultlist as " << faultlistFile << std::endl;

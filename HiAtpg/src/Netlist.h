@@ -5,11 +5,11 @@
 #ifndef HIPARSER_NETLIST_H
 #define HIPARSER_NETLIST_H
 
-#include <unordered_map>
 #include "Common.h"
 #include <vector>
 #include "Gate.h"
 #include "Fault.h"
+#include <unordered_map>
 
 class Netlist {
 public:
@@ -19,11 +19,12 @@ public:
 private:
     std::vector<Gate*> gates;
     std::vector<Fault*> faultlist;
-    std::unordered_map<Fault*, std::vector<int32_t>> collapsedFaultlist;
     int32_t numOfPI;
     int32_t numOfPO;
     int32_t numOfGates;
     std::unordered_map<std::string, Gate*> name2Gate;
+
+    void SortGates();
 };
 
 
