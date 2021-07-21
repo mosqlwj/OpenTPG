@@ -28,14 +28,14 @@ public:
         }
         for (auto cubeInfo : cubes)
         {
-            stream << "Fault Id: " << cubeInfo.first << "\n";
+            stream << "$: " << cubeInfo.first << "\n";
             int cycleSize = cubeInfo.second->GetCycleSize();
 
             const std::vector<std::vector<char>> &logicValue = cubeInfo.second->GetLogicValue();
             for (int cycle = 0; cycle < cycleSize; cycle++)
             {
                 size_t valueSize = logicValue[cycle].size();
-                for (int idx = 0; idx < valueSize; i++)
+                for (int idx = 0; idx < valueSize; idx++)
                 {
                     stream << logicValue[cycle][idx];
                 }
@@ -49,5 +49,4 @@ private:
     CubeOutput(/* args */);
     ~CubeOutput();
 };
-s
 #endif

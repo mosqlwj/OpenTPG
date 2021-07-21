@@ -1,4 +1,8 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.11)
+SET(CMAKE_BUILD_TYPE "Debug")
+SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
+SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
+
 project(HiAtpg)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -9,4 +13,22 @@ include_directories(${Boost_INCLUDE_DIRS})
 message("${Boost_INCLUDE_DIRS}")
 include_directories(${Cmdline_INCLUDE_DIRS})
 
-add_executable(HiAtpg src/main.cpp src/Netlist.cpp src/Netlist.h src/StringUtils.cpp src/StringUtils.h src/Gate.cpp src/Gate.h src/Util.cpp src/Util.h src/Params.cpp src/Params.h src/Fault.cpp src/Fault.h)
+
+
+add_executable(HiAtpg 
+src/main.cpp 
+src/Netlist.cpp 
+src/Netlist.h 
+src/StringUtils.cpp 
+src/StringUtils.h 
+src/Gate.cpp 
+src/Gate.h 
+src/Util.cpp 
+src/Util.h 
+src/Params.cpp 
+src/Params.h 
+src/Fault.cpp 
+src/Fault.h
+src/TestCube.h
+src/CubeOutput.cpp
+src/CubeOutput.h)
