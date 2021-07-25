@@ -4,6 +4,7 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import argparse
 import sys
+import random
 
 # INPUT, OUTPUT
 # BUFF NOT
@@ -12,8 +13,12 @@ import sys
 # DFF
 # XOR XNOR
 
-GateTypeOfDir = {'INPUT':0, 'OUTPUT':1, 'DFF':2, 'NOT':3, 'BUFF':4,'AND':5, 'NAND':6,'OR':7,'NOR':8,'XOR':9,'XNOR':10}
-GateNameOfDir = {0:'INPUT', 1:'OUTPUT', 2:'DFF', 3:'NOT', 4:'BUFF', 5:'AND', 6:'NAND', 7:'OR', 8:'NOR', 9:'XOR', 10:'XNOR'}
+GateTypeOfDir = {'INPUT':0, 'OUTPUT':1,'DFF':2, 'MUX':3, 'NOT':4, 'BUFF':5,'AND':6, 'NAND':7,'OR':8,'NOR':9,'XOR':10,'XNOR':11}
+GateNameOfDir = {0:'INPUT', 1:'OUTPUT', 2:'DFF', 3:'MUX', 4:'NOT', 5:'BUFF', 6:'AND', 7:'NAND', 8:'OR', 9:'NOR', 10:'XOR', 11:'XNOR'}
+gCLKName1 = 'CLK1'
+gCLKName2 = 'CLK2'
+gMUXName = 'GMUX'
+gSELName = 'SEL'
 class Gate:
     def __init__(self):
         self.typename = ''
@@ -56,7 +61,7 @@ def ParseLine(line, linenum, filenum):
         gate.ports = ParsePorts(content,6, filenum)
         if len(gate.ports) != 1:
             print("INPUT Format error: %d"%linenum)
-        if gate.ports[0][:-1] == 'clk1' or gate.ports[0][:-1] == 'clk2':
+        if gate.ports[0][:-1] == gCLKName1 or gate.ports[0][:-1] == gCLKName2:
             return
         return gate
     if content.startswith('OUTPUT'):
@@ -92,7 +97,7 @@ def ParseFile(filename, filenum):
     filetext.close()
     return testbench
 
-def CombineTwoBenchV(bench1, bench2):
+def CombineTwoBenchH(bench1, bench2):
     for i in range(GateTypeOfDir['DFF'],len(GateTypeOfDir)):
         bench1.allGates[i].extend(bench2.allGates[i])
     outputIndex = GateTypeOfDir['OUTPUT']
@@ -118,7 +123,7 @@ def CombineTwoBenchV(bench1, bench2):
             bench1.allGates[inputIndex].append(bench2.allGates[inputIndex][i])
     return bench1
 
-def CombineTwoBenchH(bench1, bench2, index):
+def CombineTwoBenchV(bench1, bench2, index):
     outindex = GateTypeOfDir['OUTPUT']
     for i in range(len(GateTypeOfDir)):
         if i != outindex:
@@ -159,20 +164,61 @@ def AddClkToDFF(bench):
             dff.ports[0] = dff.ports[0][:-1]
             continue
         elif len(dff.ports) == 1:
-            clkname = 'clk1' if i%2 == 0 else 'clk2'
+            clkname = gCLKName1 if i%2 == 0 else gCLKName2
             dff.ports.insert(0,clkname)
         else:
             print("DFF port num error: " %len(dff.ports))
     inputs = bench.allGates[GateTypeOfDir['INPUT']]
     gate = Gate()
     gate.typename = 'INPUT'
-    gate.ports.insert(0,'clk1')
+    gate.ports.append(gCLKName1)
     inputs.insert(0,gate)
+    gate2 = Gate()
+    gate2.typename = 'INPUT'
+    gate2.ports.append(gCLKName2)
+    inputs.insert(1,gate2)
+    return bench
+
+def ConvertScanDFF(bench, percent):
+    dffs = bench.allGates[GateTypeOfDir['DFF']]
+    if len(dffs) == 0:
+        return
+    muxs = bench.allGates[GateTypeOfDir['MUX']]
+    if len(muxs) > 0:
+        return
+    scandfflen = int((len(dffs) * percent) / 100)
+    if scandfflen <= 0:
+        return
+
+    random.shuffle(dffs)
+    #add si
     gate = Gate()
     gate.typename = 'INPUT'
-    gate.ports.insert(0,'clk2')
-    inputs.insert(1,gate)
-    return bench
+    gate.ports.append('SI')
+    bench.allGates[GateTypeOfDir['INPUT']].insert(0,gate)
+
+    gate = Gate()
+    gate.typename = 'INPUT'
+    gate.ports.append(gSELName)
+    bench.allGates[GateTypeOfDir['INPUT']].insert(1,gate)
+
+    siportname = 'SI'
+    for i in range(scandfflen):
+        dff = dffs[i]
+        muxgate = Gate()
+        muxgate.typename = 'MUX'
+        muxgate.ports.append(gSELName)
+        muxgate.ports.append(siportname)
+        muxgate.ports.append(dff.ports[1])
+        muxgate.gatename = gMUXName + '%d'%i
+        muxs.append(muxgate)
+        dff.ports[1] = muxgate.gatename
+        siportname = dff.gatename
+
+    gate = Gate()
+    gate.typename = 'OUTPUT'
+    gate.ports.append(siportname)
+    bench.allGates[GateTypeOfDir['OUTPUT']].insert(0, gate)
 
 def WriteFile(testbench, filename):
     outfile = open(filename,'w')
@@ -181,6 +227,8 @@ def WriteFile(testbench, filename):
     headerline = '# ' + '%d'%len(testbench.allGates[GateTypeOfDir['OUTPUT']]) + ' outputs\n'
     outfile.write(headerline)
     headerline = '# ' + '%d'%len(testbench.allGates[GateTypeOfDir['DFF']]) + ' D-type flipflops\n'
+    outfile.write(headerline)
+    headerline = '# ' + '%d'%len(testbench.allGates[GateTypeOfDir['MUX']]) + ' MUXs\n'
     outfile.write(headerline)
     headerline = '# ' + '%d'%len(testbench.allGates[GateTypeOfDir['NOT']]) + ' inverters\n'
     outfile.write(headerline)
@@ -216,6 +264,8 @@ def _parse_option():
     parser.add_argument("-o",metavar="xxx.bench", dest="output_file", type=str,required=True, help="output bench file")
     parser.add_argument("-s", metavar="combine strategy: H", dest="strategy", type=str, required=False,
                         help="set combine strategy")
+    parser.add_argument("-c", metavar="percent of convert nonscan dff to scan: 80", dest="scan_percent", type=int, required=False,
+                        help="add scan chain")
     args = parser.parse_args()
     return args
 
@@ -225,16 +275,24 @@ def main():
     inputfiles = parseArgs.input_files
     outputfile = parseArgs.output_file
     strategy = parseArgs.strategy
+    scanpercent = parseArgs.scan_percent
+    if scanpercent != None:
+        if scanpercent < 0 or scanpercent > 100:
+            print("Error: -c option must in [0:100]")
+            return
+
     benchlist = []
     for i in range(len(inputfiles)):
         benchlist.append(ParseFile(inputfiles[i],'%d'%i))
     comBench = benchlist[0]
     for i in range(1,len(benchlist)):
         if strategy == 'H':
-            comBench = CombineTwoBenchH(comBench,benchlist[i],i)
+            comBench = CombineTwoBenchH(comBench,benchlist[i])
         else:
-            comBench = CombineTwoBenchV(comBench,benchlist[i])
+            comBench = CombineTwoBenchV(comBench,benchlist[i],i)
     AddClkToDFF(comBench)
+    if scanpercent != None and scanpercent > 0:
+        ConvertScanDFF(comBench,scanpercent)
     WriteFile(comBench,outputfile)
 
 # Press the green button in the gutter to run the script.
