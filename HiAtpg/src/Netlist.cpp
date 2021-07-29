@@ -19,7 +19,6 @@ void Netlist::Parse(const std::string &fileName) {
     std::ifstream netlist(fileName);
     // 1st read by line, parse all gate
     while (getline(netlist, line)) {
-//        line = boost::trim(line);
         if (line.empty()) {
             continue;
         }
