@@ -19,6 +19,7 @@ void Netlist::Parse(const std::string &fileName) {
     std::ifstream netlist(fileName);
     // 1st read by line, parse all gate
     while (getline(netlist, line)) {
+//        line = boost::trim(line);
         if (line.empty()) {
             continue;
         }
@@ -122,9 +123,9 @@ void Netlist::SortGates()
         return (gate1->name.compare(gate2->name) < 0);
     });
 
-    for (auto gate : gates) {
-        std::cout << gate->name << std::endl;
-    }
+//    for (auto gate : gates) {
+//        std::cout << gate->name << std::endl;
+//    }
 }
 
 void Netlist::CreateFaultlist() {
@@ -172,11 +173,11 @@ void Netlist::SaveFaultlist() {
         faultlistFileName << faultlist[i]->type << " UC.UNK " << faultlist[i]->pinName << std::endl;
 
         // atalanta format for debug
-        if (faultlist[i]->pin == 0) {
-            std::cout << i << "\t" << faultlist[i]->gate->name << " /" << faultlist[i]->type << std::endl;
-        } else {
-            std::cout << i << "\t" << faultlist[i]->gate->inputs[faultlist[i]->pin - 1]->name << "->" << faultlist[i]->gate->name << " /" << faultlist[i]->type << std::endl;
-        }
+//        if (faultlist[i]->pin == 0) {
+//            std::cout << i << "\t" << faultlist[i]->gate->name << " /" << faultlist[i]->type << std::endl;
+//        } else {
+//            std::cout << i << "\t" << faultlist[i]->gate->inputs[faultlist[i]->pin - 1]->name << "->" << faultlist[i]->gate->name << " /" << faultlist[i]->type << std::endl;
+//        }
     }
 
     std::cout << "Save faultlist as " << faultlistFile << std::endl;
