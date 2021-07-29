@@ -121,10 +121,6 @@ void Netlist::SortGates()
 
         return (gate1->name.compare(gate2->name) < 0);
     });
-
-//    for (auto gate : gates) {
-//        std::cout << gate->name << std::endl;
-//    }
 }
 
 void Netlist::CreateFaultlist() {
