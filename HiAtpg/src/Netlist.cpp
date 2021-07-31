@@ -9,6 +9,7 @@
 #include <boost/algorithm/string.hpp>
 #include "Util.h"
 #include "Params.h"
+#include "ScanChain.h"
 
 void Netlist::Parse(const std::string &fileName) {
     std::string line;
@@ -17,6 +18,9 @@ void Netlist::Parse(const std::string &fileName) {
     const std::string outputHead = "OUTPUT";
 
     std::ifstream netlist(fileName);
+    if (!netlist.good()) {
+        std::cerr << "Can not find netlist file: " << fileName << std::endl;
+    }
     // 1st read by line, parse all gate
     while (getline(netlist, line)) {
         if (line.empty()) {
@@ -41,9 +45,10 @@ void Netlist::Parse(const std::string &fileName) {
 
         // eg: OUTPUT(U1)
         if (outputHead == res[0]) {
-            Gate* gate = new Gate(res[1] + "_PO", Util::GetGateTypeFromString(res[0]));
+            std::string poGateName = res[1] + "_PO";
+            Gate* gate = new Gate(poGateName, Util::GetGateTypeFromString(res[0]));
             gates.push_back(gate);
-            name2Gate[res[1]] = gate;
+            name2Gate[poGateName] = gate;
             numOfPO++;
             continue;
         }
@@ -102,14 +107,15 @@ void Netlist::Parse(const std::string &fileName) {
         targetGate->outputs.push_back(gate);
     }
 
-    for (int32_t gateId = 0; gateId < gates.size(); gateId++) {
-        gates[gateId]->id = gateId;
-    }
-
     SortGates();
-    CheckFloating();
 
+
+    CheckFloating();
     CreateFaultlist();
+    bool ret = TraceScanChain();
+    if (!ret) {
+        std::cerr << "Parse Failed!" << std::endl;
+    }
 }
 
 void Netlist::SortGates()
@@ -117,10 +123,16 @@ void Netlist::SortGates()
     std::sort(gates.begin(), gates.end(), [&](Gate* gate1, Gate* gate2) {
         if (gate1->type < gate2->type) {
             return true;
+        } else if (gate1->type > gate2->type) {
+            return false;
         }
 
-        return (gate1->name.compare(gate2->name) < 0);
+        return (gate1->name < gate2->name);
     });
+
+    for (int32_t gateId = 0; gateId < gates.size(); gateId++) {
+        gates[gateId]->id = gateId;
+    }
 }
 
 void Netlist::CreateFaultlist() {
@@ -180,8 +192,42 @@ void Netlist::SaveFaultlist() {
 
 void Netlist::CheckFloating() {
     for (auto gate : gates) {
-        if (gate->outputs.size() == 0 && gate->type != PO) {
+        if (gate->outputs.empty() && gate->type != PO) {
             std::cerr << "floating gate: " << gate->name << std::endl;
         }
     }
+}
+
+bool Netlist::TraceScanChain() {
+    std::string configFileName = Params::GetInstance()->GetConfigFile();
+
+    std::string line;
+    std::ifstream configFile(configFileName);
+
+    if (!configFile.good()) {
+        std::cerr << "Can not find config file: " << configFileName << std::endl;
+        return false;
+    }
+
+    // 1st read by line, parse all gate
+    while (getline(configFile, line)) {
+        if (line.empty()) {
+            continue;
+        }
+
+        std::vector<std::string> res;
+        boost::split(res, line, boost::is_any_of("{} "), boost::token_compress_on);
+
+        for (auto r : res) {
+            std::cout << r << std::endl;
+        }
+
+        std::string chainName = res[0];
+        Gate* siGate = name2Gate[res[1]];
+        Gate* soGate = name2Gate[res[2]];
+        ScanChain* scanChain = new ScanChain(chainName, siGate, soGate);
+        scanChains.push_back(scanChain);
+    }
+
+    return true;
 }

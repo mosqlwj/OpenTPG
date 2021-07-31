@@ -9,4 +9,5 @@ include_directories(${Boost_INCLUDE_DIRS})
 message("${Boost_INCLUDE_DIRS}")
 include_directories(${Cmdline_INCLUDE_DIRS})
 
-add_executable(HiAtpg src/main.cpp src/Netlist.cpp src/Netlist.h src/Gate.cpp src/Gate.h src/Util.cpp src/Util.h src/Params.cpp src/Params.h src/Fault.cpp src/Fault.h)
+aux_source_directory(src SRC)
+add_executable(HiAtpg ${SRC})

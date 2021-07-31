@@ -10,6 +10,7 @@
 #include "Gate.h"
 #include "Fault.h"
 #include <unordered_map>
+#include "ScanChain.h"
 
 class Netlist {
 public:
@@ -22,12 +23,14 @@ private:
     int32_t numOfPO;
     int32_t numOfGates;
     std::unordered_map<std::string, Gate*> name2Gate;
+    std::vector<ScanChain*> scanChains;
 
 private:
     void CreateFaultlist();
     void SaveFaultlist();
     void SortGates();
     void CheckFloating();
+    bool TraceScanChain();
 };
 
 
