@@ -32,24 +32,31 @@ class Gate:
         return linestr
     def GetPorts(self):
         return ",".join(self.ports)
-
+class ScanChain:
+    def __init__(self):
+        self.name = ''
+        self.si = ''
+        self.so = ''
+    def GetText(self):
+        lineStr = '{' + self.name + ' ' + self.si + ' ' + self.so + '}\n'
+        return lineStr
 class TestBench:
     def __init__(self):
         self.allGates = [list() for i in range(len(GateTypeOfDir))]
     def AddGate(self,gate):
         self.allGates[GateTypeOfDir[gate.typename]].append(gate)
 
-def ParsePorts(line,index, filenum):
+def ParsePorts(line,index, suffix):
     portstr = line[index:len(line)-1]
+    if len(portstr) == 0:
+        return
     ports = portstr.split(',')
     portlen = len(ports)
-    if portlen == 0:
-        return
     for i in range(portlen):
-        ports[i] = ports[i].strip() + filenum
+        ports[i] = ports[i].strip() + suffix
     return ports
 
-def ParseLine(line, linenum, filenum):
+def ParseLine(line, linenum, suffix):
     content = line.strip()
     if len(content) == 0:
         return
@@ -58,39 +65,42 @@ def ParseLine(line, linenum, filenum):
     gate = Gate()
     if content.startswith('INPUT'):
         gate.typename = 'INPUT'
-        gate.ports = ParsePorts(content,6, filenum)
-        if len(gate.ports) != 1:
+        gate.ports = ParsePorts(content,6, suffix)
+        if gate.ports == None or len(gate.ports) != 1:
             print("INPUT Format error: %d"%linenum)
-        if gate.ports[0][:-1] == gCLKName1 or gate.ports[0][:-1] == gCLKName2:
+            return
+        if gate.ports[0][0:3] == 'CLK' or gate.ports[0][0:3] == 'clk':
             return
         return gate
     if content.startswith('OUTPUT'):
         gate.typename = 'OUTPUT'
-        gate.ports = ParsePorts(content,7,filenum)
-        if len(gate.ports) != 1:
+        gate.ports = ParsePorts(content,7,suffix)
+        if gate.ports == None or len(gate.ports) != 1:
             print("OUTPUT Format error: %d"%linenum)
+            return
         return gate
     strlist = content.split('=')
     if len(strlist) != 2:
         print("Format error1: %d" %linenum)
         return
-    gate.gatename = strlist[0].strip() + filenum
+    gate.gatename = strlist[0].strip() + suffix
     rightstr = strlist[1].strip()
     listtype = rightstr.split('(')
     if len(listtype) != 2:
         print("Format error2: %d" %linenum)
     gate.typename = listtype[0].strip()
-    gate.ports = ParsePorts(listtype[1],0, filenum)
+    gate.ports = ParsePorts(listtype[1],0, suffix)
     if gate.ports == None:
         print("Gate floating error: %d" %linenum)
+        return
     return gate
 
-def ParseFile(filename, filenum):
+def ParseFile(filename, suffix):
     filetext = open(filename,'r')
     testbench = TestBench()
     linenum = 1
     for line in filetext.readlines():
-        gate = ParseLine(line, linenum, filenum)
+        gate = ParseLine(line, linenum, suffix)
         linenum += 1
         if gate != None:
             testbench.AddGate(gate)
@@ -123,34 +133,77 @@ def CombineTwoBenchH(bench1, bench2):
             bench1.allGates[inputIndex].append(bench2.allGates[inputIndex][i])
     return bench1
 
-def CombineTwoBenchV(bench1, bench2, index):
-    outindex = GateTypeOfDir['OUTPUT']
-    for i in range(len(GateTypeOfDir)):
-        if i != outindex:
-            bench1.allGates[i].extend(bench2.allGates[i])
-    bench1output = bench1.allGates[outindex].copy()
-    bench2output = bench2.allGates[outindex]
-    bench1.allGates[outindex].clear()
-    ben1outlen = len(bench1output)
-    ben2outlen = len(bench2output)
-    mincount = min(ben1outlen, ben2outlen)
+def ExtractSOFromOutput(benchOutputs, benchDFFs):
+    benchSOs= []
+    for gate in benchOutputs:
+        drivePortName = gate.ports[0]
+        isSO = False
+        for dffGate in benchDFFs:
+            if dffGate.gatename == drivePortName:
+                benchSOs.append(gate)
+                isSO = True
+                break
+        if isSO == False:
+            break;
+    return benchSOs
+
+def ExtractSIFromInput(benchInputs):
+    SIs = []
+    for gate in benchInputs:
+        gateName = gate.ports[0]
+        if gateName[0:2] == 'SI':
+            SIs.append(gate)
+    return SIs
+
+def CombinePOGate(outputs1, outputs2, index, andGates):
+    outputs = []
+    outlen1 = len(outputs1)
+    outlen2 = len(outputs2)
+    outType = GateTypeOfDir['OUTPUT']
+    mincount = min(outlen1, outlen2)
     for i in range(mincount):
         gate = Gate()
         gate.typename = 'AND'
-        gate.gatename = 'gand' + '%d'%i +  '%d'%index
-        gate.ports.append(bench1output[i].ports[0])
-        gate.ports.append(bench2output[i].ports[0])
-        bench1.allGates[GateTypeOfDir['AND']].append(gate)
+        gate.gatename = 'GAND' + '%d'%i +  '%d'%index
+        gate.ports.append(outputs1[i].ports[0])
+        gate.ports.append(outputs2[i].ports[0])
+        andGates.append(gate)
         gate2 = Gate()
         gate2.typename = 'OUTPUT'
         gate2.ports.append(gate.gatename)
-        bench1.allGates[GateTypeOfDir['OUTPUT']].append(gate2)
-    if ben1outlen > ben2outlen:
-        for i in range(mincount, ben1outlen):
-            bench1.allGates[outindex].append(bench1output[i])
-    elif ben1outlen < ben2outlen:
-        for i in range(mincount, ben2outlen):
-            bench1.allGates[outindex].append(bench2output[i])
+        outputs.append(gate2)
+    if outlen1 > outlen2:
+        for i in range(mincount, outlen1):
+            outputs.append(outputs1[i])
+    elif outlen1 < outlen2:
+        for i in range(mincount, outlen2):
+            outputs.append(outputs2[i])
+    return outputs
+
+def CombineTwoBenchV(bench1, bench2, index):
+    outType = GateTypeOfDir['OUTPUT']
+    for i in range(len(GateTypeOfDir)):
+        if i != outType:
+            bench1.allGates[i].extend(bench2.allGates[i])
+
+    bench1Outputs = bench1.allGates[outType].copy()
+    bench1.allGates[outType].clear()
+    bench1DFFs = bench1.allGates[GateTypeOfDir['DFF']]
+    bench1SOs = ExtractSOFromOutput(bench1Outputs, bench1DFFs)
+    for gt in bench1SOs:
+        bench1.allGates[outType].append(gt)
+        bench1Outputs.remove(gt)
+
+    bench2Outputs = bench2.allGates[outType]
+    bench2DFFs = bench2.allGates[GateTypeOfDir['DFF']]
+    bench2SOs = ExtractSOFromOutput(bench2Outputs,bench2DFFs)
+    for gt in bench2SOs:
+        bench1.allGates[outType].append(gt)
+        bench2Outputs.remove(gt)
+    andGates = []
+    combinePOs = CombinePOGate(bench1Outputs, bench2Outputs, index, andGates)
+    bench1.allGates[GateTypeOfDir['AND']].extend(andGates)
+    bench1.allGates[outType].extend(combinePOs)
     return bench1
 
 def AddClkToDFF(bench):
@@ -161,7 +214,7 @@ def AddClkToDFF(bench):
     for i in range(dfflen):
         dff = dffs[i]
         if len(dff.ports) == 2:
-            dff.ports[0] = dff.ports[0][:-1]
+            dff.ports[0] = gCLKName1 if i%2 == 0 else gCLKName2
             continue
         elif len(dff.ports) == 1:
             clkname = gCLKName1 if i%2 == 0 else gCLKName2
@@ -208,8 +261,8 @@ def ConvertScanDFF(bench, percent):
         muxgate = Gate()
         muxgate.typename = 'MUX'
         muxgate.ports.append(gSELName)
-        muxgate.ports.append(siportname)
         muxgate.ports.append(dff.ports[1])
+        muxgate.ports.append(siportname)
         muxgate.gatename = gMUXName + '%d'%i
         muxs.append(muxgate)
         dff.ports[1] = muxgate.gatename
@@ -219,6 +272,32 @@ def ConvertScanDFF(bench, percent):
     gate.typename = 'OUTPUT'
     gate.ports.append(siportname)
     bench.allGates[GateTypeOfDir['OUTPUT']].insert(0, gate)
+
+def GetScanChainData(bench):
+    scanChains = []
+    SIs = ExtractSIFromInput(bench.allGates[GateTypeOfDir['INPUT']])
+    outputs = bench.allGates[GateTypeOfDir['OUTPUT']]
+    for i in range(len(SIs)):
+        chain = ScanChain()
+        chain.name = 'ch' + '%d'%i
+        chain.si = SIs[i].ports[0]
+        chain.so = outputs[i].ports[0]
+        scanChains.append(chain)
+    return scanChains
+
+def WriteCFGFile(scanChains, outFile):
+    if len(scanChains) == 0:
+        return
+    index = outFile.rfind('.')
+    filename = outFile[0:index] + '.cfg'
+    outfile = open(filename, 'w')
+    text = 'define_scans \\\n{\n'
+    outfile.write(text)
+    for chain in scanChains:
+        chainText = chain.GetText()
+        outfile.write(chainText)
+    outfile.write('}\n')
+    outfile.close()
 
 def WriteFile(testbench, filename):
     outfile = open(filename,'w')
@@ -262,15 +341,14 @@ def _parse_option():
     #parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument("-i",metavar="xxx.bench",dest="input_files",nargs="+", type=str,required=True, help="input bench file")
     parser.add_argument("-o",metavar="xxx.bench", dest="output_file", type=str,required=True, help="output bench file")
-    parser.add_argument("-s", metavar="combine strategy: H", dest="strategy", type=str, required=False,
+    parser.add_argument("-c", metavar="combine strategy: H", dest="strategy", type=str, required=False,
                         help="set combine strategy")
-    parser.add_argument("-c", metavar="percent of convert nonscan dff to scan: 80", dest="scan_percent", type=int, required=False,
+    parser.add_argument("-s", metavar="percent of convert nonscan dff to scan: 80", dest="scan_percent", type=int, required=False,
                         help="add scan chain")
     args = parser.parse_args()
     return args
 
 def main():
-    # parse args
     parseArgs = _parse_option()
     inputfiles = parseArgs.input_files
     outputfile = parseArgs.output_file
@@ -283,7 +361,8 @@ def main():
 
     benchlist = []
     for i in range(len(inputfiles)):
-        benchlist.append(ParseFile(inputfiles[i],'%d'%i))
+        suffix = '' if len(inputfiles) == 1 else '%d'%i
+        benchlist.append(ParseFile(inputfiles[i],suffix))
     comBench = benchlist[0]
     for i in range(1,len(benchlist)):
         if strategy == 'H':
@@ -293,6 +372,8 @@ def main():
     AddClkToDFF(comBench)
     if scanpercent != None and scanpercent > 0:
         ConvertScanDFF(comBench,scanpercent)
+    scanChains = GetScanChainData(comBench)
+    WriteCFGFile(scanChains,outputfile)
     WriteFile(comBench,outputfile)
 
 # Press the green button in the gutter to run the script.
