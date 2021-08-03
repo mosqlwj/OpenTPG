@@ -30,4 +30,11 @@ enum FaultType {
     STUCK_AT_1
 };
 
+enum LogicVal {
+    LOGIC_X,
+    LOGIC_0,
+    LOGIC_1,
+    LOGIC_UNDEF
+};
+
 #endif

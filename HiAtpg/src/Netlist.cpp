@@ -230,12 +230,12 @@ bool Netlist::ParseConfig() {
             continue;
         }
 
+        std::vector<std::string> res;
+        boost::split(res, line, boost::is_any_of("{} "), boost::token_compress_on);
         switch (parseStat) {
             case IDLE:
                 break;
             case SCAN_CHAIN: {
-                std::vector<std::string> res;
-                boost::split(res, line, boost::is_any_of("{} "), boost::token_compress_on);
                 //        for (auto r : res) {
                 //            std::cout << r << std::endl;
                 //        }
@@ -247,8 +247,13 @@ bool Netlist::ParseConfig() {
                 scanChains.push_back(scanChain);
                 break;
             }
-            case CLOCK:
+            case CLOCK: {
+                std::string clockName = res[0];
+                Gate* clockGate = name2Gate[clockName];
+                LogicVal offVal = static_cast<LogicVal>(std::atoi(res[1].c_str()) + LOGIC_0);
+                clk2OffVal[clockGate] = offVal;
                 break;
+            }
             default:
                 break;
         }
