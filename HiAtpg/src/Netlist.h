@@ -15,6 +15,7 @@
 class Netlist {
 public:
     void Parse(const std::string& name);
+    const std::unordered_map<std::string, Gate*>& GetGateNameMap() { return name2Gate; }
 
 private:
     int32_t numOfPI = 0;
@@ -36,7 +37,7 @@ private:
     void ReOrderDff();
     void DumpGates();
     void CheckFloating();
-    bool TraceScanChain();
+    bool ParseConfig();
 };
 
 

@@ -117,7 +117,7 @@ void Netlist::Parse(const std::string &fileName) {
     DumpGates();
     CheckFloating();
     CreateFaultlist();
-    bool ret = TraceScanChain();
+    bool ret = ParseConfig();
     if (!ret) {
         std::cerr << "Parse Failed!" << std::endl;
     }
@@ -203,7 +203,7 @@ void Netlist::CheckFloating() {
     }
 }
 
-bool Netlist::TraceScanChain() {
+bool Netlist::ParseConfig() {
     std::string configFileName = Params::GetInstance()->GetConfigFile();
 
     std::string line;
@@ -215,23 +215,43 @@ bool Netlist::TraceScanChain() {
     }
 
     // 1st read by line, parse all gate
+    enum ParseStat {IDLE, SCAN_CHAIN, CLOCK};
+    ParseStat parseStat = IDLE;
     while (getline(configFile, line)) {
         if (line.empty()) {
             continue;
         }
 
-        std::vector<std::string> res;
-        boost::split(res, line, boost::is_any_of("{} "), boost::token_compress_on);
+        if (line.find("scan chain") != std::string::npos) {
+            parseStat = SCAN_CHAIN;
+            continue;
+        } else if (line.find("clock") != std::string::npos) {
+            parseStat = CLOCK;
+            continue;
+        }
 
-//        for (auto r : res) {
-//            std::cout << r << std::endl;
-//        }
-
-        std::string chainName = res[0];
-        Gate* siGate = name2Gate[res[1]];
-        Gate* soGate = name2Gate[res[2]];
-        ScanChain* scanChain = new ScanChain(chainName, siGate, soGate);
-        scanChains.push_back(scanChain);
+        switch (parseStat) {
+            case IDLE:
+                break;
+            case SCAN_CHAIN: {
+                std::vector<std::string> res;
+                boost::split(res, line, boost::is_any_of("{} "), boost::token_compress_on);
+                //        for (auto r : res) {
+                //            std::cout << r << std::endl;
+                //        }
+                std::string chainName = res[0];
+                Gate* siGate = name2Gate[res[1]];
+                Gate* soGate = name2Gate[res[2]];
+                ScanChain* scanChain = new ScanChain(chainName, siGate, soGate);
+                scanChain->Trace(name2Gate);
+                scanChains.push_back(scanChain);
+                break;
+            }
+            case CLOCK:
+                break;
+            default:
+                break;
+        }
     }
 
     return true;
