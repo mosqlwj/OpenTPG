@@ -38,8 +38,14 @@ void Params::parseCheck(int argc, char **argv) {
                              'c',
                              "read config file such as ./s27.cfg",
                              true);
+    options.add<std::string>("gate",
+                             'g',
+                             "dump gate file such as ./s27.gates",
+                             false,
+                             "");
     options.parse_check(argc, argv);
     netlistFile = options.get<std::string>("netlist");
     faultlistFile = options.get<std::string>("fault");
     configFile = options.get<std::string>("config");
+    gateDumpFile = options.get<std::string>("gate");
 }

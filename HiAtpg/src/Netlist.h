@@ -34,6 +34,7 @@ private:
     void SortGates();
     void TagGateRange();
     void ReOrderDff();
+    void DumpGates();
     void CheckFloating();
     bool TraceScanChain();
 };

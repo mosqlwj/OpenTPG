@@ -114,6 +114,7 @@ void Netlist::Parse(const std::string &fileName) {
     SortGates();
     TagGateRange();
     ReOrderDff();
+    DumpGates();
     CheckFloating();
     CreateFaultlist();
     bool ret = TraceScanChain();
@@ -172,7 +173,7 @@ void Netlist::CreateFaultlist() {
 }
 
 void Netlist::SaveFaultlist() {
-    std::string faultlistFile = Params::GetInstance()->GetFaultlistFile();
+    auto& faultlistFile = Params::GetInstance()->GetFaultlistFile();
     if (faultlistFile.empty()) {
         return;
     }
@@ -248,6 +249,23 @@ void Netlist::ReOrderDff() {
 
     for (GateId gateId = dffBegin; gateId < dffEnd; gateId++) {
         gates[gateId]->id = gateId;
-        std::cout << gates[gateId]->name << std::endl;
+//        std::cout << gates[gateId]->name << std::endl;
     }
+}
+
+void Netlist::DumpGates() {
+    std::string gateDumpFileName = Params::GetInstance()->GetGateDumpFile();
+    if (gateDumpFileName.empty()) {
+        return;
+    }
+    std::ofstream gateDumpFile(gateDumpFileName);
+
+    for (auto gate : gates) {
+        if (gate->type == DFF && gate->inputs[1]->type != MUX) {
+            break;
+        }
+        gateDumpFile << gate->name << std::endl;
+    }
+
+    std::cout << "Save gates as " << gateDumpFileName << std::endl;
 }
