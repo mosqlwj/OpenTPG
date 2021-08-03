@@ -21,6 +21,9 @@ void ScanChain::Trace(const std::unordered_map<std::string, Gate*>& gateNameMap)
             case MUX:
                 curGate = curGate->inputs[2];
                 break;
+            case BUF:
+            case INV:
+                curGate = curGate->inputs[0];
             default:
                 std::cerr << "Scan chain should not contains gate beyond dff and mux." << std::endl;
                 break;
