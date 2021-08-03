@@ -17,11 +17,14 @@ public:
     void Parse(const std::string& name);
 
 private:
+    int32_t numOfPI = 0;
+    int32_t numOfPO = 0;
+    int32_t numOfDFF = 0;
+    int32_t numOfGates = 0;
+    uint32_t dffBegin = 0;
+    uint32_t dffEnd = 0;
     std::vector<Gate*> gates;
     std::vector<Fault*> faultlist;
-    int32_t numOfPI;
-    int32_t numOfPO;
-    int32_t numOfGates;
     std::unordered_map<std::string, Gate*> name2Gate;
     std::vector<ScanChain*> scanChains;
 
@@ -29,6 +32,8 @@ private:
     void CreateFaultlist();
     void SaveFaultlist();
     void SortGates();
+    void TagGateRange();
+    void ReOrderDff();
     void CheckFloating();
     bool TraceScanChain();
 };

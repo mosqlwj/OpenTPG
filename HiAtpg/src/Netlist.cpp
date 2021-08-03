@@ -54,7 +54,11 @@ void Netlist::Parse(const std::string &fileName) {
         }
 
         // eg: U1 = AND(U2, U3);
-        Gate* gate = new Gate(res[0], Util::GetGateTypeFromString(res[1]));
+        GateType type = Util::GetGateTypeFromString(res[1]);
+        if (type == DFF) {
+            numOfDFF++;
+        }
+        Gate* gate = new Gate(res[0], type);
         gates.push_back(gate);
         name2Gate[res[0]] = gate;
         numOfGates++;
@@ -108,8 +112,8 @@ void Netlist::Parse(const std::string &fileName) {
     }
 
     SortGates();
-
-
+    TagGateRange();
+    ReOrderDff();
     CheckFloating();
     CreateFaultlist();
     bool ret = TraceScanChain();
@@ -218,9 +222,9 @@ bool Netlist::TraceScanChain() {
         std::vector<std::string> res;
         boost::split(res, line, boost::is_any_of("{} "), boost::token_compress_on);
 
-        for (auto r : res) {
-            std::cout << r << std::endl;
-        }
+//        for (auto r : res) {
+//            std::cout << r << std::endl;
+//        }
 
         std::string chainName = res[0];
         Gate* siGate = name2Gate[res[1]];
@@ -230,4 +234,20 @@ bool Netlist::TraceScanChain() {
     }
 
     return true;
+}
+
+void Netlist::TagGateRange() {
+    dffBegin = (*std::find_if(gates.begin(), gates.end(), [](Gate* gate) { return gate->type == DFF; }))->id;
+    dffEnd = dffBegin + numOfDFF;
+}
+
+void Netlist::ReOrderDff() {
+    std::sort(gates.begin() + dffBegin, gates.begin() + dffEnd, [&](Gate* gate1, Gate* gate2) {
+        return (gate1->inputs[1]->type == MUX && gate2->inputs[1]->type != MUX);
+    });
+
+    for (GateId gateId = dffBegin; gateId < dffEnd; gateId++) {
+        gates[gateId]->id = gateId;
+        std::cout << gates[gateId]->name << std::endl;
+    }
 }
