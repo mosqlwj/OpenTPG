@@ -38,7 +38,7 @@ class ScanChain:
         self.si = ''
         self.so = ''
     def GetText(self):
-        lineStr = '{' + self.name + ' ' + self.si + ' ' + self.so + '}\n'
+        lineStr = self.name + ' ' + self.si + ' ' + self.so + '\n'
         return lineStr
 class TestBench:
     def __init__(self):
@@ -291,12 +291,18 @@ def WriteCFGFile(scanChains, outFile):
     index = outFile.rfind('.')
     filename = outFile[0:index] + '.cfg'
     outfile = open(filename, 'w')
-    text = 'define_scans \\\n{\n'
-    outfile.write(text)
+    header = '# scan chain\n'
+    outfile.write(header)
     for chain in scanChains:
         chainText = chain.GetText()
         outfile.write(chainText)
-    outfile.write('}\n')
+    outfile.write('\n')
+    header = '# clock\n'
+    outfile.write(header)
+    clk1 = gCLKName1 + ' 0\n'
+    outfile.write(clk1)
+    clk2 = gCLKName2 + ' 0\n'
+    outfile.write(clk2)
     outfile.close()
 
 def WriteFile(testbench, filename):
@@ -324,15 +330,16 @@ def WriteFile(testbench, filename):
                 tempstr += ' + '
             tempstr += '%d'%tmplen + ' ' + GateNameOfDir[i] + 's'
             others += tmplen
-    tempstr += ')\n\n'
+    tempstr += ')\n'
     headerline = '# ' + '%d'%others + ' gates ' + tempstr
     outfile.write(headerline)
     for i in range(len(testbench.allGates)):
         gates = testbench.allGates[i]
-        for j in range(len(gates)):
-            gate = gates[j]
-            outfile.write(gate.GetText())
-        outfile.write("\n")
+        if len(gates) > 0:
+            outfile.write("\n")
+            for j in range(len(gates)):
+                gate = gates[j]
+                outfile.write(gate.GetText())
     outfile.close()
 
 def _parse_option():
@@ -361,7 +368,7 @@ def main():
 
     benchlist = []
     for i in range(len(inputfiles)):
-        suffix = '' if len(inputfiles) == 1 else '%d'%i
+        suffix = '' if len(inputfiles) == 1 else '_%d'%i
         benchlist.append(ParseFile(inputfiles[i],suffix))
     comBench = benchlist[0]
     for i in range(1,len(benchlist)):
