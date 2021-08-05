@@ -38,7 +38,7 @@ class ScanChain:
         self.si = ''
         self.so = ''
     def GetText(self):
-        lineStr = self.name + ' ' + self.si + ' ' + self.so + '\n'
+        lineStr = self.name + ' ' + self.si + ' ' + self.so + '_PO\n'
         return lineStr
 class TestBench:
     def __init__(self):
@@ -164,7 +164,7 @@ def CombinePOGate(outputs1, outputs2, index, andGates):
     for i in range(mincount):
         gate = Gate()
         gate.typename = 'AND'
-        gate.gatename = 'GAND' + '%d'%i +  '%d'%index
+        gate.gatename = 'GAND' + '%d'%i +  '_%d'%index
         gate.ports.append(outputs1[i].ports[0])
         gate.ports.append(outputs2[i].ports[0])
         andGates.append(gate)
