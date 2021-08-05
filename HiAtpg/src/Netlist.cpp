@@ -269,6 +269,7 @@ void Netlist::TagGateRange() {
 
 void Netlist::ReOrderDff() {
     std::sort(gates.begin() + dffBegin, gates.begin() + dffEnd, [&](Gate* gate1, Gate* gate2) {
+        assert(gate1->inputs.size() == 2);
         return (gate1->inputs[1]->type == MUX && gate2->inputs[1]->type != MUX);
     });
 
