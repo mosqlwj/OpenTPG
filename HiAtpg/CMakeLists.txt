@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 project(HiAtpg)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 11)
 
 set(Boost_INCLUDE_DIRS thirdparty/boost/linux/include)
 set(Cmdline_INCLUDE_DIRS thirdparty/cmdline/linux/include)
