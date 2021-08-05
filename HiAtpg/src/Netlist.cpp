@@ -121,6 +121,7 @@ void Netlist::Parse(const std::string &fileName) {
     ReOrderPi();
     ReOrderDff();
 
+    CalcCubeRange();
     DumpGates();
     CheckFloating();
 }
@@ -308,4 +309,14 @@ void Netlist::DumpGates() {
     }
 
     std::cout << "Save gates as " << gateDumpFileName << std::endl;
+}
+
+void Netlist::CalcCubeRange() {
+    cubeEndId = dffEnd;
+    for (GateId gateId = dffBegin; gateId < dffEnd; gateId++) {
+        if (gates[gateId]->inputs[1]->type != MUX) {
+            cubeEndId = gateId;
+            break;
+        }
+    }
 }

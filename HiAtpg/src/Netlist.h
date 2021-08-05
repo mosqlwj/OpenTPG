@@ -25,6 +25,7 @@ private:
     int32_t numOfGates = 0;
     uint32_t dffBegin = 0;
     uint32_t dffEnd = 0;
+    uint32_t cubeEndId = 0;
     std::vector<Gate*> gates;
     std::vector<Fault*> faultlist;
     std::unordered_map<std::string, Gate*> name2Gate;
@@ -41,6 +42,7 @@ private:
     void DumpGates();
     void CheckFloating();
     bool ParseConfig();
+    void CalcCubeRange();
 };
 
 
