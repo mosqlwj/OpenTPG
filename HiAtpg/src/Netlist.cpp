@@ -267,6 +267,18 @@ void Netlist::TagGateRange() {
     dffEnd = dffBegin + numOfDFF;
 }
 
+void Netlist::ReOrderPi() {
+    std::sort(gates.begin(), gates.begin() + dffBegin, [&](Gate* gate1, Gate* gate2) {
+        assert(gate1->inputs.size() == 0);
+        return (clk2OffVal.find(gate1) != clk2OffVal.end() && clk2OffVal.find(gate2) == clk2OffVal.end());
+    });
+
+    for (GateId gateId = 0; gateId < dffBegin; gateId++) {
+        gates[gateId]->id = gateId;
+//        std::cout << gates[gateId]->name << std::endl;
+    }
+}
+
 void Netlist::ReOrderDff() {
     std::sort(gates.begin() + dffBegin, gates.begin() + dffEnd, [&](Gate* gate1, Gate* gate2) {
         assert(gate1->inputs.size() == 2);

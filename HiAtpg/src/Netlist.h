@@ -36,6 +36,7 @@ private:
     void SaveFaultlist();
     void SortGates();
     void TagGateRange();
+    void ReOrderPi();
     void ReOrderDff();
     void DumpGates();
     void CheckFloating();

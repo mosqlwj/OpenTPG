@@ -5,7 +5,6 @@
 #include "Util.h"
 #include <map>
 #include <iostream>
-#include <regex>
 
 std::map<std::string, GateType> name2Type = {{"INPUT", PI}, {"OUTPUT", PO}, {"AND", AND}, {"NAND", NAND},
                                              {"OR", OR}, {"NOR", NOR}, {"XOR", XOR}, {"XNOR", XNOR},
