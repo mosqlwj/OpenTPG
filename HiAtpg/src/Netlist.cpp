@@ -113,14 +113,16 @@ void Netlist::Parse(const std::string &fileName) {
 
     SortGates();
     TagGateRange();
-    ReOrderDff();
-    DumpGates();
-    CheckFloating();
     CreateFaultlist();
     bool ret = ParseConfig();
     if (!ret) {
         std::cerr << "Parse Failed!" << std::endl;
     }
+    ReOrderPi();
+    ReOrderDff();
+
+    DumpGates();
+    CheckFloating();
 }
 
 void Netlist::SortGates()
