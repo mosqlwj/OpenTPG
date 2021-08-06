@@ -273,7 +273,13 @@ void Netlist::TagGateRange() {
 void Netlist::ReOrderPi() {
     std::sort(gates.begin(), gates.begin() + dffBegin, [&](Gate* gate1, Gate* gate2) {
         assert(gate1->inputs.size() == 0);
-        return (clk2OffVal.find(gate1) != clk2OffVal.end() && clk2OffVal.find(gate2) == clk2OffVal.end());
+        if (clk2OffVal.find(gate1) != clk2OffVal.end() && clk2OffVal.find(gate2) == clk2OffVal.end()) {
+            return true;
+        } else if (clk2OffVal.find(gate2) != clk2OffVal.end() && clk2OffVal.find(gate1) == clk2OffVal.end()) {
+            return false;
+        }
+
+        return (gate1->name < gate2->name);
     });
 
     for (GateId gateId = 0; gateId < dffBegin; gateId++) {
@@ -285,7 +291,12 @@ void Netlist::ReOrderPi() {
 void Netlist::ReOrderDff() {
     std::sort(gates.begin() + dffBegin, gates.begin() + dffEnd, [&](Gate* gate1, Gate* gate2) {
         assert(gate1->inputs.size() == 2);
-        return (gate1->inputs[1]->type == MUX && gate2->inputs[1]->type != MUX);
+        if (gate1->inputs[1]->type == MUX && gate2->inputs[1]->type != MUX) {
+            return true;
+        } else if (gate2->inputs[1]->type == MUX && gate1->inputs[1]->type != MUX) {
+            return false;
+        }
+        return (gate1->name < gate2->name);
     });
 
     for (GateId gateId = dffBegin; gateId < dffEnd; gateId++) {
