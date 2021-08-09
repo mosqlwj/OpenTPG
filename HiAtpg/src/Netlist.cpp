@@ -9,6 +9,7 @@
 #include <boost/algorithm/string.hpp>
 #include "Util.h"
 #include "Params.h"
+
 #include "ScanChain.h"
 
 void Netlist::Parse(const std::string &fileName) {
@@ -312,7 +313,8 @@ void Netlist::DumpGates() {
     }
     std::ofstream gateDumpFile(gateDumpFileName);
 
-    for (auto gate : gates) {
+    for (int32_t gateId = 0; gateId < dffEnd; gateId++) {
+        const Gate* gate = gates[gateId];
         if (gate->type == DFF && gate->inputs[1]->type != MUX) {
             break;
         }
