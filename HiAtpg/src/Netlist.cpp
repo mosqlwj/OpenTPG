@@ -219,7 +219,7 @@ bool Netlist::ParseConfig() {
     }
 
     // 1st read by line, parse all gate
-    enum ParseStat {IDLE, SCAN_CHAIN, CLOCK};
+    enum ParseStat {IDLE, SCAN_CHAIN, CLOCK, SELECT};
     ParseStat parseStat = IDLE;
     while (getline(configFile, line)) {
         if (line.empty()) {
@@ -231,6 +231,9 @@ bool Netlist::ParseConfig() {
             continue;
         } else if (line.find("clock") != std::string::npos) {
             parseStat = CLOCK;
+            continue;
+        } else if (line.find("select") != std::string::npos) {
+            parseStat = SELECT;
             continue;
         }
 
