@@ -9,8 +9,8 @@
 
 class CubeGeneratorExample : public CubeGenerator {
 public:
-  CubeGenerator();
-  ~CubeGenerator() override;
+  CubeGeneratorExample();
+  ~CubeGeneratorExample() override;
   TestCube *Generate(const Fault* fault) override;
 };
 

@@ -1,7 +1,10 @@
 #include "CubeGeneratorExample.h"
 
-CubeGenerator::CubeGenerator() {}
+CubeGeneratorExample::CubeGeneratorExample() {}
 
-CubeGenerator::~CubeGenerator() {}
+CubeGeneratorExample::~CubeGeneratorExample() {}
 
-TestCube* CubeGenerator::Generate(const Fault* fault) { return nullptr; }
+TestCube* CubeGeneratorExample::Generate(const Fault* fault)
+{
+  return nullptr;
+}
