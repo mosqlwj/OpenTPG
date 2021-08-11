@@ -15,7 +15,7 @@
 <a name="race-interface-install"></a>
 ### 命令行接口
 
-参见 [README.md](https://gitee.com/openeda/OpenTPG/blob/race-icisc-2021/doc/README.md#system-interface)
+参见 [README.md](https://gitee.com/openeda/OpenTPG/blob/race-icisc-2021/README.md#system-interface)
 
 
 <a name="race-case"></a>
