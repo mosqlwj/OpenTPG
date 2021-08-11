@@ -72,18 +72,9 @@ cmake ../
 make 
 ```
 
-
 <a name="quickstart"></a>
+
 # 快速入门
-
-编译完成之后会生成一个名字为 HiAtpg 的命令行工具。该工具命令行接口如下：
-
-| 参数定义 | 是否必选 | 参数含义 |
-|---      |---      |---      |
-| `-n <NETLIST-FILE>`   | Yes | 指定网表文件 |
-| `-c <CONFIG-FILE>`    | Yes | 执行网表配置文件 |
-| `-f <FAULTLIST-FILE>` | No  | 指定输出 FaultList 文件 | 
-| `-g <GATE-FILE>`      | No  | 指定输出 Gate 信息文件 | 
 
 ## 一键流程
 
@@ -91,5 +82,31 @@ make
 ./HiAtpg -n bench/s17.bench  -c bench/s17.cfg   
 ```
 
+# 接口
 
+## 约定
 
+合适的约定将极大简化项目成员之间的沟通。根据不同的用途和场景，这里列出本项目涉及到的主要的约定：
+
+* 文件名后缀约定
+
+| 后缀名 | 用途 | 文件格式 | |--- | | | | `*.bench` | 网表输入文件 | | | `*.cfg`   | 网表配置文件 | | | `*.gates` | 导出的 Gate 列表 | |
+| `*.fault` | 导出的 Fault 列表 | | | `*.cube`  | 导出的 Cube 列表 | |
+
+* 命令行接口
+
+一个命令行的参数，有两种两种组织形式 `<key> <alue>` 和 `<key>`。其中，`<key>` 必须以符号 `-` 或者 `--` 开头。特殊情况下，使用 `--` 对下一个参数进行转义。
+
+## 命令行接口定义
+
+可以通过 `HiAtpg --help` 来查看所有的命令行定义。
+
+下面将列出主要的命令行接口：
+
+| 参数定义               | 是否必选 | 参数含义 |
+|---                    |---      |---      |
+| `-n|--netlist <NETLIST-FILE>`   | Yes     | 指定网表文件 |
+| `-c|--config <CONFIG-FILE>`    | Yes     | 执行网表配置文件 |
+| `-f|--fault <FAULTLIST-FILE>` | No      | 执行导出 Fault 列表功能，<FAULTLIST-FILE> 为指定输出的 FaultList 文件 |
+| `-g|--gate <GATELISE-FILE>`      | No      | 执行导出 Gate 列表功能，<GATELISE-FILE> 为指定输出 Gate 信息文件 |
+| `-c|--cube <CUBELIST-FILE>`      | No      | 执行导出 Cube 列表功能<CUBELIST-FILE>指定输出 Cube 信息文件 |

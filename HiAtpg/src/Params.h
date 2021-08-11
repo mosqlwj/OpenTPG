@@ -3,21 +3,25 @@
 
 #include "cmdline.h"
 
-class Params {
-private:
-    Params();
-    std::string netlistFile;
-    std::string faultlistFile;
-    std::string configFile;
-    std::string gateDumpFile;
-    static Params* instance;
-
+class Params
+{
 public:
-    static Params* GetInstance();
-    const std::string& GetNetlistFile() const { return netlistFile; }
-    const std::string& GetFaultlistFile() const { return faultlistFile; }
-    const std::string& GetConfigFile() const { return configFile; }
-    const std::string& GetGateDumpFile() const { return gateDumpFile; }
-    void parseCheck(int argc, char *argv[]);
+  static Params* GetInstance();
+  const std::string& GetNetlistFile() const { return netlistFile; }
+  const std::string& GetFaultlistFile() const { return faultlistFile; }
+  const std::string& GetConfigFile() const { return configFile; }
+  const std::string& GetGateDumpFile() const { return gateDumpFile; }
+  void parseCheck(int argc, char* argv[]);
+
+private:
+  Params();
+
+private:
+  std::string netlistFile;
+  std::string faultlistFile;
+  std::string configFile;
+  std::string gateDumpFile;
+  std::string cubeDumpFile;
+  static Params* instance;
 };
 #endif
