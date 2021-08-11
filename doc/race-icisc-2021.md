@@ -3,51 +3,71 @@
 
 本项目已经连续 2 届承担参与 ICISC 竞赛出题，后续也将继续在 TPG 领域继续发力。
 
-往届 ICISC 竞赛参见 [往届 ICISC 竞赛](#race-history)
-
-
 <a name="race-interface"></a>
+
 ## 系统接口定义
 
+<a name="race-system-interface"></a>
 
+### 软件目录结构
 
+| 目录 | 用途 |
+|--- |--- |
+| doc | 文档材料 |
+| HiAtpg/src | 一个简单的用于生成 TestCube 的代码框架 |
+| HiAtpg/bench | 随工程携带的几个样例网表文件及其配置 |
+| HiAtpg/thirdparty | 所有依赖的第三方库，当前只支持 header-only 的 C++ 库 |
 
-<a name="race-interface-install"></a>
+<a name="race-system-interface"></a>
+
 ### 命令行接口
 
 参见 [README.md](https://gitee.com/openeda/OpenTPG/blob/race-icisc-2021/README.md#system-interface)
 
+<a name="race-code-interface"></a>
 
-<a name="race-case"></a>
-## Case
+### 代码接口
 
-竞赛的 case 最终会放到项目的 [race](race) 目录下。竞赛开始之后，并不会立即提供用于评分的 Case。我们会在正式进入竞赛评分环节之前，会提前 1 到 2 周发布最终的评分 Case。
-然而，我们仍然在项目的 [bench](bench) 目录下提供了大量的不同规模和复杂度的 Case。所以，您只需要充分对现有的 Case 进行充分的测试和调优即可，而不必对最终的评分 Case 太过期待或者依赖。
+### Cube 生成器：CubeGenerator
 
-<a name="race-case"></a>
-## 自助评估
+##### 1. 实现接口定义
 
-如何评估自己的优化效果？很简单，直接通过 rank.sh 脚本跑跑用例，在最终的 xxx.report 文件中可以看到最终的统计数据。
+参见文件 `CubeGenerator.h`
+
+```c++
+struct CubeGenerator
+{
+virtual ~CubeGenerator(){};
+virtual TestCube* Generate(const Fault* fault) = 0;
+};
+```
+
+`CubeGenerator` 是参赛的队伍必须实现的接口类。该接口只有一个纯虚函数 Generate 必须实现。 该函数输入一个 Fault 对象，并返回一个 TestCube 对象。 TestCube 和 Fault
+的定义，可参见对应的头文件。
+
+#### 2. 注册自己实现的 CubeGenerator
+
+直接修改 CubeGenerator.cpp 中 `CreateCubeGenerator` 函数的实现，以便启用你自己的 CubeGenerator。
+
+#### Cube 对象：TestCube
+
+TestCube 对象对象承载了 CubeGenerator 计算出来的所有的 PI 类型和 xxx 类型的 Gate 的值。其数据是连续存放的。PI 在前，xxx 在后。
+
+TestCube 的输出一般不需要关心，如果有必要可以调用 CubeOutput 类的 PrintCubes2File 接口来输出。
+
+```c++
+std::vector<std::vector<GateValue>> logicValue;
+```
 
 <a name="race-rating"></a>
+
 ## 评分
 
-评分细则，已经公布在 icisc 官网 [赛题五：基于分布式计算框架的自动测试向量生成算法：http://eda.icisc.cn/download/index?type=2](http://eda.icisc.cn/download/index?type=2)
+* 评分细则，已经公布在 icisc 官网 [https://eda.icisc.cn/download/index?type=2](https://eda.icisc.cn/download/index?type=2)
+
+* 赛题名为：`赛题一：海思-时序逻辑的高性能ATPG技术`
 
 <a name="race-faq"></a>
 ## FAQ
-
-#### 执行脚本时报语法错误
-
-问题原因：该常见于 Ubuntu 系统高版本用户，Ubuntu 的高版本，操作系统默认的 sh 并不是 bash，导致使用 sh 启动脚本时，无法识别 bash 语法从而报错。
-
-解决办法：直接改用 bash 启动脚本。比如，`bash ./install.sh`
-
-
-<a name="race-history"></a>
-# 附：往届 ICISC 竞赛
-
-- [2020 届 ICISC 竞赛](https://gitee.com/openeda/OpenTPG/blob/race-icisc-2020/doc/race-icisc-2020.md)
-
 
 
