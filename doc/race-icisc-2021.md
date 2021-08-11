@@ -52,26 +52,54 @@ virtual TestCube* Generate(const Fault* fault) = 0;
 #### Cube 对象：TestCube
 
 TestCube 对象对象承载了 CubeGenerator 计算出来的所有的 PI 类型和 DFF 类型的 Gate 的值。其数据是连续存放的。PI 在前，DFF 在后。 其内部数据结构定义如下，两层嵌套的 std::vector，外层
-vector 为 Frame 的列表，内层 vector 该 Frame 的关键 Gate 的值。
+vector 为 Frame 的列表，内层 vector 该 Cycle 的关键 Gate 的值。
 
 ```c++
-std::vector<std::vector<GateValue>> logicValue;
+std::vector<std::vector<LogicVal>> logicValue;
 ```
 
 其，实际存储结构示意如下：
 
 ```text
-
         +----+----+----+----+----+----+----+----+----+----+
-Frame-0 | PI | PI | PI | PI | PI | ...| DFF| DFF| ...| DFF|
+Cycle-0 | PI | PI | PI | PI | ...| PI | DFF| DFF| ...| DFF|
         +----+----+----+----+----+----+----+----+----+----+
-Frame-1 | PI | PI | PI | PI | PI | ...| DFF| DFF| ...| DFF|
-        +----+----+----+----+----+----+----+----+----+----+
-Frame-2 | PI | PI | PI | PI | PI | ...| DFF| DFF| ...| DFF|
-        +----+----+----+----+----+----+----+----+----+----+
+Cycle-1 | PI | PI | PI | PI | ...| PI |
+        +----+----+----+----+----+----+
+Cycle-2 | PI | PI | PI | PI | ...| PI |
+        +----+----+----+----+----+----+
 ```
 
+需要特别注意，只有首个 Cycle 里面里面是需要填写 DFF 的 Gate 的值的。后续的 Cycle 是不可以填写的。
+
 TestCube 的输出一般不需要关心，如果有必要可以调用 CubeOutput 类的 PrintCubes2File 接口来输出。
+
+
+### 文件接口
+
+#### cube 文件
+
+一个 cube 文件由一个或者多个 `TestCube Block`组成。而每个 `TestCube Block` 由 `TestCube Header` 和 `TestCube Cycle` 组成。
+下面为一个 cube 文件的样例：
+
+```text
+$: 0
+111110001111
+01001000
+01001000
+$: 1
+001110001010
+11000001
+11011001
+$: 2
+110111000110
+00110101
+00111x10
+```
+
+上述样例中，定义了 3 个 cube。每个 cube 都是以 `$:` 开头的。同时，`$:` 开头的行就是 `TestCube Header`；
+两个`TestCube Header` 之间的部分就是 `TestCube Cycle`。
+
 
 <a name="race-rating"></a>
 

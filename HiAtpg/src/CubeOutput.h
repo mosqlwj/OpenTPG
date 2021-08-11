@@ -11,39 +11,40 @@ typedef int32_t FaultId;
 class CubeOutput
 {
 private:
-    /* data */
+  /* data */
 public:
-    static CubeOutput *GetOutputInstance()
-    {
-        static CubeOutput output;
-        return &output;
+  static CubeOutput* GetOutputInstance()
+  {
+    static CubeOutput output;
+    return &output;
+  }
+
+  void PrintCubes2File(const std::string& filepath,
+                       std::map<FaultId, const TestCube*>& cubes)
+  {
+    std::ofstream stream(filepath);
+
+    if (!stream.is_open()) {
+      std::cout << "open cubes.ascii failed." << std::endl;
+      return;
     }
 
-    void PrintCubes2File(std::map<FaultId, const TestCube *> &cubes)
-    {
-        std::ofstream stream("./cubes.ascii");
-        if (!stream.is_open())
-        {
-            std::cout << "open cubes.ascii failed." << std::endl;
-        }
-        for (auto cubeInfo : cubes)
-        {
-            stream << "$: " << cubeInfo.first << "\n";
-            int cycleSize = cubeInfo.second->GetCycleSize();
+    for (auto cubeInfo : cubes) {
+      stream << "$: " << cubeInfo.first << "\n";
+      int cycleSize = cubeInfo.second->GetCycleSize();
 
-            const std::vector<std::vector<char>> &logicValue = cubeInfo.second->GetLogicValue();
-            for (int cycle = 0; cycle < cycleSize; cycle++)
-            {
-                size_t valueSize = logicValue[cycle].size();
-                for (int idx = 0; idx < valueSize; idx++)
-                {
-                    stream << logicValue[cycle][idx];
-                }
-                stream << "\n";
-            }
-            stream.close();
+      const std::vector<std::vector<char>>& logicValue =
+        cubeInfo.second->GetLogicValue();
+      for (int cycle = 0; cycle < cycleSize; cycle++) {
+        size_t valueSize = logicValue[cycle].size();
+        for (int idx = 0; idx < valueSize; idx++) {
+          stream << logicValue[cycle][idx];
         }
+        stream << "\n";
+      }
+      stream.close();
     }
+  }
 
 private:
     CubeOutput(/* args */);
