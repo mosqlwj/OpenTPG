@@ -51,13 +51,27 @@ virtual TestCube* Generate(const Fault* fault) = 0;
 
 #### Cube 对象：TestCube
 
-TestCube 对象对象承载了 CubeGenerator 计算出来的所有的 PI 类型和 xxx 类型的 Gate 的值。其数据是连续存放的。PI 在前，xxx 在后。
-
-TestCube 的输出一般不需要关心，如果有必要可以调用 CubeOutput 类的 PrintCubes2File 接口来输出。
+TestCube 对象对象承载了 CubeGenerator 计算出来的所有的 PI 类型和 DFF 类型的 Gate 的值。其数据是连续存放的。PI 在前，DFF 在后。 其内部数据结构定义如下，两层嵌套的 std::vector，外层
+vector 为 Frame 的列表，内层 vector 该 Frame 的关键 Gate 的值。
 
 ```c++
 std::vector<std::vector<GateValue>> logicValue;
 ```
+
+其，实际存储结构示意如下：
+
+```text
+
+        +----+----+----+----+----+----+----+----+----+----+
+Frame-0 | PI | PI | PI | PI | PI | ...| DFF| DFF| ...| DFF|
+        +----+----+----+----+----+----+----+----+----+----+
+Frame-1 | PI | PI | PI | PI | PI | ...| DFF| DFF| ...| DFF|
+        +----+----+----+----+----+----+----+----+----+----+
+Frame-2 | PI | PI | PI | PI | PI | ...| DFF| DFF| ...| DFF|
+        +----+----+----+----+----+----+----+----+----+----+
+```
+
+TestCube 的输出一般不需要关心，如果有必要可以调用 CubeOutput 类的 PrintCubes2File 接口来输出。
 
 <a name="race-rating"></a>
 
