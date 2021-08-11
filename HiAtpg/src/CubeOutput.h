@@ -22,7 +22,11 @@ public:
     return &output;
   }
 
- int Commit(TestCube *c) { cubes.push_back(c); return 0;}
+  int Commit(TestCube* c)
+  {
+    cubes.push_back(c);
+    return 0;
+  }
 
   void PrintCubes2File()
   {
@@ -48,8 +52,9 @@ public:
         }
         stream << "\n";
       }
-      stream.close();
     }
+    stream.close();
+    printf("Save cube to %s successful.\n", filepath.c_str());
   }
 
 private:

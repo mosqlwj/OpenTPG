@@ -30,7 +30,8 @@ public:
     return 0;
   }
 
-  
+  int RandomFill() { return 0; }
+
   void UpdateTestCubeValue(int cycle, int index, LogicVal val)
   {
     logicValue[cycle][index] = val;
