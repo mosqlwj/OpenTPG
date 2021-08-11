@@ -79,8 +79,10 @@ make
 ## 一键流程
 
 ```shell
-./HiAtpg -n bench/s17.bench  -c bench/s17.cfg   
+./HiAtpg -n bench/s17.bench  -c bench/s17.cfg -u ./s17.cube
 ```
+
+启动之后，HiAtpg将自动从 `bench/s17.bench` 和 `bench/s17.cfg` 读取输入
 
 # 接口
 
@@ -90,8 +92,13 @@ make
 
 * 文件名后缀约定
 
-| 后缀名 | 用途 | 文件格式 | |--- | | | | `*.bench` | 网表输入文件 | | | `*.cfg`   | 网表配置文件 | | | `*.gates` | 导出的 Gate 列表 | |
-| `*.fault` | 导出的 Fault 列表 | | | `*.cube`  | 导出的 Cube 列表 | |
+| 后缀名     | 用途        | 文件格式 | 
+|---        |---          |---   | 
+| `*.bench` | 网表输入文件 | | 
+| `*.cfg`   | 网表配置文件 | | 
+| `*.gate` | 导出的 Gate 列表 | |
+| `*.fault` | 导出的 Fault 列表 | | 
+| `*.cube`  | 导出的 Cube 列表 | |
 
 * 命令行接口
 
@@ -109,4 +116,4 @@ make
 | `-c|--config <CONFIG-FILE>`    | Yes     | 执行网表配置文件 |
 | `-f|--fault <FAULTLIST-FILE>` | No      | 执行导出 Fault 列表功能，<FAULTLIST-FILE> 为指定输出的 FaultList 文件 |
 | `-g|--gate <GATELISE-FILE>`      | No      | 执行导出 Gate 列表功能，<GATELISE-FILE> 为指定输出 Gate 信息文件 |
-| `-c|--cube <CUBELIST-FILE>`      | No      | 执行导出 Cube 列表功能<CUBELIST-FILE>指定输出 Cube 信息文件 |
+| `-u|--cube <CUBELIST-FILE>`      | No      | 执行导出 Cube 列表功能<CUBELIST-FILE>指定输出 Cube 信息文件 |

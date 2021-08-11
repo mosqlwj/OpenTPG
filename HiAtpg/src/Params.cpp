@@ -45,12 +45,12 @@ Params::parseCheck(int argc, char** argv)
                            true);
   options.add<std::string>("gate",                               //
                            'g',                                  //
-                           "dump gate file such as ./s27.gates", //
+                           "dump gate file such as ./s27.gate", //
                            false,                                //
                            "");
   options.add<std::string>(
     "cube",                                                        //
-    'c',                                                           //
+    'u',                                                           //
     "generate the cubes and write to the spec such as ./s27.cube", //
     false,                                                         //
     "");
