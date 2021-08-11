@@ -1,17 +1,20 @@
 #ifndef HIATPG_CUBEOUTPUT_H
 #define HIATPG_CUBEOUTPUT_H
 
+#include "Common.h"
 #include "Netlist.h"
+#include "Params.h"
 #include "TestCube.h"
 #include <fstream>
 #include <iostream>
+#include <list>
 #include <map>
-
 typedef int32_t FaultId;
 class CubeOutput
 {
 private:
-  /* data */
+  std::list<TestCube*> cubes;
+
 public:
   static CubeOutput* GetOutputInstance()
   {
@@ -19,9 +22,12 @@ public:
     return &output;
   }
 
-  void PrintCubes2File(const std::string& filepath,
-                       std::map<FaultId, const TestCube*>& cubes)
+ int Commit(TestCube *c) { cubes.push_back(c); return 0;}
+
+  void PrintCubes2File()
   {
+    const std::string filepath = Params::GetInstance()->GetCubeDumpFile();
+
     std::ofstream stream(filepath);
 
     if (!stream.is_open()) {
@@ -30,15 +36,15 @@ public:
     }
 
     for (auto cubeInfo : cubes) {
-      stream << "$: " << cubeInfo.first << "\n";
-      int cycleSize = cubeInfo.second->GetCycleSize();
+      stream << "$: " << cubeInfo->GetFaultIndex() << "\n";
+      int cycleSize = cubeInfo->GetCycleSize();
 
-      const std::vector<std::vector<char>>& logicValue =
-        cubeInfo.second->GetLogicValue();
+      const std::vector<std::vector<LogicVal>>& logicValue =
+        cubeInfo->GetLogicValue();
       for (int cycle = 0; cycle < cycleSize; cycle++) {
         size_t valueSize = logicValue[cycle].size();
         for (int idx = 0; idx < valueSize; idx++) {
-          stream << logicValue[cycle][idx];
+          stream << charOfLogicVal(logicValue[cycle][idx]);
         }
         stream << "\n";
       }
@@ -47,7 +53,7 @@ public:
   }
 
 private:
-    CubeOutput(/* args */);
-    ~CubeOutput();
+  CubeOutput(/* args */);
+  ~CubeOutput();
 };
 #endif

@@ -16,9 +16,7 @@ Params::GetInstance()
   return instance;
 }
 
-Params::Params() {
-
-}
+Params::Params() {}
 
 void
 Params::parseCheck(int argc, char** argv)
@@ -43,10 +41,10 @@ Params::parseCheck(int argc, char** argv)
                            'c',                                  //
                            "read config file such as ./s27.cfg", //
                            true);
-  options.add<std::string>("gate",                               //
-                           'g',                                  //
+  options.add<std::string>("gate",                              //
+                           'g',                                 //
                            "dump gate file such as ./s27.gate", //
-                           false,                                //
+                           false,                               //
                            "");
   options.add<std::string>(
     "cube",                                                        //

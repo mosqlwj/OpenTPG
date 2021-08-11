@@ -11,6 +11,7 @@ public:
   const std::string& GetFaultlistFile() const { return faultlistFile; }
   const std::string& GetConfigFile() const { return configFile; }
   const std::string& GetGateDumpFile() const { return gateDumpFile; }
+  const std::string& GetCubeDumpFile() const { return cubeDumpFile; }
   void parseCheck(int argc, char* argv[]);
 
 private:
