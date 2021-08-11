@@ -84,7 +84,8 @@ make
 
 启动之后，HiAtpg将自动从 `bench/s17.bench` 和 `bench/s17.cfg` 读取输入，并将生成的 Cube 写入文件 `./s17.cube`。
 
-# 接口
+<a name="system-interface"></a>
+# 系统接口
 
 ## 约定
 
