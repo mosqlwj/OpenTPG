@@ -35,10 +35,10 @@
 参见文件 `CubeGenerator.h`
 
 ```c++
-struct CubeGenerator
+class CubeGenerator
 {
-virtual ~CubeGenerator(){};
-virtual TestCube* Generate(const Fault* fault) = 0;
+    virtual ~CubeGenerator(){};
+    virtual TestCube* Generate(const Fault* fault) = 0;
 };
 ```
 
@@ -72,7 +72,7 @@ Cycle-2 | PI | PI | PI | PI | ...| PI |
 
 需要特别注意，只有首个 Cycle 里面里面是需要填写 DFF 的 Gate 的值的。后续的 Cycle 是不可以填写的。
 
-TestCube 的输出一般不需要关心，如果有必要可以调用 CubeOutput 类的 PrintCubes2File 接口来输出。
+TestCube 的输出一般不需要关心，如果有必要可以调用 CubePrinter 类的 PrintCubes2File 接口来输出。
 
 
 ### 文件接口

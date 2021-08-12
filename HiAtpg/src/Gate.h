@@ -5,7 +5,7 @@
 #ifndef HIPARSER_GATE_H
 #define HIPARSER_GATE_H
 
-#include "Common.h"
+#include "common.h"
 #include <string>
 #include <vector>
 

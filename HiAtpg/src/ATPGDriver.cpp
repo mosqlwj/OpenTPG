@@ -1,6 +1,11 @@
+//
+// Created by luolijun on 2021/8/13.
+//
 #include "ATPGDriver.h"
 
-ATPGDriver::ATPGDriver()
+#include "ATPGDriverDefault.h"
+
+extern ATPGDriver* CreateATPGDriver()
 {
-    //
+    return new ATPGDriverDefault;
 }

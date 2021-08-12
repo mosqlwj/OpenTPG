@@ -4,7 +4,8 @@
 struct Fault;
 struct TestCube;
 
-struct CubeGenerator {
+class CubeGenerator {
+public:
     virtual ~CubeGenerator() = default;
     virtual TestCube* Generate(const Fault* fault) = 0;
 };

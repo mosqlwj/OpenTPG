@@ -1,7 +1,8 @@
 #ifndef HIATPG_TESTCUBE_H
 #define HIATPG_TESTCUBE_H
-#include "Common.h"
+
 #include "Netlist.h"
+#include "common.h"
 #include <iostream>
 #include <string>
 #include <unistd.h>

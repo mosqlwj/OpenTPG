@@ -5,17 +5,17 @@
 #ifndef HIPARSER_NETLIST_H
 #define HIPARSER_NETLIST_H
 
-#include "Common.h"
 #include "Fault.h"
 #include "Gate.h"
 #include "ScanChain.h"
+#include "common.h"
 #include <map>
 #include <unordered_map>
 #include <vector>
 
 class Netlist {
 public:
-    void Parse(const std::string& name);
+    int Parse(const std::string& name);
     const std::unordered_map<std::string, Gate*>& GetGateNameMap()
     {
         return name2Gate;

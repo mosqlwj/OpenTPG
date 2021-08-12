@@ -5,8 +5,8 @@
 #ifndef HIATPG_FAULT_H
 #define HIATPG_FAULT_H
 
-#include "Common.h"
 #include "Gate.h"
+#include "common.h"
 #include <cstdint>
 #include <utility>
 

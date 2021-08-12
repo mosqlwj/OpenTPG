@@ -120,6 +120,6 @@ make
 |---                    |---      |---      |
 | `-n|--netlist <NETLIST-FILE>`   | Yes     | 指定网表文件 |
 | `-c|--config <CONFIG-FILE>`    | Yes     | 执行网表配置文件 |
-| `-f|--fault <FAULTLIST-FILE>` | No      | 执行导出 Fault 列表功能，<FAULTLIST-FILE> 为指定输出的 FaultList 文件 |
+| `-f|--fault <FAULTLIST-FILE>` | No      | 执行导出 Fault 列表功能，<FAULTLIST-FILE> 为指定输出的 Faultlist 文件 |
 | `-g|--gate <GATELISE-FILE>`      | No      | 执行导出 Gate 列表功能，<GATELISE-FILE> 为指定输出 Gate 信息文件 |
 | `-u|--cube <CUBELIST-FILE>`      | No      | 执行导出 Cube 列表功能<CUBELIST-FILE>指定输出 Cube 信息文件 |

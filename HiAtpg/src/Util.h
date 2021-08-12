@@ -5,7 +5,7 @@
 #ifndef HIPARSER_UTIL_H
 #define HIPARSER_UTIL_H
 
-#include "Common.h"
+#include "common.h"
 #include <string>
 
 class Util {

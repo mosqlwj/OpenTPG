@@ -2,7 +2,7 @@
 // Created by fish on 2021/6/28.
 //
 
-#include "Netlist.h"
+#include "NetList.h"
 #include "Params.h"
 #include "Util.h"
 #include <boost/algorithm/string.hpp>
@@ -12,7 +12,7 @@
 
 #include "ScanChain.h"
 
-void Netlist::Parse(const std::string& fileName)
+int Netlist::Parse(const std::string& fileName)
 {
     std::string line;
     const std::string commentHead = "#";
@@ -23,6 +23,7 @@ void Netlist::Parse(const std::string& fileName)
     if (!netlist.good()) {
         std::cerr << "Can not find netlist file: " << fileName << std::endl;
     }
+    
     // 1st read by line, parse all gate
     while (getline(netlist, line)) {
         if (line.empty()) {
@@ -126,6 +127,8 @@ void Netlist::Parse(const std::string& fileName)
     CalcCubeRange();
     DumpGates();
     CheckFloating();
+
+    return 0;
 }
 
 void Netlist::SortGates()

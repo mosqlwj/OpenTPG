@@ -9,6 +9,7 @@
 #include <stdint.h>
 
 typedef int32_t GateId;
+typedef int32_t FaultId;
 
 enum GateType : uint32_t {
     PI = 0x1,
@@ -38,8 +39,7 @@ enum LogicVal {
     LOGIC_UNDEF
 };
 
-static char
-charOfLogicVal(LogicVal val)
+static char charOfLogicVal(LogicVal val)
 {
     switch (val) {
     case LOGIC_X:
