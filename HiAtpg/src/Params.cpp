@@ -39,17 +39,17 @@ void Params::parseCheck(int argc, char** argv)
         "");
     options.add<std::string>("config",        //
         'c',                                  //
-        "read config file such as ./s27.cfg", //
+        "Read config file such as ./s27.cfg", //
         true);
     options.add<std::string>("gate",         //
         'g',                                 //
-        "dump gate file such as ./s27.gate", //
+        "Dump gate file such as ./s27.gate", //
         false,                               //
         "");
     options.add<std::string>(
         "cube",                                                        //
         'u',                                                           //
-        "generate the cubes and write to the spec such as ./s27.cube", //
+        "Generate the cubes and write to the spec such as ./s27.cube", //
         false,                                                         //
         "");
     options.parse_check(argc, argv);
