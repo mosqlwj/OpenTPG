@@ -23,9 +23,11 @@ public:
   }
   uint32_t GetPICount() const { return numOfPI; }
 
-  uint32_t GetScanCellCount() const { return (cubeEndId + 1) - numOfPI; }
+  uint32_t GetScanCellCount() const { return ((cubeEndId + 1) - numOfPI); }
 
   uint32_t GetCubeEndId() const { return cubeEndId; }
+
+  const std::vector<Fault*>& GetFaultList() const { return faultlist; }
 
 private:
   int32_t numOfPI = 0;

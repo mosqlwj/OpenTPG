@@ -4,6 +4,7 @@
 #include "Netlist.h"
 #include <iostream>
 #include <string>
+#include <unistd.h>
 
 class TestCube
 {
@@ -30,7 +31,24 @@ public:
     return 0;
   }
 
-  int RandomFill() { return 0; }
+  static TestCube* GenRandomCube(Netlist* netList, uint32_t faultId)
+  {
+    TestCube* randCube = new TestCube();
+    int cycleNum = rand() % 3 + 1;
+
+    printf("gen cycle num %d.\n", cycleNum);
+    randCube->Init(
+      netList->GetPICount(), netList->GetScanCellCount(), cycleNum, faultId);
+
+    for (size_t cycleId = 0; cycleId < cycleNum; cycleId++) {
+      for (size_t i = 0; i < netList->GetCubeEndId(); i++) {
+        int randBit = rand() % 3;
+        randCube->UpdateTestCubeValue(
+          cycleId, i, static_cast<LogicVal>(randBit));
+      }
+    }
+    return randCube;
+  }
 
   void UpdateTestCubeValue(int cycle, int index, LogicVal val)
   {

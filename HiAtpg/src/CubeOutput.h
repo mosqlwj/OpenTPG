@@ -35,7 +35,7 @@ public:
     std::ofstream stream(filepath);
 
     if (!stream.is_open()) {
-      std::cout << "open cubes.ascii failed." << std::endl;
+      printf("open  %s failed.\n", filepath.c_str());
       return;
     }
 
