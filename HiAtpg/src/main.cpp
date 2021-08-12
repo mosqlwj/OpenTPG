@@ -1,7 +1,8 @@
 #include "Netlist.h"
 #include "Params.h"
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
     auto params = Params::GetInstance();
     params->parseCheck(argc, argv);
 

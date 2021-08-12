@@ -13,5 +13,4 @@ public:
     static GateType GetGateTypeFromString(const std::string& name);
 };
 
-
 #endif //HIPARSER_UTIL_H

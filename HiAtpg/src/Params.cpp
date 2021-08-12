@@ -28,29 +28,29 @@ void Params::parseCheck(int argc, char** argv)
     // 第三个參数：參数描写叙述
     // 第四个參数：bool值，表示该參数是否必须存在（可选。默认值是false）
     // 第五个參数：參数的默认值（可选，当第四个參数为false时该參数有效）
-    options.add<std::string>("netlist", //
-        'n', //
+    options.add<std::string>("netlist",              //
+        'n',                                         //
         "The netlist file name such as ./s27.bench", //
         true);
-    options.add<std::string>("fault", //
-        'f', //
+    options.add<std::string>("fault",                 //
+        'f',                                          //
         "Create fault list file such as ./s27.fault", //
-        false, //
+        false,                                        //
         "");
-    options.add<std::string>("config", //
-        'c', //
+    options.add<std::string>("config",        //
+        'c',                                  //
         "read config file such as ./s27.cfg", //
         true);
-    options.add<std::string>("gate", //
-        'g', //
+    options.add<std::string>("gate",         //
+        'g',                                 //
         "dump gate file such as ./s27.gate", //
-        false, //
+        false,                               //
         "");
     options.add<std::string>(
-        "cube", //
-        'u', //
+        "cube",                                                        //
+        'u',                                                           //
         "generate the cubes and write to the spec such as ./s27.cube", //
-        false, //
+        false,                                                         //
         "");
     options.parse_check(argc, argv);
     netlistFile = options.get<std::string>("netlist");

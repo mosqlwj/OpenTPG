@@ -4,6 +4,8 @@
 
 #include "Gate.h"
 
-Gate::Gate(const std::string &name, GateType type) : name(name), type(type) {
-
+Gate::Gate(const std::string& name, GateType type)
+    : name(name)
+    , type(type)
+{
 }

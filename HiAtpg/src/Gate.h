@@ -9,8 +9,7 @@
 #include <string>
 #include <vector>
 
-struct Gate
-{
+struct Gate {
 public:
     Gate(const std::string& name, GateType type);
 
@@ -21,6 +20,5 @@ public:
     std::vector<Gate*> outputs;
     uint32_t level;
 };
-
 
 #endif //HIPARSER_GATE_H

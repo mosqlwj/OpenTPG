@@ -6,14 +6,17 @@
 #define HIATPG_SCANCHAIN_H
 
 #include "Gate.h"
-#include <unordered_map>
 #include <list>
+#include <unordered_map>
 
 class ScanChain {
 public:
     ScanChain(std::string chainName, Gate* si, Gate* so);
     void Trace(const std::unordered_map<std::string, Gate*>& gateNameMap);
-    std::list<Gate*>& GetChainGates() { return chainGates; }
+    std::list<Gate*>& GetChainGates()
+    {
+        return chainGates;
+    }
 
 private:
     Gate* si;
@@ -21,6 +24,5 @@ private:
     std::string chainName;
     std::list<Gate*> chainGates;
 };
-
 
 #endif //HIATPG_SCANCHAIN_H

@@ -3,16 +3,17 @@
 //
 
 #include "Netlist.h"
-#include <string>
+#include "Params.h"
+#include "Util.h"
+#include <boost/algorithm/string.hpp>
 #include <fstream>
 #include <iostream>
-#include <boost/algorithm/string.hpp>
-#include "Util.h"
-#include "Params.h"
+#include <string>
 
 #include "ScanChain.h"
 
-void Netlist::Parse(const std::string &fileName) {
+void Netlist::Parse(const std::string& fileName)
+{
     std::string line;
     const std::string commentHead = "#";
     const std::string inputHead = "INPUT";
@@ -20,7 +21,7 @@ void Netlist::Parse(const std::string &fileName) {
 
     std::ifstream netlist(fileName);
     if (!netlist.good()) {
-      std::cerr << "Can not find netlist file: " << fileName << std::endl;
+        std::cerr << "Can not find netlist file: " << fileName << std::endl;
     }
     // 1st read by line, parse all gate
     while (getline(netlist, line)) {
@@ -81,11 +82,11 @@ void Netlist::Parse(const std::string &fileName) {
         std::vector<std::string> res;
         boost::split(res, line, boost::is_any_of("(),= "), boost::token_compress_on);
 
-        if (inputHead ==res[0]) {
+        if (inputHead == res[0]) {
             continue;
         }
 
-        if (outputHead ==res[0]) {
+        if (outputHead == res[0]) {
             continue;
         }
 
@@ -144,10 +145,11 @@ void Netlist::SortGates()
     }
 }
 
-void Netlist::CreateFaultlist() {
+void Netlist::CreateFaultlist()
+{
     FaultType faultType;
     for (auto gate : gates) {
-        if (gate->inputs.size() > 1) {  // add s-a-1 for AND/NAND, add s-a-0 for OR/NOR, add both for other gate.
+        if (gate->inputs.size() > 1) { // add s-a-1 for AND/NAND, add s-a-0 for OR/NOR, add both for other gate.
             faultType = (gate->type & (AND | NAND)) ? STUCK_AT_1 : STUCK_AT_0;
             for (int inputIdx = 0; inputIdx < gate->inputs.size(); inputIdx++) {
                 if (gate->inputs[inputIdx]->outputs.size() > 1) {
@@ -176,7 +178,8 @@ void Netlist::CreateFaultlist() {
     SaveFaultlist();
 }
 
-void Netlist::SaveFaultlist() {
+void Netlist::SaveFaultlist()
+{
     auto& faultlistFile = Params::GetInstance()->GetFaultlistFile();
     if (faultlistFile.empty()) {
         return;
@@ -189,17 +192,18 @@ void Netlist::SaveFaultlist() {
         faultlistFileName << faultlist[i]->type << " UC.UNK " << faultlist[i]->pinName << std::endl;
 
         // atalanta format for debug
-//        if (faultlist[i]->pin == 0) {
-//            std::cout << i << "\t" << faultlist[i]->gate->name << " /" << faultlist[i]->type << std::endl;
-//        } else {
-//            std::cout << i << "\t" << faultlist[i]->gate->inputs[faultlist[i]->pin - 1]->name << "->" << faultlist[i]->gate->name << " /" << faultlist[i]->type << std::endl;
-//        }
+        //        if (faultlist[i]->pin == 0) {
+        //            std::cout << i << "\t" << faultlist[i]->gate->name << " /" << faultlist[i]->type << std::endl;
+        //        } else {
+        //            std::cout << i << "\t" << faultlist[i]->gate->inputs[faultlist[i]->pin - 1]->name << "->" << faultlist[i]->gate->name << " /" << faultlist[i]->type << std::endl;
+        //        }
     }
 
     std::cout << "Save faultlist as " << faultlistFile << std::endl;
 }
 
-void Netlist::CheckFloating() {
+void Netlist::CheckFloating()
+{
     for (auto gate : gates) {
         if (gate->outputs.empty() && gate->type != PO) {
             std::cerr << "floating gate: " << gate->name << std::endl;
@@ -207,7 +211,8 @@ void Netlist::CheckFloating() {
     }
 }
 
-bool Netlist::ParseConfig() {
+bool Netlist::ParseConfig()
+{
     std::string configFileName = Params::GetInstance()->GetConfigFile();
 
     std::string line;
@@ -219,7 +224,10 @@ bool Netlist::ParseConfig() {
     }
 
     // 1st read by line, parse all gate
-    enum ParseStat {IDLE, SCAN_CHAIN, CLOCK, SELECT};
+    enum ParseStat { IDLE,
+        SCAN_CHAIN,
+        CLOCK,
+        SELECT };
     ParseStat parseStat = IDLE;
     while (getline(configFile, line)) {
         if (line.empty()) {
@@ -240,41 +248,45 @@ bool Netlist::ParseConfig() {
         std::vector<std::string> res;
         boost::split(res, line, boost::is_any_of("{} "), boost::token_compress_on);
         switch (parseStat) {
-            case IDLE:
-                break;
-            case SCAN_CHAIN: {
-                //        for (auto r : res) {
-                //            std::cout << r << std::endl;
-                //        }
-                std::string chainName = res[0];
-                Gate* siGate = name2Gate[res[1]];
-                Gate* soGate = name2Gate[res[2]];
-                ScanChain* scanChain = new ScanChain(chainName, siGate, soGate);
-                scanChain->Trace(name2Gate);
-                scanChains.push_back(scanChain);
-                break;
-            }
-            case CLOCK: {
-                std::string clockName = res[0];
-                Gate* clockGate = name2Gate[clockName];
-                LogicVal offVal = static_cast<LogicVal>(std::atoi(res[1].c_str()) + LOGIC_0);
-                clk2OffVal[clockGate] = offVal;
-                break;
-            }
-            default:
-                break;
+        case IDLE:
+            break;
+        case SCAN_CHAIN: {
+            //        for (auto r : res) {
+            //            std::cout << r << std::endl;
+            //        }
+            std::string chainName = res[0];
+            Gate* siGate = name2Gate[res[1]];
+            Gate* soGate = name2Gate[res[2]];
+            ScanChain* scanChain = new ScanChain(chainName, siGate, soGate);
+            scanChain->Trace(name2Gate);
+            scanChains.push_back(scanChain);
+            break;
+        }
+        case CLOCK: {
+            std::string clockName = res[0];
+            Gate* clockGate = name2Gate[clockName];
+            LogicVal offVal = static_cast<LogicVal>(std::atoi(res[1].c_str()) + LOGIC_0);
+            clk2OffVal[clockGate] = offVal;
+            break;
+        }
+        default:
+            break;
         }
     }
 
     return true;
 }
 
-void Netlist::TagGateRange() {
-    dffBegin = (*std::find_if(gates.begin(), gates.end(), [](Gate* gate) { return gate->type == DFF; }))->id;
+void Netlist::TagGateRange()
+{
+    dffBegin = (*std::find_if(gates.begin(), gates.end(), [](Gate* gate) {
+        return gate->type == DFF;
+    }))->id;
     dffEnd = dffBegin + numOfDFF;
 }
 
-void Netlist::ReOrderPi() {
+void Netlist::ReOrderPi()
+{
     std::sort(gates.begin(), gates.begin() + dffBegin, [&](Gate* gate1, Gate* gate2) {
         assert(gate1->inputs.size() == 0);
         if (clk2OffVal.find(gate1) != clk2OffVal.end() && clk2OffVal.find(gate2) == clk2OffVal.end()) {
@@ -288,11 +300,12 @@ void Netlist::ReOrderPi() {
 
     for (GateId gateId = 0; gateId < dffBegin; gateId++) {
         gates[gateId]->id = gateId;
-//        std::cout << gates[gateId]->name << std::endl;
+        //        std::cout << gates[gateId]->name << std::endl;
     }
 }
 
-void Netlist::ReOrderDff() {
+void Netlist::ReOrderDff()
+{
     std::sort(gates.begin() + dffBegin, gates.begin() + dffEnd, [&](Gate* gate1, Gate* gate2) {
         assert(gate1->inputs.size() == 2);
         if (gate1->inputs[1]->type == MUX && gate2->inputs[1]->type != MUX) {
@@ -313,11 +326,12 @@ void Netlist::ReOrderDff() {
 
     for (GateId gateId = dffBegin; gateId < dffEnd; gateId++) {
         gates[gateId]->id = gateId;
-//        std::cout << gates[gateId]->name << std::endl;
+        //        std::cout << gates[gateId]->name << std::endl;
     }
 }
 
-void Netlist::DumpGates() {
+void Netlist::DumpGates()
+{
     std::string gateDumpFileName = Params::GetInstance()->GetGateDumpFile();
     if (gateDumpFileName.empty()) {
         return;
@@ -335,7 +349,8 @@ void Netlist::DumpGates() {
     std::cout << "Save gates as " << gateDumpFileName << std::endl;
 }
 
-void Netlist::CalcCubeRange() {
+void Netlist::CalcCubeRange()
+{
     cubeEndId = dffEnd;
     for (GateId gateId = dffBegin; gateId < dffEnd; gateId++) {
         if (gates[gateId]->inputs[1]->type != MUX) {
