@@ -89,12 +89,12 @@ make
 
 * 文件名后缀约定
 
-| 后缀名     | 用途        | 文件格式 | 
-|---        |---          |---   | 
-| `*.bench` | 网表输入文件 | | 
-| `*.cfg`   | 网表配置文件 | | 
-| `*.fault` | 导出的 Fault 列表 | | 
-| `*.cube`  | 导出的 Cube 列表 | |
+| 后缀名     | 用途        |  
+|---        |---          | 
+| `*.bench` | 网表输入文件 |  
+| `*.cfg`   | 网表配置文件 |  
+| `*.fault` | 导出的 Fault 列表 |  
+| `*.cube`  | 导出的 Cube 列表 | 
 
 * 命令行接口约定
 
@@ -113,7 +113,7 @@ make
 
 | 参数定义               | 是否必选 | 参数含义 |
 |---                    |---      |---      |
-| `-n|--netlist <NETLIST-FILE>`   | Yes     | 指定网表文件 |
-| `-c|--config <CONFIG-FILE>`     | Yes     | 执行网表配置文件 |
-| `-f|--fault <FAULTLIST-FILE>`   | Yes      | 执行导出 Fault 列表功能，<FAULTLIST-FILE> 为指定输出的 FaultList 文件 |
-| `-u|--cube <CUBELIST-FILE>`     | Yes      | 执行导出 Cube 列表功能<CUBELIST-FILE>指定输出 Cube 信息文件 |
+| `-n\|--netlist <NETLIST-FILE>`   | Yes     | 指定网表文件 |
+| `-c\|--config <CONFIG-FILE>`     | Yes     | 执行网表配置文件 |
+| `-f\|--fault <FAULTLIST-FILE>`   | Yes      | 执行导出 Fault 列表功能，<FAULTLIST-FILE> 为指定输出的 FaultList 文件 |
+| `-u\|--cube <CUBELIST-FILE>`     | Yes      | 执行导出 Cube 列表功能<CUBELIST-FILE>指定输出 Cube 信息文件 |
