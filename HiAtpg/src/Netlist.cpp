@@ -2,7 +2,7 @@
 // Created by fish on 2021/6/28.
 //
 
-#include "NetList.h"
+#include "Netlist.h"
 #include "Params.h"
 #include "Util.h"
 #include <boost/algorithm/string.hpp>
