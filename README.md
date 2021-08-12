@@ -114,6 +114,6 @@ make
 | 参数定义               | 是否必选 | 参数含义 |
 |---                    |---      |---      |
 | `-n\|--netlist <NETLIST-FILE>`   | Yes     | 指定网表文件 |
-| `-c\|--config <CONFIG-FILE>`     | Yes     | 执行网表配置文件 |
+| `-c\|--config <CONFIG-FILE>`     | Yes     | 指定网表配置文件 |
 | `-f\|--fault <FAULTLIST-FILE>`   | Yes      | 执行导出 Fault 列表功能，<FAULTLIST-FILE> 为指定输出的 FaultList 文件 |
 | `-u\|--cube <CUBELIST-FILE>`     | Yes      | 执行导出 Cube 列表功能<CUBELIST-FILE>指定输出 Cube 信息文件 |
