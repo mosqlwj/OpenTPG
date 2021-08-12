@@ -6,6 +6,7 @@
 - [参与贡献](#summary-join)
 
 [安装说明](#install)
+
 - [基本要求](#install-required)
 - [构建](#install-build)
 - [部署](#install-deploy)
@@ -14,17 +15,19 @@
 [快速入门](#quickstart)
 
 <a name="summary"></a>
+
 # 概述
 
 OpenTPG 项目的目标是构建开源的 TPG 工具集。
 
 <a name="summary-race"></a>
+
 ## 竞赛
 
 关于 2021 年 ICISC 竞赛相关的信息，参见：[doc/race-icisc-2021.md](doc/race-icisc-2021.md)
 
-
 <a name="summary-join"></a>
+
 ## 参与贡献
 
 我们非常欢迎，您通过下面的方式参与贡献：
@@ -34,6 +37,7 @@ OpenTPG 项目的目标是构建开源的 TPG 工具集。
 - 参与 issue 或者 Pull Request 的评审或者评论
 
 <a name="install"></a>
+
 # 安装说明
 
 <a name="install-required"></a>
@@ -49,17 +53,8 @@ OpenTPG 项目的目标是构建开源的 TPG 工具集。
 
 * 构建工具链
 
- - gcc 7, C++11 
- - cmake 3.12 及以上
-
-* 支持的操作系统
-
-  - Linux 4.9 及以上
-
-* 支持硬件环境
-
-  - amd64
-  - ARM64
+- gcc 7, C++11
+- cmake 3.12 及以上
 
 <a name="install-build"></a>
 ## 构建
@@ -85,6 +80,7 @@ make
 启动之后，HiAtpg将自动从 `bench/s17.bench` 和 `bench/s17.cfg` 读取输入，并将生成的 Cube 写入文件 `./s17.cube`。
 
 <a name="system-interface"></a>
+
 # 系统接口
 
 ## 约定
@@ -97,7 +93,6 @@ make
 |---        |---          |---   | 
 | `*.bench` | 网表输入文件 | | 
 | `*.cfg`   | 网表配置文件 | | 
-| `*.gate` | 导出的 Gate 列表 | |
 | `*.fault` | 导出的 Fault 列表 | | 
 | `*.cube`  | 导出的 Cube 列表 | |
 
@@ -119,7 +114,6 @@ make
 | 参数定义               | 是否必选 | 参数含义 |
 |---                    |---      |---      |
 | `-n|--netlist <NETLIST-FILE>`   | Yes     | 指定网表文件 |
-| `-c|--config <CONFIG-FILE>`    | Yes     | 执行网表配置文件 |
-| `-f|--fault <FAULTLIST-FILE>` | No      | 执行导出 Fault 列表功能，<FAULTLIST-FILE> 为指定输出的 Faultlist 文件 |
-| `-g|--gate <GATELISE-FILE>`      | No      | 执行导出 Gate 列表功能，<GATELISE-FILE> 为指定输出 Gate 信息文件 |
-| `-u|--cube <CUBELIST-FILE>`      | No      | 执行导出 Cube 列表功能<CUBELIST-FILE>指定输出 Cube 信息文件 |
+| `-c|--config <CONFIG-FILE>`     | Yes     | 执行网表配置文件 |
+| `-f|--fault <FAULTLIST-FILE>`   | Yes      | 执行导出 Fault 列表功能，<FAULTLIST-FILE> 为指定输出的 FaultList 文件 |
+| `-u|--cube <CUBELIST-FILE>`     | Yes      | 执行导出 Cube 列表功能<CUBELIST-FILE>指定输出 Cube 信息文件 |
