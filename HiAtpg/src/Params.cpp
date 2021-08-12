@@ -35,7 +35,7 @@ void Params::parseCheck(int argc, char** argv)
     options.add<std::string>("fault",                 //
         'f',                                          //
         "Create fault list file such as ./s27.fault", //
-        false,                                        //
+        true,                                        //
         "");
     options.add<std::string>("config",        //
         'c',                                  //
@@ -50,7 +50,7 @@ void Params::parseCheck(int argc, char** argv)
         "cube",                                                        //
         'u',                                                           //
         "Generate the cubes and write to the spec such as ./s27.cube", //
-        false,                                                         //
+        true,                                                         //
         "");
     options.parse_check(argc, argv);
     netlistFile = options.get<std::string>("netlist");
