@@ -1,4 +1,3 @@
-
 # ICISC 竞赛
 
 本项目已经连续 2 届承担参与 ICISC 竞赛出题，后续也将继续在 TPG 领域继续发力。
@@ -18,6 +17,19 @@
 | HiAtpg/bench | 随工程携带的几个样例网表文件及其配置 |
 | HiAtpg/thirdparty | 所有依赖的第三方库，当前只支持 header-only 的 C++ 库 |
 
+### 核心类及其作用
+
+| 文件名 | 作用 |
+|---    |---   |
+| Netlist | 存储和管理网表，支持网表加载、Scan chain 插入等几根能力 |
+| Faultlist | 存储和管理 fault |
+| TestCube | 定义了 cube 对象的内存表示，是个典型的数据类 |
+| Fault | 定义了 fault 对象的内存表示 |
+| Gate | 定义了 Gate 对象，包含 Gate 的类型名称等基本信息 |
+| ATPGDriver | 定义了一个用于控制所有 cube 生成的流程的接口 |
+| CubeGenerator | 定义了一个用于控制单个 cube 生成的流程 |
+| CubeHandler | 定义了一个用于 cube 对象处理器 |
+
 <a name="race-system-interface"></a>
 
 ### 命令行接口
@@ -26,18 +38,20 @@
 
 <a name="race-code-interface"></a>
 
-### 代码接口
+### 代码层接口
 
-### Cube 生成器：CubeGenerator
+### CubeGenerator
 
-##### 1. 实现接口定义
+CubeGenerator 定义了为指定的 Fault 对象生成 TestCube 接口。
+
+##### 接口定义
 
 参见文件 `CubeGenerator.h`
 
 ```c++
-class CubeGenerator
-{
-    virtual ~CubeGenerator(){};
+class CubeGenerator {
+public:
+    virtual ~CubeGenerator() = default;
     virtual TestCube* Generate(const Fault* fault) = 0;
 };
 ```
@@ -45,14 +59,54 @@ class CubeGenerator
 `CubeGenerator` 是参赛的队伍必须实现的接口类。该接口只有一个纯虚函数 Generate 必须实现。 该函数输入一个 Fault 对象，并返回一个 TestCube 对象。 TestCube 和 Fault
 的定义，可参见对应的头文件。
 
-#### 2. 注册自己实现的 CubeGenerator
+##### 自定义实现
 
 直接修改 CubeGenerator.cpp 中 `CreateCubeGenerator` 函数的实现，以便启用你自己的 CubeGenerator。
 
+### ATPGDriver
+
+ATPGDriver 定义了为 Faultlist 中缓存的所有 Fault 生成 TestCube 的流程。
+
+##### 接口定义
+
+参见文件 `ATPGDriver.h`
+
+```c++
+class ATPGDriver {
+public:
+    //! 析构函数
+    virtual ~ATPGDriver() = default;
+
+    //! 配置网表
+    virtual void SetupNetlist(Netlist* n) = 0;
+
+    //! 配置 Fault 表
+    virtual void SetupFaultlist(Faultlist* f) = 0;
+
+    //! 指定 Cube 输出目标
+    virtual void SetupCubeOutput(CubeHandler* cubeOutput) = 0;
+
+    //! 生成 cube 之前的准备工作
+    virtual int Prepare() = 0;
+
+    //! 执行生成 cube 流程
+    virtual void Execute() = 0;
+
+    //! 清理内部资源，使得整个驱动回归初始状态
+    virtual void Cleanup() = 0;
+};
+```
+
+`ATPGDriver` 是参赛队伍可选实现的。如果您计划采用自己的定制实现，请实现 ATPGDriver 接口。
+
+##### 自定义实现
+
+直接修改 ATPGDriver.cpp 中 `CreateATPGDriver` 函数的实现，以便启用你自己的 ATPGDriver。
+
 #### Cube 对象：TestCube
 
-TestCube 对象对象承载了 CubeGenerator 计算出来的所有的 PI 类型和 DFF 类型的 Gate 的值。其数据是连续存放的。PI 在前，DFF 在后。 其内部数据结构定义如下，两层嵌套的 std::vector，外层
-vector 为 Frame 的列表，内层 vector 该 Cycle 的关键 Gate 的值。
+TestCube 对象承载了 CubeGenerator 计算出来的所有的 PI 类型和 Scan DFF 类型的 Gate 的值。 其内部数据结构由两层嵌套的 std::vector 组成。 外层 vector 为 Cycle
+的列表，内层 vector 该 Cycle 的关键 Gate 的值。 Gate 的值**必须**严格按照 GateId 的顺序存储。其内部主要成员如下：
 
 ```c++
 std::vector<std::vector<LogicVal>> logicValue;
@@ -70,34 +124,30 @@ Cycle-2 | PI | PI | PI | PI | ...| PI |
         +----+----+----+----+----+----+
 ```
 
-需要特别注意，只有首个 Cycle 里面里面是需要填写 DFF 的 Gate 的值的。后续的 Cycle 是不可以填写的。
+需要特别注意，只有首个 Cycle 里面里面是需要填写 Scan DFF 的 Gate 的值的。后续的 Cycle 是不可以填写的。
 
 TestCube 的输出一般不需要关心，如果有必要可以调用 CubePrinter 类的 PrintCubes2File 接口来输出。
 
-
 ### 文件接口
 
-#### cube 文件
+#### *.cube 文件
 
-一个 cube 文件由一个或者多个 `TestCube Block`组成。而每个 `TestCube Block` 由 `TestCube Header` 和 `TestCube Cycle` 组成。
-下面为一个 cube 文件的样例：
+一个 cube 文件由一个或者多个 `TestCube Block`组成。而每个 `TestCube Block` 由 `TestCube Header` 和 `TestCube Cycle` 组成。 下面为一个 cube 文件的样例：
 
 ```text
-$：1
+$：0
 10x1011011
 101011
 10x001
-$：2
+$：1
 1011x11011
 101111
 101x01
 ```
 
-上述样例中，定义了 3 个 cube。每个 cube 都是以 `$:` 开头的。同时，`$:` 开头的行就是 `TestCube Header`；
-两个`TestCube Header` 之间的部分就是 `TestCube Cycle`。
+上述样例中，定义了 2 个 cube。每个 cube 都是以 `$:` 开头的。`$:` 之后是该 cube 对应 Fault 的 Id。之后的每一行就对应一个 Cycle 的 每个 Gate 的值。
 
-
-<a name="race-rating"></a>
+a name="race-rating"></a>
 
 ## 评分
 
@@ -106,6 +156,7 @@ $：2
 * 赛题名为：`赛题一：海思-时序逻辑的高性能ATPG技术`
 
 <a name="race-faq"></a>
+
 ## FAQ
 
 
