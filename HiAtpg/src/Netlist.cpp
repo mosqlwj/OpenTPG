@@ -20,7 +20,7 @@ void Netlist::Parse(const std::string &fileName) {
 
     std::ifstream netlist(fileName);
     if (!netlist.good()) {
-        std::cerr << "Can not find netlist file: " << fileName << std::endl;
+      std::cerr << "Can not find netlist file: " << fileName << std::endl;
     }
     // 1st read by line, parse all gate
     while (getline(netlist, line)) {
