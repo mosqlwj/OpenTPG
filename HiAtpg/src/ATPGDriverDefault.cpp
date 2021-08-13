@@ -59,10 +59,11 @@ void ATPGDriverDefault::Execute()
         ASSERT(fault != nullptr);
 
         //  对每个 fault 尝试生成一个 cube
-        TestCube* cube = cubeGenerator->Generate(fault);
+        TestCube* cube = nullptr;
+        FaultStatus faultStatus = cubeGenerator->Generate(fault, cube);
 
         //  一旦生成了 cube，交个 cubeHandler 处理
-        if (cube != nullptr) {
+        if (faultStatus == TESTED) {
             cubeHandler->Handle(cube);
         }
     }

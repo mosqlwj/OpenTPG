@@ -8,7 +8,7 @@ CubeGeneratorExample::~CubeGeneratorExample()
 {
 }
 
-TestCube* CubeGeneratorExample::Generate(const Fault* fault)
+FaultStatus CubeGeneratorExample::Generate(const Fault* fault, TestCube* cube)
 {
-    return nullptr;
+    return INIT;
 }

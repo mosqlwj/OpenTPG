@@ -39,6 +39,14 @@ enum LogicVal {
     LOGIC_UNDEF
 };
 
+enum FaultStatus {
+    INIT, // initial status
+    TESTED, // fault can be detected
+    UNTESTABLE, // untestable
+    REDUNDANT, // redundant fault
+    DETECT_BY_IMPLICATION  // fault can be detected by implication
+};
+
 static char charOfLogicVal(LogicVal val)
 {
     switch (val) {

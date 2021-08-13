@@ -6,12 +6,13 @@
 #define CUBEGENERATOREXAMPLE_H
 
 #include "CubeGenerator.h"
+#include "common.h"
 
 class CubeGeneratorExample : public CubeGenerator {
 public:
     CubeGeneratorExample();
     ~CubeGeneratorExample() override;
-    TestCube* Generate(const Fault* fault) override;
+    FaultStatus Generate(const Fault* fault, TestCube* cube) override;
 };
 
 #endif // CUBEGENERATOREXAMPLE_H
