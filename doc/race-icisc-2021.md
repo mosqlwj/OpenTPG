@@ -40,7 +40,7 @@
 
 ### 代码层接口
 
-### CubeGenerator
+### Cube 生成器：CubeGenerator
 
 CubeGenerator 定义了为指定的 Fault 对象生成 TestCube 接口。
 
@@ -52,18 +52,18 @@ CubeGenerator 定义了为指定的 Fault 对象生成 TestCube 接口。
 class CubeGenerator {
 public:
     virtual ~CubeGenerator() = default;
-    virtual TestCube* Generate(const Fault* fault) = 0;
+    virtual FaultStatus Generate(const Fault* fault, TestCube*& cube) = 0;
 };
 ```
 
-`CubeGenerator` 是参赛的队伍必须实现的接口类。该接口只有一个纯虚函数 Generate 必须实现。 该函数输入一个 Fault 对象，并返回一个 TestCube 对象。 TestCube 和 Fault
-的定义，可参见对应的头文件。
+`CubeGenerator` 是参赛的队伍必须实现的接口类。该接口只有一个纯虚函数 `Generate`。 该函数输入一个 Fault 对象，需要回 传一个 TestCube 对象。并返回一个 FaultStatus
+类型的值，用于表示对该 fault 的识别结果。 TestCube 和 Fault 的定义，可参见对应的头文件。
 
 ##### 自定义实现
 
 直接修改 CubeGenerator.cpp 中 `CreateCubeGenerator` 函数的实现，以便启用你自己的 CubeGenerator。
 
-### ATPGDriver
+### ATPG 驱动：ATPGDriver
 
 ATPGDriver 定义了为 Faultlist 中缓存的所有 Fault 生成 TestCube 的流程。
 
@@ -102,6 +102,19 @@ public:
 ##### 自定义实现
 
 直接修改 ATPGDriver.cpp 中 `CreateATPGDriver` 函数的实现，以便启用你自己的 ATPGDriver。
+
+### Context
+
+Context 顾名思义，就是执行 ATPG 计算时的上下文。Context 对象会在 CreateATPGDriver 和 CreateCubeGenerator 函数里面作为输入参数。如下所示：
+
+```c++
+extern ATPGDriver* CreateATPGDriver(void* context);
+
+extern CubeGenerator* CreateCubeGenerator(void* context);
+```
+
+从上面的函数可以看出这两个函数都是 `void*` 类型。 虽然本项目已经提供了一个 ContextDefault 的 struct，但是实际上， 这并非是强制性约束，各个参赛队伍如果有特殊诉求， 完全可以定制自己的
+Context。Context 的具体用法，可以参考 main 函 数（ 定义在 main.cpp）的代码。
 
 #### Cube 对象：TestCube
 
