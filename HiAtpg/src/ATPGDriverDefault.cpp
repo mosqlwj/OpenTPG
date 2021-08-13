@@ -3,6 +3,7 @@
 #include "ContextDefault.h"
 #include "CubeGenerator.h"
 #include "CubeHandler.h"
+#include "Faultlist.h"
 #include "Netlist.h"
 #include "asserts.h"
 
@@ -54,7 +55,7 @@ void ATPGDriverDefault::Execute()
     ASSERT(cubeOutput != nullptr);
     ASSERT(cubeGenerator != nullptr);
 
-    const std::vector<Fault*>& flist = netlist->GetFaultList();
+    const std::vector<Fault*>& flist = faultlist->Faults();
     for (std::size_t i = 0; i < flist.size(); i++) {
         //  获得一个 fault
         Fault* fault = flist[i];

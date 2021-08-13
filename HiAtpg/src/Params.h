@@ -5,7 +5,7 @@
 
 class Params {
 public:
-    static Params* GetInstance();
+    static Params& GetInstance();
     const std::string& GetNetlistFile() const
     {
         return netlistFile;
@@ -37,6 +37,6 @@ private:
     std::string configFile;
     std::string gateDumpFile;
     std::string cubeDumpFile;
-    static Params* instance;
+    static Params instance;
 };
 #endif

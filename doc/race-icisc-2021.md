@@ -113,7 +113,7 @@ extern ATPGDriver* CreateATPGDriver(void* context);
 extern CubeGenerator* CreateCubeGenerator(void* context);
 ```
 
-从上面的函数可以看出这两个函数都是 `void*` 类型。 虽然本项目已经提供了一个 ContextDefault 的 struct，但是实际上， 这并非是强制性约束，各个参赛队伍如果有特殊诉求， 完全可以定制自己的
+从上面的函数可以看出这两个函数的 context 参数都是 `void*` 类型。 虽然本项目已经提供了一个 ContextDefault 的 struct，但是实际上， 这并非是强制性约束，各个参赛队伍如果有特殊诉求， 完全可以定制自己的
 Context。Context 的具体用法，可以参考 main 函 数（ 定义在 main.cpp）的代码。
 
 #### Cube 对象：TestCube

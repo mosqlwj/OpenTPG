@@ -3,29 +3,24 @@
 //
 
 #include "Util.h"
+#include "asserts.h"
+
 #include <iostream>
 #include <map>
 
 std::map<std::string, GateType> name2Type = {
-    { "INPUT", PI },  //
-    { "OUTPUT", PO }, //
-    { "AND", AND },   //
-    { "NAND", NAND }, //
-    { "OR", OR },     //
-    { "NOR", NOR },   //
-    { "XOR", XOR },   //
-    { "XNOR", XNOR }, //
-    { "NOT", INV },   //
-    { "BUF", BUF },   //
-    { "MUX", MUX },   //
-    { "DFF", DFF },   //
+#define DEF_GATETYPE(id, name, str) { str, GateType::name },
+    GATETYPE_TABLE()
+#undef DEF_GATETYPE
 };
 
 GateType Util::GetGateTypeFromString(const std::string& name)
 {
     if (name2Type.find(name) == name2Type.end()) {
         std::cerr << "Not support gate type: " << name << std::endl;
+        ASSERT(false);
         return UNKNOWN;
     }
+
     return name2Type[name];
 }

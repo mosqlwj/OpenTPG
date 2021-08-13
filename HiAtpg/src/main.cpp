@@ -8,15 +8,21 @@
 
 int main(int argc, char** argv)
 {
-    Params* params = Params::GetInstance();
-    params->parseCheck(argc, argv);
+    //  读取用户配置
+    Params& params = Params::GetInstance();
+    params.parseCheck(argc, argv);
 
     //  读取网表
     Netlist netlist;
-    int ret = netlist.LoadNetlist(params->GetNetlistFile(), params->GetConfigFile());
+    int ret = netlist.LoadNetlist(params.GetNetlistFile(), params.GetConfigFile());
     if (ret != 0) {
-        std::cerr << "Load netlist failed. netlist=" << params->GetNetlistFile() << ", config=" << params->GetConfigFile() << std::endl;
+        std::cerr << "Load netlist failed. netlist=" << params.GetNetlistFile() << ", config=" << params.GetConfigFile() << std::endl;
         return errors::LOAD_NETLIST_FAILED;
+    }
+
+    //  如果指定了自动生成网表过程
+    if (!params.GetNetlistFile().empty()) {
+        netlist.DumpGates(params.GetNetlistFile());
     }
 
     //  生成fault
@@ -27,15 +33,20 @@ int main(int argc, char** argv)
         return errors::CREATE_FAULTLIST_FAILED;
     }
 
+    //  如果指定了 fault 需要写入文件
+    if (params.GetFaultlistFile().empty()) {
+        faultlist.DumpFaults(params.GetFaultlistFile());
+    }
+
     //  定义一个缺省的 context 对象
     ContextDefault context;
     context.netlist = &netlist;
     context.faultlist = &faultlist;
-    context.params = params;
+    context.params = &params;
 
     //  生成cube
     std::unique_ptr<ATPGDriver> atpgDriver(CreateATPGDriver(&context));
-    CubeHandlerWriteFile cubeOutputPrinter(params->GetCubeDumpFile());
+    CubeHandlerWriteFile cubeOutputPrinter(params.GetCubeDumpFile());
     atpgDriver->SetupCubeOutput(&cubeOutputPrinter);
     atpgDriver->SetupNetlist(&netlist);
     atpgDriver->SetupFaultlist(&faultlist);
@@ -45,7 +56,6 @@ int main(int argc, char** argv)
     }
 
     atpgDriver->Execute();
-    netlist.SaveFaultlist();
 
     return 0;
 }

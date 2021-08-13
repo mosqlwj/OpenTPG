@@ -116,17 +116,20 @@ int Netlist::LoadNetlist(const std::string& netlistFileName, const std::string& 
     }
 
     SortGates();
+
     TagGateRange();
-    CreateFaultlist();
-    bool ret = ParseConfig();
+
+    bool ret = ParseConfig(cfgFileName);
     if (!ret) {
-        std::cerr << "Parse Failed!" << std::endl;
+        std::cerr << "Parse Failed" << std::endl;
+        return -1;
     }
+
     ReOrderPi();
     ReOrderDff();
 
     CalcCubeRange();
-    DumpGates();
+
     CheckFloating();
 
     return 0;
@@ -149,57 +152,6 @@ void Netlist::SortGates()
     }
 }
 
-void Netlist::CreateFaultlist()
-{
-    FaultType faultType;
-    for (auto gate : gates) {
-        if (gate->inputs.size() > 1) { // add s-a-1 for AND/NAND, add s-a-0 for OR/NOR, add both for other gate.
-            faultType = (gate->type & (AND | NAND)) ? STUCK_AT_1 : STUCK_AT_0;
-            for (int inputIdx = 0; inputIdx < gate->inputs.size(); inputIdx++) {
-                if (gate->inputs[inputIdx]->outputs.size() > 1) {
-                    faultlist.push_back(new Fault(faultType, gate, inputIdx + 1));
-                    if (!(gate->type & (AND | NAND | OR | NOR))) {
-                        faultlist.push_back(new Fault(faultType == STUCK_AT_0 ? STUCK_AT_1 : STUCK_AT_0, gate, inputIdx + 1));
-                    }
-                }
-            }
-        }
-        if (gate->outputs.size() == 1 && (gate->outputs[0]->inputs.size() > 1 || gate->outputs[0]->type == PO)) {
-            faultType = (gate->outputs[0]->type & (OR | NOR)) ? STUCK_AT_0 : STUCK_AT_1;
-            faultlist.push_back(new Fault(faultType, gate, 0));
-            if (!(gate->type & (AND | NAND | OR | NOR))) {
-                faultlist.push_back(new Fault(faultType == STUCK_AT_0 ? STUCK_AT_1 : STUCK_AT_0, gate, 0));
-            }
-        } else if (gate->outputs.size() > 1) {
-            faultlist.push_back(new Fault(STUCK_AT_1, gate, 0));
-            faultlist.push_back(new Fault(STUCK_AT_0, gate, 0));
-        } else if (gate->type == PO && gate->inputs[0]->outputs.size() > 1) {
-            faultlist.push_back(new Fault(STUCK_AT_1, gate, 1));
-            faultlist.push_back(new Fault(STUCK_AT_0, gate, 1));
-        }
-    }
-
-    for (int32_t i = 0; i < faultlist.size(); i++) {
-        faultlist[i]->id = i;
-    }
-}
-
-void Netlist::SaveFaultlist()
-{
-    auto& faultlistFile = Params::GetInstance()->GetFaultlistFile();
-    if (faultlistFile.empty()) {
-        return;
-    }
-
-    std::ofstream faultlistFileName(faultlistFile);
-
-    for (std::size_t i = 0; i < faultlist.size(); i++) {
-        faultlistFileName << faultlist[i]->type << " " << charOfFaultStatus(faultlist[i]->status) << " " << faultlist[i]->pinName << std::endl;
-    }
-
-//    std::cout << "Save faultlist as " << faultlistFile << std::endl;
-}
-
 void Netlist::CheckFloating()
 {
     for (auto gate : gates) {
@@ -209,10 +161,8 @@ void Netlist::CheckFloating()
     }
 }
 
-bool Netlist::ParseConfig()
+bool Netlist::ParseConfig(const std::string& configFileName)
 {
-    std::string configFileName = Params::GetInstance()->GetConfigFile();
-
     std::string line;
     std::ifstream configFile(configFileName);
 
@@ -328,13 +278,16 @@ void Netlist::ReOrderDff()
     }
 }
 
-void Netlist::DumpGates()
+int Netlist::DumpGates(const std::string& outputFileName)
 {
-    std::string gateDumpFileName = Params::GetInstance()->GetGateDumpFile();
-    if (gateDumpFileName.empty()) {
-        return;
+    if (outputFileName.empty()) {
+        return -1;
     }
-    std::ofstream gateDumpFile(gateDumpFileName);
+
+    std::ofstream gateDumpFile(outputFileName);
+    if (!gateDumpFile.is_open()) {
+        return -1;
+    }
 
     for (int32_t gateId = 0; gateId < dffEnd; gateId++) {
         const Gate* gate = gates[gateId];
@@ -344,7 +297,9 @@ void Netlist::DumpGates()
         gateDumpFile << gate->name << std::endl;
     }
 
-    std::cout << "Save gates as " << gateDumpFileName << std::endl;
+    std::cout << "Save gates as " << outputFileName << std::endl;
+
+    return 0;
 }
 
 void Netlist::CalcCubeRange()

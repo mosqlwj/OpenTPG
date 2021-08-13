@@ -21,3 +21,10 @@ std::ofstream& operator<<(std::ofstream& stream, const TestCube& cube)
 
     return stream;
 }
+
+std::ofstream& operator<<(std::ofstream& stream, const Fault& fault)
+{
+    stream << fault.type << " " << charOfFaultStatus(fault.status) << " " << fault.pinName << std::endl;
+
+    return stream;
+}

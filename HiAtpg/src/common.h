@@ -5,27 +5,52 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include "asserts.h"
+
 #include <iostream>
 #include <stdint.h>
 
 typedef int32_t GateId;
 typedef int32_t FaultId;
 
+#define GATETYPE_TABLE()           \
+    DEF_GATETYPE(0, PI, "INPUT")   \
+    DEF_GATETYPE(1, DFF, "DFF")    \
+    DEF_GATETYPE(2, MUX, "MUX")    \
+    DEF_GATETYPE(3, AND, "AND")    \
+    DEF_GATETYPE(4, NAND, "NAND")  \
+    DEF_GATETYPE(5, OR, "OR")      \
+    DEF_GATETYPE(6, NOR, "NOR")    \
+    DEF_GATETYPE(7, XOR, "XOR")    \
+    DEF_GATETYPE(8, XNOR, "XNOR")  \
+    DEF_GATETYPE(9, INV, "NOT")    \
+    DEF_GATETYPE(10, BUF, "BUF")   \
+    DEF_GATETYPE(11, PO, "OUTPUT") \
+    /* end */
+
 enum GateType : uint32_t {
-    PI = 0x1,
-    DFF = 0x2,
-    MUX = 0x4,
-    AND = 0x8,
-    NAND = 0x10,
-    OR = 0x20,
-    NOR = 0x40,
-    XOR = 0x80,
-    XNOR = 0x100,
-    INV = 0x200,
-    BUF = 0x400,
-    PO = 0x800,
-    UNKNOWN = 0x1000,
+
+#define DEF_GATETYPE(id, name, str) name = 1 << id,
+    GATETYPE_TABLE()
+#undef DEF_GATETYPE
+
+        UNKNOWN
+    = 0x1000, //
 };
+
+static inline const char* StringOf(GateType type)
+{
+    switch (type) {
+#define DEF_GATETYPE(id, name, str) \
+    case GateType::name:            \
+        return str;
+        GATETYPE_TABLE()
+#undef DEF_GATETYPE
+    default:
+        ASSERT(false);
+        return "??";
+    }
+}
 
 enum FaultType {
     STUCK_AT_0,

@@ -7,7 +7,7 @@
 #include <string>
 #include <unistd.h>
 
-class TestCube {
+struct TestCube {
 public:
     TestCube()
     {

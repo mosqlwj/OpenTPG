@@ -10,7 +10,6 @@
 #include <vector>
 
 struct Gate {
-public:
     Gate(const std::string& name, GateType type);
 
     GateId id;

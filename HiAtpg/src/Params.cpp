@@ -4,14 +4,10 @@
 
 #include "Params.h"
 
-Params* Params::instance = nullptr;
+Params Params::instance;
 
-Params* Params::GetInstance()
+Params& Params::GetInstance()
 {
-    if (instance == nullptr) {
-        instance = new Params();
-    }
-
     return instance;
 }
 
@@ -35,7 +31,7 @@ void Params::parseCheck(int argc, char** argv)
     options.add<std::string>("fault",                 //
         'f',                                          //
         "Create fault list file such as ./s27.fault", //
-        true,                                        //
+        true,                                         //
         "");
     options.add<std::string>("config",        //
         'c',                                  //
@@ -50,7 +46,7 @@ void Params::parseCheck(int argc, char** argv)
         "cube",                                                        //
         'u',                                                           //
         "Generate the cubes and write to the spec such as ./s27.cube", //
-        true,                                                         //
+        true,                                                          //
         "");
     options.parse_check(argc, argv);
     netlistFile = options.get<std::string>("netlist");
