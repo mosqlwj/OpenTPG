@@ -57,7 +57,6 @@ private:
 
 private:
     void CreateFaultlist();
-    void SaveFaultlist();
     void SortGates();
     void TagGateRange();
     void ReOrderPi();

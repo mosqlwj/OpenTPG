@@ -197,7 +197,7 @@ void Netlist::SaveFaultlist()
         faultlistFileName << faultlist[i]->type << " " << charOfFaultStatus(faultlist[i]->status) << " " << faultlist[i]->pinName << std::endl;
     }
 
-    std::cout << "Save faultlist as " << faultlistFile << std::endl;
+//    std::cout << "Save faultlist as " << faultlistFile << std::endl;
 }
 
 void Netlist::CheckFloating()
