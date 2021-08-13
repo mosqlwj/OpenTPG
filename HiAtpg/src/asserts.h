@@ -1,16 +1,25 @@
-//
-// Created by luolijun on 2021/8/12.
-//
-
+/**
+ * Copyright (c) [Year] [name of copyright holder]
+ * [Software Name] is licensed under Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
+ * You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PSL v2 for more details.
+ */
 #ifndef ASSERTS_H
 #define ASSERTS_H
 
 #include <cassert>
 
-#if defined(DEBUG) && !defined(NDEBUG)
+#ifndef ASSERT
+#if !defined(NDEBUG)
 #define ASSERT(expr) assert(expr)
 #else
 #define ASSERT(expr)
+#endif
 #endif
 
 #endif //ASSERTS_H
