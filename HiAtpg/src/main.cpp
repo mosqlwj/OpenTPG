@@ -24,6 +24,7 @@ int main(int argc, char** argv)
     }
 
     atpgDriver->Execute();
+    netlist.SaveFaultlist();
 
     return 0;
 }

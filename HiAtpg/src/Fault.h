@@ -16,6 +16,7 @@ struct Fault {
     const Gate* gate;
     int32_t pin; // output: 0, input: 1~n
     std::string pinName;
+    FaultStatus status;
 
     Fault(FaultType type, const Gate* gate, int32_t pin)
         : id(-1)
@@ -23,6 +24,7 @@ struct Fault {
         , gate(gate)
         , pin(pin)
         , pinName(GetFaultName(gate, pin))
+        , status(INIT)
     {
     }
     std::string GetFaultName(const Gate* gate, int32_t pinIdx);

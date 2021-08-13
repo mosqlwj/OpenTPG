@@ -62,4 +62,25 @@ static char charOfLogicVal(LogicVal val)
     }
 }
 
+static const char* charOfFaultStatus(FaultStatus status)
+{
+    switch (status) {
+        case INIT:
+            return "UC.UNK";
+        case TESTED:
+            return "DS";
+        case UNTESTABLE:
+            return "AU";
+        case REDUNDANT:
+            return "RE";
+        case DETECT_BY_IMPLICATION:
+            return "DI";
+        default:
+            std::cerr << "Unknown fault type" << std::endl;
+            break;
+    }
+
+    return "";
+}
+
 #endif

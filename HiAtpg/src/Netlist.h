@@ -16,6 +16,7 @@
 class Netlist {
 public:
     int Parse(const std::string& name);
+    void SaveFaultlist();
     const std::unordered_map<std::string, Gate*>& GetGateNameMap()
     {
         return name2Gate;
@@ -56,7 +57,6 @@ private:
 
 private:
     void CreateFaultlist();
-    void SaveFaultlist();
     void SortGates();
     void TagGateRange();
     void ReOrderPi();

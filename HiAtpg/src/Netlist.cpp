@@ -178,7 +178,9 @@ void Netlist::CreateFaultlist()
         }
     }
 
-    SaveFaultlist();
+    for (int32_t i = 0; i < faultlist.size(); i++) {
+        faultlist[i]->id = i;
+    }
 }
 
 void Netlist::SaveFaultlist()
@@ -190,16 +192,8 @@ void Netlist::SaveFaultlist()
 
     std::ofstream faultlistFileName(faultlistFile);
 
-    for (int32_t i = 0; i < faultlist.size(); i++) {
-        faultlist[i]->id = i;
-        faultlistFileName << faultlist[i]->type << " UC.UNK " << faultlist[i]->pinName << std::endl;
-
-        // atalanta format for debug
-        //        if (faultlist[i]->pin == 0) {
-        //            std::cout << i << "\t" << faultlist[i]->gate->name << " /" << faultlist[i]->type << std::endl;
-        //        } else {
-        //            std::cout << i << "\t" << faultlist[i]->gate->inputs[faultlist[i]->pin - 1]->name << "->" << faultlist[i]->gate->name << " /" << faultlist[i]->type << std::endl;
-        //        }
+    for (std::size_t i = 0; i < faultlist.size(); i++) {
+        faultlistFileName << faultlist[i]->type << " " << charOfFaultStatus(faultlist[i]->status) << " " << faultlist[i]->pinName << std::endl;
     }
 
     std::cout << "Save faultlist as " << faultlistFile << std::endl;
