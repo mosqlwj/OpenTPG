@@ -14,7 +14,7 @@ class CubeGeneratorExample : public CubeGenerator {
 public:
     CubeGeneratorExample(ContextDefault* context);
     ~CubeGeneratorExample() override;
-    FaultStatus Generate(const Fault* fault, TestCube* cube) override;
+    FaultStatus Generate(const Fault* fault, TestCube*& cube) override;
 
 private:
     const ContextDefault* context;

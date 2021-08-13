@@ -4,7 +4,7 @@
 #include "Faultlist.h"
 #include "Netlist.h"
 #include "Params.h"
-#include "printers.h"
+#include "errors.h"
 
 int main(int argc, char** argv)
 {
@@ -16,7 +16,7 @@ int main(int argc, char** argv)
     int ret = netlist.LoadNetlist(params->GetNetlistFile(), params->GetConfigFile());
     if (ret != 0) {
         std::cerr << "Load netlist failed. netlist=" << params->GetNetlistFile() << ", config=" << params->GetConfigFile() << std::endl;
-        return -1;
+        return errors::LOAD_NETLIST_FAILED;
     }
 
     //  生成fault
@@ -24,7 +24,7 @@ int main(int argc, char** argv)
     ret = faultlist.CreateFaults(&netlist);
     if (ret != 0) {
         std::cerr << "Create faultlist failed." << std::endl;
-        return -1;
+        return errors::CREATE_FAULTLIST_FAILED;
     }
 
     //  定义一个缺省的 context 对象
@@ -41,7 +41,7 @@ int main(int argc, char** argv)
     atpgDriver->SetupFaultlist(&faultlist);
     ret = atpgDriver->Prepare();
     if (ret != 0) {
-        return -1;
+        return errors::ATPG_PREPARE_FAILED;
     }
 
     atpgDriver->Execute();

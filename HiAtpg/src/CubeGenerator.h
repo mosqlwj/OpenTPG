@@ -9,7 +9,7 @@ struct TestCube;
 class CubeGenerator {
 public:
     virtual ~CubeGenerator() = default;
-    virtual FaultStatus Generate(const Fault* fault, TestCube* cube) = 0;
+    virtual FaultStatus Generate(const Fault* fault, TestCube*& cube) = 0;
 };
 
 extern CubeGenerator* CreateCubeGenerator(void* context);

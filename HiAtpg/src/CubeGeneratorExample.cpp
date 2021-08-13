@@ -16,7 +16,7 @@ CubeGeneratorExample::~CubeGeneratorExample()
 {
 }
 
-FaultStatus CubeGeneratorExample::Generate(const Fault* fault, TestCube* cube)
+FaultStatus CubeGeneratorExample::Generate(const Fault* fault, TestCube*& cube)
 {
     cube = TestCube::GenRandomCube(context->netlist, fault->id);
     return INIT;
