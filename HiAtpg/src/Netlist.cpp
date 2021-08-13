@@ -4,26 +4,27 @@
 
 #include "Netlist.h"
 #include "Params.h"
+#include "ScanChain.h"
 #include "Util.h"
+
 #include <boost/algorithm/string.hpp>
 #include <fstream>
 #include <iostream>
 #include <string>
 
-#include "ScanChain.h"
-
-int Netlist::Parse(const std::string& fileName)
+int Netlist::LoadNetlist(const std::string& netlistFileName, const std::string& cfgFileName)
 {
     std::string line;
     const std::string commentHead = "#";
     const std::string inputHead = "INPUT";
     const std::string outputHead = "OUTPUT";
 
-    std::ifstream netlist(fileName);
-    if (!netlist.good()) {
-        std::cerr << "Can not find netlist file: " << fileName << std::endl;
+    std::ifstream netlist(netlistFileName);
+    if (!netlist.is_open()) {
+        std::cerr << "Can not find netlist file: " << netlistFileName << std::endl;
+        return -1;
     }
-    
+
     // 1st read by line, parse all gate
     while (getline(netlist, line)) {
         if (line.empty()) {

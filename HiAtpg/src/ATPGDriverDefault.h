@@ -8,11 +8,12 @@
 class Netlist;
 class Faultlist;
 class CubeHandler;
+class ContextDefault;
 class CubeGenerator;
 
 class ATPGDriverDefault : public ATPGDriver {
 public:
-    ATPGDriverDefault();
+    ATPGDriverDefault(ContextDefault* context);
     ~ATPGDriverDefault() override;
     void SetupNetlist(Netlist* n) override;
     void SetupFaultlist(Faultlist* f) override;
@@ -22,6 +23,7 @@ public:
     void Cleanup() override;
 
 private:
+    ContextDefault* context;
     Netlist* netlist;
     Faultlist* faultlist;
     CubeHandler* cubeHandler;

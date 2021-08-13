@@ -1,7 +1,15 @@
 #include "CubeGeneratorExample.h"
 
-CubeGeneratorExample::CubeGeneratorExample()
+#include "ContextDefault.h"
+#include "Netlist.h"
+#include "TestCube.h"
+#include "asserts.h"
+
+CubeGeneratorExample::CubeGeneratorExample(ContextDefault* context)
+    : context(context)
 {
+    ASSERT(context != nullptr);
+    ASSERT(context->netlist != nullptr);
 }
 
 CubeGeneratorExample::~CubeGeneratorExample()
@@ -10,5 +18,6 @@ CubeGeneratorExample::~CubeGeneratorExample()
 
 FaultStatus CubeGeneratorExample::Generate(const Fault* fault, TestCube* cube)
 {
+    cube = TestCube::GenRandomCube(context->netlist, fault->id);
     return INIT;
 }

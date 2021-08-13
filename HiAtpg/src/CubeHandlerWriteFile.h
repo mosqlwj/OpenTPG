@@ -20,7 +20,7 @@ public:
     {
         stream.open(cubefile);
         if (!stream.is_open()) {
-            printf("open  %s failed.\n", cubefile.c_str());
+            std::cerr << "open  " << cubefile << " failed." << std::endl;
             return;
         }
     }

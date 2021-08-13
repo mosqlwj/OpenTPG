@@ -6,13 +6,18 @@
 #define CUBEGENERATOREXAMPLE_H
 
 #include "CubeGenerator.h"
-#include "common.h"
+
+class Netlist;
+struct ContextDefault;
 
 class CubeGeneratorExample : public CubeGenerator {
 public:
-    CubeGeneratorExample();
+    CubeGeneratorExample(ContextDefault* context);
     ~CubeGeneratorExample() override;
     FaultStatus Generate(const Fault* fault, TestCube* cube) override;
+
+private:
+    const ContextDefault* context;
 };
 
 #endif // CUBEGENERATOREXAMPLE_H

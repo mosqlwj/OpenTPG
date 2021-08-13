@@ -12,6 +12,6 @@ public:
     virtual FaultStatus Generate(const Fault* fault, TestCube* cube) = 0;
 };
 
-extern CubeGenerator* CreateCubeGenerator();
+extern CubeGenerator* CreateCubeGenerator(void* context);
 
 #endif // CUBEGENERATOR_H
