@@ -34,7 +34,7 @@ int main(int argc, char** argv)
     }
 
     //  如果指定了 fault 需要写入文件
-    if (params.GetFaultlistFile().empty()) {
+    if (!params.GetFaultlistFile().empty()) {
         faultlist.DumpFaults(params.GetFaultlistFile());
     }
 

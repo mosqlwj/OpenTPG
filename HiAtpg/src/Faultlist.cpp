@@ -70,7 +70,7 @@ int Faultlist::DumpFaults(const std::string& faultlistFile)
 
     for (std::size_t i = 0; i < faultlist.size(); i++) {
         ASSERT(faultlist[i] != nullptr);
-        stream << *(faultlist[i]) << std::endl;
+        stream << *(faultlist[i]);
     }
 
     return 0;
