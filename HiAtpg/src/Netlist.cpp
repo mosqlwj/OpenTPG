@@ -304,7 +304,7 @@ int Netlist::DumpGates(const std::string& outputFileName)
         gateDumpFile << gate->name << std::endl;
     }
 
-    std::cout << "Save gates as " << outputFileName << std::endl;
+    // std::cout << "Save gates as " << outputFileName << std::endl;
 
     return 0;
 }
