@@ -21,11 +21,11 @@ int main(int argc, char** argv)
     }
 
     //  如果指定了自动生成网表过程
-    if (!params.GetNetlistFile().empty()) {
-        netlist.DumpGates(params.GetNetlistFile());
+    if (!params.GetGateDumpFile().empty()) {
+        netlist.DumpGates(params.GetGateDumpFile());
     }
 
-    //  生成fault
+    //  生成 fault
     Faultlist faultlist;
     ret = faultlist.CreateFaults(&netlist);
     if (ret != 0) {
@@ -44,7 +44,7 @@ int main(int argc, char** argv)
     context.faultlist = &faultlist;
     context.params = &params;
 
-    //  生成cube
+    //  生成 cube
     std::unique_ptr<ATPGDriver> atpgDriver(CreateATPGDriver(&context));
     CubeHandlerWriteFile cubeOutputPrinter(params.GetCubeDumpFile());
     atpgDriver->SetupCubeOutput(&cubeOutputPrinter);
