@@ -48,11 +48,11 @@ private:
     uint32_t dffBegin = 0;
     uint32_t dffEnd = 0;
     uint32_t cubeEndId = 0;
-    std::vector<Gate*> gates;
-    std::vector<Fault*> faultlist;
-    std::unordered_map<std::string, Gate*> name2Gate;
-    std::vector<ScanChain*> scanChains;
-    std::map<Gate*, LogicVal> clk2OffVal;
+    std::vector<Gate*> gates;    // 包含bench中所有的gate
+    std::vector<Fault*> faultlist;  // ATPG需要target的所有的fault，已经做了故障折叠处理
+    std::unordered_map<std::string, Gate*> name2Gate;  // 存储gate name到Gate*的映射关系
+    std::vector<ScanChain*> scanChains;  // 存储cfg中定义的scan chain，已经trace出chain上包含的所有dff
+    std::map<Gate*, LogicVal> clk2OffVal;  // 存储cfg中定义的时钟以及时钟对应的off value
 
 private:
     void CreateFaultlist();
