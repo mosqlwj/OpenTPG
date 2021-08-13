@@ -4,8 +4,11 @@
 #include "ATPGDriver.h"
 
 #include "ATPGDriverDefault.h"
+#include "ContextDefault.h"
+#include "asserts.h"
 
-extern ATPGDriver* CreateATPGDriver()
+extern ATPGDriver* CreateATPGDriver(void* context)
 {
-    return new ATPGDriverDefault;
+    ASSERT(context != nullptr);
+    return new ATPGDriverDefault(reinterpret_cast<ContextDefault*>(context));
 }

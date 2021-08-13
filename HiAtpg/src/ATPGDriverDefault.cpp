@@ -1,11 +1,13 @@
 #include "ATPGDriverDefault.h"
 
+#include "ContextDefault.h"
 #include "CubeGenerator.h"
 #include "CubeHandler.h"
 #include "Netlist.h"
 #include "asserts.h"
 
-ATPGDriverDefault::ATPGDriverDefault()
+ATPGDriverDefault::ATPGDriverDefault(ContextDefault* context)
+    : context(context)
 {
     netlist = nullptr;
     faultlist = nullptr;
@@ -40,7 +42,7 @@ void ATPGDriverDefault::SetupCubeOutput(CubeHandler* c)
 
 int ATPGDriverDefault::Prepare()
 {
-    cubeGenerator = CreateCubeGenerator();
+    cubeGenerator = CreateCubeGenerator(context);
     ASSERT(cubeGenerator != nullptr);
 
     return 0;

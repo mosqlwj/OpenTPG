@@ -32,6 +32,6 @@ public:
     virtual void Cleanup() = 0;
 };
 
-extern ATPGDriver* CreateATPGDriver();
+extern ATPGDriver* CreateATPGDriver(void* context);
 
 #endif //ATPGDRIVER_H

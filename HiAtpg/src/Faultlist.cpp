@@ -3,3 +3,8 @@
 //
 
 #include "Faultlist.h"
+
+int Faultlist::CreateFaults(Netlist* netlist)
+{
+    return 0;
+}

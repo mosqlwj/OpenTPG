@@ -10,6 +10,6 @@ public:
     virtual TestCube* Generate(const Fault* fault) = 0;
 };
 
-extern CubeGenerator* CreateCubeGenerator();
+extern CubeGenerator* CreateCubeGenerator(void* context);
 
 #endif // CUBEGENERATOR_H

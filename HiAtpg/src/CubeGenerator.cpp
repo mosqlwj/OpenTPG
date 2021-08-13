@@ -4,7 +4,11 @@
 #include "CubeGenerator.h"
 #include "CubeGeneratorExample.h"
 
-extern CubeGenerator* CreateCubeGenerator()
+#include "ContextDefault.h"
+#include "asserts.h"
+
+extern CubeGenerator* CreateCubeGenerator(void* context)
 {
-    return new CubeGeneratorExample();
+    ASSERT(context != nullptr);
+    return new CubeGeneratorExample(reinterpret_cast<ContextDefault*>(context));
 }

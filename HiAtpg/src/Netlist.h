@@ -15,7 +15,7 @@
 
 class Netlist {
 public:
-    int Parse(const std::string& name);
+    int LoadNetlist(const std::string& netlistFileName, const std::string& cfgFileName);
     const std::unordered_map<std::string, Gate*>& GetGateNameMap()
     {
         return name2Gate;

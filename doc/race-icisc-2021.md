@@ -21,7 +21,7 @@
 
 | 文件名 | 作用 |
 |---    |---   |
-| Netlist | 存储和管理网表，支持网表加载、Scan chain 插入等几根能力 |
+| Netlist | 存储和管理网表，支持网表加载、Scan chain 插入等能力 |
 | Faultlist | 存储和管理 fault |
 | TestCube | 定义了 cube 对象的内存表示，是个典型的数据类 |
 | Fault | 定义了 fault 对象的内存表示 |

@@ -33,10 +33,13 @@ enum FaultType {
 };
 
 enum LogicVal {
-    LOGIC_X,
-    LOGIC_0,
-    LOGIC_1,
-    LOGIC_UNDEF
+    LOGIC_UNDEF = -1,
+    LOGIC_X = 0,
+    LOGIC_0 = 1,
+    LOGIC_1 = 2,
+
+    //
+    LOGIC_COUNT
 };
 
 static char charOfLogicVal(LogicVal val)

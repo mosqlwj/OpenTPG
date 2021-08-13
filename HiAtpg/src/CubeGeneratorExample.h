@@ -7,11 +7,17 @@
 
 #include "CubeGenerator.h"
 
+class Netlist;
+struct ContextDefault;
+
 class CubeGeneratorExample : public CubeGenerator {
 public:
-    CubeGeneratorExample();
+    CubeGeneratorExample(ContextDefault* context);
     ~CubeGeneratorExample() override;
     TestCube* Generate(const Fault* fault) override;
+
+private:
+    const ContextDefault* context;
 };
 
 #endif // CUBEGENERATOREXAMPLE_H
