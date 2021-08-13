@@ -135,14 +135,18 @@ TestCube 的输出一般不需要关心，如果有必要可以调用 CubePrinte
 一个 cube 文件由一个或者多个 `TestCube Block`组成。而每个 `TestCube Block` 由 `TestCube Header` 和 `TestCube Cycle` 组成。 下面为一个 cube 文件的样例：
 
 ```text
-$：0
-10x1011011
-101011
-10x001
-$：1
-1011x11011
-101111
-101x01
+$: 0
+01101x110x
+1x1x100
+$: 1
+0x0x10xxx1
+001101x
+$: 2
+0xx010x111
+0x01100
+$: 3
+1x1x000x11
+0xxx000
 ```
 
 上述样例中，定义了 2 个 cube。每个 cube 都是以 `$:` 开头的。`$:` 之后是该 cube 对应 Fault 的 Id。之后的每一行就对应一个 Cycle 的 每个 Gate 的值。

@@ -63,10 +63,12 @@ void ATPGDriverDefault::Execute()
         //  对每个 fault 尝试生成一个 cube
         TestCube* cube = nullptr;
         FaultStatus faultStatus = cubeGenerator->Generate(fault, cube);
+
+        //  标记 fault 的检测状态
         fault->status = faultStatus;
 
-        //  一旦生成了 cube，交个 cubeHandler 处理
-        if (faultStatus == TESTED) {
+        //  如果能够生成 cube，那么触发 Handle 处理
+        if (cube != nullptr) {
             cubeHandler->Handle(cube);
         }
     }
