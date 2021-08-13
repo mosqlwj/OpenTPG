@@ -13,6 +13,7 @@
 #include <unordered_map>
 #include <vector>
 
+
 class Netlist {
 public:
     int LoadNetlist(const std::string& netlistFileName, const std::string& cfgFileName);

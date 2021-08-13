@@ -15,7 +15,7 @@ Params::Params()
 {
 }
 
-void Params::parseCheck(int argc, char** argv)
+void Params::Load(int argc, char** argv)
 {
     cmdline::parser options;
     // 加入指定类型的输入參数

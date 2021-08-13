@@ -26,7 +26,7 @@ public:
     {
         return cubeDumpFile;
     }
-    void parseCheck(int argc, char* argv[]);
+    void Load(int argc, char** argv);
 
 private:
     Params();

@@ -10,7 +10,7 @@ int main(int argc, char** argv)
 {
     //  读取用户配置
     Params& params = Params::GetInstance();
-    params.parseCheck(argc, argv);
+    params.Load(argc, argv);
 
     //  读取网表
     Netlist netlist;
