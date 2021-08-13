@@ -14,9 +14,9 @@
 
 #include "Netlist.h"
 #include "common.h"
+
 #include <iostream>
 #include <string>
-#include <unistd.h>
 
 struct TestCube {
 public:
@@ -28,45 +28,35 @@ public:
     {
     }
 
-    int Init(int PINum, int ScanCellNum, int32_t cycleNum, uint32_t faultId)
+    int Init(int PINum, int ScanCellNum, int32_t cycleNum, int32_t faultId)
     {
         faultIndex = faultId;
         if (cycleNum <= 0) {
             perror("Defined cycle num must larger than 0");
             return -1;
         }
+
         logicValue.resize(cycleNum, std::vector<LogicVal> {});
         logicValue[0].resize(PINum + ScanCellNum, LogicVal::LOGIC_X);
         if (cycleNum <= 1) {
             return 0;
         }
+
         for (size_t i = 1; i < cycleNum; i++) {
             logicValue[i].resize(PINum, LogicVal::LOGIC_X);
         }
+
         return 0;
     }
 
-    static TestCube* GenRandomCube(const Netlist* netList, uint32_t faultId)
+    void UpdateTestCubeValue(int8_t cycle, int32_t gateId, LogicVal val)
     {
-        TestCube* randCube = new TestCube();
-        int cycleNum = rand() % 3 + 1;
+        ASSERT(cycle >= 0);
+        ASSERT(cycle < logicValue.size());
+        ASSERT(gateId >= 0);
+        ASSERT(gateId < logicValue[cycle].size());
 
-        randCube->Init(netList->GetPICount(), netList->GetScanCellCount(), cycleNum, faultId);
-
-        for (size_t cycleId = 0; cycleId < cycleNum; cycleId++) {
-            int bitSize = (cycleId != 0) ? netList->GetPICount() : netList->GetPICount() + netList->GetScanCellCount();
-            for (size_t i = 0; i < bitSize; i++) {
-                int randBit = rand() % LogicVal::LOGIC_COUNT;
-                randCube->UpdateTestCubeValue(cycleId, i, LogicVal(randBit));
-            }
-        }
-        return randCube;
-    }
-
-    void UpdateTestCubeValue(int cycle, int index, LogicVal val)
-    {
-        logicValue[cycle][index] = val;
-        return;
+        logicValue[cycle][std::size_t(gateId)] = val;
     }
 
     const std::vector<std::vector<LogicVal>>& GetLogicValue() const
@@ -79,13 +69,13 @@ public:
         return logicValue.size();
     }
 
-    int GetFaultIndex() const
+    int32_t GetFaultIndex() const
     {
         return faultIndex;
     }
 
 private:
-    uint32_t faultIndex;
+    int32_t faultIndex { -1 };
     std::vector<std::vector<LogicVal>> logicValue;
 };
 
