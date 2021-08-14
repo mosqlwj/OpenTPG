@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef R7_ERRORS_H
-#define R7_ERRORS_H
+#ifndef OPENTPG_ERRORS_H
+#define OPENTPG_ERRORS_H
 
 #define ERRID_TABLE()                     \
     DEF_ERRID(1, LOAD_NETLIST_FAILED)     \

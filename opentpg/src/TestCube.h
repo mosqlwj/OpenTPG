@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef R7_TESTCUBE_H
-#define R7_TESTCUBE_H
+#ifndef OPENTPG_TESTCUBE_H
+#define OPENTPG_TESTCUBE_H
 
 #include "Netlist.h"
 #include "common.h"

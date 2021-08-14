@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef R7_NETLIST_H
-#define R7_NETLIST_H
+#ifndef OPENTPG_NETLIST_H
+#define OPENTPG_NETLIST_H
 
 #include "Fault.h"
 #include "Gate.h"

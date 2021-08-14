@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef R7_CONTEXTDEFAULT_H
-#define R7_CONTEXTDEFAULT_H
+#ifndef OPENTPG_CONTEXTDEFAULT_H
+#define OPENTPG_CONTEXTDEFAULT_H
 
 class Netlist;
 class Faultlist;

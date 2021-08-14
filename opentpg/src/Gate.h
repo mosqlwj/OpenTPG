@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef R7_GATE_H
-#define R7_GATE_H
+#ifndef OPENTPG_GATE_H
+#define OPENTPG_GATE_H
 
 #include "common.h"
 #include <string>

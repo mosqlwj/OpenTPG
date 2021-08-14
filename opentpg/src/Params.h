@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef R7_PARAMS_H
-#define R7_PARAMS_H
+#ifndef OPENTPG_PARAMS_H
+#define OPENTPG_PARAMS_H
 
 #include "cmdline.h"
 

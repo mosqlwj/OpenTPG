@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef R7_SCANCHAIN_H
-#define R7_SCANCHAIN_H
+#ifndef OPENTPG_SCANCHAIN_H
+#define OPENTPG_SCANCHAIN_H
 
 #include "Gate.h"
 

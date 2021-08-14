@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef R7_CUBEHANDLERWRITEFILE_H
-#define R7_CUBEHANDLERWRITEFILE_H
+#ifndef OPENTPG_CUBEHANDLERWRITEFILE_H
+#define OPENTPG_CUBEHANDLERWRITEFILE_H
 
 #include "CubeHandler.h"
 #include "TestCube.h"

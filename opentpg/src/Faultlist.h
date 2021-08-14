@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef R7_FAULTLIST_H
-#define R7_FAULTLIST_H
+#ifndef OPENTPG_FAULTLIST_H
+#define OPENTPG_FAULTLIST_H
 
 #include <vector>
 
