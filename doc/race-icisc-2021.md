@@ -23,20 +23,20 @@
 
 | 文件名 | 作用 |
 |---    |---   |
-| ATPGDriver.* | 定义了一个用于控制所有 cube 生成的流程的接口 |
-| Netlist.* | 存储和管理网表，支持网表加载、Scan chain 插入等能力 |
-| Faultlist.* | 存储和管理 fault |
-| TestCube.* | 定义了 cube 对象的内存表示，是个典型的数据类 |
-| Fault.* | 定义了 fault 对象的内存表示 |
-| Gate.* | 定义了 Gate 对象，包含 Gate 的类型名称等基本信息 |
-| ScanChain.* | 定义了 Scan chain 数据结构 |
-| CubeGenerator.* | 定义了一个用于控制单个 cube 生成的流程 |
-| CubeHandler.* | 定义了一个用于 cube 对象处理器 |
-| common.* | 定义了一些基础类型、数据结构及相关函数 |
-| errors.* | 定义了错误处理相关的基础类型及数据结构 |
-| main.cpp | 程序入口 |
-| Params.* | 参数定义和解析 |
-| printers.* | 定义了一些对象的输出方式 |
+| ATPGDriver.*      | 定义了一个用于控制所有 cube 生成的流程的接口 |
+| CubeGenerator.*   | 定义了一个用于控制单个 cube 生成的流程 |
+| CubeHandler.*     | 定义了一个用于 cube 对象处理器 |
+| common.*          | 定义了一些基础类型、数据结构及相关函数 |
+| errors.*          | 定义了错误处理相关的基础类型及数据结构 |
+| Fault.*           | 定义了 fault 对象的内存表示 |
+| Faultlist.*       | 存储和管理 fault |
+| Gate.*            | 定义了 Gate 对象，包含 Gate 的类型名称等基本信息 |
+| main.cpp          | 程序入口 |
+| Netlist.*         | 存储和管理网表，支持网表加载、Scan chain 插入等能力 |
+| Params.*          | 参数定义和解析 |
+| printers.*        | 定义了一些对象的输出方式 |
+| ScanChain.*       | 定义了 Scan chain 数据结构 |
+| TestCube.*        | 定义了 cube 对象的内存表示，是个典型的数据类 |
 
 <a name="race-system-interface"></a>
 
