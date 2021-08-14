@@ -40,16 +40,16 @@ source "${PROJECT_ROOT}/PROJECT"
 source "${MODULE_ROOT}/MODULE"
 
 # 帮助
-function go_help() {
+function build_help() {
     echo "Usage:"
     echo "   build.sh [compile]"
     echo "   build.sh clean"
-
+    echo "   build.sh format"
     return 0
 }
 
 # 编译
-function go_compile() {
+function build_compile() {
     rm -rf "${MODULE_ROOT}/build"
     mkdir -p "${MODULE_ROOT}/build"
 
@@ -69,7 +69,7 @@ function go_compile() {
 }
 
 # 清理
-function go_clean() {
+function build_clean() {
     echo "Clean : ${MODULE_ROOT}/build"
     rm -rf "${MODULE_ROOT}/build"
 
@@ -85,6 +85,24 @@ function go_clean() {
     return 0
 }
 
+# 代码格式化
+function build_format() {
+    local cpplist=$(find "${MODULE_ROOT}/src" -name '*.cpp')
+    local hlist=$(find "${MODULE_ROOT}/src" -name '*.h')
+    local alllist="${cpplist} ${hlist}"
+    for f in ${alllist}; do
+        clang-format -style=file -i "${f}"
+        RESULT=$?
+        if [[ ${RESULT} -eq 0 ]]; then
+            echo    "[ OK ] ${f}"
+        else
+            echo    "[FAIL] ${f}"
+        fi
+    done
+
+    return 0
+}
+
 # 入口函数
 function main() {
     local action="$1"
@@ -92,20 +110,24 @@ function main() {
         action="compile"
     fi
 
-    if [[ "${action}" == "-h" || "${action}" == "--help" || "${action}" == "help" ]]; then
-        go_help "$@"
+    case "${action}" in
+    help | -h | --help)
+        build_help "$@"
         return $?
-    fi
-
-    if [[ "${action}" == "compile" ]]; then
-        go_compile "$@"
+        ;;
+    compile)
+        build_compile "$@"
         return $?
-    fi
-
-    if [[ "${action}" == "clean" ]]; then
-        go_clean "$@"
+        ;;
+    clean)
+        build_clean "$@"
         return $?
-    fi
+        ;;
+    format)
+        build_format "$@"
+        return $?
+        ;;
+    esac
 
     echo "Unsupported command '${action}'"
     return 1
