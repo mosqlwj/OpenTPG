@@ -1,0 +1,31 @@
+/**
+ * Copyright (c) 2021 opentpg.com
+ * opentpg is licensed under Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
+ * You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PSL v2 for more details.
+ */
+#ifndef R7_ERRORS_H
+#define R7_ERRORS_H
+
+#define ERRID_TABLE()                     \
+    DEF_ERRID(1, LOAD_NETLIST_FAILED)     \
+    DEF_ERRID(2, CREATE_FAULTLIST_FAILED) \
+    DEF_ERRID(3, ATPG_PREPARE_FAILED)     \
+    /* (end) */
+
+namespace errors {
+
+enum : int {
+#define DEF_ERRID(id, name) name = id,
+    ERRID_TABLE()
+#undef DEF_ERRID
+};
+
+}; // errors
+
+#endif //R7_ERRORS_H

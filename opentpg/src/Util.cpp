@@ -1,0 +1,33 @@
+/**
+ * Copyright (c) 2021 opentpg.com
+ * opentpg is licensed under Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
+ * You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PSL v2 for more details.
+ */
+#include "Util.h"
+#include "asserts.h"
+
+#include <iostream>
+#include <map>
+
+std::map<std::string, GateType> name2Type = {
+#define DEF_GATETYPE(id, name, str) { str, GateType::name },
+    GATETYPE_TABLE()
+#undef DEF_GATETYPE
+};
+
+GateType Util::GetGateTypeFromString(const std::string& name)
+{
+    if (name2Type.find(name) == name2Type.end()) {
+        std::cerr << "Not support gate type: " << name << std::endl;
+        ASSERT(false);
+        return UNKNOWN;
+    }
+
+    return name2Type[name];
+}

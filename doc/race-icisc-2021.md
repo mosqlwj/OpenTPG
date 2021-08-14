@@ -13,6 +13,8 @@
 | 目录 | 用途 |
 |--- |--- |
 | doc | 文档材料 |
+| plan | 愿景、计划、想法等 |
+| .convention | 公约、文件头 License 模板 |
 | r7/src | 一个简单的用于生成 TestCube 的代码框架 |
 | r7/bench | 随工程携带的几个样例网表文件及其配置 |
 | r7/thirdparty | 所有依赖的第三方库，当前只支持 header-only 的 C++ 库 |
