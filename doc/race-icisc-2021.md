@@ -170,7 +170,7 @@ $: 3
 0xxx000
 ```
 
-上述样例中，定义了 2 个 cube。每个 cube 都是以 `$:` 开头的。`$:` 之后是该 cube 对应 Fault 的 Id。之后的每一行就对应一个 Cycle 的 每个 Gate 的值。
+上述样例中，定义了 4 个 cube。每个 cube 都是以 `$:` 开头的。`$:` 之后是该 cube 对应 Fault 的 Id。之后的每一行就对应一个 Cycle 的 每个 Gate 的值。
 
 a name="race-rating"></a>
 
