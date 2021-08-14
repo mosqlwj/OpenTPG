@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef CUBEGENERATOREXAMPLE_H
-#define CUBEGENERATOREXAMPLE_H
+#ifndef R7_CUBEGENERATOREXAMPLE_H
+#define R7_CUBEGENERATOREXAMPLE_H
 
 #include "CubeGenerator.h"
 
@@ -27,4 +27,4 @@ private:
     const ContextDefault* context;
 };
 
-#endif // CUBEGENERATOREXAMPLE_H
+#endif //R7_CUBEGENERATOREXAMPLE_H

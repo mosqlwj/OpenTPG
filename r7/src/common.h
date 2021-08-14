@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef R7_COMMON_H
+#define R7_COMMON_H
 
 #include "asserts.h"
 
@@ -118,4 +118,4 @@ static const char* charOfFaultStatus(FaultStatus status)
     return "";
 }
 
-#endif
+#endif //R7_COMMON_H

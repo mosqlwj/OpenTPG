@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef CUBEGENERATOR_H
-#define CUBEGENERATOR_H
+#ifndef R7_CUBEGENERATOR_H
+#define R7_CUBEGENERATOR_H
 
 #include "common.h"
 
@@ -25,4 +25,4 @@ public:
 
 extern CubeGenerator* CreateCubeGenerator(void* context);
 
-#endif // CUBEGENERATOR_H
+#endif //R7_CUBEGENERATOR_H

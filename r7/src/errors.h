@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef ERRORS_H
-#define ERRORS_H
+#ifndef R7_ERRORS_H
+#define R7_ERRORS_H
 
 #define ERRID_TABLE()                     \
     DEF_ERRID(1, LOAD_NETLIST_FAILED)     \
@@ -28,4 +28,4 @@ enum : int {
 
 }; // errors
 
-#endif //ERRORS_H
+#endif //R7_ERRORS_H

@@ -9,17 +9,17 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef HIPARSER_NETLIST_H
-#define HIPARSER_NETLIST_H
+#ifndef R7_NETLIST_H
+#define R7_NETLIST_H
 
 #include "Fault.h"
 #include "Gate.h"
 #include "ScanChain.h"
 #include "common.h"
+
 #include <map>
 #include <unordered_map>
 #include <vector>
-
 
 class Netlist {
 public:
@@ -75,4 +75,4 @@ private:
     void CalcCubeRange();
 };
 
-#endif // HIPARSER_NETLIST_H
+#endif //R7_NETLIST_H

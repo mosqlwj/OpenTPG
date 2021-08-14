@@ -9,12 +9,13 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef ATPGDRIVER_H
-#define ATPGDRIVER_H
+#ifndef R7_ATPGDRIVER_H
+#define R7_ATPGDRIVER_H
 
 class Netlist;
 class CubeHandler;
 class Faultlist;
+
 class ATPGDriver {
 public:
     //! 析构函数
@@ -41,4 +42,4 @@ public:
 
 extern ATPGDriver* CreateATPGDriver(void* context);
 
-#endif //ATPGDRIVER_H
+#endif //R7_ATPGDRIVER_H

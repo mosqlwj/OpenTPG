@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef HIPARSER_UTIL_H
-#define HIPARSER_UTIL_H
+#ifndef R7_UTIL_H
+#define R7_UTIL_H
 
 #include "common.h"
 #include <string>

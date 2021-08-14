@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef CUBEOUTPUTDEFAULT_H
-#define CUBEOUTPUTDEFAULT_H
+#ifndef R7_CUBEOUTPUTDEFAULT_H
+#define R7_CUBEOUTPUTDEFAULT_H
 
 #include "CubeHandler.h"
 #include "asserts.h"
@@ -30,4 +30,4 @@ public:
     }
 };
 
-#endif //CUBEOUTPUTDEFAULT_H
+#endif //R7_CUBEOUTPUTDEFAULT_H

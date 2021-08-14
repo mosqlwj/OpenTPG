@@ -13,6 +13,7 @@
 #define R7_SCANCHAIN_H
 
 #include "Gate.h"
+
 #include <list>
 #include <unordered_map>
 

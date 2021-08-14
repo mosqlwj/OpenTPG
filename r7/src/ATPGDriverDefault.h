@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef ATPGDRIVERDEFAULT_H
-#define ATPGDRIVERDEFAULT_H
+#ifndef R7_ATPGDRIVERDEFAULT_H
+#define R7_ATPGDRIVERDEFAULT_H
 
 #include "ATPGDriver.h"
 
@@ -41,4 +41,4 @@ private:
     CubeGenerator* cubeGenerator;
 };
 
-#endif // ATPGDRIVERDEFAULT_H
+#endif //R7_ATPGDRIVERDEFAULT_H

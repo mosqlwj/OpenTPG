@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef CUBEHANDLERWRITEFILE_H
-#define CUBEHANDLERWRITEFILE_H
+#ifndef R7_CUBEHANDLERWRITEFILE_H
+#define R7_CUBEHANDLERWRITEFILE_H
 
 #include "CubeHandler.h"
 #include "TestCube.h"
@@ -46,4 +46,4 @@ private:
     std::ofstream stream;
 };
 
-#endif //CUBEHANDLERWRITEFILE_H
+#endif //R7_CUBEHANDLERWRITEFILE_H

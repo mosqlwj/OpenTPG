@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef R7_CUBEOUTPUT_H
-#define R7_CUBEOUTPUT_H
+#ifndef R7_PRINTERS_H
+#define R7_PRINTERS_H
 
 #include "Fault.h"
 #include "TestCube.h"
@@ -21,4 +21,4 @@ extern std::ofstream& operator<<(std::ofstream& stream, const TestCube& cube);
 
 extern std::ofstream& operator<<(std::ofstream& stream, const Fault& fault);
 
-#endif //R7_CUBEOUTPUT_H
+#endif //R7_PRINTERS_H

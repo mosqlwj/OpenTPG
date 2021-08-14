@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef HIPARSER_GATE_H
-#define HIPARSER_GATE_H
+#ifndef R7_GATE_H
+#define R7_GATE_H
 
 #include "common.h"
 #include <string>
@@ -27,4 +27,4 @@ struct Gate {
     uint32_t level;
 };
 
-#endif //HIPARSER_GATE_H
+#endif //R7_GATE_H

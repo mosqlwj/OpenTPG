@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef CUBEHANDLER_H
-#define CUBEHANDLER_H
+#ifndef R7_CUBEHANDLER_H
+#define R7_CUBEHANDLER_H
 
 #include "TestCube.h"
 
@@ -20,4 +20,4 @@ public:
     virtual void Handle(TestCube* cube) = 0;
 };
 
-#endif //CUBEHANDLER_H
+#endif //R7_CUBEHANDLER_H

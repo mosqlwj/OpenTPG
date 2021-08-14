@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef ASSERTS_H
-#define ASSERTS_H
+#ifndef R7_ASSERTS_H
+#define R7_ASSERTS_H
 
 #include <cassert>
 
@@ -22,4 +22,4 @@
 #endif
 #endif
 
-#endif //ASSERTS_H
+#endif //R7_ASSERTS_H

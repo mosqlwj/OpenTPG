@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef __HIPARSER_PARAMS_H__
-#define __HIPARSER_PARAMS_H__
+#ifndef R7_PARAMS_H
+#define R7_PARAMS_H
 
 #include "cmdline.h"
 
@@ -50,4 +50,4 @@ private:
     std::string cubeDumpFile;
     static Params instance;
 };
-#endif
+#endif //R7_PARAMS_H

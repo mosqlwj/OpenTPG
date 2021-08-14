@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef FAULTLIST_H
-#define FAULTLIST_H
+#ifndef R7_FAULTLIST_H
+#define R7_FAULTLIST_H
 
 #include <vector>
 
@@ -38,4 +38,4 @@ private:
     std::vector<Fault*> faultlist; // ATPG需要target的所有的fault，已经做了故障折叠处理
 };
 
-#endif //FAULTLIST_H
+#endif //R7_FAULTLIST_H
