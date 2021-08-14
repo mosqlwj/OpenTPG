@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef HIATPG_SCANCHAIN_H
-#define HIATPG_SCANCHAIN_H
+#ifndef R7_SCANCHAIN_H
+#define R7_SCANCHAIN_H
 
 #include "Gate.h"
 #include <list>
@@ -32,4 +32,4 @@ private:
     std::list<Gate*> chainGates;
 };
 
-#endif //HIATPG_SCANCHAIN_H
+#endif //R7_SCANCHAIN_H

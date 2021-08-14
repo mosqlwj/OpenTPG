@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef HIATPG_FAULT_H
-#define HIATPG_FAULT_H
+#ifndef R7_FAULT_H
+#define R7_FAULT_H
 
 #include "Gate.h"
 #include "common.h"
@@ -37,4 +37,4 @@ struct Fault {
     std::string GetFaultName(const Gate* gate, int32_t pinIdx);
 };
 
-#endif //HIATPG_FAULT_H
+#endif //R7_FAULT_H

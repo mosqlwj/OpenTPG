@@ -74,10 +74,10 @@ make
 ## 一键流程
 
 ```shell
-./HiAtpg -n bench/s17.bench  -c bench/s17.cfg -u ./s17.cube
+./r7 -n bench/s17.bench  -c bench/s17.cfg -u ./s17.cube
 ```
 
-启动之后，HiAtpg将自动从 `bench/s17.bench` 和 `bench/s17.cfg` 读取输入，并将生成的 Cube 写入文件 `./s17.cube`。
+启动之后，进程将自动从 `bench/s17.bench` 和 `bench/s17.cfg` 读取输入，并将生成的 Cube 写入文件 `./s17.cube`。
 
 <a name="system-interface"></a>
 
@@ -107,7 +107,7 @@ make
 
 ## 命令行接口定义
 
-可以通过 `HiAtpg --help` 来查看所有的命令行定义。
+可以通过 `r7 --help` 来查看所有的命令行定义。
 
 下面将列出主要的命令行接口：
 
