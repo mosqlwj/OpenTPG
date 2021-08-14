@@ -36,7 +36,7 @@ OpenTPG 项目的目标是构建开源的 TPG 工具集。 r7 为本项目首个
 我们非常欢迎，您通过下面的方式参与贡献：
 
 - 通过 [提交 issue](https://gitee.com/openeda/OpenTPG/issues/new) 给项目提意见或者建议
-- 通过 [发起 Pull Request](https://gitee.com/openeda/OpenTPG/pull/new) 直接给项目贡献代码
+- 通过 [发起 Pull Request](https://gitee.com/openeda/OpenTPG/pull/new) 直接给项目贡献代码，贡献代码请遵循[CodeStyle](.convention/code-style.md)
 - 参与 issue 或者 Pull Request 的评审或者评论
 
 <a name="install"></a>
@@ -75,10 +75,10 @@ make
 # 快速入门
 
 ```shell
-./r7 -n bench/s17.bench  -c bench/s17.cfg -u ./s17.cube
+./r7 -n bench/s17.bench  -c bench/s17.cfg -f bench/s17.fault -u bench/s17.cube
 ```
 
-启动之后，进程将自动从 `bench/s17.bench` 和 `bench/s17.cfg` 读取输入，并将生成的 cube 写入文件 `./s17.cube`。
+启动之后，进程将自动从 `bench/s17.bench` 和 `bench/s17.cfg` 读取输入，并将生成的 fault 和 cube 写 入文件 `bench/s17.fault` 和 `bench/s17.cube`。
 
 <a name="system-interface"></a>
 
