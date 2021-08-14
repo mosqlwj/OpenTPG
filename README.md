@@ -18,7 +18,7 @@
 
 # 概述
 
-OpenTPG 项目的目标是构建开源的 TPG 工具集。
+OpenTPG 项目的目标是构建开源的 TPG 工具集。 r7 为本项目首个工具，其主要功能就是生成 cube，是完整 ATPG 流程的核心部分之一。
 
 <a name="summary-race"></a>
 
@@ -32,8 +32,8 @@ OpenTPG 项目的目标是构建开源的 TPG 工具集。
 
 我们非常欢迎，您通过下面的方式参与贡献：
 
-- 通过 [提交 issue](https://gitee.com/openeda/opentpg/issues/new) 给项目提意见或者建议
-- 通过 [发起 Pull Request](https://gitee.com/openeda/opentpg/pull/new) 直接给项目贡献代码
+- 通过 [提交 issue](https://gitee.com/openeda/OpenTPG/issues/new) 给项目提意见或者建议
+- 通过 [发起 Pull Request](https://gitee.com/openeda/OpenTPG/pull/new) 直接给项目贡献代码
 - 参与 issue 或者 Pull Request 的评审或者评论
 
 <a name="install"></a>
@@ -60,7 +60,7 @@ OpenTPG 项目的目标是构建开源的 TPG 工具集。
 ## 构建
 ----------------------
 
-```bash
+```shell
 mkdir build
 cd build
 cmake ../
