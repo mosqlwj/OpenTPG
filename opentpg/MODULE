@@ -1,2 +1,2 @@
-export MODULE_NAME=r7
+export MODULE_NAME=opentpg
 export MODULE_VERSION=$(cat "${PROJECT_ROOT}/VERSION")

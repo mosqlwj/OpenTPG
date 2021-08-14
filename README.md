@@ -21,7 +21,7 @@
 
 # 概述
 
-OpenTPG 项目的目标是构建开源的 TPG 工具集。 r7 为本项目首个工具，其主要功能就是生成 cube，是完整 ATPG 流程的核心部分之一。
+OpenTPG 项目的目标是构建开源的 TPG 工具集。 opentpg 为本项目首个工具，其主要功能就是生成 cube，是完整 ATPG 流程的核心部分之一。
 
 <a name="summary-race"></a>
 
@@ -75,7 +75,7 @@ make
 # 快速入门
 
 ```shell
-./r7 -n bench/s17.bench  -c bench/s17.cfg -f bench/s17.fault -u bench/s17.cube
+./opentpg -n bench/s17.bench  -c bench/s17.cfg -f bench/s17.fault -u bench/s17.cube
 ```
 
 启动之后，进程将自动从 `bench/s17.bench` 和 `bench/s17.cfg` 读取输入，并将生成的 fault 和 cube 写 入文件 `bench/s17.fault` 和 `bench/s17.cube`。
@@ -112,7 +112,7 @@ make
 
 ## 命令行接口
 
-可以通过 `r7 --help` 来查看所有的命令行定义。
+可以通过 `opentpg --help` 来查看所有的命令行定义。
 
 下面将列出主要的命令行接口：
 

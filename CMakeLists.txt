@@ -2,5 +2,5 @@ cmake_minimum_required(VERSION 3.15)
 
 project(OpenTPG)
 
-add_subdirectory(r7)
+add_subdirectory(opentpg)
 
