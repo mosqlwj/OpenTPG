@@ -8,11 +8,14 @@
 [安装说明](#install)
 
 - [基本要求](#install-required)
-- [构建](#install-build)
-- [部署](#install-deploy)
-- [小测验](#install-test)
+- [构建](#install-build))
 
 [快速入门](#quickstart)
+
+[系统接口](#system-interface)
+
+- [约定](#convention)
+- [命令行接口](#command-line-interface)
 
 <a name="summary"></a>
 
@@ -71,17 +74,17 @@ make
 
 # 快速入门
 
-## 一键流程
-
 ```shell
 ./r7 -n bench/s17.bench  -c bench/s17.cfg -u ./s17.cube
 ```
 
-启动之后，进程将自动从 `bench/s17.bench` 和 `bench/s17.cfg` 读取输入，并将生成的 Cube 写入文件 `./s17.cube`。
+启动之后，进程将自动从 `bench/s17.bench` 和 `bench/s17.cfg` 读取输入，并将生成的 cube 写入文件 `./s17.cube`。
 
 <a name="system-interface"></a>
 
 # 系统接口
+
+<a name="convention"></a>
 
 ## 约定
 
@@ -105,7 +108,9 @@ make
 `约定1`：我们约定一个类的文件名总是和该文件中的主要类的类名或相同（包括大小写）。
 `约定2`：如果一个文件不设计主要类，那么该文件名必须为全小写字母
 
-## 命令行接口定义
+<a name="command-line-interface"></a>
+
+## 命令行接口
 
 可以通过 `r7 --help` 来查看所有的命令行定义。
 
