@@ -16,6 +16,7 @@
 #include "Netlist.h"
 #include "Params.h"
 #include "errors.h"
+#include <memory>
 
 int main(int argc, char** argv)
 {

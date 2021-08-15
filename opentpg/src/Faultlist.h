@@ -11,7 +11,7 @@
  */
 #ifndef OPENTPG_FAULTLIST_H
 #define OPENTPG_FAULTLIST_H
-
+#include <string>
 #include <vector>
 
 class Netlist;
