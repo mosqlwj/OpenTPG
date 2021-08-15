@@ -39,7 +39,7 @@ public:
 
     int32_t GetScanCellCount() const
     {
-        return ((cubeEndId + 1) - numOfPI);
+        return (cubeEndId - numOfPI);
     }
 
     int32_t GetCubeEndId() const
