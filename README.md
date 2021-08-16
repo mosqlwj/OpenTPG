@@ -36,7 +36,7 @@ OpenTPG 项目的目标是构建开源的 TPG 工具集。 opentpg 为本项目�
 我们非常欢迎，您通过下面的方式参与贡献：
 
 - 通过 [提交 issue](https://gitee.com/openeda/OpenTPG/issues/new) 给项目提意见或者建议
-- 通过 [发起 Pull Request](https://gitee.com/openeda/OpenTPG/pull/new) 直接给项目贡献代码，贡献代码请遵循[CodeStyle](.convention/code-style.md)
+- 通过 [发起 Pull Request](https://gitee.com/openeda/OpenTPG/pull/new) 直接给项目贡献代码，贡献代码请遵循[code-style](.convention/code-style.md)
 - 参与 issue 或者 Pull Request 的评审或者评论
 
 <a name="install"></a>
