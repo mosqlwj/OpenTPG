@@ -8,7 +8,7 @@
 [安装说明](#install)
 
 - [基本要求](#install-required)
-- [构建](#install-build))
+- [构建](#install-build)
 
 [快速入门](#quickstart)
 
