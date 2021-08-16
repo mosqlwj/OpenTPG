@@ -15,14 +15,16 @@
 #include <vector>
 
 class Netlist;
+class Statuslist;
 struct Fault;
+
 class Faultlist {
 public:
     void Clean();
 
     int CreateFaults(Netlist* netlist);
 
-    int DumpFaults(const std::string& faultlistFile);
+    int DumpFaults(const std::string& faultlistFile, const Statuslist& statuslist);
 
     const std::vector<Fault*>& Faults() const
     {

@@ -14,12 +14,14 @@
 
 class Netlist;
 class Faultlist;
+class Statuslist;
 class Params;
 
 struct ContextDefault {
-    Netlist* netlist;
-    Faultlist* faultlist;
-    Params* params;
+    Netlist* netlist { nullptr };
+    Faultlist* faultlist { nullptr };
+    Statuslist* statuslist { nullptr };
+    Params* params { nullptr };
 };
 
 #endif //R7_CONTEXTDEFAULT_H

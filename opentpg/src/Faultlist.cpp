@@ -14,6 +14,7 @@
 #include "Gate.h"
 #include "Netlist.h"
 
+#include "Statuslist.h"
 #include "asserts.h"
 #include "common.h"
 #include "printers.h"
@@ -63,7 +64,7 @@ int Faultlist::CreateFaults(Netlist* netlist)
     return 0;
 }
 
-int Faultlist::DumpFaults(const std::string& faultlistFile)
+int Faultlist::DumpFaults(const std::string& faultlistFile, const Statuslist& statuslist)
 {
     if (faultlistFile.empty()) {
         ASSERT(false);
@@ -78,7 +79,8 @@ int Faultlist::DumpFaults(const std::string& faultlistFile)
 
     for (std::size_t i = 0; i < faultlist.size(); i++) {
         ASSERT(faultlist[i] != nullptr);
-        stream << *(faultlist[i]);
+        ASSERT(faultlist[i]->id == i);
+        Print(stream, *(faultlist[i]), statuslist[faultlist[i]->id]);
     }
 
     return 0;

@@ -9,16 +9,24 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef OPENTPG_PRINTERS_H
-#define OPENTPG_PRINTERS_H
+#ifndef OPENTPG_FAULTLISTSTATUS_H
+#define OPENTPG_FAULTLISTSTATUS_H
 
-#include "Fault.h"
-#include "TestCube.h"
+#include <vector>
 
-#include <fstream>
+#include "common.h"
 
-extern std::ofstream& operator<<(std::ofstream& stream, const TestCube& cube);
-extern int Print(std::ofstream& stream, const TestCube& cube);
-extern int Print(std::ofstream& stream, const Fault& fault, FaultStatus status);
+class Faultlist;
 
-#endif //R7_PRINTERS_H
+class Statuslist {
+public:
+    int Create(Faultlist* faultlist);
+    void UpdateStatus(int32_t faultId, FaultStatus newStatus);
+    void Clean();
+    FaultStatus operator[](int32_t faultId) const;
+
+private:
+    std::vector<FaultStatus> faultStatus;
+};
+
+#endif //FAULTLISTSTATUS_H

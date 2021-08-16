@@ -15,7 +15,9 @@
 #include "Faultlist.h"
 #include "Netlist.h"
 #include "Params.h"
+#include "Statuslist.h"
 #include "errors.h"
+
 #include <memory>
 
 int main(int argc, char** argv)
@@ -45,15 +47,16 @@ int main(int argc, char** argv)
         return errors::CREATE_FAULTLIST_FAILED;
     }
 
-    //  如果指定了 fault 需要写入文件
-    if (!params.GetFaultlistFile().empty()) {
-        faultlist.DumpFaults(params.GetFaultlistFile());
-    }
+    //  生成状态表
+    Statuslist statuslist;
+    ret = statuslist.Create(&faultlist);
+    ASSERT(ret == 0);
 
     //  定义一个缺省的 context 对象
     ContextDefault context;
     context.netlist = &netlist;
     context.faultlist = &faultlist;
+    context.statuslist = &statuslist;
     context.params = &params;
 
     //  生成 cube
@@ -67,7 +70,16 @@ int main(int argc, char** argv)
         return errors::ATPG_PREPARE_FAILED;
     }
 
+    //  执行计算
     atpgDriver->Execute();
+
+    //  清理
+    atpgDriver->Cleanup();
+
+    //  如果指定了 fault 需要写入文件
+    if (!params.GetFaultlistFile().empty()) {
+        faultlist.DumpFaults(params.GetFaultlistFile(), statuslist);
+    }
 
     return 0;
 }

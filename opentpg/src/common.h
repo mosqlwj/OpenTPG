@@ -20,20 +20,42 @@
 typedef int32_t GateId;
 typedef int32_t FaultId;
 
-#define GATETYPE_TABLE()           \
-    DEF_GATETYPE(0, PI, "INPUT")   \
-    DEF_GATETYPE(1, DFF, "DFF")    \
-    DEF_GATETYPE(2, MUX, "MUX")    \
-    DEF_GATETYPE(3, AND, "AND")    \
-    DEF_GATETYPE(4, NAND, "NAND")  \
-    DEF_GATETYPE(5, OR, "OR")      \
-    DEF_GATETYPE(6, NOR, "NOR")    \
-    DEF_GATETYPE(7, XOR, "XOR")    \
-    DEF_GATETYPE(8, XNOR, "XNOR")  \
-    DEF_GATETYPE(9, INV, "NOT")    \
-    DEF_GATETYPE(10, BUF, "BUF")   \
-    DEF_GATETYPE(11, PO, "OUTPUT") \
-    /* end */
+// clang-format off
+#define GATETYPE_TABLE()                    \
+    DEF_GATETYPE(0,     PI,     "INPUT")    \
+    DEF_GATETYPE(1,     DFF,    "DFF")      \
+    DEF_GATETYPE(2,     MUX,    "MUX")      \
+    DEF_GATETYPE(3,     AND,    "AND")      \
+    DEF_GATETYPE(4,     NAND,   "NAND")     \
+    DEF_GATETYPE(5,     OR,     "OR")       \
+    DEF_GATETYPE(6,     NOR,    "NOR")      \
+    DEF_GATETYPE(7,     XOR,    "XOR")      \
+    DEF_GATETYPE(8,     XNOR,   "XNOR")     \
+    DEF_GATETYPE(9,     INV,    "NOT")      \
+    DEF_GATETYPE(10,    BUF,    "BUF")      \
+    DEF_GATETYPE(11,    PO,     "OUTPUT")   \
+    /* (end) */
+// clang-format on
+
+// clang-format off
+#define FAULTSTATUS_TABLE()                                                                         \
+    DEF_FAULTSTATUS(0, INIT,                    "UC.UNK",   "initial status")                       \
+    DEF_FAULTSTATUS(1, TESTED,                  "DS",       "fault can be detected")                \
+    DEF_FAULTSTATUS(2, UNTESTABLE,              "AU",       "untestable")                           \
+    DEF_FAULTSTATUS(3, REDUNDANT,               "RE",       "redundant fault")                      \
+    DEF_FAULTSTATUS(4, DETECT_BY_IMPLICATION,   "DI",       "fault can be detected by implication") \
+    /* (end) */
+// clang-format on
+
+
+// clang-format off
+//  DEF_LOGICVAL(id, name, str)
+#define LOGICVAL_TABLE()            \
+    DEF_LOGICVAL(0, LOGIC_X, 'x')     \
+    DEF_LOGICVAL(1, LOGIC_0, '1')     \
+    DEF_LOGICVAL(2, LOGIC_1, '0')     \
+    /* (end) */
+// clang-format on
 
 enum GateType : uint32_t {
 
@@ -41,8 +63,8 @@ enum GateType : uint32_t {
     GATETYPE_TABLE()
 #undef DEF_GATETYPE
 
-        UNKNOWN
-    = 0x1000, //
+    //
+    UNKNOWN = 0x1000,
 };
 
 static inline const char* StringOf(GateType type)
@@ -64,34 +86,32 @@ enum FaultType {
     STUCK_AT_1
 };
 
-enum LogicVal {
-    LOGIC_UNDEF = -1,
-    LOGIC_X = 0,
-    LOGIC_0 = 1,
-    LOGIC_1 = 2,
+enum LogicVal : uint8_t {
+#define DEF_LOGICVAL(id, name, str) name = id,
+    LOGICVAL_TABLE()
+#undef DEF_LOGICVAL
 
     //
     LOGIC_COUNT
 };
 
-enum FaultStatus {
-    INIT,                 // initial status
-    TESTED,               // fault can be detected
-    UNTESTABLE,           // untestable
-    REDUNDANT,            // redundant fault
-    DETECT_BY_IMPLICATION // fault can be detected by implication
+
+enum FaultStatus : int8_t {
+#define DEF_FAULTSTATUS(id, name, str, desc) name = id,
+    FAULTSTATUS_TABLE()
+#undef DEF_FAULTSTATUS
 };
 
 static char charOfLogicVal(LogicVal val)
 {
     switch (val) {
-    case LOGIC_X:
-        return 'x';
-    case LOGIC_1:
-        return '1';
-    case LOGIC_0:
-        return '0';
+#define DEF_LOGICVAL(id, name, chr) \
+    case LogicVal::name: return chr;
+        LOGICVAL_TABLE()
+#undef DEF_LOGICVAL
+
     default:
+        ASSERT(false);
         perror("don't support logic_undefine, during logic_val convert to char");
         return 'x';
     }
@@ -100,22 +120,17 @@ static char charOfLogicVal(LogicVal val)
 static const char* charOfFaultStatus(FaultStatus status)
 {
     switch (status) {
-    case INIT:
-        return "UC.UNK";
-    case TESTED:
-        return "DS";
-    case UNTESTABLE:
-        return "AU";
-    case REDUNDANT:
-        return "RE";
-    case DETECT_BY_IMPLICATION:
-        return "DI";
-    default:
-        std::cerr << "Unknown fault type" << std::endl;
-        break;
-    }
 
-    return "";
+#define DEF_FAULTSTATUS(id, name, str, desc) \
+    case FaultStatus::name:                  \
+        return str;
+        FAULTSTATUS_TABLE()
+#undef DEF_FAULTSTATUS
+    default:
+        ASSERT(false);
+        std::cerr << "Unknown fault type" << std::endl;
+        return "";
+    }
 }
 
 #endif //R7_COMMON_H
