@@ -16,6 +16,7 @@
 #include "CubeHandler.h"
 #include "Faultlist.h"
 #include "Netlist.h"
+#include "Statuslist.h"
 #include "asserts.h"
 
 ATPGDriverDefault::ATPGDriverDefault(ContextDefault* context)
@@ -77,7 +78,7 @@ void ATPGDriverDefault::Execute()
         FaultStatus faultStatus = cubeGenerator->Generate(fault, cube);
 
         //  标记 fault 的检测状态
-        fault->status = faultStatus;
+        context->statuslist->UpdateStatus(fault->id, faultStatus);
 
         //  如果能够生成 cube，那么触发 Handle 处理
         if (cube != nullptr) {
