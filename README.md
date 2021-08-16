@@ -74,6 +74,19 @@ make
 
 # 快速入门
 
+整体计算流程为：
+
+```text
++---------+    +-----------+    +--------+
+| netlist |--->| faultlist |-+->|  cube  |
++---------+    +-----------+ |  +--------+
+                             |  +--------+
+                             +->| status |
+                                +--------+
+```
+
+命令行为：
+
 ```shell
 ./opentpg -n bench/s17.bench  -c bench/s17.cfg -f bench/s17.fault -u bench/s17.cube
 ```
