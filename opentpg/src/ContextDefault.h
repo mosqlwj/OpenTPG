@@ -24,4 +24,4 @@ struct ContextDefault {
     Params* params { nullptr };
 };
 
-#endif //R7_CONTEXTDEFAULT_H
+#endif //OPENTPG_CONTEXTDEFAULT_H

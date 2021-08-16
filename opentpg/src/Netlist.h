@@ -75,4 +75,4 @@ private:
     void CalcCubeRange();
 };
 
-#endif //R7_NETLIST_H
+#endif //OPENTPG_NETLIST_H

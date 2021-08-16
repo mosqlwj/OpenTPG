@@ -25,4 +25,4 @@ public:
 
 extern CubeGenerator* CreateCubeGenerator(void* context);
 
-#endif //R7_CUBEGENERATOR_H
+#endif //OPENTPG_CUBEGENERATOR_H

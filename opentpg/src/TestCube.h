@@ -79,4 +79,4 @@ private:
     std::vector<std::vector<LogicVal>> logicValue;
 };
 
-#endif //R7_TESTCUBE_H
+#endif //OPENTPG_TESTCUBE_H

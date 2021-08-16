@@ -30,4 +30,4 @@ public:
     }
 };
 
-#endif //R7_CUBEOUTPUTDEFAULT_H
+#endif //OPENTPG_CUBEOUTPUTDEFAULT_H

@@ -20,4 +20,4 @@ public:
     virtual void Handle(TestCube* cube) = 0;
 };
 
-#endif //R7_CUBEHANDLER_H
+#endif //OPENTPG_CUBEHANDLER_H

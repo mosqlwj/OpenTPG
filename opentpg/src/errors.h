@@ -28,4 +28,4 @@ enum : int {
 
 }; // errors
 
-#endif //R7_ERRORS_H
+#endif //OPENTPG_ERRORS_H

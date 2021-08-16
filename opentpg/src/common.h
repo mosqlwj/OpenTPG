@@ -133,4 +133,4 @@ static const char* charOfFaultStatus(FaultStatus status)
     }
 }
 
-#endif //R7_COMMON_H
+#endif //OPENTPG_COMMON_H

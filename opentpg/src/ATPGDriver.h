@@ -42,4 +42,4 @@ public:
 
 extern ATPGDriver* CreateATPGDriver(void* context);
 
-#endif //R7_ATPGDRIVER_H
+#endif //OPENTPG_ATPGDRIVER_H

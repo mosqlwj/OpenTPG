@@ -33,4 +33,4 @@ private:
     std::list<Gate*> chainGates;
 };
 
-#endif //R7_SCANCHAIN_H
+#endif //OPENTPG_SCANCHAIN_H

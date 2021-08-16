@@ -22,4 +22,4 @@
 #endif
 #endif
 
-#endif //R7_ASSERTS_H
+#endif //OPENTPG_ASSERTS_H

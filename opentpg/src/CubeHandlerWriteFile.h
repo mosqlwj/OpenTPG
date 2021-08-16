@@ -46,4 +46,4 @@ private:
     std::ofstream stream;
 };
 
-#endif //R7_CUBEHANDLERWRITEFILE_H
+#endif //OPENTPG_CUBEHANDLERWRITEFILE_H

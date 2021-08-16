@@ -35,4 +35,4 @@ struct Fault {
     std::string GetFaultName(const Gate* gate, int32_t pinIdx);
 };
 
-#endif //R7_FAULT_H
+#endif //OPENTPG_FAULT_H

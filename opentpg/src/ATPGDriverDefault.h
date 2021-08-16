@@ -41,4 +41,4 @@ private:
     CubeGenerator* cubeGenerator;
 };
 
-#endif //R7_ATPGDRIVERDEFAULT_H
+#endif //OPENTPG_ATPGDRIVERDEFAULT_H

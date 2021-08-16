@@ -21,4 +21,4 @@ extern std::ofstream& operator<<(std::ofstream& stream, const TestCube& cube);
 extern int Print(std::ofstream& stream, const TestCube& cube);
 extern int Print(std::ofstream& stream, const Fault& fault, FaultStatus status);
 
-#endif //R7_PRINTERS_H
+#endif //OPENTPG_PRINTERS_H

@@ -27,4 +27,4 @@ struct Gate {
     uint32_t level;
 };
 
-#endif //R7_GATE_H
+#endif //OPENTPG_GATE_H

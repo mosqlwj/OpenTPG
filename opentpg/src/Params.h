@@ -50,4 +50,4 @@ private:
     std::string cubeDumpFile;
     static Params instance;
 };
-#endif //R7_PARAMS_H
+#endif //OPENTPG_PARAMS_H

@@ -27,4 +27,4 @@ private:
     const ContextDefault* context;
 };
 
-#endif //R7_CUBEGENERATOREXAMPLE_H
+#endif //OPENTPG_CUBEGENERATOREXAMPLE_H

@@ -40,4 +40,4 @@ private:
     std::vector<Fault*> faultlist; // ATPG需要target的所有的fault，已经做了故障折叠处理
 };
 
-#endif //R7_FAULTLIST_H
+#endif //OPENTPG_FAULTLIST_H
