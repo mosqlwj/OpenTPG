@@ -22,6 +22,8 @@ int Statuslist::Create(Faultlist* faultlist)
 
 void Statuslist::UpdateStatus(int32_t faultId, FaultStatus newStatus)
 {
+    ASSERT(faultId >= 0);
+    ASSERT(faultId < faultStatus.size());
     faultStatus[faultId] = newStatus;
 }
 
