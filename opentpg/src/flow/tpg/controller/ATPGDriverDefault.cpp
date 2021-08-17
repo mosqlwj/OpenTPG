@@ -11,13 +11,13 @@
  */
 #include "ATPGDriverDefault.h"
 
-#include "ContextDefault.h"
+#include "../../../Faultlist.h"
+#include "../../../Netlist.h"
+#include "../../../Statuslist.h"
+#include "../../../utils/asserts.h"
+#include "../context/ContextDefault.h"
+#include "../context/CubeHandler.h"
 #include "CubeGenerator.h"
-#include "CubeHandler.h"
-#include "Faultlist.h"
-#include "Netlist.h"
-#include "Statuslist.h"
-#include "asserts.h"
 
 ATPGDriverDefault::ATPGDriverDefault(ContextDefault* context)
     : context(context)

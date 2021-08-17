@@ -12,7 +12,7 @@
 #ifndef OPENTPG_COMMON_H
 #define OPENTPG_COMMON_H
 
-#include "asserts.h"
+#include "utils/asserts.h"
 
 #include <iostream>
 #include <stdint.h>

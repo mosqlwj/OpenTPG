@@ -12,10 +12,10 @@
 #ifndef OPENTPG_CUBEHANDLERWRITEFILE_H
 #define OPENTPG_CUBEHANDLERWRITEFILE_H
 
+#include "../../../TestCube.h"
+#include "../../../printers.h"
+#include "../../../utils/asserts.h"
 #include "CubeHandler.h"
-#include "TestCube.h"
-#include "asserts.h"
-#include "printers.h"
 
 #include <fstream>
 #include <string>

@@ -9,14 +9,15 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#include "ATPGDriver.h"
+#ifndef OPENTPG_CUBEHANDLER_H
+#define OPENTPG_CUBEHANDLER_H
 
-#include "ATPGDriverDefault.h"
-#include "ContextDefault.h"
-#include "asserts.h"
+#include "../../../TestCube.h"
 
-extern ATPGDriver* CreateATPGDriver(void* context)
-{
-    ASSERT(context != nullptr);
-    return new ATPGDriverDefault(reinterpret_cast<ContextDefault*>(context));
-}
+class CubeHandler {
+public:
+    virtual ~CubeHandler() = default;
+    virtual void Handle(TestCube* cube) = 0;
+};
+
+#endif //OPENTPG_CUBEHANDLER_H

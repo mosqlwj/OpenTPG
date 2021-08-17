@@ -11,10 +11,10 @@
  */
 #include "CubeGeneratorExample.h"
 
-#include "ContextDefault.h"
-#include "Netlist.h"
-#include "TestCube.h"
-#include "asserts.h"
+#include "../../../Netlist.h"
+#include "../../../TestCube.h"
+#include "../../../utils/asserts.h"
+#include "../context/ContextDefault.h"
 
 CubeGeneratorExample::CubeGeneratorExample(ContextDefault* context)
     : context(context)

@@ -9,25 +9,14 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef OPENTPG_CUBEOUTPUTDEFAULT_H
-#define OPENTPG_CUBEOUTPUTDEFAULT_H
+#include "CubeGenerator.h"
+#include "CubeGeneratorExample.h"
 
-#include "CubeHandler.h"
-#include "asserts.h"
+#include "../../../utils/asserts.h"
+#include "../context/ContextDefault.h"
 
-class CubeHandlerDefault : public CubeHandler {
-public:
-    virtual ~CubeHandlerDefault() = default;
-
-    void Handle(TestCube* cube) override
-    {
-        ASSERT(cube != nullptr);
-        delete cube;
-    }
-
-    void Commit() override
-    {
-    }
-};
-
-#endif //OPENTPG_CUBEOUTPUTDEFAULT_H
+extern CubeGenerator* CreateCubeGenerator(void* context)
+{
+    ASSERT(context != nullptr);
+    return new CubeGeneratorExample(reinterpret_cast<ContextDefault*>(context));
+}

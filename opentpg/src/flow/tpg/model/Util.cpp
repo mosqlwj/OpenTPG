@@ -9,14 +9,25 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#include "CubeGenerator.h"
-#include "CubeGeneratorExample.h"
+#include "Util.h"
+#include "utils/asserts.h"
 
-#include "ContextDefault.h"
-#include "asserts.h"
+#include <iostream>
+#include <map>
 
-extern CubeGenerator* CreateCubeGenerator(void* context)
+std::map<std::string, GateType> name2Type = {
+#define DEF_GATETYPE(id, name, str) { str, GateType::name },
+    GATETYPE_TABLE()
+#undef DEF_GATETYPE
+};
+
+GateType Util::GetGateTypeFromString(const std::string& name)
 {
-    ASSERT(context != nullptr);
-    return new CubeGeneratorExample(reinterpret_cast<ContextDefault*>(context));
+    if (name2Type.find(name) == name2Type.end()) {
+        std::cerr << "Not support gate type: " << name << std::endl;
+        ASSERT(false);
+        return UNKNOWN;
+    }
+
+    return name2Type[name];
 }

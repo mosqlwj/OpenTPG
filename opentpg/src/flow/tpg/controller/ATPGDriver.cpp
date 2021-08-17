@@ -9,25 +9,14 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#include "Util.h"
-#include "asserts.h"
+#include "ATPGDriver.h"
 
-#include <iostream>
-#include <map>
+#include "../../../utils/asserts.h"
+#include "../context/ContextDefault.h"
+#include "ATPGDriverDefault.h"
 
-std::map<std::string, GateType> name2Type = {
-#define DEF_GATETYPE(id, name, str) { str, GateType::name },
-    GATETYPE_TABLE()
-#undef DEF_GATETYPE
-};
-
-GateType Util::GetGateTypeFromString(const std::string& name)
+extern ATPGDriver* CreateATPGDriver(void* context)
 {
-    if (name2Type.find(name) == name2Type.end()) {
-        std::cerr << "Not support gate type: " << name << std::endl;
-        ASSERT(false);
-        return UNKNOWN;
-    }
-
-    return name2Type[name];
+    ASSERT(context != nullptr);
+    return new ATPGDriverDefault(reinterpret_cast<ContextDefault*>(context));
 }

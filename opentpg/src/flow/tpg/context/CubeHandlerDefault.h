@@ -9,15 +9,25 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef OPENTPG_CUBEHANDLER_H
-#define OPENTPG_CUBEHANDLER_H
+#ifndef OPENTPG_CUBEOUTPUTDEFAULT_H
+#define OPENTPG_CUBEOUTPUTDEFAULT_H
 
-#include "TestCube.h"
+#include "../../../utils/asserts.h"
+#include "CubeHandler.h"
 
-class CubeHandler {
+class CubeHandlerDefault : public CubeHandler {
 public:
-    virtual ~CubeHandler() = default;
-    virtual void Handle(TestCube* cube) = 0;
+    virtual ~CubeHandlerDefault() = default;
+
+    void Handle(TestCube* cube) override
+    {
+        ASSERT(cube != nullptr);
+        delete cube;
+    }
+
+    void Commit() override
+    {
+    }
 };
 
-#endif //OPENTPG_CUBEHANDLER_H
+#endif //OPENTPG_CUBEOUTPUTDEFAULT_H

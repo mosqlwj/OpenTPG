@@ -12,7 +12,7 @@
 #ifndef OPENTPG_CUBEGENERATOR_H
 #define OPENTPG_CUBEGENERATOR_H
 
-#include "common.h"
+#include "../../../common.h"
 
 struct Fault;
 struct TestCube;

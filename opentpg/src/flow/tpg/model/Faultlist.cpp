@@ -15,9 +15,9 @@
 #include "Netlist.h"
 
 #include "Statuslist.h"
-#include "asserts.h"
 #include "common.h"
 #include "printers.h"
+#include "utils/asserts.h"
 
 int Faultlist::CreateFaults(Netlist* netlist)
 {
