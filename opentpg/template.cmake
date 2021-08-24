@@ -1,0 +1,27 @@
+set(SOURCES "")
+set(SOURCES_DEBUG "")
+set(SOURCES_RELEASE "")
+
+set(INCLUDEPATH "")
+set(INCLUDEPATH_DEBUG "")
+set(INCLUDEPATH_RELEASE "")
+
+set(DEFINES "")
+set(DEFINES_DEBUG "")
+set(DEFINES_RELEASE "")
+
+set(CXXFLAGS "")
+set(CXXFLAGS_DEBUG "")
+set(CXXFLAGS_RELEASE "")
+
+set(CFLAGS "")
+set(CFLAGS_DEBUG "")
+set(CFLAGS_RELEASE "")
+
+set(LIBS "")
+set(LIBS_DEBUG "")
+set(LIBS_RELEASE "")
+
+set(LFLAGS "")
+set(LFLAGS_DEBUG "")
+set(LFLAGS_RELEASE "")

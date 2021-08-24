@@ -1,0 +1,4 @@
+
+list(APPEND HEADERS ${CMAKE_CURRENT_LIST_DIR}/strings.h)
+
+list(APPEND SOURCES ${CMAKE_CURRENT_LIST_DIR}/strings.cpp)

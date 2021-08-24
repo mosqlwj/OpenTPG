@@ -21,6 +21,7 @@ public:
     {
         return netlistFile;
     }
+
     const std::string& GetFaultlistFile() const
     {
         return faultlistFile;

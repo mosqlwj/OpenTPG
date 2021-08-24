@@ -9,15 +9,7 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef OPENTPG_CUBEHANDLER_H
-#define OPENTPG_CUBEHANDLER_H
+#ifndef STRINGS_H
+#define STRINGS_H
 
-#include "../../../TestCube.h"
-
-class CubeHandler {
-public:
-    virtual ~CubeHandler() = default;
-    virtual void Handle(TestCube* cube) = 0;
-};
-
-#endif //OPENTPG_CUBEHANDLER_H
+#endif //STRINGS_H

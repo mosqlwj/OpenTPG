@@ -9,14 +9,14 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#include "Faultlist.h"
-#include "Netlist.h"
-#include "Params.h"
-#include "Statuslist.h"
-#include "flow/atpg/context/ContextDefault.h"
-#include "flow/atpg/context/CubeHandlerWriteFile.h"
-#include "flow/tpg/errors/errors.h"
-#include "tpg/ATPGDriverDefault.h"
+#include "flowtpg/context/ContextDefault.h"
+#include "flowtpg/context/CubeHandlerWriteFile.h"
+#include "flowtpg/control/ATPGDriverDefault.h"
+#include "flowtpg/errors/errors.h"
+#include "flowtpg/model/Faultlist.h"
+#include "flowtpg/model/Netlist.h"
+#include "flowtpg/model/Statuslist.h"
+#include "shell/Params.h"
 
 #include <memory>
 
