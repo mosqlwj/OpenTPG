@@ -12,7 +12,7 @@
 #include "Fault.h"
 
 static std::vector<std::string> normalGatePinName = { "Z", "I1", "I2", "I3", "I4" };
-static std::vector<std::string> dffGatePinName = { "Q", "D", "CK" };
+static std::vector<std::string> dffGatePinName = { "Q", "CK", "D" };
 
 std::string Fault::GetFaultName(const Gate* gate, int32_t pinIdx)
 {
