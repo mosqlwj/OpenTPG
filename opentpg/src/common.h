@@ -47,7 +47,6 @@ typedef int32_t FaultId;
     /* (end) */
 // clang-format on
 
-
 // clang-format off
 //  DEF_LOGICVAL(id, name, str)
 #define LOGICVAL_TABLE()            \
@@ -64,7 +63,8 @@ enum GateType : uint32_t {
 #undef DEF_GATETYPE
 
     //
-    UNKNOWN = 0x1000,
+    UNKNOWN
+    = 0x1000,
 };
 
 static inline const char* StringOf(GateType type)
@@ -95,7 +95,6 @@ enum LogicVal : uint8_t {
     LOGIC_COUNT
 };
 
-
 enum FaultStatus : int8_t {
 #define DEF_FAULTSTATUS(id, name, str, desc) name = id,
     FAULTSTATUS_TABLE()
@@ -106,7 +105,8 @@ static char charOfLogicVal(LogicVal val)
 {
     switch (val) {
 #define DEF_LOGICVAL(id, name, chr) \
-    case LogicVal::name: return chr;
+    case LogicVal::name:            \
+        return chr;
         LOGICVAL_TABLE()
 #undef DEF_LOGICVAL
 
