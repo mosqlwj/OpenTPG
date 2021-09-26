@@ -52,6 +52,16 @@ public:
         return gates;
     }
 
+    inline int32_t GetPOCount() const
+    {
+        return numOfPO;
+    }
+
+    inline int32_t GetDffCount() const
+    {
+        return numOfDFF;
+    }
+
 private:
     int32_t numOfPI = 0;
     int32_t numOfPO = 0;

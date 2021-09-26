@@ -20,6 +20,8 @@
 typedef int32_t GateId;
 typedef int32_t FaultId;
 
+#define MAXCYCLENUM 4
+
 // clang-format off
 #define GATETYPE_TABLE()                    \
     DEF_GATETYPE(0,     PI,     "INPUT")    \
@@ -49,10 +51,11 @@ typedef int32_t FaultId;
 
 // clang-format off
 //  DEF_LOGICVAL(id, name, str)
-#define LOGICVAL_TABLE()            \
-    DEF_LOGICVAL(0, LOGIC_X, 'x')     \
-    DEF_LOGICVAL(1, LOGIC_0, '1')     \
-    DEF_LOGICVAL(2, LOGIC_1, '0')     \
+#define LOGICVAL_TABLE()                \
+    DEF_LOGICVAL(0, LOGIC_X, 'x')       \
+    DEF_LOGICVAL(1, LOGIC_0, '0')       \
+    DEF_LOGICVAL(2, LOGIC_1, '1')       \
+    DEF_LOGICVAL(3, LOGIC_UNKNOW, 'u')  \
     /* (end) */
 // clang-format on
 
@@ -82,7 +85,7 @@ static inline const char* StringOf(GateType type)
 }
 
 enum FaultType {
-    STUCK_AT_0,
+    STUCK_AT_0 = 0,
     STUCK_AT_1
 };
 
@@ -132,5 +135,17 @@ static const char* charOfFaultStatus(FaultStatus status)
         return "";
     }
 }
+
+const LogicVal INV_TABLE[] = { LOGIC_X, LOGIC_1, LOGIC_0 };
+const LogicVal BUF_TABLE[] = { LOGIC_X, LOGIC_0, LOGIC_1 };
+const LogicVal AND_TABLE[3][3] = { { LOGIC_X, LOGIC_0, LOGIC_X },
+    { LOGIC_0, LOGIC_0, LOGIC_0 },
+    { LOGIC_X, LOGIC_0, LOGIC_1 } };
+const LogicVal OR_TABLE[3][3] = { { LOGIC_X, LOGIC_X, LOGIC_1 },
+    { LOGIC_X, LOGIC_0, LOGIC_1 },
+    { LOGIC_1, LOGIC_1, LOGIC_1 } };
+const LogicVal XOR_TABLE[3][3] = { { LOGIC_X, LOGIC_X, LOGIC_X },
+    { LOGIC_X, LOGIC_0, LOGIC_1 },
+    { LOGIC_X, LOGIC_1, LOGIC_0 } };
 
 #endif //OPENTPG_COMMON_H
