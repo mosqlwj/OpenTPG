@@ -52,10 +52,15 @@ void Params::Load(int argc, char** argv) {
         "Generate the cubes and write to the spec such as ./s27.cube", //
         true,                                                          //
         "");
+    options.add(
+        "simulate", //
+        's',        //
+        "Auto do simulate for each cube, and print the fault detect result.");
     options.parse_check(argc, argv);
     netlistFile = options.get<std::string>("netlist");
     faultlistFile = options.get<std::string>("fault");
     configFile = options.get<std::string>("config");
     gateDumpFile = options.get<std::string>("gate");
     cubeDumpFile = options.get<std::string>("cube");
+    simulate = options.exist("simulate");
 }

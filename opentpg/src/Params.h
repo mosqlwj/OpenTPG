@@ -32,6 +32,9 @@ public:
     const std::string& GetCubeDumpFile() const {
         return cubeDumpFile;
     }
+    bool EnableSimulate() const {
+        return simulate;
+    }
     void Load(int argc, char** argv);
 
 private:
@@ -43,6 +46,7 @@ private:
     std::string configFile;
     std::string gateDumpFile;
     std::string cubeDumpFile;
+    bool simulate { false };
     static Params instance;
 };
 #endif //OPENTPG_PARAMS_H

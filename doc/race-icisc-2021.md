@@ -176,6 +176,10 @@ $: 3
 
 <a name="race-rating"></a>
 
+## 如何自验证
+
+本项目自带了一个简易的 simulator，可以通过 `-s` 来告诉程序在将 cube 写入文件之后顺便做一下仿真。 
+
 ## 评分
 
 * 评分细则，已经公布在 icisc 官网 [https://eda.icisc.cn/download/index?type=2](https://eda.icisc.cn/download/index?type=2)

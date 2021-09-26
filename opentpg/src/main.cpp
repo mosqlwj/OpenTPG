@@ -60,17 +60,22 @@ int main(int argc, char** argv) {
     context.params = &params;
 
     //  定义一个仿真器
-    SimulatorDefault simulator;
-    simulator.SetupNetlist(&netlist);
+    Simulator* simulator = nullptr;
+    if (params.EnableSimulate()) {
+        SimulatorDefault* defaultSimulator = new SimulatorDefault;
+        defaultSimulator->SetupNetlist(&netlist);
+        simulator = defaultSimulator;
+    }
 
     //  生成 cube
     std::unique_ptr<ATPGDriver> atpgDriver(CreateATPGDriver(&context));
-    CubeHandlerWriteFile cubeOutputPrinter(params.GetCubeDumpFile(), &simulator);
+    CubeHandlerWriteFile cubeOutputPrinter(params.GetCubeDumpFile(), simulator);
     atpgDriver->SetupCubeOutput(&cubeOutputPrinter);
     atpgDriver->SetupNetlist(&netlist);
     atpgDriver->SetupFaultlist(&faultlist);
     ret = atpgDriver->Prepare();
     if (ret != 0) {
+        delete simulator;
         return errors::ATPG_PREPARE_FAILED;
     }
 
@@ -85,5 +90,6 @@ int main(int argc, char** argv) {
         faultlist.DumpFaults(params.GetFaultlistFile(), statuslist);
     }
 
+    delete simulator;
     return 0;
 }

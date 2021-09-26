@@ -44,7 +44,7 @@ public:
         ASSERT(stream.is_open());
         stream << (*cube);
 
-        //  提醒：去掉下面的注释可以自动进行基本的仿真验证，以方便大家调测代码。但正式发布时，不需要这段代码。
+        //  执行仿真验证
         if (simulator != nullptr) {
             bool detected = simulator->Simulate(fault, cube);
             std::cout << "CUBE DETECT:" << cube->GetFaultIndex() << " " << (detected ? "YES" : "NO") << std::endl;
