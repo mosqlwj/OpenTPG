@@ -37,3 +37,11 @@ cmake*/
 *cmake_install.cmake
 build/
 *.old
+
+CMakeCache.txt
+*.swp
+*.cbp
+Testing/
+Makefile
+
+
