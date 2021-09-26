@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef SIMFAULT_H
-#define SIMFAULT_H
+#ifndef OPENTPG_SIMFAULT_H
+#define OPENTPG_SIMFAULT_H
 
 #include "Faultlist.h"
 #include "Netlist.h"

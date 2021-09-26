@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef SIMGOOD_H
-#define SIMGOOD_H
+#ifndef OPENTPG_SIMGOOD_H
+#define OPENTPG_SIMGOOD_H
 
 #include "Netlist.h"
 #include "SimUtil.h"
@@ -49,7 +49,7 @@ public:
     {
         return goodMechine[cycleId][id];
     }
-    
+
     inline std::vector<std::vector<LogicVal>>& GetGoodMechine()
     {
         return goodMechine;
@@ -99,4 +99,4 @@ private:
     std::queue<Gate*> eventQueue;
 };
 
-#endif //SIMGOOD_H
+#endif //OPENTPG_SIMGOOD_H

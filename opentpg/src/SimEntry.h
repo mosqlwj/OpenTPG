@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef SIMENTRY_H
-#define SIMENTRY_H
+#ifndef OPENTPG_SIMENTRY_H
+#define OPENTPG_SIMENTRY_H
 
 #include "Faultlist.h"
 #include "SimFault.h"
@@ -50,4 +50,4 @@ private:
     SimFault* faultSimulator { nullptr };
 };
 
-#endif //SIMENTRY_H
+#endif //OPENTPG_SIMENTRY_H

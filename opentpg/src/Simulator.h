@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef SIMULATOR_H
-#define SIMULATOR_H
+#ifndef OPENTPG_SIMULATOR_H
+#define OPENTPG_SIMULATOR_H
 
 class Simulator {
 public:
@@ -18,4 +18,4 @@ public:
     virtual bool HandleTestCube(TestCube* testCube) = 0;
 };
 
-#endif //SIMULATOR_H
+#endif //OPENTPG_SIMULATOR_H

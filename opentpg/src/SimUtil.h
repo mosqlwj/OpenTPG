@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef SIMUTIL_H
-#define SIMUTIL_H
+#ifndef OPENTPG_SIMUTIL_H
+#define OPENTPG_SIMUTIL_H
 
 #include "Gate.h"
 #include "TestCube.h"
@@ -225,4 +225,4 @@ public:
     }
 };
 
-#endif //SIMUTIL_H
+#endif //OPENTPG_SIMUTIL_H
