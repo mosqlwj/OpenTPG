@@ -17,6 +17,8 @@
 #include "common.h"
 #include "printers.h"
 
+#include <cstring>
+
 class ValueManager {
     uint8_t* exists;
     size_t gCount;
