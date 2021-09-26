@@ -45,10 +45,11 @@ public:
         ASSERT(stream.is_open());
         stream << (*cube);
 
-        if (simulator != nullptr) {
-            bool detected = simulator->HandleTestCube(cube);
-            std::cout << "CUBE " << cube->GetFaultIndex() << " " << (detected ? "DETECTED" : "UNDETECTED") << std::endl;
-        }
+        //  提醒：去掉下面的注释可以自动进行基本的仿真验证，以方便大家调测代码。但正式发布时，不需要这段代码。
+        // if (simulator != nullptr) {
+        //     bool detected = simulator->HandleTestCube(cube);
+        //     std::cout << "CUBE " << cube->GetFaultIndex() << " " << (detected ? "DETECTED" : "UNDETECTED") << std::endl;
+        // }
     }
 
 private:
