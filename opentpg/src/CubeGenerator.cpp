@@ -15,8 +15,7 @@
 #include "ContextDefault.h"
 #include "asserts.h"
 
-extern CubeGenerator* CreateCubeGenerator(void* context)
-{
+extern CubeGenerator* CreateCubeGenerator(void* context) {
     ASSERT(context != nullptr);
     return new CubeGeneratorExample(reinterpret_cast<ContextDefault*>(context));
 }

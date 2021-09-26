@@ -12,30 +12,26 @@
 #include "Statuslist.h"
 #include "Faultlist.h"
 
-int Statuslist::Create(Faultlist* faultlist)
-{
+int Statuslist::Create(Faultlist* faultlist) {
     ASSERT(faultlist != nullptr);
     ASSERT(faultlist->Faults().size() > 0);
     faultStatus.resize(faultlist->Faults().size(), FaultStatus::INIT);
     return 0;
 }
 
-void Statuslist::UpdateStatus(int32_t faultId, FaultStatus newStatus)
-{
+void Statuslist::UpdateStatus(int32_t faultId, FaultStatus newStatus) {
     ASSERT(faultId >= 0);
     ASSERT(faultId < faultStatus.size());
     faultStatus[faultId] = newStatus;
 }
 
-void Statuslist::Clean()
-{
+void Statuslist::Clean() {
     auto size = faultStatus.size();
     faultStatus.clear();
     faultStatus.resize(size, FaultStatus::INIT);
 }
 
-FaultStatus Statuslist::operator[](int32_t faultId) const
-{
+FaultStatus Statuslist::operator[](int32_t faultId) const {
     ASSERT(faultId >= 0);
     ASSERT(faultId < faultStatus.size());
     return faultStatus[faultId];

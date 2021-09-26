@@ -26,13 +26,11 @@ public:
 
     int DumpFaults(const std::string& faultlistFile, const Statuslist& statuslist);
 
-    const std::vector<Fault*>& Faults() const
-    {
+    const std::vector<Fault*>& Faults() const {
         return faultlist;
     }
 
-    std::vector<Fault*>& Faults()
-    {
+    std::vector<Fault*>& Faults() {
         return faultlist;
     }
 

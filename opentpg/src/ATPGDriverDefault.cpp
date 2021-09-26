@@ -20,49 +20,42 @@
 #include "asserts.h"
 
 ATPGDriverDefault::ATPGDriverDefault(ContextDefault* context)
-    : context(context)
-{
+    : context(context) {
     netlist = nullptr;
     faultlist = nullptr;
     cubeHandler = nullptr;
     cubeGenerator = nullptr;
 }
 
-ATPGDriverDefault::~ATPGDriverDefault()
-{
+ATPGDriverDefault::~ATPGDriverDefault() {
 }
 
-void ATPGDriverDefault::SetupNetlist(Netlist* n)
-{
+void ATPGDriverDefault::SetupNetlist(Netlist* n) {
     ASSERT(n != nullptr);
     ASSERT(netlist == nullptr);
     netlist = n;
 }
 
-void ATPGDriverDefault::SetupFaultlist(Faultlist* f)
-{
+void ATPGDriverDefault::SetupFaultlist(Faultlist* f) {
     ASSERT(f != nullptr);
     ASSERT(faultlist == nullptr);
     faultlist = f;
 }
 
-void ATPGDriverDefault::SetupCubeOutput(CubeHandler* c)
-{
+void ATPGDriverDefault::SetupCubeOutput(CubeHandler* c) {
     ASSERT(c != nullptr);
     ASSERT(cubeHandler == nullptr);
     cubeHandler = c;
 }
 
-int ATPGDriverDefault::Prepare()
-{
+int ATPGDriverDefault::Prepare() {
     cubeGenerator = CreateCubeGenerator(context);
     ASSERT(cubeGenerator != nullptr);
 
     return 0;
 }
 
-void ATPGDriverDefault::Execute()
-{
+void ATPGDriverDefault::Execute() {
     ASSERT(faultlist != nullptr);
     ASSERT(cubeHandler != nullptr);
     ASSERT(cubeGenerator != nullptr);
@@ -87,8 +80,7 @@ void ATPGDriverDefault::Execute()
     }
 }
 
-void ATPGDriverDefault::Cleanup()
-{
+void ATPGDriverDefault::Cleanup() {
     netlist = nullptr;
     faultlist = nullptr;
     cubeHandler = nullptr;

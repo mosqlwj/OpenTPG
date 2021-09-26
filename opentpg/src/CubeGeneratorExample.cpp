@@ -17,18 +17,15 @@
 #include "asserts.h"
 
 CubeGeneratorExample::CubeGeneratorExample(ContextDefault* context)
-    : context(context)
-{
+    : context(context) {
     ASSERT(context != nullptr);
     ASSERT(context->netlist != nullptr);
 }
 
-CubeGeneratorExample::~CubeGeneratorExample()
-{
+CubeGeneratorExample::~CubeGeneratorExample() {
 }
 
-FaultStatus CubeGeneratorExample::Generate(const Fault* fault, TestCube*& cube)
-{
+FaultStatus CubeGeneratorExample::Generate(const Fault* fault, TestCube*& cube) {
     ASSERT(fault != nullptr);
     ASSERT(cube == nullptr);
     ASSERT(context != nullptr);

@@ -19,8 +19,7 @@
 #include <iostream>
 #include <string>
 
-int Netlist::LoadNetlist(const std::string& netlistFileName, const std::string& cfgFileName)
-{
+int Netlist::LoadNetlist(const std::string& netlistFileName, const std::string& cfgFileName) {
     std::string line;
     const std::string commentHead = "#";
     const std::string inputHead = "INPUT";
@@ -142,8 +141,7 @@ int Netlist::LoadNetlist(const std::string& netlistFileName, const std::string& 
     return 0;
 }
 
-void Netlist::SortGates()
-{
+void Netlist::SortGates() {
     std::sort(gates.begin(), gates.end(), [&](Gate* gate1, Gate* gate2) {
         if (gate1->type < gate2->type) {
             return true;
@@ -159,8 +157,7 @@ void Netlist::SortGates()
     }
 }
 
-void Netlist::CheckFloating()
-{
+void Netlist::CheckFloating() {
     for (auto gate : gates) {
         if (gate->outputs.empty() && gate->type != PO) {
             std::cerr << "floating gate: " << gate->name << std::endl;
@@ -168,8 +165,7 @@ void Netlist::CheckFloating()
     }
 }
 
-bool Netlist::ParseConfig(const std::string& configFileName)
-{
+bool Netlist::ParseConfig(const std::string& configFileName) {
     std::string line;
     std::ifstream configFile(configFileName);
 
@@ -203,45 +199,43 @@ bool Netlist::ParseConfig(const std::string& configFileName)
         std::vector<std::string> res;
         boost::split(res, line, boost::is_any_of("{} "), boost::token_compress_on);
         switch (parseStat) {
-        case IDLE:
-            break;
-        case SCAN_CHAIN: {
-            //        for (auto r : res) {
-            //            std::cout << r << std::endl;
-            //        }
-            std::string chainName = res[0];
-            Gate* siGate = name2Gate[res[1]];
-            Gate* soGate = name2Gate[res[2]];
-            ScanChain* scanChain = new ScanChain(chainName, siGate, soGate);
-            scanChain->Trace(name2Gate);
-            scanChains.push_back(scanChain);
-            break;
-        }
-        case CLOCK: {
-            std::string clockName = res[0];
-            Gate* clockGate = name2Gate[clockName];
-            LogicVal offVal = static_cast<LogicVal>(std::atoi(res[1].c_str()) + LOGIC_0);
-            clk2OffVal[clockGate] = offVal;
-            break;
-        }
-        default:
-            break;
+            case IDLE:
+                break;
+            case SCAN_CHAIN: {
+                //        for (auto r : res) {
+                //            std::cout << r << std::endl;
+                //        }
+                std::string chainName = res[0];
+                Gate* siGate = name2Gate[res[1]];
+                Gate* soGate = name2Gate[res[2]];
+                ScanChain* scanChain = new ScanChain(chainName, siGate, soGate);
+                scanChain->Trace(name2Gate);
+                scanChains.push_back(scanChain);
+                break;
+            }
+            case CLOCK: {
+                std::string clockName = res[0];
+                Gate* clockGate = name2Gate[clockName];
+                LogicVal offVal = static_cast<LogicVal>(std::atoi(res[1].c_str()) + LOGIC_0);
+                clk2OffVal[clockGate] = offVal;
+                break;
+            }
+            default:
+                break;
         }
     }
 
     return true;
 }
 
-void Netlist::TagGateRange()
-{
+void Netlist::TagGateRange() {
     dffBegin = (*std::find_if(gates.begin(), gates.end(), [](Gate* gate) {
         return gate->type == DFF;
     }))->id;
     dffEnd = dffBegin + numOfDFF;
 }
 
-void Netlist::ReOrderPi()
-{
+void Netlist::ReOrderPi() {
     std::sort(gates.begin(), gates.begin() + dffBegin, [&](Gate* gate1, Gate* gate2) {
         assert(gate1->inputs.size() == 0);
         if (clk2OffVal.find(gate1) != clk2OffVal.end() && clk2OffVal.find(gate2) == clk2OffVal.end()) {
@@ -259,8 +253,7 @@ void Netlist::ReOrderPi()
     }
 }
 
-void Netlist::ReOrderDff()
-{
+void Netlist::ReOrderDff() {
     std::sort(gates.begin() + dffBegin, gates.begin() + dffEnd, [&](Gate* gate1, Gate* gate2) {
         assert(gate1->inputs.size() == 2);
         if (gate1->inputs[1]->type == MUX && gate2->inputs[1]->type != MUX) {
@@ -285,8 +278,7 @@ void Netlist::ReOrderDff()
     }
 }
 
-int Netlist::DumpGates(const std::string& outputFileName)
-{
+int Netlist::DumpGates(const std::string& outputFileName) {
     if (outputFileName.empty()) {
         return -1;
     }
@@ -309,8 +301,7 @@ int Netlist::DumpGates(const std::string& outputFileName)
     return 0;
 }
 
-void Netlist::CalcCubeRange()
-{
+void Netlist::CalcCubeRange() {
     cubeEndId = dffEnd;
     for (GateId gateId = dffBegin; gateId < dffEnd; gateId++) {
         if (gates[gateId]->inputs[1]->type != MUX) {

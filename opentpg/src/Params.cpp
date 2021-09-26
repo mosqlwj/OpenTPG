@@ -13,17 +13,14 @@
 
 Params Params::instance;
 
-Params& Params::GetInstance()
-{
+Params& Params::GetInstance() {
     return instance;
 }
 
-Params::Params()
-{
+Params::Params() {
 }
 
-void Params::Load(int argc, char** argv)
-{
+void Params::Load(int argc, char** argv) {
     cmdline::parser options;
     // 加入指定类型的输入參数
     // 第一个參数：长名称

@@ -20,26 +20,22 @@
 
 class SimulatorDefault : public Simulator {
 public:
-    SimulatorDefault()
-    {
+    SimulatorDefault() {
         goodSimulator = new SimGood();
         faultSimulator = new SimFault();
     }
 
-    void SetupNetlist(Netlist* netlist)
-    {
+    void SetupNetlist(Netlist* netlist) {
         goodSimulator->SetupNetlist(netlist);
         faultSimulator->SetupNetlist(netlist);
     }
 
-    ~SimulatorDefault() override
-    {
+    ~SimulatorDefault() override {
         delete goodSimulator;
         delete faultSimulator;
     }
 
-    bool Simulate(Fault* fault, TestCube* testCube) override
-    {
+    bool Simulate(Fault* fault, TestCube* testCube) override {
         ASSERT(fault != nullptr);
         ASSERT(testCube != nullptr);
 

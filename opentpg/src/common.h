@@ -70,17 +70,16 @@ enum GateType : uint32_t {
     = 0x1000,
 };
 
-static inline const char* StringOf(GateType type)
-{
+static inline const char* StringOf(GateType type) {
     switch (type) {
 #define DEF_GATETYPE(id, name, str) \
     case GateType::name:            \
         return str;
         GATETYPE_TABLE()
 #undef DEF_GATETYPE
-    default:
-        ASSERT(false);
-        return "??";
+        default:
+            ASSERT(false);
+            return "??";
     }
 }
 
@@ -105,8 +104,7 @@ enum FaultStatus : int8_t {
 #undef DEF_FAULTSTATUS
 };
 
-static char charOfLogicVal(LogicVal val)
-{
+static char charOfLogicVal(LogicVal val) {
     switch (val) {
 #define DEF_LOGICVAL(id, name, chr) \
     case LogicVal::name:            \
@@ -114,15 +112,14 @@ static char charOfLogicVal(LogicVal val)
         LOGICVAL_TABLE()
 #undef DEF_LOGICVAL
 
-    default:
-        ASSERT(false);
-        perror("don't support logic_undefine, during logic_val convert to char");
-        return 'x';
+        default:
+            ASSERT(false);
+            perror("don't support logic_undefine, during logic_val convert to char");
+            return 'x';
     }
 }
 
-static const char* charOfFaultStatus(FaultStatus status)
-{
+static const char* charOfFaultStatus(FaultStatus status) {
     switch (status) {
 
 #define DEF_FAULTSTATUS(id, name, str, desc) \
@@ -130,10 +127,10 @@ static const char* charOfFaultStatus(FaultStatus status)
         return str;
         FAULTSTATUS_TABLE()
 #undef DEF_FAULTSTATUS
-    default:
-        ASSERT(false);
-        std::cerr << "Unknown fault type" << std::endl;
-        return "";
+        default:
+            ASSERT(false);
+            std::cerr << "Unknown fault type" << std::endl;
+            return "";
     }
 }
 

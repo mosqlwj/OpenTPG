@@ -29,8 +29,7 @@ struct Fault {
         , type(type)
         , gate(gate)
         , pin(pin)
-        , pinName(GetFaultName(gate, pin))
-    {
+        , pinName(GetFaultName(gate, pin)) {
     }
     std::string GetFaultName(const Gate* gate, int32_t pinIdx);
 };

@@ -19,8 +19,7 @@
 #include "common.h"
 #include "printers.h"
 
-int Faultlist::CreateFaults(Netlist* netlist)
-{
+int Faultlist::CreateFaults(Netlist* netlist) {
     ASSERT(netlist != nullptr);
     ASSERT(netlist->Gates().size() > 0);
 
@@ -64,8 +63,7 @@ int Faultlist::CreateFaults(Netlist* netlist)
     return 0;
 }
 
-int Faultlist::DumpFaults(const std::string& faultlistFile, const Statuslist& statuslist)
-{
+int Faultlist::DumpFaults(const std::string& faultlistFile, const Statuslist& statuslist) {
     if (faultlistFile.empty()) {
         ASSERT(false);
         return -1;
@@ -86,8 +84,7 @@ int Faultlist::DumpFaults(const std::string& faultlistFile, const Statuslist& st
     return 0;
 }
 
-void Faultlist::Clean()
-{
+void Faultlist::Clean() {
     for (Fault*& fault : faultlist) {
         delete fault;
         fault = nullptr;

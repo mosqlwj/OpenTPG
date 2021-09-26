@@ -21,8 +21,7 @@ std::map<std::string, GateType> name2Type = {
 #undef DEF_GATETYPE
 };
 
-GateType Util::GetGateTypeFromString(const std::string& name)
-{
+GateType Util::GetGateTypeFromString(const std::string& name) {
     if (name2Type.find(name) == name2Type.end()) {
         std::cerr << "Not support gate type: " << name << std::endl;
         ASSERT(false);

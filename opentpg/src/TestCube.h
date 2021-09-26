@@ -20,16 +20,13 @@
 
 struct TestCube {
 public:
-    TestCube()
-    {
+    TestCube() {
     }
 
-    ~TestCube()
-    {
+    ~TestCube() {
     }
 
-    int Init(int PINum, int ScanCellNum, int32_t cycleNum, int32_t faultId)
-    {
+    int Init(int PINum, int ScanCellNum, int32_t cycleNum, int32_t faultId) {
         faultIndex = faultId;
         if (cycleNum <= 0) {
             perror("Defined cycle num must larger than 0");
@@ -49,8 +46,7 @@ public:
         return 0;
     }
 
-    void UpdateTestCubeValue(int8_t cycle, int32_t gateId, LogicVal val)
-    {
+    void UpdateTestCubeValue(int8_t cycle, int32_t gateId, LogicVal val) {
         ASSERT(cycle >= 0);
         ASSERT(cycle < logicValue.size());
         ASSERT(gateId >= 0);
@@ -59,18 +55,15 @@ public:
         logicValue[cycle][std::size_t(gateId)] = val;
     }
 
-    const std::vector<std::vector<LogicVal>>& GetLogicValue() const
-    {
+    const std::vector<std::vector<LogicVal>>& GetLogicValue() const {
         return logicValue;
     }
 
-    int GetCycleSize() const
-    {
+    int GetCycleSize() const {
         return logicValue.size();
     }
 
-    int32_t GetFaultIndex() const
-    {
+    int32_t GetFaultIndex() const {
         return faultIndex;
     }
 

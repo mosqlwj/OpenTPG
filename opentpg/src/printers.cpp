@@ -16,8 +16,7 @@
 
 #include <fstream>
 
-extern int Print(std::ofstream& stream, const TestCube& cube)
-{
+extern int Print(std::ofstream& stream, const TestCube& cube) {
     stream << "$: " << cube.GetFaultIndex() << "\n";
     int cycleSize = cube.GetCycleSize();
 
@@ -33,14 +32,12 @@ extern int Print(std::ofstream& stream, const TestCube& cube)
     return 0;
 }
 
-extern std::ofstream& operator<<(std::ofstream& stream, const TestCube& cube)
-{
+extern std::ofstream& operator<<(std::ofstream& stream, const TestCube& cube) {
     Print(stream, cube);
     return stream;
 }
 
-extern int Print(std::ofstream& stream, const Fault& fault, FaultStatus status)
-{
+extern int Print(std::ofstream& stream, const Fault& fault, FaultStatus status) {
     stream << fault.type << " " << charOfFaultStatus(status) << " " << fault.pinName << std::endl;
     return 0;
 }

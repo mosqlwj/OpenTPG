@@ -15,8 +15,7 @@
 #include "ContextDefault.h"
 #include "asserts.h"
 
-extern ATPGDriver* CreateATPGDriver(void* context)
-{
+extern ATPGDriver* CreateATPGDriver(void* context) {
     ASSERT(context != nullptr);
     return new ATPGDriverDefault(reinterpret_cast<ContextDefault*>(context));
 }

@@ -21,8 +21,7 @@
 
 #include <memory>
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
     //  读取用户配置
     Params& params = Params::GetInstance();
     params.Load(argc, argv);

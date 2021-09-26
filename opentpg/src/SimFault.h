@@ -20,14 +20,12 @@
 
 class SimFault {
 public:
-    SimFault()
-    {
+    SimFault() {
         observableGates.resize(MAXCYCLENUM);
         faultMechine.resize(MAXCYCLENUM);
     }
 
-    void SetupNetlist(Netlist* nlist)
-    {
+    void SetupNetlist(Netlist* nlist) {
         ASSERT(nlist != nullptr);
 
         netlist = nlist;
@@ -51,13 +49,11 @@ private:
     void InitialStateEvent(int32_t cycleId);
 
 private:
-    inline void AddQueue(Gate* gate)
-    {
+    inline void AddQueue(Gate* gate) {
         ASSERT(gate != nullptr);
         eventQueue.push(gate);
     }
-    inline void CleanQueue()
-    {
+    inline void CleanQueue() {
         while (!eventQueue.empty()) {
             eventQueue.pop();
         }

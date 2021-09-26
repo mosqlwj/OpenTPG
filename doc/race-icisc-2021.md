@@ -37,6 +37,8 @@
 | printers.*        | 定义了一些对象的输出方式 |
 | ScanChain.*       | 定义了 Scan chain 数据结构 |
 | TestCube.*        | 定义了 cube 对象的内存表示，是个典型的数据类 |
+| Simulator.h       | 定义了仿真器的接口 |
+| Sim*              | 仿真器的简易实现，这部分代码并不是必须的，这里提供的仿真器主要目的是便于各位学生验证 cube 正确性。目前这个仿真器还只是一个原型，我们尽力做到做到，但由于投入有限还无法保证没有 bug 存在 |
 
 <a name="race-system-interface"></a>
 

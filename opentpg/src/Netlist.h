@@ -27,38 +27,31 @@ public:
 
     int DumpGates(const std::string& outputFileName);
 
-    const std::unordered_map<std::string, Gate*>& GetGateNameMap()
-    {
+    const std::unordered_map<std::string, Gate*>& GetGateNameMap() {
         return name2Gate;
     }
 
-    int32_t GetPICount() const
-    {
+    int32_t GetPICount() const {
         return numOfPI;
     }
 
-    int32_t GetScanCellCount() const
-    {
+    int32_t GetScanCellCount() const {
         return (cubeEndId - numOfPI);
     }
 
-    int32_t GetCubeEndId() const
-    {
+    int32_t GetCubeEndId() const {
         return cubeEndId;
     }
 
-    inline const std::vector<Gate*>& Gates() const
-    {
+    inline const std::vector<Gate*>& Gates() const {
         return gates;
     }
 
-    inline int32_t GetPOCount() const
-    {
+    inline int32_t GetPOCount() const {
         return numOfPO;
     }
 
-    inline int32_t GetDffCount() const
-    {
+    inline int32_t GetDffCount() const {
         return numOfDFF;
     }
 

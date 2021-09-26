@@ -12,8 +12,7 @@
 #include "SimGood.h"
 #include "SimUtil.h"
 
-void SimGood::DoSim()
-{
+void SimGood::DoSim() {
     PrepareForSim(netlist);
     for (int cycleId = 0; cycleId < cycleNum; cycleId++) {
         DoEventDriven(cycleId);
@@ -21,16 +20,14 @@ void SimGood::DoSim()
     }
 }
 
-void SimGood::PrepareForSim(Netlist* nlist)
-{
+void SimGood::PrepareForSim(Netlist* nlist) {
     ASSERT(nlist != nullptr);
 
     CleanQueue();
     ResetValueManager(nlist->Gates().size());
 }
 
-void SimGood::DoEventDriven(int32_t cycleId)
-{
+void SimGood::DoEventDriven(int32_t cycleId) {
     InitialPiEvent(cycleId);
     if (cycleId == 0) {
         InitialFirstFrameStateEvent();
@@ -40,8 +37,7 @@ void SimGood::DoEventDriven(int32_t cycleId)
     TraceByLevel(cycleId);
 }
 
-void SimGood::TraceByLevel(int32_t cycleId)
-{
+void SimGood::TraceByLevel(int32_t cycleId) {
     while (!eventQueue.empty()) {
         Gate* curGate = eventQueue.front();
         eventQueue.pop();
@@ -50,64 +46,64 @@ void SimGood::TraceByLevel(int32_t cycleId)
             continue;
         }
         switch (curGate->type) {
-        case INV: {
-            SimUtil::SimINV(&goodMechine, nullptr, cycleId, curGate);
-            break;
-        }
-        case BUF: {
-            SimUtil::SimBUF(&goodMechine, nullptr, cycleId, curGate);
-            break;
-        }
-        case AND: {
-            SimUtil::SimAND(&goodMechine, nullptr, cycleId, curGate);
-            break;
-        }
-        case NAND: {
-            SimUtil::SimNAND(&goodMechine, nullptr, cycleId, curGate);
-            break;
-        }
-        case OR: {
-            SimUtil::SimOR(&goodMechine, nullptr, cycleId, curGate);
-            break;
-        }
-        case NOR: {
-            SimUtil::SimNOR(&goodMechine, nullptr, cycleId, curGate);
-            break;
-        }
-        case XOR: {
-            SimUtil::SimXOR(&goodMechine, nullptr, cycleId, curGate);
-            break;
-        }
-        case XNOR: {
-            SimUtil::SimNXOR(&goodMechine, nullptr, cycleId, curGate);
-            break;
-        }
-        case MUX: {
-            SimUtil::SimMUX(&goodMechine, nullptr, cycleId, curGate);
-            break;
-        }
-        case DFF: {
-            if (observableGates[cycleId].find(curGate) == observableGates[cycleId].end()) {
-                observableGates[cycleId].insert(curGate);
+            case INV: {
+                SimUtil::SimINV(&goodMechine, nullptr, cycleId, curGate);
+                break;
             }
-            // assume event only come from D
-            if (SimUtil::ClockPulse(testCube, cycleId, curGate)) {
-                goodMechine[cycleId + 1][curGate->id] = goodMechine[cycleId][SimUtil::GetStateDGate(curGate)->id];
-            } else {
-                goodMechine[cycleId + 1][curGate->id] = goodMechine[cycleId][curGate->id];
+            case BUF: {
+                SimUtil::SimBUF(&goodMechine, nullptr, cycleId, curGate);
+                break;
             }
-            break;
-        }
-        case PI: {
-            break;
-        }
-        case PO: {
-            SimUtil::SimBUF(&goodMechine, nullptr, cycleId, curGate);
-            break;
-        }
-        default: {
-            break;
-        }
+            case AND: {
+                SimUtil::SimAND(&goodMechine, nullptr, cycleId, curGate);
+                break;
+            }
+            case NAND: {
+                SimUtil::SimNAND(&goodMechine, nullptr, cycleId, curGate);
+                break;
+            }
+            case OR: {
+                SimUtil::SimOR(&goodMechine, nullptr, cycleId, curGate);
+                break;
+            }
+            case NOR: {
+                SimUtil::SimNOR(&goodMechine, nullptr, cycleId, curGate);
+                break;
+            }
+            case XOR: {
+                SimUtil::SimXOR(&goodMechine, nullptr, cycleId, curGate);
+                break;
+            }
+            case XNOR: {
+                SimUtil::SimXNOR(&goodMechine, nullptr, cycleId, curGate);
+                break;
+            }
+            case MUX: {
+                SimUtil::SimMUX(&goodMechine, nullptr, cycleId, curGate);
+                break;
+            }
+            case DFF: {
+                if (observableGates[cycleId].find(curGate) == observableGates[cycleId].end()) {
+                    observableGates[cycleId].insert(curGate);
+                }
+                // assume event only come from D
+                if (SimUtil::ClockPulse(testCube, cycleId, curGate)) {
+                    goodMechine[cycleId + 1][curGate->id] = goodMechine[cycleId][SimUtil::GetStateDGate(curGate)->id];
+                } else {
+                    goodMechine[cycleId + 1][curGate->id] = goodMechine[cycleId][curGate->id];
+                }
+                break;
+            }
+            case PI: {
+                break;
+            }
+            case PO: {
+                SimUtil::SimBUF(&goodMechine, nullptr, cycleId, curGate);
+                break;
+            }
+            default: {
+                break;
+            }
         }
         if (curGate->type != DFF) {
             for (auto fanout : curGate->outputs) {
@@ -117,8 +113,7 @@ void SimGood::TraceByLevel(int32_t cycleId)
     }
 }
 
-void SimGood::InitialPiEvent(int32_t cycleId)
-{
+void SimGood::InitialPiEvent(int32_t cycleId) {
     const std::vector<Gate*>& gateVec = netlist->Gates();
     const std::vector<std::vector<LogicVal>>& logicValues = testCube->GetLogicValue();
     for (int i = 0; i < netlist->GetPICount(); i++) {
@@ -130,8 +125,7 @@ void SimGood::InitialPiEvent(int32_t cycleId)
     }
 }
 
-void SimGood::InitialStateEvent(int32_t cycleId)
-{
+void SimGood::InitialStateEvent(int32_t cycleId) {
     if (cycleId == 0) {
         return;
     }
@@ -148,8 +142,7 @@ void SimGood::InitialStateEvent(int32_t cycleId)
     }
 }
 
-void SimGood::InitialFirstFrameStateEvent()
-{
+void SimGood::InitialFirstFrameStateEvent() {
     const std::vector<Gate*>& gateVec = netlist->Gates();
     const std::vector<std::vector<LogicVal>>& logicValues = testCube->GetLogicValue();
     // initial scan-cell
@@ -171,10 +164,9 @@ void SimGood::InitialFirstFrameStateEvent()
     }
 }
 
-bool SimGood::InputReady(Gate* gate, int32_t cycleId)
-{
+bool SimGood::InputReady(Gate* gate, int32_t cycleId) {
     ASSERT(gate != nullptr);
-    
+
     for (auto fanin : gate->inputs) {
         if (goodMechine[cycleId][fanin->id] == LOGIC_UNKNOW) {
             return false;
@@ -183,8 +175,7 @@ bool SimGood::InputReady(Gate* gate, int32_t cycleId)
     return true;
 }
 
-void SimGood::Reset()
-{
+void SimGood::Reset() {
     goodMechine.resize(MAXCYCLENUM);
     for (int i = 0; i < MAXCYCLENUM; i++) {
         for (int j = 0; j < goodMechine[i].size(); j++) {

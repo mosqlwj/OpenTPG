@@ -13,6 +13,5 @@
 
 Gate::Gate(const std::string& name, GateType type)
     : name(name)
-    , type(type)
-{
+    , type(type) {
 }

@@ -23,17 +23,14 @@ class ValueManager {
     size_t cCount;
 
 public:
-    ValueManager()
-    {
+    ValueManager() {
         exists = nullptr;
     }
-    ~ValueManager()
-    {
+    ~ValueManager() {
         Delete();
     }
 
-    inline int Init(size_t gateCount)
-    {
+    inline int Init(size_t gateCount) {
         if (exists == nullptr) {
             exists = (uint8_t*)malloc(sizeof(uint8_t) * (gateCount / 8 + 1));
         }
@@ -42,18 +39,15 @@ public:
         return 0;
     }
 
-    inline void Delete()
-    {
+    inline void Delete() {
         free(exists);
     }
 
-    inline void Reset()
-    {
+    inline void Reset() {
         memset(exists, 0, sizeof(uint8_t) * (gCount / 8 + 1));
     }
 
-    inline bool Contains(int index) const
-    {
+    inline bool Contains(int index) const {
         static uint8_t containsMask[8] = {
             0x01,
             0x02,
@@ -69,8 +63,7 @@ public:
         return (0 != (exists[byteIndex] & containsMask[bitsIndex]));
     }
 
-    inline void Set(int32_t index)
-    {
+    inline void Set(int32_t index) {
         static uint8_t containsMask[8] = {
             0x01,
             0x02,
@@ -89,16 +82,13 @@ public:
 
 class SimUtil {
 public:
-    static Gate* GetStateDGate(Gate* state)
-    {
+    static Gate* GetStateDGate(Gate* state) {
         return (state->inputs)[1];
     }
-    static Gate* GetStateClockGate(Gate* state)
-    {
+    static Gate* GetStateClockGate(Gate* state) {
         return (state->inputs)[0];
     }
-    static bool ClockPulse(TestCube* testCube, int32_t cycleId, Gate* state)
-    {
+    static bool ClockPulse(TestCube* testCube, int32_t cycleId, Gate* state) {
         Gate* clockGate = SimUtil::GetStateClockGate(state);
         if (clockGate == nullptr) {
             return false;
@@ -109,8 +99,7 @@ public:
         }
         return false;
     }
-    static LogicVal GetLogicVal(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, int32_t gateId)
-    {
+    static LogicVal GetLogicVal(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, int32_t gateId) {
         if (goodMechine == nullptr) {
             return LOGIC_UNKNOW;
         }
@@ -121,42 +110,39 @@ public:
 
         return (*faultMechine)[cycleId][gateId];
     }
-    static void SetLogicVal(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, int32_t gateId, LogicVal res)
-    {
+    static void SetLogicVal(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, int32_t gateId, LogicVal res) {
         if (faultMechine == nullptr) {
             (*goodMechine)[cycleId][gateId] = res;
         } else {
             (*faultMechine)[cycleId][gateId] = res;
         }
     }
-    static LogicVal ReverseValue(LogicVal val)
-    {
+    static LogicVal ReverseValue(LogicVal val) {
         LogicVal res = LOGIC_UNKNOW;
         switch (val) {
-        case LOGIC_X: {
-            res = LOGIC_X;
-            break;
-        }
-        case LOGIC_1: {
-            res = LOGIC_0;
-            break;
-        }
-        case LOGIC_0: {
-            res = LOGIC_1;
-            break;
-        }
-        case LOGIC_UNKNOW: {
-            res = LOGIC_UNKNOW;
-            break;
-        }
-        default: {
-            break;
-        }
+            case LOGIC_X: {
+                res = LOGIC_X;
+                break;
+            }
+            case LOGIC_1: {
+                res = LOGIC_0;
+                break;
+            }
+            case LOGIC_0: {
+                res = LOGIC_1;
+                break;
+            }
+            case LOGIC_UNKNOW: {
+                res = LOGIC_UNKNOW;
+                break;
+            }
+            default: {
+                break;
+            }
         }
         return res;
     }
-    static LogicVal CalculateGate(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, Gate* gate, const LogicVal logicTable[3][3])
-    {
+    static LogicVal CalculateGate(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, Gate* gate, const LogicVal logicTable[3][3]) {
         LogicVal res = GetLogicVal(goodMechine, faultMechine, cycleId, (gate->inputs)[0]->id);
         for (int i = 1; i < gate->inputs.size(); i++) {
             Gate* fanin = (gate->inputs)[i];
@@ -164,50 +150,41 @@ public:
         }
         return res;
     }
-    static void SimINV(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, Gate* gate)
-    {
+    static void SimINV(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, Gate* gate) {
         Gate* fanin = (gate->inputs)[0];
         LogicVal res = INV_TABLE[GetLogicVal(goodMechine, faultMechine, cycleId, fanin->id)];
         SetLogicVal(goodMechine, faultMechine, cycleId, gate->id, res);
     }
-    static void SimBUF(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, Gate* gate)
-    {
+    static void SimBUF(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, Gate* gate) {
         Gate* fanin = (gate->inputs)[0];
         LogicVal res = BUF_TABLE[GetLogicVal(goodMechine, faultMechine, cycleId, fanin->id)];
         SetLogicVal(goodMechine, faultMechine, cycleId, gate->id, res);
     }
-    static void SimAND(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, Gate* gate)
-    {
+    static void SimAND(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, Gate* gate) {
         LogicVal res = CalculateGate(goodMechine, faultMechine, cycleId, gate, AND_TABLE);
         SetLogicVal(goodMechine, faultMechine, cycleId, gate->id, res);
     }
-    static void SimNAND(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, Gate* gate)
-    {
+    static void SimNAND(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, Gate* gate) {
         LogicVal res = CalculateGate(goodMechine, faultMechine, cycleId, gate, AND_TABLE);
         SetLogicVal(goodMechine, faultMechine, cycleId, gate->id, ReverseValue(res));
     }
-    static void SimOR(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, Gate* gate)
-    {
+    static void SimOR(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, Gate* gate) {
         LogicVal res = CalculateGate(goodMechine, faultMechine, cycleId, gate, OR_TABLE);
         SetLogicVal(goodMechine, faultMechine, cycleId, gate->id, res);
     }
-    static void SimNOR(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, Gate* gate)
-    {
+    static void SimNOR(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, Gate* gate) {
         LogicVal res = CalculateGate(goodMechine, faultMechine, cycleId, gate, OR_TABLE);
         SetLogicVal(goodMechine, faultMechine, cycleId, gate->id, ReverseValue(res));
     }
-    static void SimXOR(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, Gate* gate)
-    {
+    static void SimXOR(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, Gate* gate) {
         LogicVal res = CalculateGate(goodMechine, faultMechine, cycleId, gate, XOR_TABLE);
         SetLogicVal(goodMechine, faultMechine, cycleId, gate->id, res);
     }
-    static void SimNXOR(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, Gate* gate)
-    {
+    static void SimXNOR(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, Gate* gate) {
         LogicVal res = CalculateGate(goodMechine, faultMechine, cycleId, gate, XOR_TABLE);
         SetLogicVal(goodMechine, faultMechine, cycleId, gate->id, ReverseValue(res));
     }
-    static void SimMUX(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, Gate* gate)
-    {
+    static void SimMUX(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, Gate* gate) {
         LogicVal selValue = GetLogicVal(goodMechine, faultMechine, cycleId, ((gate->inputs)[0])->id);
         LogicVal dValue = GetLogicVal(goodMechine, faultMechine, cycleId, ((gate->inputs)[1])->id);
         LogicVal siValue = GetLogicVal(goodMechine, faultMechine, cycleId, ((gate->inputs)[2])->id);

@@ -26,8 +26,7 @@
 class CubeHandlerWriteFile : public CubeHandler {
 
 public:
-    CubeHandlerWriteFile(const std::string& cubefile, Simulator* sim = nullptr)
-    {
+    CubeHandlerWriteFile(const std::string& cubefile, Simulator* sim = nullptr) {
         stream.open(cubefile);
         if (!stream.is_open()) {
             std::cerr << "open  " << cubefile << " failed." << std::endl;
@@ -40,8 +39,7 @@ public:
     ~CubeHandlerWriteFile() override = default;
 
 public:
-    void Handle(Fault* fault, TestCube* cube) override
-    {
+    void Handle(Fault* fault, TestCube* cube) override {
         ASSERT(cube != nullptr);
         ASSERT(stream.is_open());
         stream << (*cube);

@@ -17,24 +17,19 @@
 class Params {
 public:
     static Params& GetInstance();
-    const std::string& GetNetlistFile() const
-    {
+    const std::string& GetNetlistFile() const {
         return netlistFile;
     }
-    const std::string& GetFaultlistFile() const
-    {
+    const std::string& GetFaultlistFile() const {
         return faultlistFile;
     }
-    const std::string& GetConfigFile() const
-    {
+    const std::string& GetConfigFile() const {
         return configFile;
     }
-    const std::string& GetGateDumpFile() const
-    {
+    const std::string& GetGateDumpFile() const {
         return gateDumpFile;
     }
-    const std::string& GetCubeDumpFile() const
-    {
+    const std::string& GetCubeDumpFile() const {
         return cubeDumpFile;
     }
     void Load(int argc, char** argv);
