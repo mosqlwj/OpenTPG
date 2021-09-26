@@ -9,8 +9,8 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef OPENTPG_SIMENTRY_H
-#define OPENTPG_SIMENTRY_H
+#ifndef OPENTPG_SIMENTRYDEFAULT_H
+#define OPENTPG_SIMENTRYDEFAULT_H
 
 #include "Faultlist.h"
 #include "SimFault.h"
@@ -18,9 +18,9 @@
 #include "Simulator.h"
 #include "TestCube.h"
 
-class SimEntry : public Simulator {
+class SimulatorDefault : public Simulator {
 public:
-    SimEntry()
+    SimulatorDefault()
     {
         goodSimulator = new SimGood();
         faultSimulator = new SimFault();
@@ -37,7 +37,7 @@ public:
         faultSimulator->SetupFaultlist(flist);
     }
 
-    ~SimEntry() override
+    ~SimulatorDefault() override
     {
         delete goodSimulator;
         delete faultSimulator;
@@ -50,4 +50,4 @@ private:
     SimFault* faultSimulator { nullptr };
 };
 
-#endif //OPENTPG_SIMENTRY_H
+#endif //OPENTPG_SIMENTRYDEFAULT_H
