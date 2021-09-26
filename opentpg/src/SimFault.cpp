@@ -177,7 +177,7 @@ void SimFault::SimGate(int32_t cycleId, Gate* curGate) {
             SimUtil::SimNOR(&(goodSimulation->GetGoodMechine()), &faultMechine, cycleId, curGate);
         } break;
         case XOR: {
-            SimUtil::SimXNOR(&(goodSimulation->GetGoodMechine()), &faultMechine, cycleId, curGate);
+            SimUtil::SimXOR(&(goodSimulation->GetGoodMechine()), &faultMechine, cycleId, curGate);
         } break;
         case XNOR: {
             SimUtil::SimXNOR(&(goodSimulation->GetGoodMechine()), &faultMechine, cycleId, curGate);
