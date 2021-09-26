@@ -21,7 +21,6 @@
 class SimFault {
 public:
     SimFault()
-
     {
         observableGates.resize(MAXCYCLENUM);
         faultMechine.resize(MAXCYCLENUM);
@@ -37,15 +36,8 @@ public:
         }
     }
 
-    void SetupFaultlist(Faultlist* flist)
-    {
-        ASSERT(flist != nullptr);
-
-        faultlist = flist;
-    }
-
     bool DoSim();
-    void Init(TestCube* tCube, SimGood* goodSim);
+    void Init(TestCube* tCube, Fault* tFault, SimGood* goodSim);
     void Reset();
 
 private:
@@ -61,6 +53,7 @@ private:
 private:
     inline void AddQueue(Gate* gate)
     {
+        ASSERT(gate != nullptr);
         eventQueue.push(gate);
     }
     inline void CleanQueue()
@@ -71,11 +64,12 @@ private:
     }
 
 private:
-    int32_t cycleNum = 0;
-    Netlist* netlist = nullptr;
-    TestCube* testCube = nullptr;
-    SimGood* goodSimulation = nullptr;
-    Faultlist* faultlist = nullptr;
+    int32_t cycleNum { 0 };
+    Netlist* netlist { nullptr };
+    TestCube* testCube { nullptr };
+    Fault* fault { nullptr };
+    SimGood* goodSimulation { nullptr };
+    Faultlist* faultlist { nullptr };
     std::vector<std::set<Gate*>> observableGates;
     std::vector<std::vector<LogicVal>> faultMechine;
     std::queue<Gate*> eventQueue;

@@ -63,7 +63,6 @@ int main(int argc, char** argv)
     //  定义一个仿真器
     SimulatorDefault simulator;
     simulator.SetupNetlist(&netlist);
-    simulator.SetupFaultlist(&faultlist);
 
     //  生成 cube
     std::unique_ptr<ATPGDriver> atpgDriver(CreateATPGDriver(&context));

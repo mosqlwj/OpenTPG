@@ -13,6 +13,7 @@
 #define OPENTPG_CUBEHANDLERWRITEFILE_H
 
 #include "CubeHandler.h"
+#include "Faultlist.h"
 #include "Simulator.h"
 #include "TestCube.h"
 #include "asserts.h"
@@ -39,7 +40,7 @@ public:
     ~CubeHandlerWriteFile() override = default;
 
 public:
-    void Handle(TestCube* cube) override
+    void Handle(Fault* fault, TestCube* cube) override
     {
         ASSERT(cube != nullptr);
         ASSERT(stream.is_open());
@@ -47,7 +48,7 @@ public:
 
         //  提醒：去掉下面的注释可以自动进行基本的仿真验证，以方便大家调测代码。但正式发布时，不需要这段代码。
         if (simulator != nullptr) {
-            bool detected = simulator->HandleTestCube(cube);
+            bool detected = simulator->Simulate(fault, cube);
             std::cout << "CUBE DETECT:" << cube->GetFaultIndex() << " " << (detected ? "YES" : "NO") << std::endl;
         }
     }

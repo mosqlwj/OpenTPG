@@ -19,8 +19,9 @@ class CubeHandlerDefault : public CubeHandler {
 public:
     virtual ~CubeHandlerDefault() = default;
 
-    void Handle(TestCube* cube) override
+    void Handle(Fault* fault, TestCube* cube) override
     {
+        ASSERT(fault != nullptr);
         ASSERT(cube != nullptr);
         delete cube;
     }

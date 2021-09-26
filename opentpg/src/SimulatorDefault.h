@@ -32,18 +32,28 @@ public:
         faultSimulator->SetupNetlist(netlist);
     }
 
-    void SetupFaultlist(Faultlist* flist)
-    {
-        faultSimulator->SetupFaultlist(flist);
-    }
-
     ~SimulatorDefault() override
     {
         delete goodSimulator;
         delete faultSimulator;
     }
 
-    bool HandleTestCube(TestCube* testCube) override;
+    bool Simulate(Fault* fault, TestCube* testCube) override
+    {
+        ASSERT(fault != nullptr);
+        ASSERT(testCube != nullptr);
+
+        ASSERT(goodSimulator != nullptr);
+        ASSERT(faultSimulator != nullptr);
+
+        goodSimulator->Init(testCube);
+        goodSimulator->DoSim();
+        faultSimulator->Init(testCube, fault, goodSimulator);
+        bool result = faultSimulator->DoSim();
+        goodSimulator->Reset();
+        faultSimulator->Reset();
+        return result;
+    }
 
 private:
     SimGood* goodSimulator { nullptr };

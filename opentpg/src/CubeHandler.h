@@ -17,7 +17,7 @@
 class CubeHandler {
 public:
     virtual ~CubeHandler() = default;
-    virtual void Handle(TestCube* cube) = 0;
+    virtual void Handle(Fault* fault, TestCube* cube) = 0;
 };
 
 #endif //OPENTPG_CUBEHANDLER_H

@@ -28,9 +28,12 @@ public:
         goodMechine.resize(MAXCYCLENUM);
     }
 
-    void SetupNetlist(Netlist* net)
+    void SetupNetlist(Netlist* nlist)
     {
-        netlist = net;
+        ASSERT(nlist != nullptr);
+
+        netlist = nlist;
+
         for (int i = 0; i < goodMechine.size(); i++) {
             goodMechine[i].resize(netlist->Gates().size(), LOGIC_UNKNOW);
         }
@@ -41,6 +44,8 @@ public:
 
     void Init(TestCube* tCube)
     {
+        ASSERT(tCube != nullptr);
+
         testCube = tCube;
         cycleNum = tCube->GetLogicValue().size();
     }
@@ -66,9 +71,12 @@ private:
 
     inline void AddQueue(Gate* gate)
     {
+        ASSERT(gate != nullptr);
+
         if (valueManager->Contains(gate->id)) {
             return;
         }
+
         valueManager->Set(gate->id);
         eventQueue.emplace(gate);
     }
@@ -90,10 +98,10 @@ private:
     }
 
 private:
-    int cycleNum = 0;
-    Netlist* netlist = nullptr;
-    ValueManager* valueManager = nullptr;
-    TestCube* testCube = nullptr;
+    int cycleNum { 0 };
+    Netlist* netlist { nullptr };
+    ValueManager* valueManager { nullptr };
+    TestCube* testCube { nullptr };
     std::vector<std::vector<LogicVal>> goodMechine;
     std::vector<std::set<Gate*>> observableGates;
     std::queue<Gate*> eventQueue;

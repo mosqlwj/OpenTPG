@@ -12,10 +12,11 @@
 #ifndef OPENTPG_SIMULATOR_H
 #define OPENTPG_SIMULATOR_H
 
+class TestCube;
 class Simulator {
 public:
     virtual ~Simulator() = default;
-    virtual bool HandleTestCube(TestCube* testCube) = 0;
+    virtual bool Simulate(Fault* fault, TestCube* testCube) = 0;
 };
 
 #endif //OPENTPG_SIMULATOR_H

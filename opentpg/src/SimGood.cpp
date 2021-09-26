@@ -21,10 +21,12 @@ void SimGood::DoSim()
     }
 }
 
-void SimGood::PrepareForSim(Netlist* netlist)
+void SimGood::PrepareForSim(Netlist* nlist)
 {
+    ASSERT(nlist != nullptr);
+
     CleanQueue();
-    ResetValueManager(netlist->Gates().size());
+    ResetValueManager(nlist->Gates().size());
 }
 
 void SimGood::DoEventDriven(int32_t cycleId)
@@ -171,6 +173,8 @@ void SimGood::InitialFirstFrameStateEvent()
 
 bool SimGood::InputReady(Gate* gate, int32_t cycleId)
 {
+    ASSERT(gate != nullptr);
+    
     for (auto fanin : gate->inputs) {
         if (goodMechine[cycleId][fanin->id] == LOGIC_UNKNOW) {
             return false;

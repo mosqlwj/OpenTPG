@@ -21,15 +21,21 @@ bool SimFault::DoSim()
     return CheckObserved();
 }
 
-void SimFault::PrepareForSim(Netlist* netlist)
+void SimFault::PrepareForSim(Netlist* nlist)
 {
+    ASSERT(nlist != nullptr);
     CleanQueue();
 }
 
-void SimFault::Init(TestCube* tCube, SimGood* goodSim)
+void SimFault::Init(TestCube* tCube, Fault* tFault, SimGood* goodSim)
 {
+    ASSERT(tCube != nullptr);
+    ASSERT(tFault != nullptr);
+    ASSERT(goodSim != nullptr);
+
     cycleNum = tCube->GetLogicValue().size();
     testCube = tCube;
+    fault = tFault;
     goodSimulation = goodSim;
 }
 
@@ -47,8 +53,6 @@ void SimFault::DoEventDriven(int32_t cycleId)
 void SimFault::InitialFaultEvent(int32_t cycleId)
 {
     static LogicVal faultValueType[] = { LOGIC_0, LOGIC_1 };
-    int32_t faultIndex = testCube->GetFaultIndex();
-    Fault* fault = faultlist->Faults()[faultIndex];
     const Gate* faultFannoutGate = (fault->pin == 0) ? fault->gate : (fault->gate->inputs)[fault->pin - 1];
     if (fault->pin == 0) {
         if (fault->type == STUCK_AT_0 && goodSimulation->GetGoodValue(cycleId, fault->gate->id) == LOGIC_0) {

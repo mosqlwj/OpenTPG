@@ -82,7 +82,7 @@ void ATPGDriverDefault::Execute()
 
         //  如果能够生成 cube，那么触发 Handle 处理
         if (cube != nullptr) {
-            cubeHandler->Handle(cube);
+            cubeHandler->Handle(fault, cube);
         }
     }
 }
