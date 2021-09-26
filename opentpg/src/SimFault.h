@@ -1,7 +1,14 @@
-//
-// Created by luolijun on 2021/9/26.
-//
-
+/**
+ * Copyright (c) 2021 opentpg.com
+ * opentpg is licensed under Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
+ * You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PSL v2 for more details.
+ */
 #ifndef SIMFAULT_H
 #define SIMFAULT_H
 
@@ -13,16 +20,30 @@
 
 class SimFault {
 public:
-    explicit SimFault(Netlist* net, Faultlist* flist)
-        : netlist(net)
-        , faultlist(flist)
+    SimFault()
+
     {
         observableGates.resize(MAXCYCLENUM);
         faultMechine.resize(MAXCYCLENUM);
-        for (int i = 0; i < MAXCYCLENUM; i++) {
+    }
+
+    void SetupNetlist(Netlist* nlist)
+    {
+        ASSERT(nlist != nullptr);
+
+        netlist = nlist;
+        for (int i = 0; i < faultMechine.size(); i++) {
             faultMechine[i].resize(netlist->Gates().size(), LOGIC_UNKNOW);
         }
     }
+
+    void SetupFaultlist(Faultlist* flist)
+    {
+        ASSERT(flist != nullptr);
+
+        faultlist = flist;
+    }
+
     bool DoSim();
     void Init(TestCube* tCube, SimGood* goodSim);
     void Reset();

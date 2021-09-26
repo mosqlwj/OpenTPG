@@ -1,6 +1,14 @@
-//
-// Created by luolijun on 2021/9/26.
-//
+/**
+ * Copyright (c) 2021 opentpg.com
+ * opentpg is licensed under Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
+ * You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PSL v2 for more details.
+ */
 #include "SimFault.h"
 
 bool SimFault::DoSim()
@@ -41,7 +49,7 @@ void SimFault::InitialFaultEvent(int32_t cycleId)
     static LogicVal faultValueType[] = { LOGIC_0, LOGIC_1 };
     int32_t faultIndex = testCube->GetFaultIndex();
     Fault* fault = faultlist->Faults()[faultIndex];
-    const Gate faultFannoutGate = fault->pin == 0 ? fault->gate : (fault->gate->inputs)[fault->pin - 1];
+    const Gate* faultFannoutGate = (fault->pin == 0) ? fault->gate : (fault->gate->inputs)[fault->pin - 1];
     if (fault->pin == 0) {
         if (fault->type == STUCK_AT_0 && goodSimulation->GetGoodValue(cycleId, fault->gate->id) == LOGIC_0) {
             return;
@@ -178,7 +186,7 @@ void SimFault::SimGate(int32_t cycleId, Gate* curGate)
         SimUtil::SimNXOR(&(goodSimulation->GetGoodMechine()), &faultMechine, cycleId, curGate);
         break;
     }
-    case NXOR: {
+    case XNOR: {
         SimUtil::SimNXOR(&(goodSimulation->GetGoodMechine()), &faultMechine, cycleId, curGate);
         break;
     }

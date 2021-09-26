@@ -1,7 +1,14 @@
-//
-// Created by luolijun on 2021/9/26.
-//
-
+/**
+ * Copyright (c) 2021 opentpg.com
+ * opentpg is licensed under Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
+ * You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PSL v2 for more details.
+ */
 #ifndef SIMUTIL_H
 #define SIMUTIL_H
 
@@ -25,7 +32,7 @@ public:
         Delete();
     }
 
-    inline int Init(size_g gateCount)
+    inline int Init(size_t gateCount)
     {
         if (exists == nullptr) {
             exists = (uint8_t*)malloc(sizeof(uint8_t) * (gateCount / 8 + 1));
@@ -62,7 +69,7 @@ public:
         return (0 != (exists[byteIndex] & containsMask[bitsIndex]));
     }
 
-    inline bool Set(int32_t index)
+    inline void Set(int32_t index)
     {
         static uint8_t containsMask[8] = {
             0x01,
@@ -76,7 +83,7 @@ public:
         };
         int byteIndex = index / 8;
         int bitsIndex = index % 8;
-        exists[byteIndex] |= setMask[bitsIndex];
+        exists[byteIndex] |= containsMask[bitsIndex];
     }
 };
 
@@ -104,12 +111,14 @@ public:
     }
     static LogicVal GetLogicVal(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, int32_t gateId)
     {
-        if (goodMechine = nullptr) {
+        if (goodMechine == nullptr) {
             return LOGIC_UNKNOW;
         }
+
         if (faultMechine == nullptr || (*faultMechine)[cycleId][gateId] == LOGIC_UNKNOW) {
             return (*goodMechine)[cycleId][gateId];
         }
+
         return (*faultMechine)[cycleId][gateId];
     }
     static void SetLogicVal(std::vector<std::vector<LogicVal>>* goodMechine, std::vector<std::vector<LogicVal>>* faultMechine, int32_t cycleId, int32_t gateId, LogicVal res)

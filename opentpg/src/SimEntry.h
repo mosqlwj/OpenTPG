@@ -1,40 +1,53 @@
-//
-// Created by luolijun on 2021/9/26.
-//
-
+/**
+ * Copyright (c) 2021 opentpg.com
+ * opentpg is licensed under Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
+ * You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PSL v2 for more details.
+ */
 #ifndef SIMENTRY_H
 #define SIMENTRY_H
 
 #include "Faultlist.h"
 #include "SimFault.h"
 #include "SimGood.h"
+#include "Simulator.h"
 #include "TestCube.h"
 
-class SimEntry {
+class SimEntry : public Simulator {
 public:
-    SimEntry(Netlist* net, Faultlist* flist)
-        : netlist(net)
+    SimEntry()
     {
-        goodSimulator = new SimGood(net);
-        faultSimulator = new SimFault(net, fList);
+        goodSimulator = new SimGood();
+        faultSimulator = new SimFault();
     }
-    ~SimEntry()
+
+    void SetupNetlist(Netlist* netlist)
     {
-        if (nullptr != goodSimulator) {
-            delete goodSimulator;
-            goodSimulator = nullptr;
-        }
-        if (nullptr != faultSimulator) {
-            delete faultSimulator;
-            faultSimulator = nullptr;
-        }
+        goodSimulator->SetupNetlist(netlist);
+        faultSimulator->SetupNetlist(netlist);
     }
-    bool HandleTestCube(TestCube* testCube);
+
+    void SetupFaultlist(Faultlist* flist)
+    {
+        faultSimulator->SetupFaultlist(flist);
+    }
+
+    ~SimEntry() override
+    {
+        delete goodSimulator;
+        delete faultSimulator;
+    }
+
+    bool HandleTestCube(TestCube* testCube) override;
 
 private:
-    SimGood* goodSimulator = nullptr;
-    SimFault* faultSimulator = nullptr;
-    Netlist* netlist = nullptr;
+    SimGood* goodSimulator { nullptr };
+    SimFault* faultSimulator { nullptr };
 };
 
 #endif //SIMENTRY_H

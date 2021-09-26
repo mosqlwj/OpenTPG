@@ -15,6 +15,7 @@
 #include "Faultlist.h"
 #include "Netlist.h"
 #include "Params.h"
+#include "SimEntry.h"
 #include "Statuslist.h"
 #include "errors.h"
 
@@ -59,9 +60,14 @@ int main(int argc, char** argv)
     context.statuslist = &statuslist;
     context.params = &params;
 
+    //  定义一个仿真器
+    SimEntry simulator;
+    simulator.SetupNetlist(&netlist);
+    simulator.SetupFaultlist(&faultlist);
+
     //  生成 cube
     std::unique_ptr<ATPGDriver> atpgDriver(CreateATPGDriver(&context));
-    CubeHandlerWriteFile cubeOutputPrinter(params.GetCubeDumpFile());
+    CubeHandlerWriteFile cubeOutputPrinter(params.GetCubeDumpFile(), &simulator);
     atpgDriver->SetupCubeOutput(&cubeOutputPrinter);
     atpgDriver->SetupNetlist(&netlist);
     atpgDriver->SetupFaultlist(&faultlist);

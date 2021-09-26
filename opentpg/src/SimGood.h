@@ -1,7 +1,14 @@
-//
-// Created by luolijun on 2021/9/26.
-//
-
+/**
+ * Copyright (c) 2021 opentpg.com
+ * opentpg is licensed under Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
+ * You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PSL v2 for more details.
+ */
 #ifndef SIMGOOD_H
 #define SIMGOOD_H
 
@@ -15,26 +22,34 @@
 
 class SimGood {
 public:
-    explicit SimGood(Netlist* net)
-        : netlist(net)
+    explicit SimGood()
     {
         observableGates.resize(MAXCYCLENUM);
         goodMechine.resize(MAXCYCLENUM);
-        for (int i = 0; i < MAXCYCLENUM; i++) {
+    }
+
+    void SetupNetlist(Netlist* net)
+    {
+        netlist = net;
+        for (int i = 0; i < goodMechine.size(); i++) {
             goodMechine[i].resize(netlist->Gates().size(), LOGIC_UNKNOW);
         }
     }
+
     void DoSim();
     void Reset();
+
     void Init(TestCube* tCube)
     {
         testCube = tCube;
         cycleNum = tCube->GetLogicValue().size();
     }
-    LogicVal GetGoodValue(int32_t cycleId, GateId id)
+
+    LogicVal GetGoodValue(int32_t cycleId, GateId id) const
     {
         return goodMechine[cycleId][id];
     }
+    
     inline std::vector<std::vector<LogicVal>>& GetGoodMechine()
     {
         return goodMechine;

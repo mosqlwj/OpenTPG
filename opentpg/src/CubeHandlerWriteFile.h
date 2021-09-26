@@ -13,23 +13,27 @@
 #define OPENTPG_CUBEHANDLERWRITEFILE_H
 
 #include "CubeHandler.h"
+#include "Simulator.h"
 #include "TestCube.h"
 #include "asserts.h"
 #include "printers.h"
 
 #include <fstream>
+#include <iostream>
 #include <string>
 
 class CubeHandlerWriteFile : public CubeHandler {
 
 public:
-    explicit CubeHandlerWriteFile(const std::string& cubefile)
+    CubeHandlerWriteFile(const std::string& cubefile, Simulator* sim = nullptr)
     {
         stream.open(cubefile);
         if (!stream.is_open()) {
             std::cerr << "open  " << cubefile << " failed." << std::endl;
             return;
         }
+
+        simulator = sim;
     }
 
     ~CubeHandlerWriteFile() override = default;
@@ -40,10 +44,16 @@ public:
         ASSERT(cube != nullptr);
         ASSERT(stream.is_open());
         stream << (*cube);
+
+        if (simulator != nullptr) {
+            bool detected = simulator->HandleTestCube(cube);
+            std::cout << "CUBE " << cube->GetFaultIndex() << " " << (detected ? "DETECTED" : "UNDETECTED") << std::endl;
+        }
     }
 
 private:
     std::ofstream stream;
+    Simulator* simulator { nullptr };
 };
 
 #endif //OPENTPG_CUBEHANDLERWRITEFILE_H

@@ -1,6 +1,14 @@
-//
-// Created by luolijun on 2021/9/26.
-//
+/**
+ * Copyright (c) 2021 opentpg.com
+ * opentpg is licensed under Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
+ * You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PSL v2 for more details.
+ */
 #include "SimGood.h"
 #include "SimUtil.h"
 
@@ -41,39 +49,39 @@ void SimGood::TraceByLevel(int32_t cycleId)
         }
         switch (curGate->type) {
         case INV: {
-            SimUtil::SimINV(goodMechine, nullptr, cycleId, curGate);
+            SimUtil::SimINV(&goodMechine, nullptr, cycleId, curGate);
             break;
         }
         case BUF: {
-            SimUtil::SimBUF(goodMechine, nullptr, cycleId, curGate);
+            SimUtil::SimBUF(&goodMechine, nullptr, cycleId, curGate);
             break;
         }
         case AND: {
-            SimUtil::SimAND(goodMechine, nullptr, cycleId, curGate);
+            SimUtil::SimAND(&goodMechine, nullptr, cycleId, curGate);
             break;
         }
         case NAND: {
-            SimUtil::SimNAND(goodMechine, nullptr, cycleId, curGate);
+            SimUtil::SimNAND(&goodMechine, nullptr, cycleId, curGate);
             break;
         }
         case OR: {
-            SimUtil::SimOR(goodMechine, nullptr, cycleId, curGate);
+            SimUtil::SimOR(&goodMechine, nullptr, cycleId, curGate);
             break;
         }
         case NOR: {
-            SimUtil::SimNOR(goodMechine, nullptr, cycleId, curGate);
+            SimUtil::SimNOR(&goodMechine, nullptr, cycleId, curGate);
             break;
         }
         case XOR: {
-            SimUtil::SimNXOR(goodMechine, nullptr, cycleId, curGate);
+            SimUtil::SimNXOR(&goodMechine, nullptr, cycleId, curGate);
             break;
         }
-        case NXOR: {
-            SimUtil::SimNXOR(goodMechine, nullptr, cycleId, curGate);
+        case XNOR: {
+            SimUtil::SimNXOR(&goodMechine, nullptr, cycleId, curGate);
             break;
         }
         case MUX: {
-            SimUtil::SimMUX(goodMechine, nullptr, cycleId, curGate);
+            SimUtil::SimMUX(&goodMechine, nullptr, cycleId, curGate);
             break;
         }
         case DFF: {
@@ -92,7 +100,7 @@ void SimGood::TraceByLevel(int32_t cycleId)
             break;
         }
         case PO: {
-            SimUtil::SimBUF(goodMechine, nullptr, cycleId, curGate);
+            SimUtil::SimBUF(&goodMechine, nullptr, cycleId, curGate);
             break;
         }
         default: {
@@ -148,7 +156,7 @@ void SimGood::InitialFirstFrameStateEvent()
         goodMechine[0][scanCellIndex] = logicValues[0][scanCellIndex];
         Gate* curGate = gateVec[scanCellIndex];
         for (auto fanout : curGate->outputs) {
-            AddQueue(fanout)
+            AddQueue(fanout);
         }
     }
     // initial non-scan cell

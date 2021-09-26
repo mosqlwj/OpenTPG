@@ -9,15 +9,13 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#include "SimEntry.h"
+#ifndef SIMULATOR_H
+#define SIMULATOR_H
 
-bool SimEntry::HandleTestCube(TestCube* testCube)
-{
-    goodSimulator->Init(testCube);
-    goodSimulator->DoSim();
-    faultSimulator->Init(testCube, goodSimulator);
-    bool result = faultSimulator->DoSim();
-    goodSimulator->Reset();
-    faultSimulator->Reset();
-    return result;
-}
+class Simulator {
+public:
+    virtual ~Simulator() = default;
+    virtual bool HandleTestCube(TestCube* testCube) = 0;
+};
+
+#endif //SIMULATOR_H
