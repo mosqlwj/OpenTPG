@@ -54,7 +54,7 @@ FaultStatus CubeGeneratorExample::Generate(const Fault* fault, TestCube*& cube)
     for (size_t cycleId = 0; cycleId < cycleNum; cycleId++) {
         int bitSize = (cycleId != 0) ? netlist->GetPICount() : netlist->GetPICount() + netlist->GetScanCellCount();
         for (size_t i = 0; i < bitSize; i++) {
-            int randBit = rand() % LogicVal::LOGIC_COUNT;
+            int randBit = rand() % (LogicVal::LOGIC_COUNT - 1);
             cube->UpdateTestCubeValue(cycleId, i, LogicVal(randBit));
         }
     }

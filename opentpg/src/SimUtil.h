@@ -219,7 +219,7 @@ public:
             if (dValue == siValue) {
                 SetLogicVal(goodMechine, faultMechine, cycleId, gate->id, siValue);
             } else {
-                SetLogicVal(goodMechine, faultMechine, cycleId, gate->id, LOGIC_UNKNOW);
+                SetLogicVal(goodMechine, faultMechine, cycleId, gate->id, LOGIC_X);
             }
         }
     }

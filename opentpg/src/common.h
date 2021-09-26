@@ -97,6 +97,7 @@ enum LogicVal : uint8_t {
     //
     LOGIC_COUNT
 };
+static_assert(LogicVal::LOGIC_COUNT == (LogicVal::LOGIC_UNKNOW + 1), "这个约束便于快速计算有效逻辑值枚举的数量");
 
 enum FaultStatus : int8_t {
 #define DEF_FAULTSTATUS(id, name, str, desc) name = id,

@@ -89,30 +89,37 @@ bool SimFault::CheckObserved()
 {
     const std::vector<std::vector<LogicVal>>& cubes = testCube->GetLogicValue();
     const std::vector<std::vector<LogicVal>>& goodMechine = goodSimulation->GetGoodMechine();
+
     // scan cell
     for (int i = netlist->GetPICount(); i < cubes[0].size(); i++) {
         if (faultMechine[cycleNum][i] == LOGIC_UNKNOW) {
             continue;
         }
+
         if (goodMechine[cycleNum][i] == LOGIC_X || faultMechine[cycleNum][i] == LOGIC_X) {
             continue;
         }
+
         if (goodMechine[cycleNum][i] != faultMechine[cycleNum][i]) {
             return true;
         }
     }
+
     // po
     for (int i = netlist->Gates().size() - netlist->GetPOCount(); i < netlist->Gates().size(); i++) {
         if (faultMechine[cycleNum - 1][i] == LOGIC_UNKNOW) {
             continue;
         }
-        if (goodMechine[cycleNum - 1][i] == LOGIC_X || faultMechine[cycleNum][i] == LOGIC_X) {
+
+        if (goodMechine[cycleNum - 1][i] == LOGIC_X || faultMechine[cycleNum - 1][i] == LOGIC_X) {
             continue;
         }
-        if (goodMechine[cycleNum - 1][i] != faultMechine[cycleNum][i]) {
+
+        if (goodMechine[cycleNum - 1][i] != faultMechine[cycleNum - 1][i]) {
             return true;
         }
     }
+
     return false;
 }
 

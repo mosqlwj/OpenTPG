@@ -15,7 +15,7 @@
 void SimGood::DoSim()
 {
     PrepareForSim(netlist);
-    for (int cycleId = 0; cycleId < cycleNum; cycleId--) {
+    for (int cycleId = 0; cycleId < cycleNum; cycleId++) {
         DoEventDriven(cycleId);
         PrepareForSim(netlist);
     }
@@ -73,7 +73,7 @@ void SimGood::TraceByLevel(int32_t cycleId)
             break;
         }
         case XOR: {
-            SimUtil::SimNXOR(&goodMechine, nullptr, cycleId, curGate);
+            SimUtil::SimXOR(&goodMechine, nullptr, cycleId, curGate);
             break;
         }
         case XNOR: {
