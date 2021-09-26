@@ -178,7 +178,28 @@ $: 3
 
 ## 如何自验证
 
-本项目自带了一个简易的 simulator，可以通过 `-s` 来告诉程序在将 cube 写入文件之后顺便做一下仿真。 
+本项目自带了一个简易的 simulator，可以通过 `-s` 来告诉程序在将 cube 写入文件之后顺便做一下仿真。启用自动仿真时，终端上输出信息可参考如下：
+
+```txt
+CUBE DETECT:0 YES
+CUBE DETECT:1 YES
+CUBE DETECT:2 YES
+CUBE DETECT:3 YES
+CUBE DETECT:4 YES
+CUBE DETECT:5 NO
+CUBE DETECT:6 YES
+CUBE DETECT:7 NO
+CUBE DETECT:8 NO
+CUBE DETECT:9 YES
+CUBE DETECT:10 YES
+CUBE DETECT:11 YES
+CUBE DETECT:12 YES
+...
+```
+
+其中，`CUBE DETECT:xxx` 中 `xxx` 位置的数字代表 fault 的编号，而 `YES` 和 `NO` 表示这个 fault 是否被您生成的 cube 识别到。
+
+主要注意，目前实现的简易 simulator 实现相当简单，性能自然不高，对于大网表，仿真的时间会变得很长，并不适合一直开着 -s 来跑。
 
 ## 评分
 
