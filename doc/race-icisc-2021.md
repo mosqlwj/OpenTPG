@@ -243,16 +243,16 @@ CUBE DETECT:12 YES
 
 具体方法为：
 
-* 在您的开发服务器 `${HOME}` 目录下新建一个名字为 `product-release` 的目录；
+* 第一步，在您的开发服务器 `${HOME}` 目录下新建一个名字为 `product-release` 的目录；
 
 参考命令：
 ```shell
 mkdir -p ${HOME}/product-release
 ```
 
-* 按照 [作品打包要求](#race-pack) 的要求对编译好的二进制文件以及依赖库（如果有）打包，然后将包拷贝到 `${HOME}/product-release`；
+* 第二步，按照 [作品打包要求](#race-pack) 的要求对编译好的二进制文件以及依赖库（如果有）打包，然后将包拷贝到 `${HOME}/product-release`；
 
-* 将源代码包整体打包放到 `${HOME}/product-release` 目录下，包名固定为 `source.tar.gz`；
+* 第三步，将源代码包整体打包放到 `${HOME}/product-release` 目录下，包名固定为 `source.tar.gz`；
 
 赛题验收方会在作品提交时间截止后，从 `${HOME}/product-release` 目录下拷贝作品做作品验收。上面这些动作请务必在作品提交时间截止前完成，
 不要在截止时间之后继续拷贝，一方面可能会晚了，不会重新拷贝；另一方面，如果刚好碰到收包脚本正在拉去你的代码，会导致拉取的文件半新半旧的问题。
