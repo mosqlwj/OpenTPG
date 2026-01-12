@@ -1,0 +1,1 @@
+list(APPEND HEADERS ${CMAKE_CURRENT_LIST_DIR}/errors.h)

@@ -1,0 +1,63 @@
+/**
+ * Copyright (c) 2025 opentpg.com
+ * opentpg is licensed under Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
+ * You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PSL v2 for more details.
+ */
+
+#include <gtest/gtest.h>
+
+#include "flowtpg/model/Netlist.h"
+
+class NetlistTest : public ::testing::Test
+{
+protected:
+    void SetUp() override
+    {
+        netlist = new Netlist();
+    }
+
+    void TearDown() override
+    {
+        delete netlist;
+    }
+
+    Netlist* netlist;
+};
+
+TEST_F(NetlistTest, CreateNetlist)
+{
+    ASSERT_NE(netlist, nullptr);
+}
+
+TEST_F(NetlistTest, InitialPICount)
+{
+    EXPECT_EQ(netlist->GetPICount(), 0);
+}
+
+TEST_F(NetlistTest, InitialScanCellCount)
+{
+    EXPECT_EQ(netlist->GetScanCellCount(), 0);
+}
+
+TEST_F(NetlistTest, InitialCubeEndId)
+{
+    EXPECT_EQ(netlist->GetCubeEndId(), 0);
+}
+
+TEST_F(NetlistTest, GatesVector)
+{
+    const std::vector<Gate*>& gates = netlist->Gates();
+    EXPECT_EQ(gates.size(), 0);
+}
+
+TEST_F(NetlistTest, GateNameMap)
+{
+    const auto& gateNameMap = netlist->GetGateNameMap();
+    EXPECT_EQ(gateNameMap.size(), 0);
+}

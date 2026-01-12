@@ -1,0 +1,52 @@
+# OpenTPG CI/CD 工作流配置
+# 自动构建、测试和代码检查
+
+name: CI
+
+on:
+  push:
+    branches: [ main, master, develop, br-support-shell ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 检出代码
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # 安装依赖
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake g++ libboost-all-dev
+
+    # 配置 CMake
+    - name: Configure CMake
+      run: |
+        cd opentpg
+        mkdir -p build
+        cd build
+        cmake .. -DBUILD_TESTS=ON
+
+    # 编译项目
+    - name: Build
+      run: |
+        cd opentpg/build
+        make -j4
+
+    # 运行单元测试
+    - name: Run tests
+      run: |
+        cd opentpg/build
+        ./test/opentpg_test --gtest_color=yes
+
+    # 代码格式检查
+    - name: Code format check
+      run: |
+        cd opentpg
+        ./build.sh format
+        git diff --exit-code || (echo "Code format check failed. Run 'cd opentpg && ./build.sh format' to fix." && exit 1)
