@@ -9,25 +9,18 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-#ifndef OPENTPG_CUBEOUTPUTDEFAULT_H
-#define OPENTPG_CUBEOUTPUTDEFAULT_H
+#include "plugin/PluginManager.h"
 
-#include "../../utils/asserts.h"
-#include "CubeHandler.h"
+namespace opentpg {
+namespace core {
+namespace plugin {
 
-class CubeHandlerDefault : public CubeHandler {
-public:
-    virtual ~CubeHandlerDefault() = default;
+PluginManager& PluginManager::GetInstance()
+{
+    static PluginManager instance;
+    return instance;
+}
 
-    void Handle(TestCube* cube) override
-    {
-        ASSERT(cube != nullptr);
-        delete cube;
-    }
-
-    void Commit() override
-    {
-    }
-};
-
-#endif //OPENTPG_CUBEOUTPUTDEFAULT_H
+} // namespace plugin
+} // namespace core
+} // namespace opentpg

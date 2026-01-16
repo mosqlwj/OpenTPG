@@ -11,10 +11,10 @@
  */
 #include "ATPGDriverDefault.h"
 
-#include "../../../Faultlist.h"
-#include "../../../Netlist.h"
-#include "../../../Statuslist.h"
-#include "../../../utils/asserts.h"
+#include "../model/Faultlist.h"
+#include "../model/Netlist.h"
+#include "../model/Statuslist.h"
+#include "../../utils/asserts.h"
 #include "../context/ContextDefault.h"
 #include "../context/CubeHandler.h"
 #include "CubeGenerator.h"

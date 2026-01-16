@@ -11,7 +11,7 @@
  */
 #include "ATPGDriver.h"
 
-#include "../../../utils/asserts.h"
+#include "utils/asserts.h"
 #include "../context/ContextDefault.h"
 #include "ATPGDriverDefault.h"
 

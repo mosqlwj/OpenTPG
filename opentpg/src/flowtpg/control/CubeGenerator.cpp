@@ -12,7 +12,7 @@
 #include "CubeGenerator.h"
 #include "CubeGeneratorExample.h"
 
-#include "../../../utils/asserts.h"
+#include "../../utils/asserts.h"
 #include "../context/ContextDefault.h"
 
 extern CubeGenerator* CreateCubeGenerator(void* context)

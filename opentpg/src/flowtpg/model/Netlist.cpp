@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 #include "Netlist.h"
-#include "Params.h"
+#include "shell/Params.h"
 #include "ScanChain.h"
 #include "Util.h"
 

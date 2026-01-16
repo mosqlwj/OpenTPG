@@ -32,6 +32,32 @@ cmake ../
 make
 ```
 
+### 构建测试
+
+```bash
+cd opentpg/build
+cmake -DBUILD_TESTS=ON ../  # 确保启用测试
+make                          # 构建 opentpg_test 可执行文件
+```
+
+测试可执行文件位于 `opentpg/build/opentpg_test`。
+
+### 运行测试
+
+```bash
+cd opentpg/build
+./opentpg_test                    # 运行所有测试
+./opentpg_test --gtest_filter=TestGate.*  # 运行特定测试套件
+./opentpg_test --gtest_list_tests        # 列出所有测试
+```
+
+或使用 ctest：
+```bash
+cd opentpg/build
+ctest                  # 运行所有测试
+ctest -R TestGate       # 运行匹配模式的测试
+```
+
 ## 运行工具
 
 ```bash
@@ -65,6 +91,8 @@ make
 
 - **`shell/`** - 命令行接口和参数处理
 
+- **`logger/`** - 日志系统
+
 - **`utils/`** - 通用工具（字符串处理等）
 
 ### 关键接口
@@ -76,6 +104,9 @@ make
   - `Prepare()` - 生成前准备
   - `Execute()` - 运行立方生成
   - `Cleanup()` - 重置状态
+
+- **CubeHandler** (`flowtpg/context/CubeHandler.h`) - 测试立方输出处理器的抽象接口
+  - `Handle(TestCube* cube)` - 处理生成的测试立方（调用者负责传递所有权）
 
 - **Netlist** (`flowtpg/model/Netlist.h`) - 表示数字电路，包含门、扫描链和 PI/PO 映射
 
@@ -93,8 +124,10 @@ make
 
 ### 代码风格
 - 提交代码前使用 `build.sh format` 通过 clang-format 格式化代码
+- 代码格式配置文件位于项目根目录 `.clang-format`
 - 避免使用行内注释（`//` 和 `/* */`）
 - 逻辑段落之间留空行
+- Include 路径：使用相对于 `src/` 的路径（如 `#include "flowtpg/model/Netlist.h"`）
 - Include 顺序：项目自研 → 开源库 → 标准库（稳定性从低到高）
 - 文件后缀：`.h`（头文件）、`.cpp`（实现）、`.inc`（包含文件）
 
@@ -108,6 +141,7 @@ make
 
 - **Boost 1.76** - C++ 工具库
 - **cmdline 3.2.1** - 命令行解析
+- **Google Test 1.11.0** - 单元测试框架（测试时自动通过 FetchContent 下载）
 - **CMake 3.12+** - 构建系统
 - **gcc 7+** 支持 C++11
 
@@ -120,8 +154,16 @@ make
 
 ## 测试
 
-基准电路位于 `opentpg/bench/`：
+### 单元测试
+测试目录位于 `opentpg/test/`，使用 Google Test 框架：
+
+- **`test_main.cpp`** - 测试入口
+- **`model/`** - Model 模块测试（TestGate、TestFault、TestTestCube）
+- **`logger/`** - Logger 模块测试
+
+测试配置通过 CMake 自动发现（`gtest_discover_tests`），无需手动注册。
+
+### 基准电路
+位于 `opentpg/bench/`：
 - `s27.bench` / `s27.cfg` - 小型测试电路
 - `s838.bench` / `s838.cfg` - 大型基准电路
-
-测试目录 `opentpg/test/` 当前存在但为空。

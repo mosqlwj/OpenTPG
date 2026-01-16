@@ -11,9 +11,9 @@
  */
 #include "CubeGeneratorExample.h"
 
-#include "../../../Netlist.h"
-#include "../../../TestCube.h"
-#include "../../../utils/asserts.h"
+#include "../model/Netlist.h"
+#include "../model/TestCube.h"
+#include "../../utils/asserts.h"
 #include "../context/ContextDefault.h"
 
 CubeGeneratorExample::CubeGeneratorExample(ContextDefault* context)
